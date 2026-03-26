@@ -56,7 +56,7 @@ const BENCHMARKS = [
     body_focus: 'full-body',
     equipment: ['pullUpBar', 'bodyweight'],
     scoring_type: 'time',
-    description: 'Barbara is five rounds of bodyweight gymnastics with 3 minutes of rest between rounds. The volume climbs through each round, testing both strength and conditioning. The 3-minute rest is deceptive—you'll realize you need every second.',
+    description: 'Barbara is five rounds of bodyweight gymnastics with 3 minutes of rest between rounds. The volume climbs through each round, testing both strength and conditioning. The 3-minute rest is deceptive—you\'ll realize you need every second.',
     movements: [
       { name: 'Pull-Ups', reps: '20', tip: 'Kipping or strict—whatever gets you through' },
       { name: 'Push-Ups', reps: '30', tip: 'Touch chest to deck each rep' },
@@ -64,7 +64,7 @@ const BENCHMARKS = [
       { name: 'Air Squats', reps: '50', tip: 'Below parallel' }
     ],
     scoring_notes: 'Record your finish time for all 5 rounds + rest. Under 25 min is strong.',
-    tips: ['Don't go out hard in round 1', 'The last two rounds will humble you', 'Use the 3-minute rest wisely—stretch, breathe, reset']
+    tips: ['Don\'t go out hard in round 1', 'The last two rounds will humble you', 'Use the 3-minute rest wisely—stretch, breathe, reset']
   },
 
   {
@@ -84,7 +84,7 @@ const BENCHMARKS = [
       { name: 'Air Squats', reps: '15', tip: 'Below parallel' }
     ],
     scoring_notes: 'Score is total rounds completed in 30 minutes. 30 rounds = 5 rounds/minute is very strong.',
-    tips: ['Aim for 20–25 seconds of work, rest the remainder', 'If you can't complete a round, that's your stopping point', 'Pacing, pacing, pacing']
+    tips: ['Aim for 20–25 seconds of work, rest the remainder', 'If you can\'t complete a round, that\'s your stopping point', 'Pacing, pacing, pacing']
   },
 
   {
@@ -104,7 +104,7 @@ const BENCHMARKS = [
       { name: 'Air Squats', reps: '15', tip: 'Below parallel' }
     ],
     scoring_notes: 'Score is total rounds + any additional reps. 20+ rounds is very strong.',
-    tips: ['Pace to start—you'll want to sprint at the end', 'If you hit 20 rounds, you're elite', 'Stay consistent in your pull-up sets']
+    tips: ['Pace to start—you\'ll want to sprint at the end', 'If you hit 20 rounds, you\'re elite', 'Stay consistent in your pull-up sets']
   },
 
   {
@@ -181,7 +181,7 @@ const BENCHMARKS = [
       { name: 'Pull-Ups', reps: '21 – 15 – 9', tip: 'Kipping is allowed and encouraged' }
     ],
     scoring_notes: 'Record your finish time. Sub-3 min is elite. Sub-5 min is strong. Sub-8 min is a solid benchmark.',
-    tips: ['Thrusters are where speed matters most', 'Kip your pull-ups early, don't save energy for later', 'Go hard—Fran is short!']
+    tips: ['Thrusters are where speed matters most', 'Kip your pull-ups early, don\'t save energy for later', 'Go hard—Fran is short!']
   },
 
   {
@@ -194,12 +194,12 @@ const BENCHMARKS = [
     body_focus: 'full-body',
     equipment: ['barbell'],
     scoring_type: 'time',
-    description: 'Grace is 30 clean and jerks for time. It's pure barbell, pure speed. This benchmark separates technical lifters from those learning the movement. A fast Grace is a sign of elite strength-endurance.',
+    description: 'Grace is 30 clean and jerks for time. It\'s pure barbell, pure speed. This benchmark separates technical lifters from those learning the movement. A fast Grace is a sign of elite strength-endurance.',
     movements: [
       { name: 'Clean and Jerks', reps: '30', rx_men: '135 lb', rx_women: '95 lb', tip: 'Efficient hip drive; split or power jerk as needed' }
     ],
     scoring_notes: 'Record your finish time. Sub-4 min is elite. Sub-6 min is strong.',
-    tips: ['Find your rhythm and don't break it', 'Power through the 10-20 rep range', 'The last 10 are mental']
+    tips: ['Find your rhythm and don\'t break it', 'Power through the 10-20 rep range', 'The last 10 are mental']
   },
 
   {
@@ -219,7 +219,7 @@ const BENCHMARKS = [
       { name: 'Pull-Ups', reps: '12', tip: 'Kipping or strict' }
     ],
     scoring_notes: 'Record your finish time. Under 15 min is strong.',
-    tips: ['Don't go all-out on the first run', 'Use KB swings as recovery', 'The last round determines your score']
+    tips: ['Don\'t go all-out on the first run', 'Use KB swings as recovery', 'The last round determines your score']
   },
 
   {
@@ -257,7 +257,7 @@ const BENCHMARKS = [
       { name: 'Pull-Ups', reps: '30', tip: 'Consistent rhythm' }
     ],
     scoring_notes: 'Record your finish time. Under 12 min is strong.',
-    tips: ['Don't go all-out on the row', 'Use thrusters to recover from the row', 'The pull-ups will feel heavy after thrusters']
+    tips: ['Don\'t go all-out on the row', 'Use thrusters to recover from the row', 'The pull-ups will feel heavy after thrusters']
   },
 
   {
@@ -270,12 +270,12 @@ const BENCHMARKS = [
     body_focus: 'legs',
     equipment: ['wallBall'],
     scoring_type: 'time',
-    description: 'Karen is 150 wall balls for time. It's a simple, brutal test of lower body power and cardiovascular capacity. The 10-foot target keeps every rep honest.',
+    description: 'Karen is 150 wall balls for time. It\'s a simple, brutal test of lower body power and cardiovascular capacity. The 10-foot target keeps every rep honest.',
     movements: [
       { name: 'Wall Balls', reps: '150', rx_men: '20 lb to 10 ft', rx_women: '14 lb to 9 ft', tip: 'Consistent pace; full depth squat' }
     ],
     scoring_notes: 'Record your finish time. Under 10 min is strong.',
-    tips: ['Pace yourself in sets of 20–30', 'Catch the ball in the squat—don't waste time at the top', 'The last 30 will burn']
+    tips: ['Pace yourself in sets of 20–30', 'Catch the ball in the squat—don\'t waste time at the top', 'The last 30 will burn']
   },
 
   {
@@ -295,7 +295,7 @@ const BENCHMARKS = [
       { name: 'Wall Balls', reps: '30', rx_men: '20 lb', rx_women: '14 lb', tip: 'Full depth' }
     ],
     scoring_notes: 'Record your finish time. Under 20 min is strong.',
-    tips: ['Don't go all-out on the first run', 'Box jumps are your fastest movement', 'Wall balls are where you'll feel the volume']
+    tips: ['Don\'t go all-out on the first run', 'Box jumps are your fastest movement', 'Wall balls are where you\'ll feel the volume']
   },
 
   {
@@ -308,7 +308,7 @@ const BENCHMARKS = [
     body_focus: 'full-body',
     equipment: ['barbell'],
     scoring_type: 'time',
-    description: 'Linda pairs three heavy barbell movements in descending reps. It's the ultimate test of strength endurance and technical proficiency under fatigue.',
+    description: 'Linda pairs three heavy barbell movements in descending reps. It\'s the ultimate test of strength endurance and technical proficiency under fatigue.',
     movements: [
       { name: 'Deadlifts', reps: '10–9–8–7–6–5–4–3–2–1', rx_men: '1.5x BW', rx_women: '1x BW', tip: 'Full extension' },
       { name: 'Bench Press', reps: '10–9–8–7–6–5–4–3–2–1', rx_men: '1x BW', rx_women: '0.75x BW', tip: 'Full range; chest touch required' },
@@ -328,7 +328,7 @@ const BENCHMARKS = [
     body_focus: 'full-body',
     equipment: ['pullUpBar', 'bodyweight'],
     scoring_type: 'rounds_reps',
-    description: 'Mary is a 20-minute AMRAP featuring handstand push-ups, pistols, and pull-ups. It's incredibly demanding, combining pure strength with flexibility and balance.',
+    description: 'Mary is a 20-minute AMRAP featuring handstand push-ups, pistols, and pull-ups. It\'s incredibly demanding, combining pure strength with flexibility and balance.',
     movements: [
       { name: 'Handstand Push-Ups', reps: '5', tip: 'Full range; chest to wall' },
       { name: 'Pistol Squats', reps: '10', tip: 'Full depth; arm extended for balance' },
@@ -397,7 +397,7 @@ const BENCHMARKS = [
       { name: '1 Mile Run', reps: '1', tip: 'Pace similar to first mile' }
     ],
     scoring_notes: 'Record your finish time. Elite times are under 35 min. Most complete in 40–60 min.',
-    tips: ['Partition the gymnastics—don't try to unbroken 100+ pull-ups', 'The second mile will be mentally brutal', 'Use equal partitions (10 PU, 20 PU, 30 SQ per round) for consistency']
+    tips: ['Partition the gymnastics—don\'t try to unbroken 100+ pull-ups', 'The second mile will be mentally brutal', 'Use equal partitions (10 PU, 20 PU, 30 SQ per round) for consistency']
   },
 
   {
@@ -456,12 +456,12 @@ const BENCHMARKS = [
       { name: '400m Run', reps: '1', tip: 'Steady pace' },
       { name: 'Thrusters', reps: '21', rx_men: '95 lb', rx_women: '65 lb', tip: 'Unbroken if possible' },
       { name: '800m Run', reps: '1', tip: 'Second run—pace matters' },
-      { name: 'Thrusters', reps: '21', rx_men: '95 lb', rx_women: '65 lb', tip: 'Don't drop the bar' },
+      { name: 'Thrusters', reps: '21', rx_men: '95 lb', rx_women: '65 lb', tip: 'Don\'t drop the bar' },
       { name: '400m Run', reps: '1', tip: 'Final sprint' },
       { name: 'Pull-Ups', reps: '50', tip: 'These will feel heavy' }
     ],
     scoring_notes: 'Record your finish time. Sub-25 min is strong.',
-    tips: ['Front-load pull-ups when you're fresh', 'Pace the middle run carefully', 'The final 50 pull-ups are mental']
+    tips: ['Front-load pull-ups when you\'re fresh', 'Pace the middle run carefully', 'The final 50 pull-ups are mental']
   },
 
   {
@@ -836,7 +836,7 @@ const BENCHMARKS = [
       { name: 'Double-Unders', reps: '50', tip: 'Consistent rhythm' }
     ],
     scoring_notes: 'Record your finish time. Sub-45 min is strong.',
-    tips: ['Break movements into manageable sets', 'Don't go all-out on the box jumps', 'The wall balls will test your resolve']
+    tips: ['Break movements into manageable sets', 'Don\'t go all-out on the box jumps', 'The wall balls will test your resolve']
   },
 
   {
@@ -973,7 +973,7 @@ const BENCHMARKS = [
       { name: 'Burpees', reps: '20', tip: 'Chest to deck; full jump' }
     ],
     scoring_notes: 'Score is total rounds completed in 30 minutes. 15+ complete rounds is strong.',
-    tips: ['Pace the rows to finish in 40–45 seconds', 'If you can't complete a round, that's your stopping point', 'Consistency matters more than any single peak']
+    tips: ['Pace the rows to finish in 40–45 seconds', 'If you can\'t complete a round, that\'s your stopping point', 'Consistency matters more than any single peak']
   },
 
   {
@@ -1069,6 +1069,6 @@ const BENCHMARKS = [
       { name: 'Pull-Ups', reps: '1, 2, 3, 4, ... until failure', tip: 'Kipping or strict; find your rhythm' }
     ],
     scoring_notes: 'Score is the minute you fail to complete. Lasting 10+ minutes is strong.',
-    tips: ['Start conservatively', 'Break early to avoid failure', 'You'll hit a wall when single-digit numbers become impossible']
+    tips: ['Start conservatively', 'Break early to avoid failure', 'You\'ll hit a wall when single-digit numbers become impossible']
   }
 ];
