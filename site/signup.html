@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - HomeWODrx</title>
+  <meta name="description" content="Create your free HomeWODrx account to log workouts, track PRs, and compete on leaderboards.">
+
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/db.js"></script>
+  <script src="/js/benchmarks.js"></script>
+  <script src="/js/nav.js"></script>
+  <style>
+    .auth-page {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .auth-card {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .auth-logo {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .auth-logo a {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .auth-logo a span {
+      color: var(--orange);
+    }
+
+    .auth-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+
+    .auth-subtitle {
+      color: var(--text-muted, #888);
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .form-input {
+      width: 100%;
+      background: var(--dark-bg);
+      border: 1px solid var(--dark-border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: var(--text-primary);
+      font-size: 1rem;
+      transition: border-color 0.2s;
+      box-sizing: border-box;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--orange);
+    }
+
+    .form-input::placeholder {
+      color: #555;
+    }
+
+    .form-hint {
+      font-size: 0.8rem;
+      color: var(--text-muted, #888);
+      margin-top: 0.35rem;
+    }
+
+    .auth-error {
+      background: rgba(232, 83, 10, 0.1);
+      border: 1px solid rgba(232, 83, 10, 0.3);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: var(--orange);
+      font-size: 0.9rem;
+      margin-bottom: 1.25rem;
+      display: none;
+    }
+
+    .auth-error.visible {
+      display: block;
+    }
+
+    .auth-success {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: #22c55e;
+      font-size: 0.9rem;
+      margin-bottom: 1.25rem;
+      display: none;
+    }
+
+    .auth-success.visible {
+      display: block;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 0.85rem;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+
+    .auth-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      color: var(--text-muted, #888);
+    }
+
+    .auth-footer a {
+      color: var(--orange);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .auth-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--dark-border);
+      margin: 1.5rem 0;
+    }
+
+    .terms-note {
+      font-size: 0.8rem;
+      color: var(--text-muted, #888);
+      text-align: center;
+      margin-top: 1rem;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body data-nav-init="true" data-active-page="">
+  <main class="auth-page">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <a href="/"><span>⚡</span> HomeWODrx</a>
+      </div>
+
+      <h1 class="auth-title">Create your account</h1>
+      <p class="auth-subtitle">Free forever. Log WODs, track PRs, compete on leaderboards.</p>
+
+      <div class="auth-error" id="auth-error"></div>
+      <div class="auth-success" id="auth-success"></div>
+
+      <form id="signup-form">
+        <div class="form-group">
+          <label class="form-label" for="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            class="form-input"
+            placeholder="rxdathlete"
+            required
+            minlength="3"
+            maxlength="30"
+            autocomplete="username"
+          />
+          <p class="form-hint">3–30 characters. This is how you appear on leaderboards.</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            class="form-input"
+            placeholder="you@example.com"
+            required
+            autocomplete="email"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            class="form-input"
+            placeholder="••••••••"
+            required
+            minlength="8"
+            autocomplete="new-password"
+          />
+          <p class="form-hint">Minimum 8 characters.</p>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-submit" id="submit-btn">
+          Create Account
+        </button>
+
+        <p class="terms-note">
+          By signing up you agree to our terms of service and privacy policy.
+        </p>
+      </form>
+
+      <hr class="divider">
+
+      <div class="auth-footer">
+        Already have an account? <a href="/login.html">Log in</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const submitBtn = document.getElementById('submit-btn');
+      const errorEl = document.getElementById('auth-error');
+      const successEl = document.getElementById('auth-success');
+
+      // Reset messages
+      errorEl.className = 'auth-error';
+      successEl.className = 'auth-success';
+
+      // Validate username
+      if (!/^[a-zA-Z0-9_-]{3,30}$/.test(username)) {
+        errorEl.textContent = 'Username can only contain letters, numbers, underscores, and hyphens (3–30 characters).';
+        errorEl.className = 'auth-error visible';
+        return;
+      }
+
+      // Loading state
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Creating account...';
+
+      try {
+        const { user, error } = await db.signUp(email, password, username);
+
+        if (error) {
+          errorEl.textContent = error.message || 'Could not create account. Please try again.';
+          errorEl.className = 'auth-error visible';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Create Account';
+          return;
+        }
+
+        if (user) {
+          // Check if email confirmation is required
+          if (!user.confirmed_at && !user.email_confirmed_at) {
+            successEl.textContent = 'Account created! Check your email to confirm your address, then log in.';
+          } else {
+            successEl.textContent = 'Account created! Redirecting...';
+            setTimeout(() => {
+              window.location.href = '/';
+            }, 1000);
+          }
+          successEl.className = 'auth-success visible';
+          submitBtn.disabled = true;
+        }
+      } catch (err) {
+        errorEl.textContent = 'Something went wrong. Please try again.';
+        errorEl.className = 'auth-error visible';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Create Account';
+      }
+    });
+  </script>
+</body>
+</html>
