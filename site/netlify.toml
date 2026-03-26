@@ -1,0 +1,44 @@
+[build]
+  publish = "."
+
+# Clean URLs: /workouts/fran → /workout.html?slug=fran
+[[redirects]]
+  from = "/workouts/:slug"
+  to   = "/workout.html?slug=:slug"
+  status = 200
+
+# User profile pages
+[[redirects]]
+  from = "/u/:username"
+  to   = "/profile.html?user=:username"
+  status = 200
+
+# Friendly redirect for generator
+[[redirects]]
+  from = "/wod"
+  to   = "/generator.html"
+  status = 301
+
+[[redirects]]
+  from = "/generate"
+  to   = "/generator.html"
+  status = 301
+
+# Security headers for all pages
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options        = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy        = "strict-origin-when-cross-origin"
+
+# Cache static assets aggressively
+[[headers]]
+  for = "/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"

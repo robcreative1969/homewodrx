@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Athlete Profile — HomeWODrx</title>
+<link rel="stylesheet" href="/css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+.profile-page{max-width:900px;margin:0 auto;padding:36px 20px 80px}
+.not-found{text-align:center;padding:80px 20px}
+.not-found .icon{font-size:56px;margin-bottom:16px}
+.not-found h2{font-size:24px;font-weight:900;margin-bottom:8px}
+.not-found p{color:var(--mu);font-size:15px;margin-bottom:24px}
+
+/* Profile header */
+.profile-header{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:32px;margin-bottom:24px;display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap}
+.avatar-large{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;flex-shrink:0;border:3px solid var(--or)}
+.profile-info{flex:1}
+.profile-info h1{font-size:26px;font-weight:900;margin-bottom:4px}
+.profile-info .bio{color:var(--mu);font-size:14px;line-height:1.7;margin:8px 0}
+.profile-meta{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px}
+.profile-meta-item{font-size:12px;color:var(--mu);display:flex;align-items:center;gap:5px}
+.profile-meta-item strong{color:var(--tx);font-weight:700}
+.own-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.edit-btn{padding:8px 16px;background:none;border:1px solid var(--bd);border-radius:7px;color:var(--tx);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.edit-btn:hover{border-color:var(--or);color:var(--orl)}
+
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:24px}
+.stat-card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:18px;text-align:center}
+.stat-card .num{font-size:28px;font-weight:900;color:var(--or)}
+.stat-card .lbl{font-size:11px;color:var(--mu);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+
+/* Tabs */
+.profile-tabs{display:flex;gap:0;border-bottom:1px solid var(--bd);margin-bottom:24px}
+.profile-tab{padding:11px 20px;font-size:13px;font-weight:700;color:var(--mu);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap}
+.profile-tab:hover{color:var(--tx)}
+.profile-tab.active{color:var(--or);border-bottom-color:var(--or)}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
+/* Results table */
+.results-table{width:100%;border-collapse:collapse;font-size:13px}
+.results-table th{padding:9px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--bd);background:var(--card)}
+.results-table td{padding:11px 14px;border-bottom:1px solid var(--bd)}
+.results-table tr:hover td{background:rgba(255,255,255,.02)}
+.results-table tr:last-child td{border-bottom:none}
+.score-cell{font-weight:800;color:var(--orl)}
+.pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700}
+.pill-or{background:rgba(232,83,10,.2);color:var(--or);border:1px solid rgba(232,83,10,.4)}
+.pill-gr{background:rgba(39,174,96,.2);color:#58d68d;border:1px solid rgba(39,174,96,.3)}
+.pill-mu{background:var(--dk2);color:var(--mu);border:1px solid var(--bd)}
+.pill-pu{background:rgba(155,89,182,.2);color:#c39bd3;border:1px solid rgba(155,89,182,.3)}
+
+/* Workouts grid */
+.workout-card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:12px;transition:all .15s}
+.workout-card:hover{border-color:var(--or)}
+.workout-card h3{font-size:15px;font-weight:800;margin-bottom:6px}
+.workout-card .meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.workout-card .desc{font-size:12px;color:var(--mu);line-height:1.7}
+.workout-card .actions{display:flex;gap:8px;margin-top:12px}
+.wc-btn{padding:7px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .15s;text-decoration:none;display:inline-block}
+.wc-btn-pri{background:var(--or);color:#fff}
+.wc-btn-pri:hover{background:var(--orl)}
+.wc-btn-sec{background:var(--dk2);color:var(--tx);border:1px solid var(--bd)}
+.wc-btn-sec:hover{border-color:var(--or);color:var(--orl)}
+
+/* Edit modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:32px;width:100%;max-width:460px;position:relative;max-height:90vh;overflow-y:auto}
+.modal-close{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--mu);font-size:20px;cursor:pointer;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%}
+.modal-close:hover{background:var(--bd);color:var(--tx)}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.field input,.field textarea{width:100%;background:var(--dk2);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;color:var(--tx);font-size:14px;outline:none;font-family:inherit}
+.field input:focus,.field textarea:focus{border-color:var(--or)}
+.modal-btn{width:100%;padding:12px;background:var(--or);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;margin-top:4px}
+.modal-btn:hover{background:var(--orl)}
+.modal-err{background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);color:#e74c3c;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
+.modal-err.vis{display:block}
+.modal-ok{background:rgba(39,174,96,.15);border:1px solid rgba(39,174,96,.4);color:#58d68d;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
+.modal-ok.vis{display:block}
+
+.empty-state{text-align:center;padding:48px 20px}
+.empty-state .icon{font-size:40px;margin-bottom:12px}
+.empty-state p{color:var(--mu);font-size:14px}
+
+/* Best performances */
+.pr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.pr-card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:16px;transition:all .15s}
+.pr-card:hover{border-color:var(--or)}
+.pr-card .workout-name{font-size:13px;font-weight:800;margin-bottom:4px}
+.pr-card .workout-name a{color:var(--tx);text-decoration:none}
+.pr-card .workout-name a:hover{color:var(--orl)}
+.pr-card .pr-score{font-size:20px;font-weight:900;color:var(--or);margin:8px 0}
+.pr-card .pr-date{font-size:11px;color:var(--mu)}
+</style>
+</head>
+<body data-nav-init="true" data-active-page="profile">
+
+<div id="profile-wrap">
+  <div style="text-align:center;padding:80px 20px;color:var(--mu)">Loading profile…</div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal-overlay" id="edit-modal">
+<div class="modal">
+  <button class="modal-close" onclick="closeEditModal()">✕</button>
+  <h2 style="font-size:20px;font-weight:900;margin-bottom:6px">Edit Profile</h2>
+  <p style="color:var(--mu);font-size:13px;margin-bottom:20px">Update your public profile.</p>
+  <div class="modal-err" id="edit-err"></div>
+  <div class="modal-ok" id="edit-ok"></div>
+  <div class="field"><label>Username</label><input type="text" id="edit-username" placeholder="Your username" maxlength="20"></div>
+  <div class="field"><label>Bio</label><textarea id="edit-bio" placeholder="Tell the community about yourself..." rows="3"></textarea></div>
+  <button class="modal-btn" onclick="saveProfile()">Save Changes →</button>
+</div>
+</div>
+
+<script src="/js/config.js"></script>
+<script src="/js/db.js"></script>
+<script src="/js/benchmarks.js"></script>
+<script src="/js/nav.js"></script>
+<script>
+
+let profileUser = null;
+let currentUser = null;
+let profileResults = [];
+let profileWorkouts = [];
+
+document.addEventListener('DOMContentLoaded', async () => {
+  currentUser = await db.getUser();
+  const params = new URLSearchParams(window.location.search);
+  let username = params.get('user');
+
+  // Also support /u/:username via netlify redirect
+  if (!username) {
+    const pathParts = window.location.pathname.split('/');
+    username = pathParts[pathParts.length - 1] || null;
+  }
+
+  // If no username and user is logged in, show own profile
+  if (!username && currentUser) {
+    username = currentUser.email?.split('@')[0] || null;
+  }
+
+  if (!username) {
+    renderNotFound();
+    return;
+  }
+
+  await loadProfile(username);
+});
+
+async function loadProfile(username) {
+  profileUser = await db.getProfileByUsername(username);
+
+  if (!profileUser) {
+    // Demo mode: check if current user matches
+    if (currentUser) {
+      const cu = currentUser.email?.split('@')[0];
+      if (cu === username || username === 'me') {
+        profileUser = {
+          id: currentUser.id,
+          username: cu,
+          bio: 'HomeWODrx athlete. No days off.',
+          avatar_color: '#E8530A',
+          created_at: new Date().toISOString()
+        };
+      }
+    }
+    if (!profileUser) { renderNotFound(); return; }
+  }
+
+  // Load results and workouts
+  [profileResults, profileWorkouts] = await Promise.all([
+    db.getResults({ userId: profileUser.id }),
+    db.getWorkouts({ userId: profileUser.id })
+  ]);
+
+  renderProfile();
+}
+
+function renderProfile() {
+  const isOwnProfile = currentUser && (currentUser.id === profileUser.id || currentUser.email?.split('@')[0] === profileUser.username);
+  const color = profileUser.avatar_color || '#E8530A';
+  const initial = (profileUser.username || '?')[0].toUpperCase();
+  const joinDate = new Date(profileUser.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+  // Compute stats
+  const benchmarkResults = profileResults.filter(r => r.benchmark_slug);
+  const communityResults = profileResults.filter(r => r.workout_id);
+  const publicWorkouts = profileWorkouts.filter(w => w.is_public || w.isPublic);
+
+  document.getElementById('profile-wrap').innerHTML = `
+  <div class="profile-page">
+
+    <div class="profile-header">
+      <div class="avatar-large" style="background:${color}">${initial}</div>
+      <div class="profile-info">
+        <h1>${escHtml(profileUser.username)}</h1>
+        ${profileUser.bio ? `<div class="bio">${escHtml(profileUser.bio)}</div>` : ''}
+        <div class="profile-meta">
+          <div class="profile-meta-item">📅 Joined <strong>${joinDate}</strong></div>
+          <div class="profile-meta-item">📊 <strong>${profileResults.length}</strong> results logged</div>
+          <div class="profile-meta-item">💪 <strong>${profileWorkouts.length}</strong> workouts saved</div>
+          ${publicWorkouts.length ? `<div class="profile-meta-item">🌍 <strong>${publicWorkouts.length}</strong> public</div>` : ''}
+        </div>
+        ${isOwnProfile ? `<div class="own-actions">
+          <button class="edit-btn" onclick="openEditModal()">✏️ Edit Profile</button>
+          <a href="/generator.html" class="edit-btn" style="text-decoration:none">+ New Workout</a>
+        </div>` : ''}
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="num">${profileResults.length}</div><div class="lbl">Total Results</div></div>
+      <div class="stat-card"><div class="num">${benchmarkResults.length}</div><div class="lbl">Benchmarks Logged</div></div>
+      <div class="stat-card"><div class="num">${profileWorkouts.length}</div><div class="lbl">Workouts Created</div></div>
+      <div class="stat-card"><div class="num">${publicWorkouts.length}</div><div class="lbl">Public Workouts</div></div>
+    </div>
+
+    <div class="profile-tabs">
+      <button class="profile-tab active" onclick="showProfileTab('results',this)">📊 Results</button>
+      <button class="profile-tab" onclick="showProfileTab('prs',this)">🏆 Best Scores</button>
+      <button class="profile-tab" onclick="showProfileTab('workouts',this)">💪 Workouts</button>
+    </div>
+
+    <!-- Results Tab -->
+    <div id="ptab-results" class="tab-pane active">
+      ${profileResults.length ? `
+      <table class="results-table">
+        <thead><tr><th>Workout</th><th>Score</th><th>Rx</th><th>Notes</th><th>Date</th></tr></thead>
+        <tbody>
+          ${profileResults.slice(0, 50).map(r => `
+          <tr>
+            <td style="font-weight:700">
+              ${r.benchmark_slug
+                ? `<a href="/workouts/${encodeURIComponent(r.benchmark_slug)}" style="color:var(--orl);text-decoration:none">${r.benchmark_slug.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase())}</a>`
+                : `<span style="color:var(--mu);font-size:11px">Community WOD</span>`}
+            </td>
+            <td class="score-cell">${escHtml(r.score_display || r.score || '')}</td>
+            <td>${r.is_rx ? '<span class="pill pill-gr">Rx</span>' : '<span class="pill pill-mu">Scaled</span>'}</td>
+            <td style="color:var(--mu);font-size:12px;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(r.notes||'')}</td>
+            <td style="color:var(--mu);font-size:12px">${formatDate(r.date || r.created_at)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>` : `
+      <div class="empty-state">
+        <div class="icon">📝</div>
+        <p>No results logged yet. ${isOwnProfile ? 'Hit a workout and <a href="/generator.html" style="color:var(--or)">log your first result!</a>' : 'Check back soon.'}</p>
+      </div>`}
+    </div>
+
+    <!-- PRs Tab -->
+    <div id="ptab-prs" class="tab-pane">
+      ${buildPRGrid(benchmarkResults)}
+    </div>
+
+    <!-- Workouts Tab -->
+    <div id="ptab-workouts" class="tab-pane">
+      ${profileWorkouts.length ? `
+      <div>${profileWorkouts.map(w => `
+        <div class="workout-card">
+          <div class="meta">
+            <span class="pill pill-or">${escHtml(w.format||'AMRAP')}</span>
+            <span class="pill pill-mu">${cap(w.level||'intermediate')}</span>
+            ${w.duration ? `<span class="pill pill-mu">${w.duration}min</span>` : ''}
+            <span class="pill ${(w.is_public||w.isPublic)?'pill-gr':'pill-mu'}">${(w.is_public||w.isPublic)?'🌍 Public':'🔒 Private'}</span>
+          </div>
+          <h3>${escHtml(w.title)}</h3>
+          ${w.description ? `<div class="desc">${escHtml(w.description.slice(0,120))}${w.description.length>120?'…':''}</div>` : ''}
+          <div class="actions">
+            <a href="/generator.html" class="wc-btn wc-btn-sec">View in Generator</a>
+            ${isOwnProfile && !(w.is_public||w.isPublic) ? `<button class="wc-btn wc-btn-pri" onclick="makePublic('${escHtml(w.id)}')">Make Public</button>` : ''}
+          </div>
+        </div>`).join('')}
+      </div>` : `
+      <div class="empty-state">
+        <div class="icon">💪</div>
+        <p>${isOwnProfile ? 'No workouts saved yet. <a href="/generator.html" style="color:var(--or)">Generate your first!</a>' : 'No public workouts yet.'}</p>
+      </div>`}
+    </div>
+
+  </div>`;
+
+  // Update page title
+  document.title = `${profileUser.username} — HomeWODrx`;
+}
+
+function buildPRGrid(results) {
+  if (!results.length) return `<div class="empty-state"><div class="icon">🏆</div><p>No benchmark results yet.</p></div>`;
+
+  // Group by benchmark slug, keep best score per workout
+  const bests = {};
+  results.forEach(r => {
+    const slug = r.benchmark_slug;
+    if (!slug) return;
+    if (!bests[slug] || new Date(r.date) > new Date(bests[slug].date)) {
+      bests[slug] = r;
+    }
+  });
+
+  const entries = Object.values(bests).slice(0, 12);
+  return `<div class="pr-grid">
+    ${entries.map(r => {
+      const bm = (typeof BENCHMARKS !== 'undefined') ? BENCHMARKS.find(b => b.slug === r.benchmark_slug) : null;
+      return `<div class="pr-card">
+        <div class="workout-name"><a href="/workouts/${encodeURIComponent(r.benchmark_slug)}">${bm ? bm.name : r.benchmark_slug.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase())}</a></div>
+        <div class="pr-score">${escHtml(r.score_display || r.score || '')}</div>
+        <div class="pr-date">${r.is_rx ? '✓ Rx · ' : 'Scaled · '}${formatDate(r.date||r.created_at)}</div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function renderNotFound() {
+  document.getElementById('profile-wrap').innerHTML = `
+    <div class="not-found">
+      <div class="icon">🤷</div>
+      <h2>Athlete Not Found</h2>
+      <p>We couldn't find a profile for that username.</p>
+      <a href="/" style="display:inline-block;padding:11px 22px;background:var(--or);color:#fff;border-radius:8px;font-weight:700;text-decoration:none">Go Home</a>
+    </div>`;
+}
+
+function showProfileTab(name, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.profile-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(`ptab-${name}`).classList.add('active');
+  btn.classList.add('active');
+}
+
+function openEditModal() {
+  document.getElementById('edit-username').value = profileUser.username || '';
+  document.getElementById('edit-bio').value = profileUser.bio || '';
+  document.getElementById('edit-err').classList.remove('vis');
+  document.getElementById('edit-ok').classList.remove('vis');
+  document.getElementById('edit-modal').classList.add('open');
+}
+function closeEditModal() { document.getElementById('edit-modal').classList.remove('open'); }
+
+async function saveProfile() {
+  const username = document.getElementById('edit-username').value.trim();
+  const bio = document.getElementById('edit-bio').value.trim();
+  const errEl = document.getElementById('edit-err');
+  const okEl = document.getElementById('edit-ok');
+  if (!username) { errEl.textContent = 'Username is required.'; errEl.classList.add('vis'); return; }
+
+  if (supabaseClient && currentUser) {
+    const { error } = await supabaseClient.from('profiles')
+      .update({ username, bio })
+      .eq('id', currentUser.id);
+    if (error) { errEl.textContent = error.message; errEl.classList.add('vis'); return; }
+  } else {
+    // Demo mode
+    const user = JSON.parse(localStorage.getItem('demo_user') || '{}');
+    user.username = username;
+    localStorage.setItem('demo_user', JSON.stringify(user));
+  }
+
+  profileUser.username = username;
+  profileUser.bio = bio;
+  okEl.textContent = 'Profile updated!';
+  okEl.classList.add('vis');
+  setTimeout(() => { closeEditModal(); renderProfile(); }, 1200);
+}
+
+async function makePublic(workoutId) {
+  if (!supabaseClient) return;
+  await supabaseClient.from('workouts').update({ is_public: true }).eq('id', workoutId);
+  const w = profileWorkouts.find(x => x.id === workoutId);
+  if (w) { w.is_public = true; w.isPublic = true; }
+  renderProfile();
+  showProfileTab('workouts', document.querySelector('.profile-tab:nth-child(3)'));
+}
+
+function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function formatDate(d) {
+  if (!d) return '';
+  try { return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
+  catch(e) { return d; }
+}
+</script>
+</body>
+</html>

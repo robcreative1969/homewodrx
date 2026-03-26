@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workout Generator — HomeWODrx</title>
+<meta name="description" content="Generate custom workouts based on your equipment, experience level, body focus, and available time.">
+<link rel="stylesheet" href="/css/style.css">
+<!-- Supabase CDN (only loads when configured) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+/* ── GENERATOR-SPECIFIC STYLES ───────────────────────────── */
+.gen-page{max-width:860px;margin:0 auto;padding:36px 20px 80px}
+.page-hero{margin-bottom:32px}
+.page-hero h1{font-size:30px;font-weight:900;margin-bottom:6px}
+.page-hero p{color:var(--mu);font-size:15px}
+
+.section{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:24px;margin-top:20px}
+.slabel{font-size:10px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
+.stitle{font-size:16px;font-weight:700;margin-bottom:14px}
+
+/* equipment grid */
+.eq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(115px,1fr));gap:9px}
+.eq-card{background:var(--dk2);border:2px solid var(--bd);border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .15s;user-select:none}
+.eq-card:hover{border-color:var(--orl)}
+.eq-card.sel{border-color:var(--or);background:rgba(232,83,10,.15);box-shadow:0 0 0 1px var(--or)}
+.eq-card .icon{font-size:24px;margin-bottom:5px;display:block}
+.eq-card .name{font-size:11px;font-weight:700}
+
+/* body focus */
+.bf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:9px}
+.bf-card{background:var(--dk2);border:2px solid var(--bd);border-radius:10px;padding:12px 10px;text-align:center;cursor:pointer;transition:all .15s;user-select:none}
+.bf-card:hover{border-color:var(--orl)}
+.bf-card.sel{border-color:var(--or);background:rgba(232,83,10,.15)}
+.bf-card .icon{font-size:20px;margin-bottom:4px;display:block}
+.bf-card .name{font-size:12px;font-weight:700;margin-bottom:2px}
+.bf-card .sub{font-size:10px;color:var(--mu)}
+
+/* pills */
+.pill-group{display:flex;flex-wrap:wrap;gap:8px}
+.pill{background:var(--dk2);border:2px solid var(--bd);border-radius:50px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;user-select:none}
+.pill:hover{border-color:var(--orl)}
+.pill.sel{border-color:var(--or);background:rgba(232,83,10,.15);color:var(--orl)}
+
+/* slider */
+.slider-row{display:flex;align-items:center;gap:14px;margin-top:8px}
+.sval{font-size:28px;font-weight:900;color:var(--or);min-width:70px;text-align:center}
+.sval small{font-size:11px;color:var(--mu);font-weight:400;display:block}
+input[type=range]{flex:1;-webkit-appearance:none;height:5px;background:var(--bd);border-radius:3px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;background:var(--or);border-radius:50%;cursor:pointer}
+
+/* generate button */
+.gen-btn{display:block;width:100%;margin-top:24px;padding:16px;background:var(--or);color:#fff;font-size:16px;font-weight:800;border:none;border-radius:var(--r);cursor:pointer;letter-spacing:.3px;transition:all .2s}
+.gen-btn:hover{background:var(--orl);transform:translateY(-1px);box-shadow:0 6px 20px rgba(232,83,10,.35)}
+.gen-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.gen-btn .sp{display:none;width:18px;height:18px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}
+.gen-btn.loading .bt{display:none}
+.gen-btn.loading .sp{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* workout result */
+#workout-result{display:none;margin-top:26px}
+.res-hdr{background:linear-gradient(135deg,var(--or) 0%,#c44400 100%);border-radius:var(--r) var(--r) 0 0;padding:22px 26px}
+.res-hdr h2{font-size:22px;font-weight:900;color:#fff}
+.res-hdr .rsub{color:rgba(255,255,255,.8);font-size:13px;margin-top:3px}
+.res-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{background:rgba(0,0,0,.25);color:rgba(255,255,255,.9);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+.res-body{background:var(--card);border:1px solid var(--bd);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px}
+.wdesc{background:var(--dk2);border-left:3px solid var(--or);padding:12px 16px;border-radius:0 7px 7px 0;font-size:13px;line-height:1.7;margin-bottom:20px}
+.mov-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px}
+.mov-table th{padding:9px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--bd);background:var(--dk2)}
+.mov-table td{padding:11px 12px;border-bottom:1px solid var(--bd);vertical-align:top}
+.mov-table tr:last-child td{border-bottom:none}
+.mov-table tr:hover td{background:rgba(255,255,255,.02)}
+.mname{font-weight:700;font-size:14px}
+.mname a{color:var(--tx);text-decoration:none}
+.mname a:hover{color:var(--orl)}
+.mtip{font-size:11px;color:var(--mu);margin-top:2px}
+.rbadge{background:rgba(232,83,10,.18);color:var(--orl);font-weight:800;font-size:13px;padding:3px 11px;border-radius:20px;display:inline-block;border:1px solid var(--or)}
+.score-box{background:var(--dk2);border:1px solid var(--bd);border-radius:9px;padding:16px;margin-bottom:18px}
+.score-box h4{font-size:11px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.score-box p{font-size:13px;line-height:1.6}
+.res-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:4px}
+.abtn{flex:1;min-width:110px;padding:11px 14px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:7px;text-decoration:none}
+.abtn.pri{background:var(--or);color:#fff}
+.abtn.pri:hover{background:var(--orl)}
+.abtn.sec{background:var(--dk2);color:var(--tx);border:1px solid var(--bd)}
+.abtn.sec:hover{border-color:var(--or);color:var(--orl)}
+.abtn.gho{background:transparent;color:var(--mu);border:1px solid var(--bd)}
+.abtn.gho:hover{color:var(--tx);border-color:var(--mu)}
+.warmup-cool{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+@media(max-width:500px){.warmup-cool{grid-template-columns:1fr}}
+.wc-card{background:var(--dk2);border:1px solid var(--bd);border-radius:9px;padding:14px}
+.wc-card h4{font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.wc-card li{font-size:12px;padding:2px 0;list-style:none;display:flex;align-items:center;gap:7px;color:var(--tx)}
+.wc-card li::before{content:'›';color:var(--or);font-weight:700}
+
+/* community */
+.comm-page{max-width:980px;margin:0 auto;padding:36px 20px 80px}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;align-items:center}
+.fchip{padding:7px 14px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(--bd);background:var(--dk2);color:var(--mu);transition:all .15s}
+.fchip:hover{border-color:var(--or);color:var(--orl)}
+.fchip.active{background:rgba(232,83,10,.15);border-color:var(--or);color:var(--orl)}
+.search-wrap{flex:1;min-width:200px;position:relative}
+.search-wrap input{width:100%;padding:8px 12px 8px 34px;background:var(--dk2);border:1px solid var(--bd);border-radius:7px;color:var(--tx);font-size:13px;outline:none}
+.search-wrap input:focus{border-color:var(--or)}
+.search-wrap::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px}
+.wod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.wod-card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .15s}
+.wod-card:hover{border-color:var(--or);transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.wod-card-hdr{padding:16px;border-bottom:1px solid var(--bd);background:linear-gradient(135deg,rgba(232,83,10,.1),transparent)}
+.wod-card-hdr h3{font-size:16px;font-weight:800;margin-bottom:8px}
+.wod-card-meta{display:flex;gap:6px;flex-wrap:wrap}
+.wod-card-body{padding:14px 16px}
+.wod-movements{font-size:12px;color:var(--mu);line-height:1.8;margin-bottom:10px}
+.wod-stats{display:flex;gap:14px}
+.wod-stat{font-size:12px;color:var(--mu);display:flex;align-items:center;gap:4px}
+.wod-stat strong{color:var(--tx);font-weight:700}
+.empty-state{text-align:center;padding:60px 20px}
+.empty-state .icon{font-size:48px;margin-bottom:16px}
+.empty-state h3{font-size:20px;font-weight:800;margin-bottom:8px}
+.empty-state p{color:var(--mu);font-size:14px;max-width:300px;margin:0 auto 20px}
+
+/* modals */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:32px;width:100%;max-width:460px;position:relative;max-height:90vh;overflow-y:auto}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--mu);font-size:20px;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:all .15s}
+.modal-close:hover{background:var(--bd);color:var(--tx)}
+.modal h2{font-size:22px;font-weight:900;margin-bottom:6px}
+.msub{color:var(--mu);font-size:13px;margin-bottom:20px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.field input,.field textarea,.field select{width:100%;background:var(--dk2);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;color:var(--tx);font-size:14px;outline:none;font-family:inherit}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--or)}
+.field textarea{min-height:80px;resize:vertical}
+.modal-btn{width:100%;padding:13px;background:var(--or);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;margin-top:4px;transition:all .2s}
+.modal-btn:hover{background:var(--orl)}
+.modal-link{text-align:center;margin-top:12px;font-size:13px;color:var(--mu)}
+.modal-link a{color:var(--or);cursor:pointer;text-decoration:none}
+.modal-error{background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);color:#E74C3C;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
+.modal-error.vis{display:block}
+.modal-success{background:rgba(39,174,96,.15);border:1px solid rgba(39,174,96,.4);color:#27AE60;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
+.modal-success.vis{display:block}
+
+/* my workouts */
+.myw-page{max-width:980px;margin:0 auto;padding:36px 20px 80px}
+.myw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.myw-card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:20px;transition:all .15s}
+.myw-card:hover{border-color:var(--or)}
+.myw-card h3{font-size:16px;font-weight:800;margin-bottom:8px}
+.myw-card-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.myw-actions{display:flex;gap:8px}
+.myw-btn{flex:1;padding:8px 10px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .15s;text-align:center}
+.myw-btn.pri{background:var(--or);color:#fff}
+.myw-btn.pri:hover{background:var(--orl)}
+.myw-btn.sec{background:var(--dk2);color:var(--tx);border:1px solid var(--bd)}
+.myw-btn.sec:hover{border-color:var(--or);color:var(--orl)}
+
+/* tabs */
+.gen-tabs{display:flex;gap:0;border-bottom:1px solid var(--bd);margin-bottom:28px}
+.gen-tab{padding:12px 20px;font-size:13px;font-weight:700;color:var(--mu);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;white-space:nowrap}
+.gen-tab:hover{color:var(--tx)}
+.gen-tab.active{color:var(--or);border-bottom-color:var(--or)}
+.view{display:none}
+.view.active{display:block}
+
+/* workout detail overlay */
+#wod-detail-overlay{display:none;position:fixed;inset:0;background:var(--dk);z-index:400;overflow-y:auto}
+#wod-detail-overlay.open{display:block}
+.det-inner{max-width:720px;margin:0 auto;padding:28px 20px 80px}
+.back-btn{background:none;border:none;color:var(--mu);font-size:13px;font-weight:700;cursor:pointer;padding:0;display:flex;align-items:center;gap:6px;margin-bottom:20px}
+.back-btn:hover{color:var(--tx)}
+.lb-table{width:100%;border-collapse:collapse;font-size:13px}
+.lb-table th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--bd);background:var(--dk2)}
+.lb-table td{padding:12px 14px;border-bottom:1px solid var(--bd)}
+.lb-table tr:hover td{background:rgba(255,255,255,.02)}
+.rank-badge{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0}
+.rank-1{background:gold;color:#333}
+.rank-2{background:#C0C0C0;color:#333}
+.rank-3{background:#CD7F32;color:#fff}
+.rank-other{background:var(--dk2);color:var(--mu)}
+.lb-user{display:flex;align-items:center;gap:10px}
+.lb-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+.lb-score{font-weight:800;color:var(--orl)}
+
+/* badge chips */
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.3px}
+.badge-or{background:rgba(232,83,10,.2);color:var(--or);border:1px solid rgba(232,83,10,.4)}
+.badge-bl{background:rgba(52,152,219,.2);color:#5dade2;border:1px solid rgba(52,152,219,.3)}
+.badge-gr{background:rgba(39,174,96,.2);color:#58d68d;border:1px solid rgba(39,174,96,.3)}
+.badge-pu{background:rgba(155,89,182,.2);color:#c39bd3;border:1px solid rgba(155,89,182,.3)}
+.badge-mu{background:var(--dk2);color:var(--mu);border:1px solid var(--bd)}
+
+/* toast */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 18px;font-size:14px;font-weight:600;box-shadow:0 8px 32px rgba(0,0,0,.4);transform:translateY(80px);opacity:0;transition:all .3s;z-index:9999;max-width:320px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{border-color:rgba(39,174,96,.5);color:#58d68d}
+.toast.error{border-color:rgba(231,76,60,.5);color:#e74c3c}
+.toast.info{border-color:var(--or);color:var(--orl)}
+</style>
+</head>
+<body data-nav-init="true" data-active-page="generator">
+
+<div id="toast" class="toast"></div>
+
+<!-- Main layout injected after nav -->
+<main>
+<div style="max-width:980px;margin:0 auto;padding:0 20px">
+  <!-- Tabs -->
+  <div style="margin-top:28px" class="gen-tabs">
+    <button class="gen-tab active" onclick="showTab('generator')">⚡ Generator</button>
+    <button class="gen-tab" onclick="showTab('community')">🌍 Community</button>
+    <button class="gen-tab" onclick="showTab('myworkouts')">💪 My Workouts</button>
+  </div>
+</div>
+
+<!-- ═══ TAB: GENERATOR ═══════════════════════════════════════ -->
+<div id="tab-generator" class="view active">
+<div class="gen-page">
+
+  <!-- Equipment -->
+  <div class="section">
+    <div class="slabel">Step 1</div>
+    <div class="stitle">What equipment do you have?</div>
+    <div class="eq-grid" id="eq-grid">
+      <label class="eq-card sel" data-val="bodyweight"><span class="icon">🤸</span><span class="name">Bodyweight</span></label>
+      <label class="eq-card" data-val="pullupbar"><span class="icon">🔩</span><span class="name">Pull-up Bar</span></label>
+      <label class="eq-card" data-val="kettlebell"><span class="icon">🔔</span><span class="name">Kettlebell</span></label>
+      <label class="eq-card" data-val="dumbbells"><span class="icon">🏋️</span><span class="name">Dumbbells</span></label>
+      <label class="eq-card" data-val="barbell"><span class="icon">⚡</span><span class="name">Barbell</span></label>
+      <label class="eq-card" data-val="resistancebands"><span class="icon">🎯</span><span class="name">Bands</span></label>
+      <label class="eq-card" data-val="jumprope"><span class="icon">🪢</span><span class="name">Jump Rope</span></label>
+      <label class="eq-card" data-val="box"><span class="icon">📦</span><span class="name">Plyo Box</span></label>
+      <label class="eq-card" data-val="medicineball"><span class="icon">⚽</span><span class="name">Med Ball</span></label>
+      <label class="eq-card" data-val="rings"><span class="icon">⭕</span><span class="name">Rings</span></label>
+    </div>
+  </div>
+
+  <!-- Body Focus -->
+  <div class="section">
+    <div class="slabel">Step 2</div>
+    <div class="stitle">What do you want to target?</div>
+    <div class="bf-grid" id="bf-grid">
+      <label class="bf-card sel" data-val="full-body"><span class="icon">🔥</span><span class="name">Full Body</span><span class="sub">Everything</span></label>
+      <label class="bf-card" data-val="upper-body"><span class="icon">💪</span><span class="name">Upper Body</span><span class="sub">Push + Pull</span></label>
+      <label class="bf-card" data-val="lower-body"><span class="icon">🦵</span><span class="name">Lower Body</span><span class="sub">Legs + Hips</span></label>
+      <label class="bf-card" data-val="core"><span class="icon">🎯</span><span class="name">Core</span><span class="sub">Abs + Stability</span></label>
+      <label class="bf-card" data-val="push"><span class="icon">🤜</span><span class="name">Push</span><span class="sub">Chest, Tri, Shoulder</span></label>
+      <label class="bf-card" data-val="pull"><span class="icon">🤛</span><span class="name">Pull</span><span class="sub">Back + Biceps</span></label>
+      <label class="bf-card" data-val="legs-glutes"><span class="icon">🍑</span><span class="name">Legs & Glutes</span><span class="sub">Posterior Chain</span></label>
+      <label class="bf-card" data-val="cardio"><span class="icon">❤️</span><span class="name">Cardio</span><span class="sub">Conditioning</span></label>
+    </div>
+  </div>
+
+  <!-- Experience -->
+  <div class="section">
+    <div class="slabel">Step 3</div>
+    <div class="stitle">Experience level</div>
+    <div class="pill-group" id="level-group">
+      <label class="pill" data-val="beginner">🌱 Beginner</label>
+      <label class="pill sel" data-val="intermediate">🔥 Intermediate</label>
+      <label class="pill" data-val="advanced">💀 Advanced</label>
+    </div>
+  </div>
+
+  <!-- Format -->
+  <div class="section">
+    <div class="slabel">Step 4</div>
+    <div class="stitle">Workout format</div>
+    <div class="pill-group" id="format-group">
+      <label class="pill sel" data-val="any">🎲 Surprise Me</label>
+      <label class="pill" data-val="amrap">⏱ AMRAP</label>
+      <label class="pill" data-val="emom">📡 EMOM</label>
+      <label class="pill" data-val="fortime">🏁 For Time</label>
+      <label class="pill" data-val="circuit">🔄 Circuit</label>
+    </div>
+  </div>
+
+  <!-- Duration -->
+  <div class="section">
+    <div class="slabel">Step 5</div>
+    <div class="stitle">How long do you have?</div>
+    <div class="slider-row">
+      <div class="sval"><span id="dur-val">20</span><small>min</small></div>
+      <input type="range" id="dur-slider" min="10" max="60" step="5" value="20" oninput="document.getElementById('dur-val').textContent=this.value">
+    </div>
+  </div>
+
+  <button class="gen-btn" id="gen-btn" onclick="generateWorkout()">
+    <span class="bt">⚡ Generate My Workout</span>
+    <div class="sp"></div>
+  </button>
+
+  <!-- Result -->
+  <div id="workout-result">
+    <div class="res-hdr">
+      <h2 id="wod-title"></h2>
+      <div class="rsub" id="wod-sub"></div>
+      <div class="res-meta" id="wod-meta"></div>
+    </div>
+    <div class="res-body">
+      <div class="wdesc" id="wod-desc"></div>
+      <table class="mov-table">
+        <thead><tr><th>Movement</th><th>Reps / Time</th><th>Coaching Tip</th></tr></thead>
+        <tbody id="wod-movements"></tbody>
+      </table>
+      <div class="score-box">
+        <h4>📊 Scoring</h4>
+        <p id="wod-scoring"></p>
+      </div>
+      <div class="res-actions" id="wod-actions">
+        <button class="abtn pri" onclick="openLogResult()">📝 Log Result</button>
+        <button class="abtn sec" onclick="openSaveWorkout()">💾 Save Workout</button>
+        <button class="abtn sec" onclick="generateWorkout()">🔄 Regenerate</button>
+        <button class="abtn gho" id="nominate-btn" onclick="nominateWorkout()">⭐ Nominate as Featured</button>
+      </div>
+      <div class="warmup-cool">
+        <div class="wc-card"><h4>🔥 Warm-Up (do first)</h4><ul id="warmup-list"></ul></div>
+        <div class="wc-card"><h4>🧊 Cool-Down</h4><ul id="cooldown-list"></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ TAB: COMMUNITY ════════════════════════════════════════ -->
+<div id="tab-community" class="view">
+<div class="comm-page">
+  <div class="page-hero" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+    <div>
+      <h1 style="font-size:28px;font-weight:900;margin-bottom:4px">Community Workouts</h1>
+      <p style="color:var(--mu);font-size:14px">Workouts shared by the HomeWODrx community</p>
+    </div>
+    <a href="/workouts.html" class="abtn sec" style="flex:unset;padding:10px 18px;text-decoration:none;font-size:13px">View Named Benchmarks →</a>
+  </div>
+
+  <div class="filter-bar">
+    <div class="search-wrap"><input type="text" id="comm-search" placeholder="Search workouts…" oninput="filterCommunity()"></div>
+    <button class="fchip active" data-fmt="all" onclick="setCommFilter(this,'fmt')">All Formats</button>
+    <button class="fchip" data-fmt="amrap" onclick="setCommFilter(this,'fmt')">AMRAP</button>
+    <button class="fchip" data-fmt="emom" onclick="setCommFilter(this,'fmt')">EMOM</button>
+    <button class="fchip" data-fmt="fortime" onclick="setCommFilter(this,'fmt')">For Time</button>
+    <button class="fchip" data-fmt="circuit" onclick="setCommFilter(this,'fmt')">Circuit</button>
+  </div>
+  <div class="filter-bar" style="margin-top:-10px">
+    <button class="fchip active" data-lvl="all" onclick="setCommFilter(this,'lvl')">All Levels</button>
+    <button class="fchip" data-lvl="beginner" onclick="setCommFilter(this,'lvl')">Beginner</button>
+    <button class="fchip" data-lvl="intermediate" onclick="setCommFilter(this,'lvl')">Intermediate</button>
+    <button class="fchip" data-lvl="advanced" onclick="setCommFilter(this,'lvl')">Advanced</button>
+  </div>
+
+  <div class="wod-grid" id="comm-grid"></div>
+  <div id="comm-empty" class="empty-state" style="display:none">
+    <div class="icon">🏋️</div>
+    <h3>No workouts found</h3>
+    <p>Generate a workout and save it to share it with the community!</p>
+    <button class="abtn pri" style="max-width:200px;margin:0 auto" onclick="showTab('generator')">Generate a Workout</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══ TAB: MY WORKOUTS ══════════════════════════════════════ -->
+<div id="tab-myworkouts" class="view">
+<div class="myw-page">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:24px">
+    <div>
+      <h1 style="font-size:28px;font-weight:900;margin-bottom:4px">My Workouts</h1>
+      <p style="color:var(--mu);font-size:14px" id="myw-subtitle">Your saved and generated workouts</p>
+    </div>
+    <button class="abtn pri" style="flex:unset;padding:10px 18px" onclick="showTab('generator')">+ Generate New</button>
+  </div>
+  <div id="myw-auth-wall" style="display:none">
+    <div class="empty-state">
+      <div class="icon">🔐</div>
+      <h3>Sign in to save workouts</h3>
+      <p>Create a free account to save your workouts and track your results over time.</p>
+      <button class="abtn pri" style="max-width:200px;margin:0 auto" onclick="openAuthModal()">Sign Up Free</button>
+    </div>
+  </div>
+  <div id="myw-content">
+    <div class="myw-grid" id="myw-grid"></div>
+    <div id="myw-empty" class="empty-state" style="display:none">
+      <div class="icon">💪</div>
+      <h3>No saved workouts yet</h3>
+      <p>Generate a workout and save it here to track your progress.</p>
+      <button class="abtn pri" style="max-width:200px;margin:0 auto" onclick="showTab('generator')">Generate a Workout</button>
+    </div>
+  </div>
+</div>
+</div>
+</main>
+
+<!-- ═══ WOD DETAIL OVERLAY ════════════════════════════════════ -->
+<div id="wod-detail-overlay">
+<div class="det-inner">
+  <button class="back-btn" onclick="closeWodDetail()">← Back to Community</button>
+  <div id="wod-detail-content"></div>
+</div>
+</div>
+
+<!-- ═══ MODAL: AUTH ═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="auth-modal">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('auth-modal')">✕</button>
+  <h2 id="auth-title">Welcome Back</h2>
+  <p class="msub" id="auth-sub">Sign in to save workouts and track results.</p>
+  <div id="auth-error" class="modal-error"></div>
+  <div id="auth-success" class="modal-success"></div>
+  <div id="login-form">
+    <div class="field"><label>Email</label><input type="email" id="li-email" placeholder="you@email.com"></div>
+    <div class="field"><label>Password</label><input type="password" id="li-pass" placeholder="Your password" onkeydown="if(event.key==='Enter')submitLogin()"></div>
+    <button class="modal-btn" onclick="submitLogin()">Sign In →</button>
+    <p class="modal-link">No account? <a onclick="switchAuthTab('signup')">Sign up free</a></p>
+  </div>
+  <div id="signup-form" style="display:none">
+    <div class="field"><label>Username</label><input type="text" id="su-user" placeholder="e.g. firebreather_rob" maxlength="20"></div>
+    <div class="field"><label>Email</label><input type="email" id="su-email" placeholder="you@email.com"></div>
+    <div class="field"><label>Password</label><input type="password" id="su-pass" placeholder="Min 6 characters" onkeydown="if(event.key==='Enter')submitSignup()"></div>
+    <button class="modal-btn" onclick="submitSignup()">Create Account →</button>
+    <p class="modal-link">Already have one? <a onclick="switchAuthTab('login')">Log in</a></p>
+  </div>
+</div>
+</div>
+
+<!-- ═══ MODAL: LOG RESULT ═════════════════════════════════════ -->
+<div class="modal-overlay" id="result-modal">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('result-modal')">✕</button>
+  <h2>📝 Log Your Result</h2>
+  <p class="msub" id="result-modal-sub">Record your score for this workout</p>
+  <div id="result-error" class="modal-error"></div>
+  <div class="field"><label id="score-label">Score</label><input type="text" id="result-score" placeholder="e.g. 8 rounds + 12 reps"></div>
+  <div class="field"><label>Was this Rx?</label>
+    <select id="result-rx">
+      <option value="yes">Yes — as written</option>
+      <option value="no">No — scaled</option>
+    </select>
+  </div>
+  <div class="field"><label>Notes (optional)</label><textarea id="result-notes" placeholder="Scaling notes, how it felt, PRs..."></textarea></div>
+  <div class="field">
+    <label>Share workout publicly?</label>
+    <select id="result-public">
+      <option value="no">No — keep it private</option>
+      <option value="yes">Yes — share with community</option>
+    </select>
+  </div>
+  <button class="modal-btn" onclick="submitResult()">Submit Result →</button>
+</div>
+</div>
+
+<!-- ═══ MODAL: SAVE WORKOUT ═══════════════════════════════════ -->
+<div class="modal-overlay" id="save-modal">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('save-modal')">✕</button>
+  <h2>💾 Save Workout</h2>
+  <p class="msub">Give your workout a name and save it.</p>
+  <div id="save-error" class="modal-error"></div>
+  <div class="field"><label>Workout Name</label><input type="text" id="save-name" placeholder="e.g. My Monday Grind"></div>
+  <div class="field"><label>Description (optional)</label><textarea id="save-desc" placeholder="What's the intent? Tips for athletes?"></textarea></div>
+  <div class="field"><label>Make it public?</label>
+    <select id="save-public">
+      <option value="no">No — keep it private</option>
+      <option value="yes">Yes — share with community</option>
+    </select>
+  </div>
+  <button class="modal-btn" onclick="submitSave()">Save Workout →</button>
+</div>
+</div>
+
+<!-- ═══ SCRIPTS ════════════════════════════════════════════════ -->
+<script src="/js/config.js"></script>
+<script src="/js/db.js"></script>
+<script src="/js/benchmarks.js"></script>
+<script src="/js/nav.js"></script>
+<script>
+
+// ── MOVEMENT DATABASE ─────────────────────────────────────────
+// Exposed as MOVEMENT_DB for daily-wod.js compatibility
+const MOVEMENT_DB = {
+  bodyweight:[
+    {name:"Air Squats",tip:"Heels down, knees track toes",b:[15,20],i:[20,25],a:[25,30],tags:["lower"]},
+    {name:"Push-Ups",tip:"Rigid plank, chest to floor",b:[8,12],i:[15,20],a:[20,30],tags:["push"]},
+    {name:"Sit-Ups",tip:"Anchor feet, full range of motion",b:[15,20],i:[20,25],a:[25,30],tags:["core"]},
+    {name:"Burpees",tip:"Step out if needed — keep moving",b:[5,8],i:[10,12],a:[15,20],tags:["full","cardio"]},
+    {name:"Lunges",tip:"Front knee over ankle, torso upright",b:[10,12],i:[16,20],a:[20,24],tags:["lower"]},
+    {name:"Mountain Climbers",tip:"Hips level, drive knees in fast",b:[16,20],i:[24,30],a:[30,40],tags:["core","cardio"]},
+    {name:"Jump Squats",tip:"Land soft, absorb through the hips",b:[8,10],i:[12,15],a:[15,20],tags:["lower","cardio"]},
+    {name:"Plank Hold",tip:"Neutral spine, squeeze glutes",b:["30s"],i:["45s"],a:["60s"],timed:true,tags:["core"]},
+    {name:"Superman Hold",tip:"Squeeze glutes and upper back at top",b:["20s"],i:["35s"],a:["50s"],timed:true,tags:["pull","core"]},
+    {name:"High Knees",tip:"Drive knees to hip height, pump arms",b:[30],i:[40],a:[50],tags:["cardio"]},
+    {name:"Glute Bridges",tip:"Drive hips high, squeeze at top",b:[15,20],i:[20,25],a:[25,30],tags:["lower","legs-glutes"]},
+    {name:"Tricep Dips",tip:"Use chair — straight legs = harder",b:[10,12],i:[12,15],a:[15,20],tags:["push"]},
+    {name:"V-Ups",tip:"Meet hands to feet at the top",b:[8,10],i:[12,15],a:[15,20],tags:["core"]},
+    {name:"Hollow Hold",tip:"Lower back pressed into floor",b:["20s"],i:["35s"],a:["50s"],timed:true,tags:["core"]},
+    {name:"Broad Jumps",tip:"Max distance each rep, stick the landing",b:[5],i:[8],a:[10],tags:["lower","cardio"]},
+    {name:"Bear Crawl",tip:"10m out+back = 1 rep, hips level",b:[3],i:[5],a:[7],tags:["full","cardio"]},
+    {name:"Lateral Lunges",tip:"Sit back into the working hip",b:[10,12],i:[14,16],a:[18,22],tags:["lower","legs-glutes"]},
+    {name:"Inchworms",tip:"Walk hands out to plank, walk back",b:[6,8],i:[8,10],a:[10,12],tags:["full"]},
+    {name:"Single-Leg Glute Bridges",tip:"Drive through heel, keep hips level",b:[10,12],i:[12,15],a:[15,20],tags:["lower","legs-glutes"]},
+    {name:"Dive Bomber Push-Ups",tip:"Swoop low, push forward and up",b:[6,8],i:[10,12],a:[12,15],tags:["push","full"]},
+  ],
+  pullupbar:[
+    {name:"Pull-Ups",tip:"Full hang to chin over bar",b:[3,5],i:[7,10],a:[10,15],tags:["pull"]},
+    {name:"Hanging Knee Raises",tip:"Control the descent, no swinging",b:[8,10],i:[12,15],a:[15,20],tags:["core"]},
+    {name:"Dead Hang",tip:"Active shoulders — no passive shrugging",b:["20s"],i:["35s"],a:["50s"],timed:true,tags:["pull"]},
+    {name:"Toes-to-Bar",tip:"Kip if needed, control the swing",b:[3,5],i:[7,10],a:[12,15],tags:["core","pull"]},
+    {name:"Chin-Ups",tip:"Supinated grip — palms face you",b:[3,5],i:[8,10],a:[12,15],tags:["pull"]},
+    {name:"Scapular Pull-Ups",tip:"Arms straight — retract shoulder blades",b:[8,10],i:[10,12],a:[12,15],tags:["pull"]},
+    {name:"L-Sit Hang",tip:"Compress the abs, legs parallel to floor",b:["10s"],i:["20s"],a:["30s"],timed:true,tags:["core"]},
+  ],
+  kettlebell:[
+    {name:"Kettlebell Swings",tip:"Hip hinge — not a squat. Snap hips!",b:[10,15],i:[15,20],a:[20,30],tags:["full","lower","cardio"]},
+    {name:"Goblet Squats",tip:"Elbows inside knees at the bottom",b:[10,12],i:[12,15],a:[15,20],tags:["lower"]},
+    {name:"KB Deadlifts",tip:"Neutral spine — push the floor away",b:[10,12],i:[12,15],a:[15,20],tags:["lower","legs-glutes"]},
+    {name:"KB Press",tip:"Stack wrist over elbow over shoulder",b:[8,10],i:[10,12],a:[12,15],tags:["push"]},
+    {name:"KB Bent-Over Row",tip:"Brace core, pull elbow past hip",b:[8,10],i:[10,12],a:[12,15],tags:["pull"]},
+    {name:"KB Clean",tip:"Guide the bell — don't muscle it up",b:[5,8],i:[8,10],a:[10,12],tags:["full"]},
+    {name:"KB Snatch",tip:"Punch through at the top",b:[3,5],i:[5,8],a:[8,10],tags:["full","cardio"]},
+    {name:"KB Turkish Get-Up",tip:"Slow is smooth — 1 rep = full up/down",b:[2,3],i:[3,4],a:[4,5],tags:["full"]},
+    {name:"KB Farmer Carry",tip:"20m out+back = 1 rep, shoulders packed",b:[3,4],i:[4,5],a:[5,6],tags:["full","core"]},
+    {name:"KB Sumo Deadlift High Pull",tip:"Wide stance, elbows high at top",b:[10,12],i:[12,15],a:[15,20],tags:["full","lower"]},
+    {name:"KB Single-Leg Deadlift",tip:"Hinge at hip, soft knee, back flat",b:[8,10],i:[10,12],a:[12,15],tags:["lower","legs-glutes"]},
+  ],
+  dumbbells:[
+    {name:"DB Thrusters",tip:"Squat then drive overhead — one motion",b:[8,10],i:[12,15],a:[15,20],tags:["full","push"]},
+    {name:"DB Deadlifts",tip:"Hip hinge, flat back throughout",b:[10,12],i:[12,15],a:[15,20],tags:["lower"]},
+    {name:"DB Bent-Over Rows",tip:"90° torso, pull to lower ribs",b:[10,12],i:[12,15],a:[12,15],tags:["pull"]},
+    {name:"DB Shoulder Press",tip:"Press in a slight forward arc",b:[8,10],i:[10,12],a:[12,15],tags:["push"]},
+    {name:"DB Lunges",tip:"Front knee stays over ankle",b:[10,12],i:[14,16],a:[18,20],tags:["lower"]},
+    {name:"DB Romanian DL",tip:"Hinge until hamstrings load, then drive",b:[10,12],i:[12,15],a:[15,20],tags:["lower","legs-glutes"]},
+    {name:"DB Renegade Rows",tip:"Full plank — hips level throughout",b:[6,8],i:[8,10],a:[10,12],tags:["pull","core"]},
+    {name:"DB Floor Press",tip:"Upper arm at 45°, pause at bottom",b:[10,12],i:[12,15],a:[15,20],tags:["push"]},
+    {name:"DB Clean & Press",tip:"Power from the hip, press at top",b:[6,8],i:[8,10],a:[10,12],tags:["full","push"]},
+    {name:"DB Lateral Raises",tip:"Lead with elbows — slight lean forward",b:[10,12],i:[12,15],a:[15,20],tags:["push"]},
+    {name:"DB Single-Leg RDL",tip:"Hinge at hip, soft knee, back flat",b:[8,10],i:[10,12],a:[12,15],tags:["lower","legs-glutes"]},
+  ],
+  barbell:[
+    {name:"Back Squat",tip:"Break at hips and knees together",b:[5,8],i:[8,10],a:[10,15],tags:["lower"]},
+    {name:"Deadlift",tip:"Bar over mid-foot, shoulders over bar",b:[3,5],i:[5,8],a:[8,10],tags:["lower","legs-glutes"]},
+    {name:"Barbell Thruster",tip:"Front rack → squat → push press — one motion",b:[5,8],i:[10,12],a:[15,21],tags:["full","push"]},
+    {name:"Power Clean",tip:"Triple extension — jump and catch",b:[3,5],i:[5,8],a:[8,10],tags:["full"]},
+    {name:"Overhead Press",tip:"Bar in front, press up and slightly back",b:[5,8],i:[8,10],a:[10,12],tags:["push"]},
+    {name:"Bent-Over Row",tip:"45° torso — pull to lower ribs",b:[5,8],i:[8,10],a:[10,12],tags:["pull"]},
+    {name:"Front Squat",tip:"Elbows high, stay upright",b:[5,8],i:[8,10],a:[10,15],tags:["lower"]},
+    {name:"Sumo Deadlift",tip:"Wide stance, toes out, vertical shins",b:[3,5],i:[5,8],a:[8,10],tags:["lower","legs-glutes"]},
+  ],
+  resistancebands:[
+    {name:"Banded Squats",tip:"Band above knees — push knees out",b:[15,20],i:[20,25],a:[25,30],tags:["lower"]},
+    {name:"Banded Pull-Aparts",tip:"Arms straight — squeeze shoulder blades",b:[15,20],i:[20,25],a:[25,30],tags:["pull"]},
+    {name:"Banded Hip Thrusts",tip:"Band across hips, drive through heels",b:[15,20],i:[20,25],a:[25,30],tags:["lower","legs-glutes"]},
+    {name:"Banded Face Pulls",tip:"Pull to nose, elbows high and wide",b:[15,20],i:[20,25],a:[25,30],tags:["pull"]},
+    {name:"Banded Rows",tip:"Anchor low — row to chest",b:[12,15],i:[15,20],a:[20,25],tags:["pull"]},
+    {name:"Banded Chest Press",tip:"Anchor behind — press forward",b:[12,15],i:[15,20],a:[20,25],tags:["push"]},
+    {name:"Banded Deadlift",tip:"Stand on band, maintain neutral spine",b:[12,15],i:[15,20],a:[20,25],tags:["lower"]},
+  ],
+  jumprope:[
+    {name:"Single Unders",tip:"Wrists do the work — keep elbows in",b:[30,40],i:[50,60],a:[80,100],tags:["cardio"]},
+    {name:"Double Unders",tip:"One big jump, two rope passes",b:[10,15],i:[20,30],a:[40,50],tags:["cardio"]},
+    {name:"Jump Rope Intervals",tip:"Max effort for set time",b:["30s"],i:["45s"],a:["60s"],timed:true,tags:["cardio"]},
+  ],
+  box:[
+    {name:"Box Jumps",tip:"Land in athletic stance — stand fully",b:[6,8],i:[10,12],a:[12,15],tags:["lower","cardio"]},
+    {name:"Step-Ups",tip:"Drive through the heel on top of box",b:[10,12],i:[14,16],a:[18,20],tags:["lower"]},
+    {name:"Box Dips",tip:"Straight legs = harder, bent = easier",b:[10,12],i:[12,15],a:[15,20],tags:["push"]},
+    {name:"Box Pike Push-Ups",tip:"Hands on box, hips high — hits shoulders",b:[6,8],i:[10,12],a:[12,15],tags:["push"]},
+  ],
+  medicineball:[
+    {name:"Wall Balls",tip:"Squat deep — drive ball to target",b:[8,10],i:[12,15],a:[20,30],tags:["full","lower"]},
+    {name:"MB Slams",tip:"Full extension up, slam with intent",b:[8,10],i:[12,15],a:[15,20],tags:["full","cardio"]},
+    {name:"MB Russian Twists",tip:"Feet up — rotate fully side to side",b:[16,20],i:[20,24],a:[24,30],tags:["core"]},
+    {name:"MB Squat & Press",tip:"Squat deep, press overhead at the top",b:[8,10],i:[12,15],a:[15,20],tags:["full","push"]},
+    {name:"MB Clean",tip:"Scoop from floor — catch at chest",b:[8,10],i:[10,12],a:[12,15],tags:["full"]},
+  ],
+  rings:[
+    {name:"Ring Rows",tip:"Adjust angle to change difficulty",b:[8,10],i:[12,15],a:[15,20],tags:["pull"]},
+    {name:"Ring Push-Ups",tip:"Rings just off floor — turn out at top",b:[6,8],i:[10,12],a:[15,20],tags:["push"]},
+    {name:"Ring Dips",tip:"Straight arm position at top — turn out",b:[3,5],i:[7,10],a:[10,15],tags:["push"]},
+    {name:"Ring Muscle-Ups",tip:"Pull to waist then punch over rings",b:[1,2],i:[3,5],a:[5,8],tags:["full","pull"]},
+  ],
+};
+
+const WARMUP = ["30s jumping jacks","20 arm circles each direction","10 hip circles each direction","10 leg swings each side","30s cat-cow","10 world's greatest stretch each side","30s high knees easy","8 inchworms"];
+const COOLDOWN = ["60s down-dog stretch","30s figure-4 glute stretch each side","30s hip flexor stretch each side","60s chest opener","30s hamstring stretch each side","30s child's pose","60s pigeon stretch each side"];
+
+// ── STATE ─────────────────────────────────────────────────────
+let currentWorkout = null;
+let communityWorkouts = [];
+let myWorkouts = [];
+let commFilters = { fmt: 'all', lvl: 'all', q: '' };
+let currentUser = null;
+
+// ── INIT ──────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+  // nav is auto-inited via data-nav-init="true"
+  currentUser = await db.getUser();
+  setupEquipmentGrid();
+  setupBodyFocusGrid();
+  setupPillGroups();
+  await loadCommunityWorkouts();
+  await loadMyWorkouts();
+});
+
+// ── SELECTION HELPERS ─────────────────────────────────────────
+function setupEquipmentGrid() {
+  document.querySelectorAll('#eq-grid .eq-card').forEach(card => {
+    card.addEventListener('click', () => card.classList.toggle('sel'));
+  });
+}
+function setupBodyFocusGrid() {
+  document.querySelectorAll('#bf-grid .bf-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('#bf-grid .bf-card').forEach(c => c.classList.remove('sel'));
+      card.classList.add('sel');
+    });
+  });
+}
+function setupPillGroups() {
+  ['level-group','format-group'].forEach(id => {
+    document.querySelectorAll(`#${id} .pill`).forEach(p => {
+      p.addEventListener('click', () => {
+        document.querySelectorAll(`#${id} .pill`).forEach(x => x.classList.remove('sel'));
+        p.classList.add('sel');
+      });
+    });
+  });
+}
+function getSelected(gridId, attr) {
+  return [...document.querySelectorAll(`#${gridId} .sel`)].map(c => c.getAttribute(attr));
+}
+
+// ── GENERATOR ─────────────────────────────────────────────────
+function generateWorkout() {
+  const equipment = getSelected('eq-grid','data-val');
+  if (!equipment.length) { showToast('Select at least one equipment option.','error'); return; }
+
+  const bodyFocus = document.querySelector('#bf-grid .sel')?.getAttribute('data-val') || 'full-body';
+  const level = document.querySelector('#level-group .sel')?.getAttribute('data-val') || 'intermediate';
+  const formatPref = document.querySelector('#format-group .sel')?.getAttribute('data-val') || 'any';
+  const duration = parseInt(document.getElementById('dur-slider').value);
+
+  const btn = document.getElementById('gen-btn');
+  btn.classList.add('loading'); btn.disabled = true;
+
+  setTimeout(() => {
+    const workout = buildWorkout(equipment, bodyFocus, level, formatPref, duration);
+    currentWorkout = workout;
+    renderWorkout(workout);
+    btn.classList.remove('loading'); btn.disabled = false;
+    document.getElementById('workout-result').scrollIntoView({ behavior:'smooth', block:'start' });
+  }, 600);
+}
+
+function buildWorkout(equipment, bodyFocus, level, formatPref, duration) {
+  const pool = buildPool(equipment, level, bodyFocus);
+  const formats = formatPref === 'any' ? ['amrap','emom','fortime','circuit'] : [formatPref];
+  const format = formats[Math.floor(Math.random() * formats.length)];
+
+  let workout;
+  if (format === 'amrap')      workout = genAMRAP(pool, level, duration, bodyFocus);
+  else if (format === 'emom')  workout = genEMOM(pool, level, duration, bodyFocus);
+  else if (format === 'fortime') workout = genForTime(pool, level);
+  else                         workout = genCircuit(pool, level, duration, bodyFocus);
+
+  return { ...workout, equipment, bodyFocus, level, duration, generatedAt: new Date().toISOString() };
+}
+
+function buildPool(equipment, level, bodyFocus) {
+  let moves = [...(MOVEMENT_DB.bodyweight || [])];
+  equipment.forEach(eq => { if (eq !== 'bodyweight' && MOVEMENT_DB[eq]) moves.push(...MOVEMENT_DB[eq]); });
+  if (level === 'beginner') moves = moves.filter(m => !/(muscle.up|snatch|toes.to.bar|double under|turkish)/i.test(m.name));
+  if (level === 'intermediate') moves = moves.filter(m => !/(muscle.up)/i.test(m.name));
+
+  const BF_TAGS = {
+    'full-body': null, 'upper-body': ['push','pull'], 'lower-body': ['lower','legs-glutes'],
+    'core': ['core'], 'push': ['push'], 'pull': ['pull'],
+    'legs-glutes': ['lower','legs-glutes'], 'cardio': ['cardio','full'],
+  };
+  const tags = BF_TAGS[bodyFocus];
+  if (tags) {
+    const primary = moves.filter(m => m.tags && m.tags.some(t => tags.includes(t)));
+    if (primary.length >= 3) moves = primary;
+  }
+  return moves;
+}
+
+function balancedPick(pool, count) {
+  const buckets = { lower:[], push:[], pull:[], core:[], full:[], other:[] };
+  pool.forEach(m => {
+    const t = m.tags || [];
+    if (t.includes('full')) buckets.full.push(m);
+    else if (t.includes('lower')) buckets.lower.push(m);
+    else if (t.includes('push'))  buckets.push.push(m);
+    else if (t.includes('pull'))  buckets.pull.push(m);
+    else if (t.includes('core'))  buckets.core.push(m);
+    else buckets.other.push(m);
+  });
+  const order = count >= 5 ? ['lower','push','pull','core','full']
+              : count === 4 ? ['lower','push','pull','core']
+              : count === 3 ? ['lower','push','core']
+              : ['lower','push'];
+  const result = [];
+  order.forEach(cat => {
+    const bk = [...buckets[cat]];
+    if (bk.length) {
+      const idx = Math.floor(Math.random() * bk.length);
+      result.push(bk[idx]);
+      bk.splice(idx,1);
+      buckets[cat] = bk;
+    }
+  });
+  while (result.length < count) {
+    const rem = Object.values(buckets).flat().filter(m => !result.includes(m));
+    if (!rem.length) break;
+    result.push(rem[Math.floor(Math.random() * rem.length)]);
+  }
+  return result;
+}
+
+function getReps(m, level) {
+  const r = m[level === 'beginner' ? 'b' : level === 'intermediate' ? 'i' : 'a'];
+  if (Array.isArray(r)) return r[0] + (Math.random() > .5 && r[1] ? '-' + r[1] : '');
+  return r;
+}
+
+function genAMRAP(pool, level, duration, bodyFocus) {
+  const count = duration <= 15 ? 3 : duration <= 25 ? 4 : 5;
+  const sel = balancedPick(pool, count);
+  return {
+    title: `${duration}-Minute AMRAP`,
+    format: 'AMRAP',
+    description: `Complete as many rounds as possible in ${duration} minutes. Pace yourself — consistent rounds from start to finish beat a blazing first half.`,
+    rows: sel.map(m => ({ movement: m.name, reps: String(getReps(m, level)), tip: m.tip })),
+    scoring: `Record total rounds + reps completed (e.g. "8 rounds + 12 reps").`,
+    scoring_type: 'rounds_reps'
+  };
+}
+function genEMOM(pool, level, duration, bodyFocus) {
+  const movCount = Math.min(4, Math.max(2, Math.floor(duration / 4)));
+  const sel = balancedPick(pool, movCount);
+  return {
+    title: `${duration}-Minute EMOM`,
+    format: 'EMOM',
+    description: `Every Minute On the Minute for ${duration} minutes. Start the prescribed work at the top of each minute; rest for whatever time remains.`,
+    rows: sel.map((m, i) => ({ movement: m.name, reps: `Min ${i+1} (repeat): ${getReps(m, level)} reps`, tip: m.tip })),
+    scoring: `Track whether you complete each minute before the next starts. Adjust reps if you're consistently missing.`,
+    scoring_type: 'rounds_reps'
+  };
+}
+function genForTime(pool, level) {
+  const schemes = { beginner:[15,12,9], intermediate:[21,15,9], advanced:[30,20,10] };
+  const scheme = schemes[level];
+  const sel = balancedPick(pool, 3);
+  return {
+    title: `For Time — ${scheme.join('-')}`,
+    format: 'For Time',
+    description: `Complete all reps as fast as possible using the ${scheme.join('-')} rep scheme. Push the pace — this is a sprint, not a jog.`,
+    rows: sel.map(m => ({ movement: m.name, reps: scheme.join(' – ') + ' reps', tip: m.tip })),
+    scoring: `Record your total finish time. Aim to move continuously.`,
+    scoring_type: 'time'
+  };
+}
+function genCircuit(pool, level, duration, bodyFocus) {
+  const movCount = duration <= 15 ? 4 : duration <= 30 ? 5 : 6;
+  const rounds = duration <= 15 ? 3 : duration <= 30 ? 4 : 5;
+  const sel = balancedPick(pool, movCount);
+  return {
+    title: `${rounds}-Round Circuit`,
+    format: 'Circuit',
+    description: `Complete all ${movCount} movements back-to-back with minimal rest. Rest 60 seconds between rounds. ${rounds} rounds total.`,
+    rows: sel.map(m => ({ movement: m.name, reps: String(getReps(m, level)), tip: m.tip })),
+    scoring: `Record total time and round splits.`,
+    scoring_type: 'time'
+  };
+}
+
+function renderWorkout(w) {
+  document.getElementById('wod-title').textContent = w.title;
+  document.getElementById('wod-sub').textContent = `Generated for you · ${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}`;
+  document.getElementById('wod-meta').innerHTML =
+    `<span class="chip">${cap(w.level)}</span>
+     <span class="chip">${cap(w.bodyFocus.replace('-',' '))}</span>
+     <span class="chip">${w.duration} min</span>
+     <span class="chip">${w.equipment.map(e=>cap(e)).join(' + ')}</span>`;
+  document.getElementById('wod-desc').textContent = w.description;
+  document.getElementById('wod-movements').innerHTML = w.rows.map(r => `
+    <tr>
+      <td><div class="mname"><a href="/movements/${slugify(r.movement)}.html">${r.movement}</a></div>${r.tip ? `<div class="mtip">💡 ${r.tip}</div>` : ''}</td>
+      <td><span class="rbadge">${r.reps}</span></td>
+      <td style="color:var(--mu);font-size:12px">${r.tip || ''}</td>
+    </tr>`).join('');
+  document.getElementById('wod-scoring').textContent = w.scoring;
+
+  // warmup / cooldown
+  const wu = shuffle([...WARMUP]).slice(0,5);
+  const cd = shuffle([...COOLDOWN]).slice(0,4);
+  document.getElementById('warmup-list').innerHTML = wu.map(i => `<li>${i}</li>`).join('');
+  document.getElementById('cooldown-list').innerHTML = cd.map(i => `<li>${i}</li>`).join('');
+
+  document.getElementById('workout-result').style.display = 'block';
+}
+
+// ── COMMUNITY ─────────────────────────────────────────────────
+async function loadCommunityWorkouts() {
+  communityWorkouts = await db.getWorkouts({ isPublic: true, limit: 50 });
+  // Seed demo data if empty
+  if (!communityWorkouts.length) {
+    communityWorkouts = getDemoWorkouts();
+  }
+  renderCommunityGrid(communityWorkouts);
+}
+
+function renderCommunityGrid(workouts) {
+  const grid = document.getElementById('comm-grid');
+  const empty = document.getElementById('comm-empty');
+  if (!workouts.length) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  grid.innerHTML = workouts.map(w => `
+    <div class="wod-card" onclick="openWodDetail('${escHtml(w.id)}')">
+      <div class="wod-card-hdr">
+        <h3>${escHtml(w.title)}</h3>
+        <div class="wod-card-meta">
+          <span class="badge badge-or">${escHtml(w.format || 'AMRAP')}</span>
+          <span class="badge badge-mu">${cap(w.level||'intermediate')}</span>
+          ${w.duration ? `<span class="badge badge-mu">${w.duration}min</span>` : ''}
+          <span class="badge badge-mu">${cap((w.body_focus||w.bodyFocus||'full-body').replace('-',' '))}</span>
+        </div>
+      </div>
+      <div class="wod-card-body">
+        <div class="wod-movements">${getMovePreview(w)}</div>
+        <div class="wod-stats">
+          <span class="wod-stat">👤 <strong>${escHtml(w.username||'anonymous')}</strong></span>
+          <span class="wod-stat">📅 <strong>${formatDate(w.created_at||w.createdAt)}</strong></span>
+          ${w.result_count ? `<span class="wod-stat">📊 <strong>${w.result_count}</strong> results</span>` : ''}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function filterCommunity() {
+  commFilters.q = document.getElementById('comm-search').value.toLowerCase();
+  applyCommFilters();
+}
+function setCommFilter(el, type) {
+  const key = type === 'fmt' ? 'data-fmt' : 'data-lvl';
+  el.closest('.filter-bar').querySelectorAll('.fchip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  commFilters[type] = el.getAttribute(key);
+  applyCommFilters();
+}
+function applyCommFilters() {
+  let filtered = [...communityWorkouts];
+  if (commFilters.fmt !== 'all') filtered = filtered.filter(w => (w.format||'').toLowerCase() === commFilters.fmt);
+  if (commFilters.lvl !== 'all') filtered = filtered.filter(w => (w.level||'') === commFilters.lvl);
+  if (commFilters.q) filtered = filtered.filter(w =>
+    (w.title||'').toLowerCase().includes(commFilters.q) ||
+    (w.description||w.desc||'').toLowerCase().includes(commFilters.q));
+  renderCommunityGrid(filtered);
+}
+
+function getMovePreview(w) {
+  const rows = w.movements || w.rows || [];
+  if (!rows.length) return '<em>No movements listed</em>';
+  return rows.slice(0,4).map(r => `• ${escHtml(r.name||r.movement||'')} ${r.reps ? '<span style="color:var(--or)">×'+escHtml(String(r.reps))+'</span>' : ''}`).join('<br>') + (rows.length > 4 ? `<br><span style="color:var(--mu)">+${rows.length-4} more</span>` : '');
+}
+
+// ── WOD DETAIL OVERLAY ────────────────────────────────────────
+async function openWodDetail(workoutId) {
+  const w = communityWorkouts.find(x => x.id === workoutId);
+  if (!w) return;
+
+  const results = await db.getResults({ workoutId });
+
+  const rows = w.movements || w.rows || [];
+  const eqList = (w.equipment||[]).map(e=>cap(e)).join(', ') || 'Bodyweight';
+
+  document.getElementById('wod-detail-content').innerHTML = `
+    <div class="res-hdr">
+      <h2>${escHtml(w.title)}</h2>
+      <div class="rsub">by ${escHtml(w.username||'anonymous')} · ${formatDate(w.created_at||w.createdAt)}</div>
+      <div class="res-meta">
+        <span class="chip">${escHtml(w.format||'AMRAP')}</span>
+        <span class="chip">${cap(w.level||'intermediate')}</span>
+        ${w.duration ? `<span class="chip">${w.duration} min</span>` : ''}
+        <span class="chip">${cap((w.body_focus||w.bodyFocus||'full-body').replace('-',' '))}</span>
+        <span class="chip">${eqList}</span>
+      </div>
+    </div>
+    <div class="res-body">
+      ${w.description||w.desc ? `<div class="wdesc">${escHtml(w.description||w.desc)}</div>` : ''}
+      <table class="mov-table">
+        <thead><tr><th>Movement</th><th>Reps / Time</th><th>Coaching Tip</th></tr></thead>
+        <tbody>${rows.map(r => `
+          <tr>
+            <td><div class="mname">${escHtml(r.name||r.movement||'')}</div></td>
+            <td><span class="rbadge">${escHtml(String(r.reps||''))}</span></td>
+            <td style="color:var(--mu);font-size:12px">${escHtml(r.tip||'')}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+      <div class="score-box">
+        <h4>📊 Scoring</h4>
+        <p>${escHtml(w.scoring || 'Record your score.')}</p>
+      </div>
+      <div class="res-actions">
+        <button class="abtn pri" onclick="openCommResultModal('${escHtml(w.id)}','${escHtml(w.title)}','${escHtml(w.format||'AMRAP')}')">📝 Log Result</button>
+        <button class="abtn gho" onclick="nominateFromDetail('${escHtml(w.id)}')">⭐ Nominate as Featured</button>
+      </div>
+      ${results.length ? `
+      <div style="margin-top:28px">
+        <h3 style="font-size:18px;font-weight:800;margin-bottom:16px">📊 Leaderboard (${results.length} results)</h3>
+        <table class="lb-table">
+          <thead><tr><th>#</th><th>Athlete</th><th>Score</th><th>Date</th></tr></thead>
+          <tbody>${results.slice(0,15).map((r,i) => `
+            <tr>
+              <td><span class="rank-badge ${i<3?'rank-'+(i+1):'rank-other'}">${i+1}</span></td>
+              <td><div class="lb-user">
+                <div class="lb-avatar" style="background:var(--or)">${(r.username||'?')[0].toUpperCase()}</div>
+                <a href="/u/${encodeURIComponent(r.username||'')}" style="color:var(--tx);text-decoration:none;font-weight:700">${escHtml(r.username||'anonymous')}</a>
+              </div></td>
+              <td class="lb-score">${escHtml(r.score_display||r.score||'')}</td>
+              <td style="color:var(--mu);font-size:12px">${formatDate(r.date||r.created_at)}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>` : '<p style="color:var(--mu);margin-top:20px;font-size:14px">No results logged yet. Be the first!</p>'}
+    </div>`;
+
+  document.getElementById('wod-detail-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeWodDetail() {
+  document.getElementById('wod-detail-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ── MY WORKOUTS ───────────────────────────────────────────────
+async function loadMyWorkouts() {
+  currentUser = await db.getUser();
+  if (!currentUser) {
+    document.getElementById('myw-auth-wall').style.display = 'block';
+    document.getElementById('myw-content').style.display = 'none';
+    return;
+  }
+  document.getElementById('myw-auth-wall').style.display = 'none';
+  document.getElementById('myw-content').style.display = 'block';
+  document.getElementById('myw-subtitle').textContent = `Saved workouts for ${currentUser.email?.split('@')[0] || 'you'}`;
+
+  myWorkouts = await db.getWorkouts({ userId: currentUser.id });
+  const grid = document.getElementById('myw-grid');
+  const empty = document.getElementById('myw-empty');
+  if (!myWorkouts.length) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  grid.innerHTML = myWorkouts.map(w => `
+    <div class="myw-card">
+      <div class="myw-card-meta">
+        <span class="badge badge-or">${escHtml(w.format||'AMRAP')}</span>
+        <span class="badge badge-mu">${cap(w.level||'intermediate')}</span>
+        <span class="badge ${w.is_public||w.isPublic ? 'badge-gr' : 'badge-mu'}">${w.is_public||w.isPublic ? '🌍 Public' : '🔒 Private'}</span>
+      </div>
+      <h3>${escHtml(w.title)}</h3>
+      <p style="color:var(--mu);font-size:12px;margin-bottom:12px">${formatDate(w.created_at||w.createdAt)}</p>
+      <div class="myw-actions">
+        <button class="myw-btn pri" onclick="openCommResultModal('${escHtml(w.id)}','${escHtml(w.title)}','${escHtml(w.format||'AMRAP')}')">Log Result</button>
+        <button class="myw-btn sec" onclick="openWodDetail('${escHtml(w.id)}')">View</button>
+      </div>
+    </div>`).join('');
+  // Make sure these workouts are in communityWorkouts for detail view
+  myWorkouts.forEach(w => { if (!communityWorkouts.find(c => c.id === w.id)) communityWorkouts.push(w); });
+}
+
+// ── TABS ──────────────────────────────────────────────────────
+function showTab(tab) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.gen-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`tab-${tab}`).classList.add('active');
+  const tabs = { generator: 0, community: 1, myworkouts: 2 };
+  document.querySelectorAll('.gen-tab')[tabs[tab]].classList.add('active');
+  if (tab === 'myworkouts') loadMyWorkouts();
+}
+
+// ── MODALS ────────────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function openAuthModal(mode = 'login') {
+  switchAuthTab(mode);
+  openModal('auth-modal');
+}
+function switchAuthTab(tab) {
+  document.getElementById('auth-title').textContent = tab === 'login' ? 'Welcome Back' : 'Create Account';
+  document.getElementById('auth-sub').textContent = tab === 'login' ? 'Sign in to save workouts and track results.' : 'Join the HomeWODrx community — it\'s free.';
+  document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('signup-form').style.display = tab === 'signup' ? 'block' : 'none';
+  document.getElementById('auth-error').classList.remove('vis');
+  document.getElementById('auth-success').classList.remove('vis');
+}
+
+async function submitLogin() {
+  const email = document.getElementById('li-email').value.trim();
+  const pass = document.getElementById('li-pass').value;
+  const errEl = document.getElementById('auth-error');
+  if (!email || !pass) { errEl.textContent = 'Please fill in all fields.'; errEl.classList.add('vis'); return; }
+  const { user, error } = await db.signIn(email, pass);
+  if (error) { errEl.textContent = error.message || 'Sign in failed.'; errEl.classList.add('vis'); return; }
+  currentUser = user;
+  closeModal('auth-modal');
+  showToast('Welcome back! 👋','success');
+  await loadMyWorkouts();
+  // Refresh nav
+  location.reload();
+}
+
+async function submitSignup() {
+  const username = document.getElementById('su-user').value.trim();
+  const email = document.getElementById('su-email').value.trim();
+  const pass = document.getElementById('su-pass').value;
+  const errEl = document.getElementById('auth-error');
+  if (!username || !email || !pass) { errEl.textContent = 'Please fill in all fields.'; errEl.classList.add('vis'); return; }
+  if (pass.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.classList.add('vis'); return; }
+  const { user, error } = await db.signUp(email, pass, username);
+  if (error) { errEl.textContent = error.message || 'Sign up failed.'; errEl.classList.add('vis'); return; }
+  currentUser = user;
+  closeModal('auth-modal');
+  showToast('Account created! Welcome to HomeWODrx 🔥','success');
+  await loadMyWorkouts();
+  location.reload();
+}
+
+function openLogResult() {
+  if (!currentUser) { openAuthModal(); return; }
+  if (!currentWorkout) return;
+  const fmt = currentWorkout.format || '';
+  const label = fmt.toLowerCase().includes('time') ? 'Time (mm:ss)' : 'Rounds + Reps';
+  const ph = fmt.toLowerCase().includes('time') ? 'e.g. 7:42' : 'e.g. 8 rounds + 12 reps';
+  document.getElementById('score-label').textContent = label;
+  document.getElementById('result-score').placeholder = ph;
+  document.getElementById('result-modal-sub').textContent = `Log your score for: ${currentWorkout.title}`;
+  document.getElementById('result-error').classList.remove('vis');
+  document.getElementById('result-score').value = '';
+  document.getElementById('result-notes').value = '';
+  openModal('result-modal');
+}
+
+async function submitResult() {
+  const score = document.getElementById('result-score').value.trim();
+  const notes = document.getElementById('result-notes').value.trim();
+  const isPublic = document.getElementById('result-public').value === 'yes';
+  const isRx = document.getElementById('result-rx').value === 'yes';
+  const errEl = document.getElementById('result-error');
+  if (!score) { errEl.textContent = 'Please enter a score.'; errEl.classList.add('vis'); return; }
+
+  // Save workout first if it has no ID
+  let workoutId = currentWorkout.id;
+  if (!workoutId) {
+    const { data } = await db.saveWorkout({
+      user_id: currentUser.id,
+      username: currentUser.email?.split('@')[0] || 'user',
+      title: currentWorkout.title,
+      format: currentWorkout.format,
+      duration: currentWorkout.duration,
+      level: currentWorkout.level,
+      body_focus: currentWorkout.bodyFocus,
+      equipment: currentWorkout.equipment,
+      movements: currentWorkout.rows,
+      scoring: currentWorkout.scoring,
+      scoring_type: currentWorkout.scoring_type || 'rounds_reps',
+      is_public: isPublic
+    });
+    workoutId = data?.id;
+  }
+
+  const result = {
+    user_id: currentUser.id,
+    username: currentUser.email?.split('@')[0] || 'user',
+    workout_id: workoutId,
+    score_display: score,
+    is_rx: isRx,
+    notes,
+    date: new Date().toISOString().split('T')[0]
+  };
+
+  const { error } = await db.saveResult(result);
+  if (error) { errEl.textContent = error.message; errEl.classList.add('vis'); return; }
+  closeModal('result-modal');
+  showToast('Result logged! 🎉','success');
+}
+
+function openSaveWorkout() {
+  if (!currentUser) { openAuthModal(); return; }
+  if (!currentWorkout) return;
+  document.getElementById('save-name').value = currentWorkout.title;
+  document.getElementById('save-desc').value = currentWorkout.description || '';
+  document.getElementById('save-error').classList.remove('vis');
+  openModal('save-modal');
+}
+
+async function submitSave() {
+  const name = document.getElementById('save-name').value.trim();
+  const desc = document.getElementById('save-desc').value.trim();
+  const isPublic = document.getElementById('save-public').value === 'yes';
+  const errEl = document.getElementById('save-error');
+  if (!name) { errEl.textContent = 'Please enter a workout name.'; errEl.classList.add('vis'); return; }
+
+  const { data, error } = await db.saveWorkout({
+    user_id: currentUser.id,
+    username: currentUser.email?.split('@')[0] || 'user',
+    title: name,
+    description: desc,
+    format: currentWorkout.format,
+    duration: currentWorkout.duration,
+    level: currentWorkout.level,
+    body_focus: currentWorkout.bodyFocus,
+    equipment: currentWorkout.equipment,
+    movements: currentWorkout.rows,
+    scoring: currentWorkout.scoring,
+    scoring_type: currentWorkout.scoring_type || 'rounds_reps',
+    is_public: isPublic
+  });
+
+  if (error) { errEl.textContent = error.message; errEl.classList.add('vis'); return; }
+  currentWorkout = { ...currentWorkout, id: data?.id };
+  closeModal('save-modal');
+  showToast(isPublic ? 'Workout saved and shared with the community! 🌍' : 'Workout saved! 💾','success');
+  if (isPublic) await loadCommunityWorkouts();
+  await loadMyWorkouts();
+}
+
+function openCommResultModal(workoutId, title, format) {
+  if (!currentUser) { openAuthModal(); return; }
+  const w = communityWorkouts.find(x => x.id === workoutId) || myWorkouts.find(x => x.id === workoutId);
+  if (!w) return;
+  currentWorkout = w;
+  openLogResult();
+}
+
+async function nominateWorkout() {
+  if (!currentUser) { openAuthModal(); return; }
+  if (!currentWorkout) return;
+  showToast('Workout submitted for Featured WOD consideration! ⭐','info');
+  // In production, this would upsert to workouts table with nomination_pending=true
+  if (supabaseClient && currentWorkout.id) {
+    await supabaseClient.from('workouts').update({ nomination_pending: true }).eq('id', currentWorkout.id);
+  }
+}
+
+async function nominateFromDetail(workoutId) {
+  if (!currentUser) { openAuthModal(); return; }
+  showToast('Workout submitted for Featured WOD consideration! ⭐','info');
+  if (supabaseClient) {
+    await supabaseClient.from('workouts').update({ nomination_pending: true }).eq('id', workoutId);
+  }
+}
+
+// ── DEMO DATA ─────────────────────────────────────────────────
+function getDemoWorkouts() {
+  return [
+    {id:"sw1",username:"firebreather_k",title:"The Inferno",format:"AMRAP",duration:20,level:"advanced",body_focus:"full-body",equipment:["kettlebell","pullupbar"],is_public:true,created_at:"2026-03-18",description:"A relentless 20-min grind combining kettlebell power with gymnastics.",movements:[{movement:"Kettlebell Swings",reps:"15",tip:"Hip snap"},{movement:"Pull-Ups",reps:"7",tip:"Strict or kipping"},{movement:"Goblet Squats",reps:"10",tip:"Elbows in"},{movement:"Mountain Climbers",reps:"20",tip:"Hips level"}],scoring:"Count total rounds + reps.",scoring_type:"rounds_reps",result_count:4},
+    {id:"sw2",username:"rxrunner",title:"Morning Grind",format:"Circuit",duration:30,level:"intermediate",body_focus:"full-body",equipment:["dumbbells"],is_public:true,created_at:"2026-03-19",description:"4 rounds of functional dumbbell work for a solid 30-min morning session.",movements:[{movement:"DB Thrusters",reps:"12",tip:"One fluid motion"},{movement:"DB Bent-Over Rows",reps:"12",tip:"Row to lower ribs"},{movement:"DB Romanian DL",reps:"15",tip:"Load the hamstrings"},{movement:"Burpees",reps:"8",tip:"Step out if needed"}],scoring:"4 rounds for time. Rest 60s between rounds.",scoring_type:"time",result_count:3},
+    {id:"sw3",username:"no_excuses_jen",title:"No Excuses",format:"AMRAP",duration:15,level:"beginner",body_focus:"full-body",equipment:["bodyweight"],is_public:true,created_at:"2026-03-20",description:"Zero equipment. Zero excuses. Perfect for travel.",movements:[{movement:"Air Squats",reps:"15"},{movement:"Push-Ups",reps:"10"},{movement:"Sit-Ups",reps:"12"},{movement:"Jump Squats",reps:"8"}],scoring:"Total rounds + reps in 15 min.",scoring_type:"rounds_reps",result_count:3},
+    {id:"sw4",username:"coach_dmac",title:"KB Destroyer",format:"EMOM",duration:24,level:"intermediate",body_focus:"full-body",equipment:["kettlebell"],is_public:true,created_at:"2026-03-21",description:"6 exercises, 4 rounds EMOM. Earn your rest.",movements:[{movement:"Kettlebell Swings",reps:"Min 1: 15 reps"},{movement:"Goblet Squats",reps:"Min 2: 12 reps"},{movement:"KB Press",reps:"Min 3: 10 each"},{movement:"Mountain Climbers",reps:"Min 4: 30 reps"}],scoring:"Track each minute — finish or fail.",scoring_type:"rounds_reps",result_count:0},
+    {id:"sw5",username:"wod_wombat",title:"The 21-15-9",format:"For Time",duration:12,level:"intermediate",body_focus:"full-body",equipment:["barbell","pullupbar"],is_public:true,created_at:"2026-03-22",description:"A classic rep scheme. Simple structure, brutal execution.",movements:[{movement:"Barbell Thruster",reps:"21 – 15 – 9"},{movement:"Pull-Ups",reps:"21 – 15 – 9"}],scoring:"Time to complete all rounds.",scoring_type:"time",result_count:3},
+    {id:"sw6",username:"strongmom_pdx",title:"Legs & Lungs",format:"Circuit",duration:25,level:"intermediate",body_focus:"lower-body",equipment:["bodyweight","jumprope"],is_public:true,created_at:"2026-03-23",description:"Posterior chain meets cardio. 5 rounds, keep moving.",movements:[{movement:"Single Unders",reps:"50"},{movement:"Lunges",reps:"20"},{movement:"Glute Bridges",reps:"20"},{movement:"Jump Squats",reps:"12"}],scoring:"5 rounds for time.",scoring_type:"time",result_count:0},
+  ];
+}
+
+// ── UTILITIES ─────────────────────────────────────────────────
+function showToast(msg, type = 'info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => { t.classList.remove('show'); }, 3500);
+}
+function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+function slugify(s) { return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function formatDate(d) {
+  if (!d) return '';
+  try { return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+  catch(e) { return d; }
+}
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+</script>
+</body>
+</html>

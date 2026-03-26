@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browse Workouts - HomeWODrx</title>
+  <meta name="description" content="Browse and filter all CrossFit benchmarks and user-generated workouts.">
+  <meta property="og:title" content="Browse Workouts - HomeWODrx">
+  <meta property="og:description" content="Browse and filter all CrossFit benchmarks and user-generated workouts.">
+
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/db.js"></script>
+  <script src="/js/benchmarks.js"></script>
+  <script src="/js/nav.js"></script>
+</head>
+<body data-nav-init="true" data-active-page="workouts">
+  <main class="container">
+    <section style="margin-bottom: 2rem; padding: 2rem 0;">
+      <h1>Browse Workouts</h1>
+      <p class="text-muted">Filter and search from our complete library of benchmarks and user-generated WODs.</p>
+    </section>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+      <div class="filter-section">
+        <label class="filter-label">Type</label>
+        <div class="filter-chips" id="type-filters">
+          <button class="chip active" data-type="all">All</button>
+          <button class="chip" data-type="girl">The Girls</button>
+          <button class="chip" data-type="hero">Heroes</button>
+          <button class="chip" data-type="benchmark">Community Benchmarks</button>
+          <button class="chip" data-type="user">User-Generated</button>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <label class="filter-label">Format</label>
+        <div class="filter-chips" id="format-filters">
+          <button class="chip active" data-format="all">All</button>
+          <button class="chip" data-format="amrap">AMRAP</button>
+          <button class="chip" data-format="emom">EMOM</button>
+          <button class="chip" data-format="fortime">For Time</button>
+          <button class="chip" data-format="circuit">Circuit</button>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <label class="filter-label">Difficulty</label>
+        <div class="filter-chips" id="difficulty-filters">
+          <button class="chip active" data-difficulty="all">All</button>
+          <button class="chip" data-difficulty="beginner">Beginner</button>
+          <button class="chip" data-difficulty="intermediate">Intermediate</button>
+          <button class="chip" data-difficulty="advanced">Advanced</button>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <label class="filter-label">Body Focus</label>
+        <div class="filter-chips" id="focus-filters">
+          <button class="chip active" data-focus="all">All</button>
+          <button class="chip" data-focus="full-body">Full Body</button>
+          <button class="chip" data-focus="upper">Upper</button>
+          <button class="chip" data-focus="lower">Lower</button>
+          <button class="chip" data-focus="core">Core</button>
+          <button class="chip" data-focus="conditioning">Conditioning</button>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <label class="filter-label">Search</label>
+        <input type="text" id="search-input" placeholder="Search by workout name...">
+      </div>
+
+      <div class="filter-section">
+        <label class="filter-label">Sort By</label>
+        <select id="sort-select">
+          <option value="newest">Newest First</option>
+          <option value="alphabetical">Alphabetical</option>
+          <option value="difficulty">Difficulty (Easiest First)</option>
+          <option value="difficulty-hard">Difficulty (Hardest First)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- WORKOUTS GRID -->
+    <div id="workouts-container" class="grid grid-cols-3">
+      <div class="loading">
+        <div class="spinner"></div>
+      </div>
+    </div>
+
+    <!-- LOAD MORE -->
+    <div style="text-align: center; margin-top: 2rem;">
+      <button id="load-more-btn" class="btn btn-secondary" style="display: none;">Load More</button>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>HomeWODrx</h4>
+          <p>The platform for every athlete.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 HomeWODrx. Built for athletes, by athletes.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    let allWorkouts = [];
+    let filteredWorkouts = [];
+    let currentFilters = {
+      type: 'all',
+      format: 'all',
+      difficulty: 'all',
+      focus: 'all',
+      search: ''
+    };
+    let displayCount = 12;
+
+    async function loadWorkouts() {
+      const container = document.getElementById('workouts-container');
+      container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+      try {
+        // Load benchmarks
+        allWorkouts = [...BENCHMARKS];
+
+        // Load user workouts
+        const userWorkouts = await db.getWorkouts({ isPublic: true, limit: 1000 });
+        if (userWorkouts && userWorkouts.length > 0) {
+          allWorkouts = allWorkouts.concat(userWorkouts.map(w => ({
+            ...w,
+            category: 'user',
+            slug: w.id
+          })));
+        }
+
+        applyFilters();
+      } catch (error) {
+        console.error('Error loading workouts:', error);
+        container.innerHTML = '<p class="text-muted">Error loading workouts. Please try again.</p>';
+      }
+    }
+
+    function applyFilters() {
+      filteredWorkouts = allWorkouts.filter(w => {
+        if (currentFilters.type !== 'all' && w.category !== currentFilters.type) return false;
+        if (currentFilters.format !== 'all' && w.format.toLowerCase() !== currentFilters.format.toLowerCase()) return false;
+        if (currentFilters.difficulty !== 'all' && w.difficulty !== currentFilters.difficulty) return false;
+        if (currentFilters.focus !== 'all' && w.body_focus !== currentFilters.focus) return false;
+        if (currentFilters.search && !w.name.toLowerCase().includes(currentFilters.search.toLowerCase())) return false;
+        return true;
+      });
+
+      // Sort
+      const sortBy = document.getElementById('sort-select').value;
+      if (sortBy === 'alphabetical') {
+        filteredWorkouts.sort((a, b) => a.name.localeCompare(b.name));
+      } else if (sortBy === 'difficulty') {
+        const diffOrder = { 'beginner': 1, 'intermediate': 2, 'advanced': 3 };
+        filteredWorkouts.sort((a, b) => (diffOrder[a.difficulty] || 0) - (diffOrder[b.difficulty] || 0));
+      } else if (sortBy === 'difficulty-hard') {
+        const diffOrder = { 'beginner': 1, 'intermediate': 2, 'advanced': 3 };
+        filteredWorkouts.sort((a, b) => (diffOrder[b.difficulty] || 0) - (diffOrder[a.difficulty] || 0));
+      } else {
+        // Newest first (benchmarks first, then by date)
+        filteredWorkouts.sort((a, b) => {
+          const aIsUser = a.category === 'user' ? 1 : 0;
+          const bIsUser = b.category === 'user' ? 1 : 0;
+          return aIsUser - bIsUser;
+        });
+      }
+
+      renderWorkouts();
+    }
+
+    function renderWorkouts() {
+      const container = document.getElementById('workouts-container');
+      const displayed = filteredWorkouts.slice(0, displayCount);
+
+      if (displayed.length === 0) {
+        container.innerHTML = '<div style="grid-column: 1/-1;"><p class="text-muted">No workouts found. Try adjusting your filters.</p></div>';
+        document.getElementById('load-more-btn').style.display = 'none';
+        return;
+      }
+
+      container.innerHTML = displayed.map(w => {
+        const isUser = w.category === 'user';
+        const href = isUser ? `/workout.html?id=${w.id}` : `/workout.html?slug=${w.slug}`;
+        return `
+          <a href="${href}" style="text-decoration: none;">
+            <div class="card">
+              <h4>${w.name}</h4>
+              <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 0.5rem;">
+                ${w.format} • ${w.duration_estimate}
+              </p>
+              <div style="margin-bottom: 1rem;">
+                ${w.equipment ? w.equipment.map(e => `<span class="badge badge-orange" style="font-size: 0.8rem;">${e}</span>`).join('') : ''}
+              </div>
+              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <span class="badge badge-orange">${w.difficulty}</span>
+                <span class="badge badge-orange">${w.body_focus}</span>
+                ${isUser ? '<span class="badge badge-success">Community</span>' : ''}
+              </div>
+            </div>
+          </a>
+        `;
+      }).join('');
+
+      // Show load more button
+      const loadMoreBtn = document.getElementById('load-more-btn');
+      if (filteredWorkouts.length > displayCount) {
+        loadMoreBtn.style.display = 'inline-block';
+      } else {
+        loadMoreBtn.style.display = 'none';
+      }
+    }
+
+    function setupFilterListeners() {
+      // Type filters
+      document.querySelectorAll('#type-filters .chip').forEach(chip => {
+        chip.addEventListener('click', (e) => {
+          document.querySelectorAll('#type-filters .chip').forEach(c => c.classList.remove('active'));
+          e.target.classList.add('active');
+          currentFilters.type = e.target.dataset.type;
+          displayCount = 12;
+          applyFilters();
+        });
+      });
+
+      // Format filters
+      document.querySelectorAll('#format-filters .chip').forEach(chip => {
+        chip.addEventListener('click', (e) => {
+          document.querySelectorAll('#format-filters .chip').forEach(c => c.classList.remove('active'));
+          e.target.classList.add('active');
+          currentFilters.format = e.target.dataset.format;
+          displayCount = 12;
+          applyFilters();
+        });
+      });
+
+      // Difficulty filters
+      document.querySelectorAll('#difficulty-filters .chip').forEach(chip => {
+        chip.addEventListener('click', (e) => {
+          document.querySelectorAll('#difficulty-filters .chip').forEach(c => c.classList.remove('active'));
+          e.target.classList.add('active');
+          currentFilters.difficulty = e.target.dataset.difficulty;
+          displayCount = 12;
+          applyFilters();
+        });
+      });
+
+      // Focus filters
+      document.querySelectorAll('#focus-filters .chip').forEach(chip => {
+        chip.addEventListener('click', (e) => {
+          document.querySelectorAll('#focus-filters .chip').forEach(c => c.classList.remove('active'));
+          e.target.classList.add('active');
+          currentFilters.focus = e.target.dataset.focus;
+          displayCount = 12;
+          applyFilters();
+        });
+      });
+
+      // Search
+      document.getElementById('search-input').addEventListener('input', (e) => {
+        currentFilters.search = e.target.value;
+        displayCount = 12;
+        applyFilters();
+      });
+
+      // Sort
+      document.getElementById('sort-select').addEventListener('change', applyFilters);
+
+      // Load more
+      document.getElementById('load-more-btn').addEventListener('click', () => {
+        displayCount += 12;
+        renderWorkouts();
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setupFilterListeners();
+      loadWorkouts();
+    });
+  </script>
+</body>
+</html>

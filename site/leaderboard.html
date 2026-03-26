@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leaderboard — HomeWODrx</title>
+<meta name="description" content="Search and filter results from every athlete on HomeWODrx — named benchmarks, user-created WODs, all in one place.">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/js/db.js"></script>
+<script src="/js/benchmarks.js"></script>
+<script src="/js/nav.js"></script>
+<style>
+.lb-page{max-width:1000px;margin:0 auto;padding:32px 20px 80px}
+.lb-header{margin-bottom:28px}
+.lb-header h1{font-size:clamp(24px,4vw,34px);font-weight:900;margin-bottom:6px}
+.lb-header p{color:var(--mu);font-size:14px}
+.stats-bar{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:28px}
+.stat-card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:16px;text-align:center}
+.stat-card .val{font-size:26px;font-weight:900;color:var(--or)}
+.stat-card .lbl{font-size:11px;color:var(--mu);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-top:4px}
+.filters-panel{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:20px;margin-bottom:24px}
+.filters-panel h3{font-size:13px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px}
+.filter-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:14px}
+.filter-row:last-child{margin-bottom:0}
+.filter-group label{display:block;font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.filter-group select,.filter-group input[type=text]{width:100%;background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:8px 10px;color:var(--tx);font-size:13px;outline:none;font-family:inherit}
+.filter-group select:focus,.filter-group input:focus{border-color:var(--or)}
+.filter-group select option{background:var(--dk3)}
+.search-bar{position:relative}
+.search-bar input{padding-left:34px}
+.search-bar::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none;z-index:1;margin-top:3px}
+.filter-actions{display:flex;gap:10px;margin-top:14px}
+.fbtn{padding:9px 18px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .15s}
+.fbtn.pri{background:var(--or);color:#fff}.fbtn.pri:hover{background:var(--orl)}
+.fbtn.sec{background:var(--dk3);color:var(--mu);border:1px solid var(--bd)}.fbtn.sec:hover{color:var(--tx);border-color:var(--mu)}
+.period-tabs{display:flex;gap:0;border:1px solid var(--bd);border-radius:8px;overflow:hidden;margin-bottom:20px;width:fit-content}
+.period-tab{padding:8px 16px;font-size:13px;font-weight:700;color:var(--mu);cursor:pointer;background:var(--dk3);border:none;transition:all .15s;white-space:nowrap}
+.period-tab.active{background:var(--or);color:#fff}
+.results-count{font-size:13px;color:var(--mu);margin-bottom:12px}
+.results-count strong{color:var(--tx)}
+.lb-table-wrap{overflow-x:auto}
+.lb-table{width:100%;border-collapse:collapse;font-size:13px;min-width:600px}
+.lb-table thead tr{background:var(--dk2)}
+.lb-table th{padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--bd);white-space:nowrap}
+.lb-table td{padding:12px 14px;border-bottom:1px solid var(--bd);vertical-align:middle}
+.lb-table tr:hover td{background:rgba(255,255,255,.02)}
+.rank{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:12px}
+.r1{background:gold;color:#333}.r2{background:#C0C0C0;color:#333}.r3{background:#CD7F32;color:#fff}.rn{background:var(--dk3);color:var(--mu)}
+.athlete{display:flex;align-items:center;gap:10px}
+.ava{width:28px;height:28px;border-radius:50%;background:var(--or);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.athlete-name{font-weight:700;font-size:13px}
+.wod-link{color:var(--or);text-decoration:none;font-weight:700;font-size:13px}
+.wod-link:hover{text-decoration:underline}
+.score-val{font-weight:800;color:var(--orl);font-size:14px}
+.rx-badge{background:rgba(39,174,96,.15);color:#27ae60;border:1px solid rgba(39,174,96,.3);font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px}
+.notes-cell{font-size:12px;color:var(--mu);max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cat-chip{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;display:inline-block}
+.cat-girl{background:rgba(232,83,10,.15);color:var(--orl);border:1px solid rgba(232,83,10,.3)}
+.cat-hero{background:rgba(52,152,219,.15);color:#3498db;border:1px solid rgba(52,152,219,.3)}
+.cat-bench{background:rgba(155,89,182,.15);color:#9b59b6;border:1px solid rgba(155,89,182,.3)}
+.cat-user{background:rgba(39,174,96,.15);color:#27ae60;border:1px solid rgba(39,174,96,.3)}
+.load-more{display:block;width:100%;padding:13px;margin-top:16px;background:var(--dk3);color:var(--mu);border:1px solid var(--bd);border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s}
+.load-more:hover{border-color:var(--or);color:var(--or)}
+.empty{text-align:center;padding:48px 20px;color:var(--mu)}
+.empty .ei{font-size:40px;margin-bottom:12px}
+@media(max-width:600px){.filter-row{grid-template-columns:1fr}.stats-bar{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div id="nav-root"></div>
+<main>
+<div class="lb-page">
+  <div class="lb-header">
+    <h1>🏆 Global Leaderboard</h1>
+    <p>Every result from every athlete. Search, filter, compare.</p>
+  </div>
+
+  <div class="stats-bar" id="stats-bar">
+    <div class="stat-card"><div class="val" id="stat-athletes">—</div><div class="lbl">Athletes</div></div>
+    <div class="stat-card"><div class="val" id="stat-results">—</div><div class="lbl">Total Results</div></div>
+    <div class="stat-card"><div class="val" id="stat-top-wod">—</div><div class="lbl">Most Attempted</div></div>
+    <div class="stat-card"><div class="val" id="stat-today">—</div><div class="lbl">Logged Today</div></div>
+  </div>
+
+  <div class="filters-panel">
+    <h3>Filter & Search</h3>
+    <div class="filter-row">
+      <div class="filter-group search-bar">
+        <label>Search workout or athlete</label>
+        <input type="text" id="f-search" placeholder="e.g. Fran, Cindy, @username…">
+      </div>
+      <div class="filter-group">
+        <label>Workout Type</label>
+        <select id="f-type">
+          <option value="">All Types</option>
+          <option value="girl">The Girls</option>
+          <option value="hero">Hero WODs</option>
+          <option value="benchmark">Other Benchmarks</option>
+          <option value="user">User-Generated</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Format</label>
+        <select id="f-format">
+          <option value="">All Formats</option>
+          <option value="AMRAP">AMRAP</option>
+          <option value="EMOM">EMOM</option>
+          <option value="For Time">For Time</option>
+          <option value="Circuit">Circuit</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Difficulty</label>
+        <select id="f-difficulty">
+          <option value="">All Levels</option>
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="advanced">Advanced</option>
+        </select>
+      </div>
+    </div>
+    <div class="filter-row">
+      <div class="filter-group">
+        <label>Body Focus</label>
+        <select id="f-focus">
+          <option value="">All Focus Areas</option>
+          <option value="full-body">Full Body</option>
+          <option value="upper-body">Upper Body</option>
+          <option value="lower-body">Lower Body</option>
+          <option value="core">Core & Abs</option>
+          <option value="push">Push</option>
+          <option value="pull">Pull</option>
+          <option value="legs-glutes">Legs & Glutes</option>
+          <option value="cardio">Conditioning</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Equipment</label>
+        <select id="f-equipment">
+          <option value="">Any Equipment</option>
+          <option value="bodyweight">Bodyweight Only</option>
+          <option value="kettlebell">Kettlebell</option>
+          <option value="dumbbells">Dumbbells</option>
+          <option value="barbell">Barbell</option>
+          <option value="pullupbar">Pull-Up Bar</option>
+          <option value="resistancebands">Resistance Bands</option>
+          <option value="jumprope">Jump Rope</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Rx Only</label>
+        <select id="f-rx">
+          <option value="">All Results</option>
+          <option value="true">Rx Only</option>
+          <option value="false">Scaled Only</option>
+        </select>
+      </div>
+    </div>
+    <div class="filter-actions">
+      <button class="fbtn pri" onclick="applyFilters()">🔍 Search</button>
+      <button class="fbtn sec" onclick="resetFilters()">✕ Reset</button>
+    </div>
+  </div>
+
+  <div class="period-tabs">
+    <button class="period-tab active" data-period="week">This Week</button>
+    <button class="period-tab" data-period="month">This Month</button>
+    <button class="period-tab" data-period="all">All Time</button>
+  </div>
+
+  <div class="results-count" id="results-count"></div>
+
+  <div class="lb-table-wrap">
+    <table class="lb-table">
+      <thead>
+        <tr>
+          <th style="width:40px">Rank</th>
+          <th>Athlete</th>
+          <th>Workout</th>
+          <th>Score</th>
+          <th>Notes</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody id="lb-body"></tbody>
+    </table>
+  </div>
+  <div id="lb-empty" class="empty" style="display:none">
+    <div class="ei">🏋️</div>
+    <p>No results match your filters. Try broadening the search.</p>
+  </div>
+  <button class="load-more" id="load-more-btn" onclick="loadMore()" style="display:none">Load More Results</button>
+</div>
+</main>
+
+<script>
+Nav.init('leaderboard');
+
+let allResults = [];
+let filteredResults = [];
+let displayedCount = 0;
+const PAGE_SIZE = 25;
+let currentPeriod = 'week';
+
+// Build lookup map for benchmark slugs
+const benchmarkMap = {};
+if (typeof BENCHMARKS !== 'undefined') {
+  BENCHMARKS.forEach(b => { benchmarkMap[b.slug] = b; });
+}
+
+async function init() {
+  await loadStats();
+  await applyFilters();
+}
+
+async function loadStats() {
+  const results = await db.getGlobalLeaderboard({ period: 'all', limit: 1000 });
+  const athletes = new Set(results.map(r => r.username)).size;
+  const today = new Date().toISOString().split('T')[0];
+  const todayCount = results.filter(r => r.date === today).length;
+
+  // Most attempted workout
+  const wodCounts = {};
+  results.forEach(r => {
+    const key = r.benchmark_slug || r.workout_id;
+    if (key) wodCounts[key] = (wodCounts[key] || 0) + 1;
+  });
+  const topWod = Object.entries(wodCounts).sort((a,b) => b[1]-a[1])[0];
+  let topName = '—';
+  if (topWod) {
+    const bench = benchmarkMap[topWod[0]];
+    topName = bench ? bench.name : 'Custom';
+  }
+
+  document.getElementById('stat-athletes').textContent = athletes.toLocaleString();
+  document.getElementById('stat-results').textContent = results.length.toLocaleString();
+  document.getElementById('stat-top-wod').textContent = topName;
+  document.getElementById('stat-today').textContent = todayCount;
+}
+
+async function applyFilters() {
+  const search     = document.getElementById('f-search').value.trim().toLowerCase();
+  const type       = document.getElementById('f-type').value;
+  const format     = document.getElementById('f-format').value;
+  const difficulty = document.getElementById('f-difficulty').value;
+  const focus      = document.getElementById('f-focus').value;
+  const equipment  = document.getElementById('f-equipment').value;
+  const rx         = document.getElementById('f-rx').value;
+
+  document.getElementById('lb-body').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--mu)">Loading…</td></tr>';
+
+  const results = await db.getGlobalLeaderboard({ period: currentPeriod, limit: 500 });
+
+  filteredResults = results.filter(r => {
+    // Get workout metadata
+    const bench = r.benchmark_slug ? benchmarkMap[r.benchmark_slug] : null;
+    const wodTitle = bench ? bench.name : (r.workout_title || 'Custom Workout');
+    const wodFormat = bench ? bench.format : (r.workout_format || '');
+    const wodDiff   = bench ? bench.difficulty : (r.workout_level || '');
+    const wodFocus  = bench ? bench.body_focus : (r.workout_body_focus || '');
+    const wodEq     = bench ? (bench.equipment || []) : (r.workout_equipment || []);
+    const wodCat    = bench ? bench.category : 'user';
+
+    if (search) {
+      const haystack = [wodTitle, r.username, r.notes || '', r.score_display].join(' ').toLowerCase();
+      if (!haystack.includes(search)) return false;
+    }
+    if (type) {
+      if (type === 'user' && r.benchmark_slug) return false;
+      if (type !== 'user' && (!bench || bench.category !== type)) return false;
+    }
+    if (format && wodFormat !== format) return false;
+    if (difficulty && wodDiff !== difficulty) return false;
+    if (focus && wodFocus !== focus) return false;
+    if (equipment && !wodEq.includes(equipment)) return false;
+    if (rx === 'true' && !r.is_rx) return false;
+    if (rx === 'false' && r.is_rx) return false;
+    return true;
+  });
+
+  displayedCount = 0;
+  document.getElementById('lb-body').innerHTML = '';
+  renderRows();
+}
+
+function renderRows() {
+  const tbody = document.getElementById('lb-body');
+  const empty = document.getElementById('lb-empty');
+  const loadBtn = document.getElementById('load-more-btn');
+  const countEl = document.getElementById('results-count');
+
+  if (!filteredResults.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    loadBtn.style.display = 'none';
+    countEl.textContent = '';
+    return;
+  }
+  empty.style.display = 'none';
+
+  const slice = filteredResults.slice(displayedCount, displayedCount + PAGE_SIZE);
+  slice.forEach((r, i) => {
+    const rank = displayedCount + i + 1;
+    const rankClass = rank === 1 ? 'r1' : rank === 2 ? 'r2' : rank === 3 ? 'r3' : 'rn';
+    const bench = r.benchmark_slug ? benchmarkMap[r.benchmark_slug] : null;
+    const wodTitle = bench ? bench.name : (r.workout_title || 'Custom Workout');
+    const wodSlug = r.benchmark_slug || r.workout_id || '';
+    const catLabel = bench ? { girl:'Girl', hero:'Hero', benchmark:'Benchmark' }[bench.category] || '' : 'User WOD';
+    const catClass = bench ? `cat-${bench.category}` : 'cat-user';
+    const link = r.benchmark_slug
+      ? `/workouts/${r.benchmark_slug}`
+      : `/workout.html?slug=${r.workout_id}`;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="rank ${rankClass}">${rank}</span></td>
+      <td>
+        <div class="athlete">
+          <div class="ava">${r.username[0].toUpperCase()}</div>
+          <div class="athlete-name">${r.username}</div>
+        </div>
+      </td>
+      <td>
+        <a href="${link}" class="wod-link">${wodTitle}</a>
+        <div style="margin-top:3px"><span class="cat-chip ${catClass}">${catLabel}</span></div>
+      </td>
+      <td>
+        <div class="score-val">${r.score_display}</div>
+        ${r.is_rx ? '<span class="rx-badge">Rx</span>' : ''}
+      </td>
+      <td class="notes-cell" title="${r.notes||''}">${r.notes || '—'}</td>
+      <td style="font-size:12px;color:var(--mu);white-space:nowrap">${r.date || ''}</td>`;
+    tbody.appendChild(tr);
+  });
+
+  displayedCount += slice.length;
+  countEl.innerHTML = `Showing <strong>${displayedCount}</strong> of <strong>${filteredResults.length}</strong> results`;
+  loadBtn.style.display = displayedCount < filteredResults.length ? 'block' : 'none';
+}
+
+function loadMore() { renderRows(); }
+
+function resetFilters() {
+  ['f-search','f-type','f-format','f-difficulty','f-focus','f-equipment','f-rx'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el.tagName === 'INPUT') el.value = '';
+    else el.value = '';
+  });
+  applyFilters();
+}
+
+// Period tabs
+document.querySelectorAll('.period-tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.period-tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    currentPeriod = t.dataset.period;
+    applyFilters();
+  });
+});
+
+document.getElementById('f-search').addEventListener('keydown', e => {
+  if (e.key === 'Enter') applyFilters();
+});
+
+init();
+</script>
+</body>
+</html>

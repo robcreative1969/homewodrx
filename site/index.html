@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HomeWODrx — Every WOD. Every Athlete. One Platform.</title>
+  <meta name="description" content="HomeWODrx is the complete fitness platform for named benchmark workouts, AI WOD generation, and community leaderboards.">
+  <meta property="og:title" content="HomeWODrx — Every WOD. Every Athlete. One Platform.">
+  <meta property="og:description" content="Named benchmarks, AI WOD generator, and global leaderboards for home and garage gym athletes.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://homewodrx.com/">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/db.js"></script>
+  <script src="/js/benchmarks.js"></script>
+  <script src="/js/daily-wod.js"></script>
+  <script src="/js/nav.js"></script>
+  <style>
+  /* ── HOME PAGE STYLES ─────────────────────────────────────── */
+  .home-hero{padding:64px 20px 56px;text-align:center;background:linear-gradient(180deg,rgba(232,83,10,.06) 0%,transparent 100%);border-bottom:1px solid var(--bd)}
+  .home-hero h1{font-size:clamp(32px,5vw,52px);font-weight:900;line-height:1.1;margin-bottom:16px;letter-spacing:-.5px}
+  .home-hero h1 span{color:var(--or)}
+  .home-hero p{font-size:clamp(15px,2vw,18px);color:var(--mu);max-width:560px;margin:0 auto 28px;line-height:1.7}
+  .hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .btn-hero{padding:14px 28px;border-radius:10px;font-size:15px;font-weight:800;text-decoration:none;transition:all .2s;display:inline-block}
+  .btn-hero-pri{background:var(--or);color:#fff}
+  .btn-hero-pri:hover{background:var(--orl);transform:translateY(-2px);box-shadow:0 6px 20px rgba(232,83,10,.4)}
+  .btn-hero-sec{background:transparent;color:var(--tx);border:2px solid var(--bd)}
+  .btn-hero-sec:hover{border-color:var(--or);color:var(--orl)}
+
+  .home-container{max-width:1080px;margin:0 auto;padding:0 20px}
+  .home-section{padding:48px 0}
+  .home-section-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+  .home-section-hdr h2{font-size:22px;font-weight:900}
+  .view-all{font-size:13px;font-weight:700;color:var(--or);text-decoration:none}
+  .view-all:hover{color:var(--orl)}
+
+  /* TWO-COLUMN WOD ZONE */
+  .wod-zone{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:0}
+  @media(max-width:720px){.wod-zone{grid-template-columns:1fr}}
+
+  /* DAILY WOD CARD */
+  .daily-wod-card{background:linear-gradient(135deg,#1a1220 0%,var(--card) 100%);border:2px solid var(--or);border-radius:16px;overflow:hidden;position:relative}
+  .daily-wod-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--or),var(--orl))}
+  .wod-card-top{padding:20px 22px 16px;border-bottom:1px solid var(--bd)}
+  .wod-label{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .wod-label-dot{width:8px;height:8px;border-radius:50%;background:var(--or);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .wod-label-text{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--or)}
+  .wod-date{font-size:11px;color:var(--mu);margin-left:auto}
+  .wod-card-top h3{font-size:20px;font-weight:900;margin-bottom:6px}
+  .wod-card-meta{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700}
+  .chip-or{background:rgba(232,83,10,.2);color:var(--or);border:1px solid rgba(232,83,10,.4)}
+  .chip-mu{background:var(--dk2);color:var(--mu);border:1px solid var(--bd)}
+  .chip-gr{background:rgba(39,174,96,.2);color:#58d68d;border:1px solid rgba(39,174,96,.3)}
+  .wod-card-body{padding:16px 22px}
+  .wod-card-body table{width:100%;border-collapse:collapse;font-size:12px}
+  .wod-card-body tr td{padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+  .wod-card-body tr:last-child td{border-bottom:none}
+  .wod-card-body td:first-child{font-weight:700;color:var(--tx)}
+  .wod-card-body td:last-child{text-align:right;color:var(--or);font-weight:800}
+  .wod-card-footer{padding:14px 22px;border-top:1px solid var(--bd);display:flex;gap:8px}
+  .wod-footer-btn{flex:1;padding:10px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;transition:all .15s}
+  .wfb-pri{background:var(--or);color:#fff}
+  .wfb-pri:hover{background:var(--orl)}
+  .wfb-sec{background:var(--dk2);color:var(--tx);border:1px solid var(--bd)}
+  .wfb-sec:hover{border-color:var(--or);color:var(--orl)}
+
+  /* FEATURED WOD CARD */
+  .featured-wod-card{background:var(--card);border:1px solid var(--bd);border-radius:16px;overflow:hidden}
+  .feat-hdr{background:linear-gradient(135deg,rgba(232,83,10,.12),transparent);padding:20px 22px 16px;border-bottom:1px solid var(--bd)}
+  .feat-hdr h3{font-size:20px;font-weight:900;margin:10px 0 6px}
+
+  /* BENCHMARK GRID */
+  .bm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+  .bm-card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;text-decoration:none;color:var(--tx);transition:all .15s;display:block}
+  .bm-card:hover{border-color:var(--or);transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.3)}
+  .bm-card h4{font-size:17px;font-weight:900;margin-bottom:6px}
+  .bm-card .bm-cat{font-size:11px;color:var(--mu);margin-bottom:10px}
+  .bm-card .bm-meta{font-size:12px;color:var(--mu);margin-bottom:10px}
+  .bm-card .bm-tags{display:flex;gap:5px;flex-wrap:wrap}
+
+  /* ACTIVITY FEED */
+  .activity-list{display:flex;flex-direction:column;gap:10px}
+  .activity-item{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:14px}
+  .act-avatar{width:38px;height:38px;border-radius:50%;background:var(--or);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0}
+  .act-info{flex:1}
+  .act-info strong{font-size:14px;font-weight:700}
+  .act-info .act-wod{font-size:13px;color:var(--mu)}
+  .act-score{font-size:18px;font-weight:900;color:var(--or)}
+  .act-date{font-size:11px;color:var(--mu);margin-left:8px}
+
+  /* FEATURE CARDS */
+  .features-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+  .feature-card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:24px}
+  .feature-card .ficon{font-size:32px;margin-bottom:12px}
+  .feature-card h3{font-size:16px;font-weight:800;margin-bottom:8px}
+  .feature-card p{font-size:13px;color:var(--mu);line-height:1.7}
+  .feature-card a{color:var(--or);text-decoration:none;font-weight:700;font-size:13px}
+  .feature-card a:hover{color:var(--orl)}
+
+  /* LOADING SKELETON */
+  .skel{background:linear-gradient(90deg,var(--bd) 25%,rgba(255,255,255,.05) 50%,var(--bd) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px}
+  @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  </style>
+</head>
+<body data-nav-init="true" data-active-page="home">
+
+<!-- HERO -->
+<section class="home-hero">
+  <h1>Every WOD.<br><span>Every Athlete.</span> One Platform.</h1>
+  <p>Track your benchmark PRs, generate AI-powered custom workouts, and compete on the global leaderboard. Built for home and garage gym athletes.</p>
+  <div class="hero-ctas">
+    <a href="/generator.html" class="btn-hero btn-hero-pri">⚡ Generate a Workout</a>
+    <a href="/workouts.html" class="btn-hero btn-hero-sec">Browse Benchmarks →</a>
+  </div>
+</section>
+
+<main>
+<div class="home-container">
+
+  <!-- DAILY WOD + FEATURED WOD -->
+  <div class="home-section">
+    <div class="home-section-hdr">
+      <h2>Today's Workouts</h2>
+      <span style="font-size:13px;color:var(--mu)" id="today-date-display"></span>
+    </div>
+    <div class="wod-zone">
+
+      <!-- Daily WOD (auto-generated) -->
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Daily WOD — Auto-Generated</div>
+        <div class="daily-wod-card" id="daily-wod-card">
+          <div class="wod-card-top">
+            <div class="wod-label">
+              <div class="wod-label-dot"></div>
+              <span class="wod-label-text">Live Now</span>
+              <span class="wod-date" id="wod-date-str"></span>
+            </div>
+            <div class="skel" style="height:24px;width:60%;margin-bottom:8px" id="dwod-title-skel"></div>
+            <h3 id="dwod-title" style="display:none"></h3>
+            <div class="wod-card-meta" id="dwod-meta"></div>
+          </div>
+          <div class="wod-card-body">
+            <table id="dwod-movements">
+              <tr><td><div class="skel" style="height:14px;width:120px"></div></td><td><div class="skel" style="height:14px;width:40px;margin-left:auto"></div></td></tr>
+              <tr><td><div class="skel" style="height:14px;width:100px;margin-top:6px"></div></td><td></td></tr>
+              <tr><td><div class="skel" style="height:14px;width:140px;margin-top:6px"></div></td><td></td></tr>
+            </table>
+            <div style="margin-top:12px;font-size:11px;color:var(--mu)" id="dwod-scoring"></div>
+          </div>
+          <div class="wod-card-footer">
+            <a href="/generator.html" class="wod-footer-btn wfb-pri">📝 Log Result</a>
+            <a href="/generator.html" class="wod-footer-btn wfb-sec">Full View →</a>
+          </div>
+        </div>
+        <p style="font-size:11px;color:var(--mu);margin-top:8px;text-align:center">🔄 Auto-regenerates daily · same for all visitors · <a href="/admin.html" style="color:var(--mu)">admin override</a></p>
+      </div>
+
+      <!-- Featured WOD (curated) -->
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Featured WOD — Curated Pick</div>
+        <div class="featured-wod-card" id="featured-wod-card">
+          <div class="feat-hdr">
+            <div class="wod-label">
+              <span class="chip chip-or">⭐ Featured</span>
+            </div>
+            <div class="skel" style="height:24px;width:55%;margin:10px 0 6px" id="feat-title-skel"></div>
+            <h3 id="feat-title" style="display:none"></h3>
+            <div class="wod-card-meta" id="feat-meta"></div>
+          </div>
+          <div id="feat-body" style="padding:16px 22px">
+            <div class="skel" style="height:14px;width:90%;margin-bottom:8px"></div>
+            <div class="skel" style="height:14px;width:75%;margin-bottom:8px"></div>
+            <div class="skel" style="height:14px;width:80%"></div>
+          </div>
+          <div class="wod-card-footer">
+            <a id="feat-link" href="/workouts.html" class="wod-footer-btn wfb-pri">View Workout</a>
+            <a href="/leaderboard.html" class="wod-footer-btn wfb-sec">Leaderboard →</a>
+          </div>
+        </div>
+        <p style="font-size:11px;color:var(--mu);margin-top:8px;text-align:center">✋ Manually curated · <a href="/admin.html" style="color:var(--mu)">admin panel</a> · community nominations welcome</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- NAMED BENCHMARKS -->
+  <div class="home-section" style="border-top:1px solid var(--bd)">
+    <div class="home-section-hdr">
+      <h2>Named Benchmarks</h2>
+      <a href="/workouts.html" class="view-all">View all 53+ →</a>
+    </div>
+    <div class="bm-grid" id="benchmarks-grid">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
+  <!-- COMMUNITY ACTIVITY -->
+  <div class="home-section" style="border-top:1px solid var(--bd)">
+    <div class="home-section-hdr">
+      <h2>Community Activity</h2>
+      <a href="/leaderboard.html" class="view-all">Full Leaderboard →</a>
+    </div>
+    <div class="activity-list" id="activity-list">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
+  <!-- PLATFORM FEATURES -->
+  <div class="home-section" style="border-top:1px solid var(--bd)">
+    <div class="home-section-hdr">
+      <h2>Everything You Need</h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="ficon">📅</div>
+        <h3>Daily WOD</h3>
+        <p>A fresh, auto-generated workout every day — same for every visitor. Deterministic algorithm means no two days are the same. <a href="/generator.html">Try it today →</a></p>
+      </div>
+      <div class="feature-card">
+        <div class="ficon">⚡</div>
+        <h3>AI WOD Generator</h3>
+        <p>Enter your equipment, experience level, and available time. Get a custom workout built just for you in seconds. <a href="/generator.html">Generate a WOD →</a></p>
+      </div>
+      <div class="feature-card">
+        <div class="ficon">📖</div>
+        <h3>53+ Named Benchmarks</h3>
+        <p>Complete database of The Girls, Hero WODs, and benchmark workouts with movement guides, tips, and community leaderboards. <a href="/workouts.html">Browse all →</a></p>
+      </div>
+      <div class="feature-card">
+        <div class="ficon">🏆</div>
+        <h3>Global Leaderboard</h3>
+        <p>See how you stack up against the community. Filter by workout, difficulty, equipment, and time period. <a href="/leaderboard.html">Check standings →</a></p>
+      </div>
+      <div class="feature-card">
+        <div class="ficon">🌍</div>
+        <h3>Community Workouts</h3>
+        <p>Share your custom WODs with the community. Others can do your workout, log results, and compete on the leaderboard. <a href="/generator.html">Share a WOD →</a></p>
+      </div>
+      <div class="feature-card">
+        <div class="ficon">👤</div>
+        <h3>Athlete Profiles</h3>
+        <p>Track your results, personal records, and workout history. Build your profile and show the community what you're made of. <a href="/generator.html">Get started →</a></p>
+      </div>
+    </div>
+  </div>
+
+</div>
+</main>
+
+<!-- FOOTER -->
+<footer style="border-top:1px solid var(--bd);padding:40px 20px;margin-top:40px">
+  <div style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:32px">
+    <div>
+      <div style="font-size:18px;font-weight:900;margin-bottom:12px">⚡ HomeWODrx</div>
+      <p style="font-size:13px;color:var(--mu);line-height:1.7">The complete platform for home and garage gym athletes.</p>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Workouts</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <a href="/workouts.html" style="color:var(--tx);font-size:13px;text-decoration:none">Named Benchmarks</a>
+        <a href="/generator.html" style="color:var(--tx);font-size:13px;text-decoration:none">WOD Generator</a>
+        <a href="/generator.html" style="color:var(--tx);font-size:13px;text-decoration:none">Community WODs</a>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Community</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <a href="/leaderboard.html" style="color:var(--tx);font-size:13px;text-decoration:none">Leaderboard</a>
+        <a href="/generator.html" style="color:var(--tx);font-size:13px;text-decoration:none">Log a Result</a>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Account</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <a href="/generator.html" style="color:var(--tx);font-size:13px;text-decoration:none">Sign Up Free</a>
+        <a href="/generator.html" style="color:var(--tx);font-size:13px;text-decoration:none">Log In</a>
+        <a href="/admin.html" style="color:var(--mu);font-size:12px;text-decoration:none">Admin</a>
+      </div>
+    </div>
+  </div>
+  <div style="max-width:1080px;margin:32px auto 0;padding-top:20px;border-top:1px solid var(--bd);text-align:center;font-size:12px;color:var(--mu)">
+    &copy; 2026 HomeWODrx &middot; Built for athletes, by athletes. &middot; Named benchmark workouts are common knowledge in the fitness community.
+  </div>
+</footer>
+
+<script>
+// Inline movement DB for DailyWOD (small version for index)
+const MOVEMENT_DB = {
+  bodyweight:[
+    {name:"Air Squats",b:[15,20],i:[20,25],a:[25,30],tags:["lower"]},
+    {name:"Push-Ups",b:[8,12],i:[15,20],a:[20,30],tags:["push"]},
+    {name:"Sit-Ups",b:[15,20],i:[20,25],a:[25,30],tags:["core"]},
+    {name:"Burpees",b:[5,8],i:[10,12],a:[15,20],tags:["full","cardio"]},
+    {name:"Lunges",b:[10,12],i:[16,20],a:[20,24],tags:["lower"]},
+    {name:"Mountain Climbers",b:[16,20],i:[24,30],a:[30,40],tags:["core","cardio"]},
+    {name:"Jump Squats",b:[8,10],i:[12,15],a:[15,20],tags:["lower","cardio"]},
+    {name:"Glute Bridges",b:[15,20],i:[20,25],a:[25,30],tags:["lower","legs-glutes"]},
+    {name:"High Knees",b:[30],i:[40],a:[50],tags:["cardio"]},
+    {name:"V-Ups",b:[8,10],i:[12,15],a:[15,20],tags:["core"]},
+  ],
+  kettlebell:[
+    {name:"Kettlebell Swings",b:[10,15],i:[15,20],a:[20,30],tags:["full","lower","cardio"]},
+    {name:"Goblet Squats",b:[10,12],i:[12,15],a:[15,20],tags:["lower"]},
+  ],
+  dumbbells:[
+    {name:"DB Thrusters",b:[8,10],i:[12,15],a:[15,20],tags:["full","push"]},
+    {name:"DB Bent-Over Rows",b:[10,12],i:[12,15],a:[12,15],tags:["pull"]},
+  ]
+};
+
+async function initHomepage() {
+  const today = new Date();
+  const dateStr = today.toISOString().split('T')[0];
+  const dayName = today.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+
+  document.getElementById('today-date-display').textContent = dayName;
+  document.getElementById('wod-date-str').textContent = dateStr;
+
+  // ── DAILY WOD ──────────────────────────────────────────────
+  const wod = await DailyWOD.generate(dateStr);
+  renderDailyWOD(wod);
+
+  // ── FEATURED WOD ───────────────────────────────────────────
+  const featured = await db.getFeatured();
+  renderFeaturedWOD(featured);
+
+  // ── BENCHMARK PREVIEW ─────────────────────────────────────
+  renderBenchmarkGrid();
+
+  // ── COMMUNITY ACTIVITY ────────────────────────────────────
+  await renderActivity();
+}
+
+function renderDailyWOD(wod) {
+  document.getElementById('dwod-title-skel').style.display = 'none';
+  document.getElementById('dwod-title').style.display = 'block';
+  document.getElementById('dwod-title').textContent = wod.title;
+
+  const meta = document.getElementById('dwod-meta');
+  meta.innerHTML = `
+    <span class="chip chip-or">${escHtml(wod.format||'AMRAP')}</span>
+    <span class="chip chip-mu">${cap(wod.difficulty||'intermediate')}</span>
+    <span class="chip chip-mu">${wod.duration||20} min</span>
+    ${wod.isManual ? '<span class="chip chip-gr">Curated</span>' : '<span class="chip chip-mu">Auto</span>'}`;
+
+  const rows = wod.rows || [];
+  document.getElementById('dwod-movements').innerHTML = rows.slice(0,5).map(r => `
+    <tr>
+      <td>${escHtml(r.movement||r.name||'')}</td>
+      <td>${escHtml(String(r.reps||''))}</td>
+    </tr>`).join('') + (rows.length > 5 ? `<tr><td colspan="2" style="color:var(--mu);font-size:11px">+${rows.length-5} more</td></tr>` : '');
+
+  document.getElementById('dwod-scoring').textContent = wod.scoring ? '📊 ' + wod.scoring : '';
+}
+
+function renderFeaturedWOD(featured) {
+  const skelEl = document.getElementById('feat-title-skel');
+  const titleEl = document.getElementById('feat-title');
+  const metaEl = document.getElementById('feat-meta');
+  const bodyEl = document.getElementById('feat-body');
+  const linkEl = document.getElementById('feat-link');
+
+  skelEl.style.display = 'none';
+  titleEl.style.display = 'block';
+
+  if (featured && featured.benchmark_slug) {
+    const bm = BENCHMARKS.find(b => b.slug === featured.benchmark_slug);
+    if (bm) {
+      titleEl.textContent = bm.name;
+      metaEl.innerHTML = `
+        <span class="chip chip-or">${escHtml(bm.format||'')}</span>
+        <span class="chip chip-mu">${cap(bm.difficulty||'intermediate')}</span>
+        <span class="chip chip-mu">${escHtml(bm.duration_estimate||'')}</span>
+        <span class="chip chip-mu">${escHtml(bm.category==='girl'?'The Girls':bm.category==='hero'?'Hero WOD':'Benchmark')}</span>`;
+      bodyEl.innerHTML = `<p style="font-size:13px;color:var(--mu);line-height:1.7">${escHtml(bm.description||'').slice(0,160)}…</p>
+        <div style="margin-top:12px;font-size:12px;color:var(--mu)">
+          ${(bm.movements||[]).slice(0,3).map(m => `<div style="padding:4px 0">• <strong style="color:var(--tx)">${escHtml(m.name)}</strong> <span style="color:var(--or)">${escHtml(String(m.reps||''))}</span></div>`).join('')}
+          ${bm.movements?.length > 3 ? `<div style="color:var(--mu);font-size:11px;margin-top:4px">+${bm.movements.length-3} more movements</div>` : ''}
+        </div>`;
+      linkEl.href = `/workouts/${bm.slug}`;
+      return;
+    }
+  }
+
+  // Fallback
+  titleEl.textContent = 'Cindy';
+  metaEl.innerHTML = `<span class="chip chip-or">AMRAP</span><span class="chip chip-mu">20 min</span><span class="chip chip-mu">The Girls</span>`;
+  bodyEl.innerHTML = `<p style="font-size:13px;color:var(--mu)">As many rounds as possible in 20 minutes of: 5 Pull-Ups, 10 Push-Ups, 15 Air Squats. A classic benchmark for endurance and bodyweight efficiency.</p>`;
+  linkEl.href = '/workouts/cindy';
+}
+
+function renderBenchmarkGrid() {
+  const grid = document.getElementById('benchmarks-grid');
+  const picks = [
+    ...BENCHMARKS.filter(b => b.category === 'girl').slice(0,3),
+    ...BENCHMARKS.filter(b => b.category === 'hero').slice(0,3)
+  ].slice(0, 6);
+
+  grid.innerHTML = picks.map(b => `
+    <a class="bm-card" href="/workouts/${b.slug}">
+      <h4>${escHtml(b.name)}</h4>
+      <div class="bm-cat">${b.category==='girl'?'👧 The Girls':b.category==='hero'?'🦸 Hero WOD':'⚡ Benchmark'}</div>
+      <div class="bm-meta">${escHtml(b.format||'')} · ${escHtml(b.duration_estimate||'')}</div>
+      <div class="bm-tags">
+        <span class="chip chip-or" style="font-size:9px">${cap(b.difficulty||'intermediate')}</span>
+        <span class="chip chip-mu" style="font-size:9px">${cap((b.body_focus||'full-body').replace('-',' '))}</span>
+      </div>
+    </a>`).join('');
+}
+
+async function renderActivity() {
+  const results = await db.getResults({ limit: 5 });
+  const list = document.getElementById('activity-list');
+
+  if (!results?.length) {
+    list.innerHTML = `<div style="text-align:center;padding:32px;color:var(--mu);font-size:14px">No results logged yet. Be the first to log a workout!</div>`;
+    return;
+  }
+
+  list.innerHTML = results.map(r => {
+    const workoutName = r.benchmark_slug
+      ? (BENCHMARKS.find(b => b.slug === r.benchmark_slug)?.name || r.benchmark_slug.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase()))
+      : 'Community WOD';
+    const initial = (r.username||'?')[0].toUpperCase();
+    const colors = ['#E8530A','#FF6B35','#c44400','#e67e22','#d35400'];
+    const color = colors[initial.charCodeAt(0) % colors.length];
+    return `<div class="activity-item">
+      <a href="/u/${encodeURIComponent(r.username||'')}" style="text-decoration:none">
+        <div class="act-avatar" style="background:${color}">${initial}</div>
+      </a>
+      <div class="act-info">
+        <strong><a href="/u/${encodeURIComponent(r.username||'')}" style="color:var(--tx);text-decoration:none">${escHtml(r.username||'athlete')}</a></strong>
+        <div class="act-wod">completed <a href="/workouts/${encodeURIComponent(r.benchmark_slug||'')}" style="color:var(--orl);text-decoration:none">${escHtml(workoutName)}</a></div>
+      </div>
+      <div>
+        <div class="act-score">${escHtml(r.score_display||r.score||'')}</div>
+        <div class="act-date">${formatDate(r.date||r.created_at)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function formatDate(d) {
+  if (!d) return '';
+  try { return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+  catch(e) { return d; }
+}
+
+document.addEventListener('DOMContentLoaded', initHomepage);
+</script>
+</body>
+</html>
