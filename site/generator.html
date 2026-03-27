@@ -46,8 +46,8 @@
 .slider-row{display:flex;align-items:center;gap:14px;margin-top:8px}
 .sval{font-size:28px;font-weight:900;color:var(--or);min-width:70px;text-align:center}
 .sval small{font-size:11px;color:var(--mu);font-weight:400;display:block}
-input[type=range]{flex:1;-webkit-appearance:none;height:5px;background:var(--bd);border-radius:3px;outline:none}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;background:var(--or);border-radius:50%;cursor:pointer}
+input[type=range]{flex:1;-webkit-appearance:none;height:12px;background:var(--bd);border-radius:6px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;background:var(--or);border-radius:50%;cursor:pointer}
 
 /* generate button */
 .gen-btn{display:block;width:100%;margin-top:24px;padding:16px;background:var(--or);color:#fff;font-size:16px;font-weight:800;border:none;border-radius:var(--r);cursor:pointer;letter-spacing:.3px;transition:all .2s}
@@ -283,7 +283,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;heigh
     <div class="stitle">How long do you have?</div>
     <div class="slider-row">
       <div class="sval"><span id="dur-val">20</span><small>min</small></div>
-      <input type="range" id="dur-slider" min="10" max="60" step="5" value="20" oninput="document.getElementById('dur-val').textContent=this.value">
+      <div style="flex:1">
+        <input type="range" id="dur-slider" min="10" max="60" step="5" value="20" style="width:100%" oninput="document.getElementById('dur-val').textContent=this.value">
+        <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:0.75rem;color:var(--text-muted,#888);padding:0 2px">
+          <span>10 min</span><span>60 min</span>
+        </div>
+      </div>
     </div>
   </div>
 
