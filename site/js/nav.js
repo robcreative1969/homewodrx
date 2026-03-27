@@ -41,6 +41,7 @@ const Nav = {
     const navLinks = [
       { text: 'Home', href: '/', page: 'home' },
       { text: 'Workouts', href: '/workouts.html', page: 'workouts' },
+      { text: 'Movements', href: '/movements.html', page: 'movements' },
       { text: 'Generator', href: '/generator.html', page: 'generator' },
       { text: 'Leaderboard', href: '/leaderboard.html', page: 'leaderboard' }
     ];
