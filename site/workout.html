@@ -5,397 +5,310 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Workout - HomeWODrx</title>
   <meta name="description" content="View detailed workout information and log your results.">
-
   <link rel="stylesheet" href="/css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="/js/config.js"></script>
   <script src="/js/db.js"></script>
   <script src="/js/benchmarks.js"></script>
   <script src="/js/nav.js"></script>
+  <style>
+    .movement-link {
+      color: var(--orange, #f97316);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .movement-link:hover {
+      text-decoration: underline;
+    }
+    .equipment-chip {
+      display: inline-block;
+      background: var(--dark-surface, #1e1e1e);
+      border: 1px solid var(--dark-border, #333);
+      border-radius: 4px;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.8rem;
+      margin: 0.2rem 0.2rem 0.2rem 0;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.2s;
+    }
+    .equipment-chip:hover {
+      border-color: var(--orange, #f97316);
+      color: var(--orange, #f97316);
+    }
+    .equipment-section {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--dark-border, #333);
+    }
+  </style>
 </head>
 <body data-nav-init="true" data-active-page="workouts">
-  <main class="container">
-    <div id="workout-header" class="loading">
-      <div class="spinner"></div>
-    </div>
+<main class="container">
 
-    <!-- WORKOUT DETAILS -->
-    <div id="workout-details" style="display: none;">
-      <section class="section">
-        <div id="description-section"></div>
-      </section>
-
-      <section class="section">
-        <div class="section-title">
-          <h2>Movements</h2>
-        </div>
-        <div id="movements-table"></div>
-      </section>
-
-      <section class="section">
-        <div class="section-title">
-          <h2>Log Your Result</h2>
-        </div>
-        <div id="log-result-section"></div>
-      </section>
-
-      <section class="section">
-        <div class="section-title">
-          <h2>Leaderboard</h2>
-        </div>
-        <div class="filter-chips" id="leaderboard-filters">
-          <button class="chip active" data-period="week">This Week</button>
-          <button class="chip" data-period="month">This Month</button>
-          <button class="chip" data-period="all">All Time</button>
-        </div>
-        <div id="leaderboard-table" style="margin-top: 1.5rem;"></div>
-      </section>
-
-      <section class="section">
-        <div class="section-title">
-          <h2>Related Workouts</h2>
-        </div>
-        <div id="related-workouts" class="grid grid-cols-3"></div>
-      </section>
-    </div>
-  </main>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-container">
-      <div class="footer-content">
-        <div class="footer-section">
-          <h4>HomeWODrx</h4>
-          <p>The platform for every athlete.</p>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2025 HomeWODrx. Built for athletes, by athletes.</p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- RESULT MODAL -->
-  <div class="modal-overlay" id="result-modal">
-    <div class="modal">
-      <div class="modal-header">
-        <h2 class="modal-title">Log Your Result</h2>
-        <button class="modal-close">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label>Your Score</label>
-          <input type="text" id="result-score" placeholder="e.g., 4:32 or 15 rounds">
-        </div>
-        <div class="form-group">
-          <label>Notes (Optional)</label>
-          <textarea id="result-notes" placeholder="Scaled weight? Modifications? How did it feel?"></textarea>
-        </div>
-        <div class="form-group">
-          <label>
-            <input type="checkbox" id="result-rx"> Completed RX (Prescribed weight)
-          </label>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="closeResultModal()">Cancel</button>
-        <button class="btn btn-primary" onclick="submitResult()">Log Result</button>
-      </div>
-    </div>
+  <div id="workout-header" class="loading">
+    <div class="spinner"></div>
   </div>
 
-  <script>
-    let currentWorkout = null;
-    let currentResults = [];
-    let leaderboardPeriod = 'week';
+  <!-- WORKOUT DETAILS -->
+  <div id="workout-details" style="display: none;">
+    <section class="section">
+      <div id="description-section"></div>
+    </section>
 
-    async function loadWorkout() {
-      const params = new URLSearchParams(window.location.search);
-      const slug = params.get('slug');
-      const id = params.get('id');
+    <section class="section">
+      <div class="section-title">
+        <h2>Movements</h2>
+      </div>
+      <div id="movements-table"></div>
+    </section>
 
-      try {
-        if (slug) {
-          currentWorkout = BENCHMARKS.find(b => b.slug === slug);
-          if (!currentWorkout) {
-            document.getElementById('workout-header').innerHTML = '<p class="text-muted">Workout not found.</p>';
-            return;
-          }
-        } else if (id) {
-          currentWorkout = await db.getWorkoutById(id);
-          if (!currentWorkout) {
-            document.getElementById('workout-header').innerHTML = '<p class="text-muted">Workout not found.</p>';
-            return;
-          }
-        }
+    <section class="section">
+      <div class="section-title">
+        <h2>Log Your Result</h2>
+      </div>
+      <div id="log-result-section"></div>
+    </section>
 
-        renderWorkoutHeader();
-        renderWorkoutDetails();
-        loadLeaderboard();
+    <section class="section">
+      <div class="section-title">
+        <h2>Leaderboard</h2>
+      </div>
+      <div class="filter-chips" id="leaderboard-filters">
+        <button class="chip active" data-period="week">This Week</button>
+        <button class="chip" data-period="month">This Month</button>
+        <button class="chip" data-period="all">All Time</button>
+      </div>
+      <div id="leaderboard-table" style="margin-top: 1.5rem;"></div>
+    </section>
 
-        // Update page title
-        document.title = `${currentWorkout.name} - HomeWODrx`;
-      } catch (error) {
-        console.error('Error loading workout:', error);
-        document.getElementById('workout-header').innerHTML = '<p class="text-muted">Error loading workout.</p>';
+    <section class="section">
+      <div class="section-title">
+        <h2>Related Workouts</h2>
+      </div>
+      <div id="related-workouts" class="grid grid-cols-3"></div>
+    </section>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-container">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>HomeWODrx</h4>
+        <p>The platform for every athlete.</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 HomeWODrx. Built for athletes, by athletes.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- RESULT MODAL -->
+<div class="modal-overlay" id="result-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">Log Your Result</h2>
+      <button class="modal-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Your Score</label>
+        <input type="text" id="result-score" placeholder="e.g., 4:32 or 15 rounds">
+      </div>
+      <div class="form-group">
+        <label>Notes (Optional)</label>
+        <textarea id="result-notes" placeholder="Scaled weight? Modifications? How did it feel?"></textarea>
+      </div>
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="result-rx">
+          Completed RX (Prescribed weight)
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeResultModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitResult()">Log Result</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentWorkout = null;
+  let currentResults = [];
+  let leaderboardPeriod = 'week';
+
+  const AFFILIATE_TAG = 'homewodrx-20';
+
+  const EQUPMENT_LINKS = {
+    'barbell': `https://www.amazon.com/s?k=barbell&tag=${AFFILIATE_TAG}`,
+    'pull-up bar': `https://www.amazon.com/s?k=pull-up+bar&tag=${AFFILIATE_TAG}`,
+    'pull up bar': `https://www.amazon.com/s?k=pull-up+bar&tag=${AFFILIATE_TAG}`,
+    'rings': `https://www.amazon.com/s?k=gymnastics+rings&tag=${AFFILIATE_TAG}`,
+    'gymnastic rings': `https://www.amazon.com/s?k=gymnastics+rings&tag=${AFFILIATE_TAG}`,
+    'kettlebell': `https://www.amazon.com/s?k=kettlebell&tag=${AFFILIATE_TAG}`,
+    'jump rope': `https://www.amazon.com/s?k=crossfit+jump+rope&tag=${AFFILIATE_TAG}`,
+    'box': `https://www.amazon.com/s?k=plyo+baz&tag=${AFFILIATE_TAG}`,
+    'kettlebell': `https://www.amazon.com/s?k=kettlebell&tag=${AFFILIATE_TAG}`,
+    'dumbbell': `https://www.amazon.com/s?k=dumbbell&tag=${AFFILIATE_TAG}`,
+    'medicine ball': `https://www.amazon.com/s?k=medicine+ball&tag=${AFFILIATE_TAG}`,
+    'wall ball': `https://www.amazon.com/s?k=wall+ball&tag=${AFFILIATE_TAG}`,
+    'rower': `https://www.amazon.com/s?k=rowing+machine&tag=${AFFILIATE_TAG}`,
+    'assault bike': `https://www.amazon.com/s?k=assault+bike&tag=${AFFILIATE_TAG}`,
+    'rope': `https://www.amazon.com/s?k=climbing+rope+crossfit&tag=${AFFILIATE_TAG}`,
+    'climbing rope': `https://www.amazon.com/s?k=climbing+rope+crossfit&tag=${AFFILIATE_TAG}`,
+    'weight vest': `https://www.amazon.com/s?k=weight+vest&tag=${AFFILIATE_TAG}`,
+  };
+
+  function slugify(name) {
+    return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  }
+
+  function getEquipmentLink(equipment) {
+    const key = equipment.toLowerCase().trim();
+    return EQUIPMENT_LINKS[key] || `https://www.amazon.com/s?k=${encodeURIComponent(equipment)}&tag=${AFFILIATE_TAG}`;
+  }
+
+  async function loadWorkout() {
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get('slug');
+    const id = params.get('id');
+    try {
+      if (slug) {
+        currentWorkout = BECHMARKS.find(b => b.slug === slug);
+        if (!currentWorkout) { document.getElementById('workout-header').innerHTML = '<p class="text-muted">Workout not found.</p>'; return; }
+      } else if (id) {
+        currentWorkout = await db.getWorkoutById(id);
+        if (!currentWorkout) { document.getElementById('workout-header').innerHTML = '<p class="text-muted">Workout not found.</p>'; return; }
       }
+      renderWorkoutHeader(); renderWorkoutDetails(); renderRelatedWorkouts(); loadLeaderboard();
+      document.title = `${currentWorkout.name} - HomeWODrx`;
+      document.querySelector('meta[name="description"]').setAttribute('content', `${currentWorkout.name}: ${currentWorkout.description ? currentWorkout.description.substring(0,155) : 'View this CrossFit workout on HomeWODrx.'}`);
+      document.getElementById('workout-details').style.display = '';
+    } catch (error) {
+      console.error('Error loading workout:', error);
+      document.getElementById('workout-header').innerHTML = '<p class="text-muted">Error loading workout.</p>';
     }
+  }
 
-    function renderWorkoutHeader() {
-      const w = currentWorkout;
-      const isBenchmark = w.category && ['girl', 'hero', 'benchmark'].includes(w.category);
-      const createdBy = w.username ? `Created by ${w.username}` : '';
-
-      document.getElementById('workout-header').innerHTML = `
-        <div style="padding: 2rem 0; margin-bottom: 2rem; border-bottom: 1px solid var(--dark-border);">
-          <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem;">
-            <div>
-              <h1 style="margin-bottom: 0.5rem;">${w.name}</h1>
-              <p class="text-muted">${isBenchmark ? (w.category === 'girl' ? '👧 The Girls' : w.category === 'hero' ? '🦸 Hero WOD' : '⚡ Benchmark') : '🏋️ User WOD'} ${createdBy ? '• ' + createdBy : ''}</p>
-            </div>
-          </div>
-          <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
-            <span class="badge badge-orange">${w.format}</span>
-            <span class="badge badge-orange">${w.duration_estimate}</span>
-            <span class="badge badge-orange">${w.difficulty}</span>
-            <span class="badge badge-orange">${w.body_focus}</span>
-          </div>
-          <div style="display: flex; gap: 1rem;">
-            <button class="btn btn-primary" onclick="openResultModal()">Log Your Result</button>
-            ${isBenchmark ? `<a href="/workouts.html" class="btn btn-secondary">Browse Similar</a>` : ''}
-          </div>
+  function renderWorkoutHeader() {
+    const w = currentWorkout;
+    const isBenchmark = w.category && ['girl', 'hero', 'benchmark'].includes(w.category);
+    const createdBy = w.username ? `Created by ${w.username}` : '';
+    document.getElementById('workout-header').innerHTML = `
+      <div style="padding: 2rem 0; margin-bottom: 2rem; border-bottom: 1px solid var(--dark-border);">
+        <h1>${w.name}</h1>
+        <p class="text-muted">${isBenchmark ? (w.category==='girl'?'ð§ The Girls':w.category==='hero'?'ð¦¸ Hero WOD':'â© Benchmark'):'ðï¸ User WOD'} ${createdBy ? 'â¢ '+createdBy:''}</p>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem;">
+          <span class="badge badge-orange">${w.format}</span>
+          <span class="badge badge-orange">${w.duration_estimate}</span>
+          <span class="badge badge-orange">${w.difficulty}</span>
+          <span class="badge badge-orange">${w.body_focus}</span>
         </div>
-      `;
+        <div style="display:flex;gap:1rem;">
+          <button class="btn btn-primary" onclick="openResultModal()">Log Your Result</button>
+          ${isBenchmark ? `<a href="/workouts.html" class="btn btn-secondary">Browse Similar</a>` : ''}
+        </div>
+      </div>`;
+  }
+
+  function renderWorkoutDetails() {
+    const w = currentWorkout;
+    document.getElementById('description-section').innerHTML = `
+      <p>${w.description}</p>
+      ${w.scoring_notes ? `<div style="margin-top:1.5rem;"><h4>Scoring Guide</h4><p>${w.scoring_notes}</p></div>` : ''}
+      ${w.tips&&w.tips.length>0?`<div style="margin-top:1.5rem;"><h4>Tips</h4><ul style="margin-left:1.5rem;">${w.tips.map(t=>`<li>${t}</li>`).join('')}</ul></div>`:''}`;
+    if (w.movements && w.movements.length > 0) {
+      document.getElementById('movements-table').innerHTML = `
+        <table><thead><tr><th>Movement</th><th>Reps / Duration</th><th>Rx (Men / Women)</th><th>Tip</th></tr></thead><tbody>
+          ${w.movements.map(m => `<tr><td><a href="/movement.html?slug=${slugify(m.name)}" class="movement-link">${m.name}</a></td><td>${m.reps||'â'}</td><td><span class="text-muted">${m.rx_men||'''} / ${m.rx_women||''}</span></td><td><span class="text-muted" style="font-size:0.9rem;">${m.tip||'"}</span></td></tr>`).join('')}
+        </tbody></table>`;
     }
-
-    function renderWorkoutDetails() {
-      const w = currentWorkout;
-
-      // Description
-      document.getElementById('description-section').innerHTML = `
-        <p>${w.description}</p>
-        ${w.scoring_notes ? `<div style="margin-top: 1.5rem;"><h4>Scoring Guide</h4><p>${w.scoring_notes}</p></div>` : ''}
-        ${w.tips && w.tips.length > 0 ? `
-          <div style="margin-top: 1.5rem;"><h4>Tips</h4><ul style="margin-left: 1.5rem;">${w.tips.map(t => `<li>${t}</li>`).join('')}</ul></div>
-        ` : ''}
-      `;
-
-      // Movements table
-      if (w.movements && w.movements.length > 0) {
-        document.getElementById('movements-table').innerHTML = `
-          <table>
-            <thead>
-              <tr>
-                <th>Movement</th>
-                <th>Reps / Duration</th>
-                <th>Rx (Men/Women)</th>
-                <th>Tip</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${w.movements.map(m => `
-                <tr>
-                  <td><strong>${m.name}</strong></td>
-                  <td>${m.reps || '–'}</td>
-                  <td><span class="text-muted">${m.rx_men || '–'} / ${m.rx_women || '–'}</span></td>
-                  <td><span class="text-muted" style="font-size: 0.9rem;">${m.tip || '–'}</span></td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        `;
-      }
-
-      // Log result section
-      document.getElementById('log-result-section').innerHTML = `
-        <p class="text-muted" style="margin-bottom: 1rem;">Record your time, rounds, or reps. Keep track of your progress over time.</p>
-        <button class="btn btn-primary" onclick="openResultModal()">Log Your Result</button>
-      `;
+    if (w.equipment && w.equipment.length > 0) {
+      document.getElementById('movements-table').innerHTML += `<div class="equipment-section"><h4 style="margin-bottom:0.75rem;">Equipment Needed</h4><p class="text-muted" style="font-size:0.85rem;margin-bottom:0.75rem;">Links are Amazon affiliate links &#8212; helps support HomeWODrx at no cost to you.</p>${w.equipment.map(e=>`<a href="${getEquipmentLink(e)}" class="equipment-chip" target="_blank" rel="noopener">ð ${e}</a>`).join('')}</div>`;
     }
+    document.getElementById('log-result-section').innerHTML = `<p class="text-muted" style="margin-bottom:1rem;">Record your time, rounds, or reps.</p><button class="btn btn-primary" onclick="openResultModal()">Log Your Result</button>`;
+  }
 
-    async function loadLeaderboard(period = 'week') {
-      leaderboardPeriod = period;
-      const container = document.getElementById('leaderboard-table');
-      container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  async function loadLeaderboard(period = 'week') {
+    leaderboardPeriod = period;
+    const container = document.getElementById('leaderboard-table');
+    container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+    try {
+      let results = [];
+      if (currentWorkout.slug) results = await db.getBenchmarkLeaderboard(currentWorkout.slug, 100);
+      else if (currentWorkout.id) results = await db.getResults({ workoutId: currentWorkout.id, limit: 100 });
+      const now = new Date(); const periodDate = new Date();
+      if (period==='week') periodDate.setDate(now.getDate()-7);
+      else if (period==='month') periodDate.setMonth(now.getMonth()-1);
+      if (period!=='all') results = results.filter(r=>new Date(r.date)>=periodDate);
+      if (results.length===0) { container.innerHTML = '<p class="text-muted">No results yet.</p>'; return; }
+      results.sort((a,b)=>{if(currentWorkout.scoring_type==='time')return(a.score_seconds||999999)-(b.score_seconds||999999);else if(currentWorkout.scoring_type==='rounds_reps')return(b.score_rounds||b.score_reps||0)-(a.score_rounds||a.score_reps||0);else return(b.score_reps||0)-(a.score_reps||0);});
+      currentResults=results;
+      container.innerHTML = `<table><thead><tr><th>Rank</th><th>Athlete</th><th>Score</th><th>Rx</th><th>Date</th></tr></thead><tbody>${results.slice(0,20).map((r,i)=>`<tr><td class="leaderboard-rank rank-${i+1<=3?i+1:''}">${i+1}</td><td>${r.username}</td><td><strong>${r.score_display}</strong></td><td>${r.is_rx?'â&§:'â'}</td><td class="text-muted">${new Date(r.date).toLocaleDateString()}</td></tr>`).join('')}</tbody></table>`;
+    } catch (e) { container.innerHTML = '<p class="text-muted">Error loading leaderboard.</p>'; }
+  }
 
-      try {
-        let results = [];
-        if (currentWorkout.slug) {
-          results = await db.getBenchmarkLeaderboard(currentWorkout.slug, 100);
-        } else if (currentWorkout.id) {
-          results = await db.getResults({ workoutId: currentWorkout.id, limit: 100 });
-        }
+  function renderRelatedWorkouts() {
+    const w = currentWorkout;
+    if (!w || !BENCHMARKS) return;
+    const wMovements = (w.movements||[]).map(m=>slugify(m.name));
+    const related = BENCHMARKS
+      .filter(b=>b.slug!==w.slug)
+      .map(b=>({...b,_score:(b.category===w.category?2:0)+wMovements.filter(m=>(b.movements||[]).map(m=>slugify(m.name)).includes(m)).length}))
+      .filter(b=>b._score>0).sort((a,b)=>b._score-a._score).slice(0,3);
+    document.getElementById('related-workouts').innerHTML = related.length ?
+      related.map(b=>`<a href="/workout.html?slug=${b.slug}" style="text-decoration:none;"><div class="card"><h4>${b.name}</h4><p class="text-muted">${b.format}</p><div><span class="badge badge-orange">${b.difficulty}</span><span class="badge badge-orange">${b.duration_estimate}</span></div></div></a>`).join('') :
+      '<p class="text-muted">No related workouts found.</p>';
+  }
 
-        // Filter by period
-        const now = new Date();
-        const periodDate = new Date();
-        if (period === 'week') periodDate.setDate(now.getDate() - 7);
-        else if (period === 'month') periodDate.setMonth(now.getMonth() - 1);
+  function openResultModal() {
+    if (!db.getUser()) { alert('Please log in to record your results.'); window.location.href='/login.html'; return; }
+    document.getElementById('result-modal').classList.add('active');
+  }
+  function closeResultModal() { document.getElementById('result-modal').classList.remove('active'); }
 
-        if (period !== 'all') {
-          results = results.filter(r => new Date(r.date) >= periodDate);
-        }
+  async function submitResult() {
+    const user = await db.getUser();
+    if (!user) { alert('Please log in first.'); return; }
+    const score = document.getElementById('result-score').value;
+    const notes = document.getElementById('result-notes').value;
+    const isRx = document.getElementById('result-rx').checked;
+    if (!score) { alert('Please enter your score.'); return; }
+    try {
+      const result = { user_id:user.id, username:user.email?.split('@')[0]||'unknown', benchmark_slug:currentWorkout.slug||null, workout_id:currentWorkout.id||null, score_display:score, score_seconds:currentWorkout.scoring_type==='time'?parseTimeToSeconds(score):null, score_rounds:currentWorkout.scoring_type==='rounds_reps'?parseRoundsReps(score):null, score_reps:currentWorkout.scoring_type==='total_reps'?parseInt(score):null, is_rx:isRx, notes:notes, date:new Date().toISOString().split('T')[0] };
+      const {error} = await db.saveResult(result);
+      if (error) throw error;
+      closeResultModal();
+      document.getElementById('result-score').value='';
+      document.getElementById('result-notes').value='';
+      document.getElementById('result-rx').checked=false;
+      alert('Result logged!');
+      loadLeaderboard(leaderboardPeriod);
+    } catch (e) { alert('Error logging result. Please try again.'); }
+  }
 
-        if (results.length === 0) {
-          container.innerHTML = '<p class="text-muted">No results yet. Be the first to log!</p>';
-          return;
-        }
+  function parseTimeToSeconds(t) { const parts=t.split(':'); return parts.length===2?parseInt(parts[0])*60+parseInt(parts[1]):parseInt(t); }
+  function parseRoundsReps(s) { const m=s.match(/(\d+)/); return m?parseInt(m[1]):0; }
 
-        // Sort by score (depends on scoring type)
-        results.sort((a, b) => {
-          if (currentWorkout.scoring_type === 'time') {
-            return (a.score_seconds || 999999) - (b.score_seconds || 999999);
-          } else if (currentWorkout.scoring_type === 'rounds_reps') {
-            return (b.score_rounds || b.score_reps || 0) - (a.score_rounds || a.score_reps || 0);
-          } else {
-            return (b.score_reps || 0) - (a.score_reps || 0);
-          }
-        });
-
-        currentResults = results;
-
-        container.innerHTML = `
-          <table>
-            <thead>
-              <tr>
-                <th>Rank</th>
-                <th>Athlete</th>
-                <th>Score</th>
-                <th>Rx</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${results.slice(0, 20).map((r, idx) => `
-                <tr>
-                  <td class="leaderboard-rank rank-${idx + 1 <= 3 ? idx + 1 : ''}">${idx + 1}</td>
-                  <td>${r.username}</td>
-                  <td><strong>${r.score_display}</strong></td>
-                  <td>${r.is_rx ? '✓' : '–'}</td>
-                  <td class="text-muted">${new Date(r.date).toLocaleDateString()}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        `;
-      } catch (error) {
-        console.error('Error loading leaderboard:', error);
-        container.innerHTML = '<p class="text-muted">Error loading leaderboard.</p>';
-      }
-    }
-
-    function renderRelatedWorkouts() {
-      const w = currentWorkout;
-      const related = BENCHMARKS
-        .filter(b => b.category === w.category && b.slug !== w.slug)
-        .slice(0, 3);
-
-      document.getElementById('related-workouts').innerHTML = related.map(b => `
-        <a href="/workout.html?slug=${b.slug}" style="text-decoration: none;">
-          <div class="card">
-            <h4>${b.name}</h4>
-            <p class="text-muted">${b.format}</p>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <span class="badge badge-orange">${b.difficulty}</span>
-              <span class="badge badge-orange">${b.duration_estimate}</span>
-            </div>
-          </div>
-        </a>
-      `).join('');
-    }
-
-    function openResultModal() {
-      const user = db.getUser();
-      if (!user) {
-        alert('Please log in to record your results.');
-        window.location.href = '/login.html';
-        return;
-      }
-      document.getElementById('result-modal').classList.add('active');
-    }
-
-    function closeResultModal() {
-      document.getElementById('result-modal').classList.remove('active');
-    }
-
-    async function submitResult() {
-      const user = await db.getUser();
-      if (!user) {
-        alert('Please log in first.');
-        return;
-      }
-
-      const score = document.getElementById('result-score').value;
-      const notes = document.getElementById('result-notes').value;
-      const isRx = document.getElementById('result-rx').checked;
-
-      if (!score) {
-        alert('Please enter your score.');
-        return;
-      }
-
-      try {
-        const result = {
-          user_id: user.id,
-          username: user.email?.split('@')[0] || 'unknown',
-          benchmark_slug: currentWorkout.slug || null,
-          workout_id: currentWorkout.id || null,
-          score_display: score,
-          score_seconds: currentWorkout.scoring_type === 'time' ? parseTimeToSeconds(score) : null,
-          score_rounds: currentWorkout.scoring_type === 'rounds_reps' ? parseRoundsReps(score) : null,
-          score_reps: currentWorkout.scoring_type === 'total_reps' ? parseInt(score) : null,
-          is_rx: isRx,
-          notes: notes,
-          date: new Date().toISOString().split('T')[0]
-        };
-
-        const { data, error } = await db.saveResult(result);
-        if (error) throw error;
-
-        closeResultModal();
-        document.getElementById('result-score').value = '';
-        document.getElementById('result-notes').value = '';
-        document.getElementById('result-rx').checked = false;
-
-        alert('Result logged! Your score has been added to the leaderboard.');
-        loadLeaderboard(leaderboardPeriod);
-      } catch (error) {
-        console.error('Error logging result:', error);
-        alert('Error logging result. Please try again.');
-      }
-    }
-
-    function parseTimeToSeconds(time) {
-      const parts = time.split(':');
-      if (parts.length === 2) {
-        return parseInt(parts[0]) * 60 + parseInt(parts[1]);
-      }
-      return parseInt(time);
-    }
-
-    function parseRoundsReps(score) {
-      const match = score.match(/(\d+)/);
-      return match ? parseInt(match[1]) : 0;
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      loadWorkout();
-
-      // Leaderboard filter listeners
-      document.querySelectorAll('#leaderboard-filters .chip').forEach(chip => {
-        chip.addEventListener('click', (e) => {
-          document.querySelectorAll('#leaderboard-filters .chip').forEach(c => c.classList.remove('active'));
-          e.target.classList.add('active');
-          loadLeaderboard(e.target.dataset.period);
-        });
-      });
-
-      // Modal close
-      document.querySelector('.modal-close').addEventListener('click', closeResultModal);
-      document.getElementById('result-modal').addEventListener('click', (e) => {
-        if (e.target === document.getElementById('result-modal')) closeResultModal();
+  document.addEventListener('DOMContentLoaded', () => {
+    loadWorkout();
+    document.querySelectorAll('#leaderboard-filters .chip').forEach(chip => {
+      chip.addEventListener('click', e => {
+        document.querySelectorAll('#leaderboard-filters .chip').forEach(c => c.classList.remove('active'));
+        e.target.classList.add('active');
+        loadLeaderboard(e.target.dataset.period);
       });
     });
-  </script>
+    document.querySelector('.modal-close').addEventListener('click', closeResultModal);
+    document.getElementById('result-modal').addEventListener('click', e => {
+      if (e.target === document.getElementById('result-modal')) closeResultModal();
+    });
+  });
+</script>
 </body>
 </html>
