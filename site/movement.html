@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movement Guide - HomeWODrx</title>
+  <meta name="description" content="Learn this CrossFit movement and find every workout that includes it.">
+  <meta property="og:title" content="Movement Guide - HomeWODrx">
+  <meta property="og:description" content="Learn this CrossFit movement and find every workout that includes it.">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/db.js"></script>
+  <script src="/js/benchmarks.js"></script>
+  <script src="/js/nav.js"></script>
+  <style>
+    .movement-hero {
+      padding: 2.5rem 0 2rem;
+      border-bottom: 1px solid var(--dark-border, #333);
+      margin-bottom: 2rem;
+    }
+    .movement-hero h1 {
+      margin-bottom: 0.5rem;
+      text-transform: capitalize;
+    }
+    .movement-hero .breadcrumb {
+      font-size: 0.9rem;
+      color: var(--text-muted, #888);
+      margin-bottom: 1rem;
+    }
+    .movement-hero .breadcrumb a {
+      color: var(--orange, #f97316);
+      text-decoration: none;
+    }
+    .movement-hero .breadcrumb a:hover { text-decoration: underline; }
+
+    .movement-tips {
+      background: var(--dark-surface, #1e1e1e);
+      border: 1px solid var(--dark-border, #333);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .movement-tips h3 { margin-bottom: 0.75rem; }
+    .movement-tips ul { margin-left: 1.5rem; }
+    .movement-tips li { margin-bottom: 0.4rem; }
+
+    .workout-count-badge {
+      display: inline-block;
+      background: var(--orange, #f97316);
+      color: #fff;
+      border-radius: 20px;
+      padding: 0.15rem 0.6rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-left: 0.5rem;
+    }
+    .section-title-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-muted, #888);
+    }
+  </style>
+</head>
+<body data-nav-init="true" data-active-page="workouts">
+<main class="container">
+
+  <div id="movement-header" class="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <div id="movement-content" style="display:none;">
+
+    <section class="section">
+      <div class="section-title-row">
+        <h2>Workouts with this Movement <span class="workout-count-badge" id="workout-count">0</span></h2>
+      </div>
+      <div id="workouts-grid" class="grid grid-cols-3"></div>
+    </section>
+
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-container">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>HomeWODrx</h4>
+        <p>The platform for every athlete.</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 HomeWODrx. Built for athletes, by athletes.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Movement-specific coaching cues and tips
+  const MOVEMENT_INFO = {
+    'pull-ups': {
+      description: 'The pull-up is a foundational upper-body pulling movement that builds back, bicep, and grip strength. It appears in many benchmark CrossFit WODs including Murph and Angie.',
+      tips: [
+        'Start from a dead hang with arms fully extended.',
+        'Engage your lats before pulling â think "elbows to hips."',
+        'Chin clears the bar at the top; return to full extension each rep.',
+        'Kipping pull-ups are allowed in most WODs; strict pull-ups build more strength.',
+        'Scale with a resistance band or ring rows if needed.'
+      ],
+      muscles: 'Latissimus dorsi, biceps, rhomboids, core'
+    },
+    'push-ups': {
+      description: 'Push-ups are a versatile pressing movement that builds chest, shoulder, and tricep strength with no equipment required.',
+      tips: [
+        'Keep your body in a straight line from head to heels.',
+        'Chest touches the ground at the bottom; arms lock out at the top.',
+        'Hands slightly wider than shoulder-width.',
+        'Engage your core to avoid sagging hips.',
+        'Scale on knees or scale up with a deficit push-up.'
+      ],
+      muscles: 'Pectorals, triceps, anterior deltoids, core'
+    },
+    'air-squats': {
+      description: 'The air squat is the foundation of all CrossFit squatting movements â essential for form before adding weight.',
+      tips: [
+        'Feet shoulder-width apart, toes slightly turned out.',
+        'Hip crease must pass below the knee at the bottom.',
+        'Keep your chest up and knees tracking over toes.',
+        'Drive through your heels to stand.',
+        'Arms can reach forward for balance.'
+      ],
+      muscles: 'Quadriceps, glutes, hamstrings, core'
+    },
+    'burpees': {
+      description: 'Burpees are a full-body conditioning movement combining a push-up with a jump. They\'re notoriously brutal and effective for metabolic conditioning.',
+      tips: [
+        'Chest and thighs must touch the ground each rep.',
+        'Jump and clap overhead at the top (6" target in some standards).',
+        'Pace yourself â burpees can spike heart rate quickly.',
+        'Step-out burpees are a common scale for beginners.',
+        'Breathe steadily; exhale on the way up.'
+      ],
+      muscles: 'Full body â chest, shoulders, quads, glutes, core'
+    },
+    'box-jumps': {
+      description: 'Box jumps develop explosive lower-body power and coordination. They appear in numerous benchmark and hero WODs.',
+      tips: [
+        'Stand close to the box, feet hip-width apart.',
+        'Use arm swing to generate momentum.',
+        'Land softly with both feet fully on the box.',
+        'Stand to full extension at the top for rep credit.',
+        'Step down (not jump down) to protect knees over high rep sets.'
+      ],
+      muscles: 'Quadriceps, glutes, calves, hip flexors'
+    },
+    'double-unders': {
+      description: 'Double-unders require the jump rope to pass twice under the feet per jump. They\'re a key CrossFit conditioning tool and a prerequisite for many benchmark WODs.',
+      tips: [
+        'Use a light, fast rope â speed ropes are best.',
+        'Keep jumps low and efficient; big jumps waste energy.',
+        'Wrists do the spinning, not arms.',
+        'Look straight ahead; don\'t look down at the rope.',
+        'Scale with single-unders (3:1 ratio) or penguin jumps.'
+      ],
+      muscles: 'Calves, shoulders, wrists, cardiovascular system'
+    },
+    'kettlebell-swings': {
+      description: 'The kettlebell swing is a powerful hip-hinge movement that builds posterior chain strength and explosive power. American swings go overhead; Russian swings stop at eye level.',
+      tips: [
+        'Hinge at the hips, not squat â keep your back flat.',
+        'Drive hips forward explosively at the top.',
+        'The bell should float briefly at the top â don\'t muscle it.',
+        'American standard: bell locks out overhead with ears visible.',
+        'Start with Russian swings to build hip hinge mechanics.'
+      ],
+      muscles: 'Hamstrings, glutes, lower back, shoulders, core'
+    },
+    'thrusters': {
+      description: 'The thruster combines a front squat with a push press into one powerful movement. It\'s the centerpiece of Fran and one of the most demanding CrossFit movements.',
+      tips: [
+        'Front rack position: elbows high, bar resting on shoulders.',
+        'Squat below parallel, then drive up explosively.',
+        'Use the hip drive to initiate the press â don\'t press with arms alone.',
+        'Lock out overhead with ears in front of biceps.',
+        'Breathe at the top, not the bottom.'
+      ],
+      muscles: 'Quadriceps, glutes, shoulders, triceps, core'
+    },
+    'sit-ups': {
+      description: 'Sit-ups in CrossFit are typically done with an AbMat to allow full range of motion. They build core strength and appear in many conditioning WODs.',
+      tips: [
+        'Use an AbMat under your lower back for full range of motion.',
+        'Butterfly position (feet together, knees out) is the CrossFit standard.',
+        'Touch the ground behind your head at the bottom.',
+        'Touch your toes (or the ground in front) at the top.',
+        'Use arm momentum on high-rep sets to maintain pace.'
+      ],
+      muscles: 'Rectus abdominis, hip flexors'
+    },
+    'deadlifts': {
+      description: 'The deadlift is a fundamental strength movement that develops posterior chain power. It appears in benchmark WODs like Diane and numerous hero WODs.',
+      tips: [
+        'Bar over mid-foot, hip-width stance.',
+        'Hinge at hips, flat back â never round the lumbar spine.',
+        'Engage lats ("protect your armpits") before lifting.',
+        'Drive the floor away â don\'t think "pull up."',
+        'Lock hips and knees out simultaneously at the top.'
+      ],
+      muscles: 'Hamstrings, glutes, lower back, traps, forearms'
+    },
+    'rowing': {
+      description: 'Rowing on the Concept2 erg is a low-impact, full-body conditioning tool widely used in CrossFit for warm-ups, metcons, and strength-endurance work.',
+      tips: [
+        'Sequence: legs â back â arms on the drive; arms â back â legs on recovery.',
+        'Push with legs first â don\'t pull with arms early.',
+        'Damper setting affects feel, not calories. 3â5 is a good starting point.',
+        'Maintain a consistent stroke rate rather than sprinting and dying.',
+        'Keep strokes long and powerful over quick and choppy.'
+      ],
+      muscles: 'Legs, back, core, arms â full body'
+    },
+    'wall-balls': {
+      description: 'Wall balls combine a squat with a medicine ball throw to a target (10 ft for women, 10â12 ft for men). They appear in benchmark WODs like Karen.',
+      tips: [
+        'Squat below parallel, then drive up and throw the ball to the target.',
+        'Catch the ball as you descend into the next squat â don\'t pause.',
+        'Keep your chest up and heels down throughout.',
+        'The ball rests on the fingertips/palms in a front rack position.',
+        'Break wall balls into manageable sets early to avoid failure on the wall.'
+      ],
+      muscles: 'Quadriceps, glutes, shoulders, core'
+    },
+    'handstand-push-ups': {
+      description: 'The handstand push-up (HSPU) is an advanced pressing movement performed upside down against a wall. It develops shoulder and tricep strength and appears in benchmark WODs like Nicole and Diane.',
+      tips: [
+        'Kick up with control, hands ~8â12" from wall.',
+        'Head touches the ground at the bottom â full range of motion.',
+        'Keep your midline tight; avoid excessive arch.',
+        'Strict HSPUs before kipping â build shoulder strength first.',
+        'Scale with Pike push-ups or box HSPU variations.'
+      ],
+      muscles: 'Shoulders (deltoids), triceps, upper traps, core'
+    },
+    'rope-climbs': {
+      description: 'Rope climbs develop grip strength, pulling strength, and coordination. They appear in hero WODs and more advanced benchmark workouts.',
+      tips: [
+        'Use the J-hook or S-hook foot technique to save grip energy.',
+        'Pull with your arms after getting a good foot lock.',
+        'Touch the beam (or designated height mark) for full credit.',
+        'Lower under control â rope burns are common from fast descents.',
+        'Scale with rope pulls from the ground or A1-2 rope pulls (partial climbs).'
+      ],
+      muscles: 'Biceps, lats, forearms, core, legs (foot lock)'
+    },
+    'muscle-ups': {
+      description: 'The muscle-up combines a pull-up with a dip on the rings or bar. It is an advanced gymnastics movement requiring both pulling and pressing strength and coordination.',
+      tips: [
+        'False grip on rings helps with the transition.',
+        'Pull high (chest to rings), then push through into the dip.',
+        'The transition is the hardest part â drill it separately.',
+        'Strict muscle-ups before kipping â build capacity first.',
+        'Scale with ring rows + ring dips or jumping muscle-up transitions.'
+      ],
+      muscles: 'Lats, biceps, chest, triceps, core'
+    },
+    'cleans': {
+      description: 'The clean moves a barbell from the floor to the front rack (shoulders). It is a key Olympic lifting movement in CrossFit and appears in many WODs.',
+      tips: [
+        'First pull: maintain back angle and drive knees back.',
+        'Second pull (power position): explosive hip extension.',
+        'Pull yourself under the bar, don\'t try to muscle it up.',
+        'Land in a front squat for a squat clean; power clean catches above parallel.',
+        'Elbows must come up quickly to lock the bar on the shoulders.'
+      ],
+      muscles: 'Hamstrings, glutes, traps, upper back, core'
+    },
+    'snatches': {
+      description: 'The snatch moves a barbell from the floor to overhead in one movement. It requires exceptional technique, mobility, and explosive power.',
+      tips: [
+        'Wide grip (hook grip recommended for heavier loads).',
+        'Keep the bar close to the body throughout the pull.',
+        'Aggressive hip extension followed by a fast drop under the bar.',
+        'Catch in an overhead squat position with arms locked out.',
+        'Mobility in hips, ankles, and shoulders is essential â address your limiters.'
+      ],
+      muscles: 'Hamstrings, glutes, traps, shoulders, triceps, core'
+    },
+    'running': {
+      description: 'Running is a foundational cardiovascular movement in CrossFit. Common distances are 200m, 400m, and 800m, and it appears in benchmark WODs like Murph and countless hero WODs.',
+      tips: [
+        'Midfoot strike, not heel strike, to reduce impact.',
+        'Lean slightly forward from the ankles â gravity-assisted running.',
+        'Relax your shoulders and arms â don\'t clench.',
+        'Control your pace on longer runs; don\'t redline early.',
+        'Breathing: try a 3:2 or 2:2 inhale:exhale pattern.'
+      ],
+      muscles: 'Quadriceps, hamstrings, calves, glutes, cardiovascular system'
+    }
+  };
+
+  function slugify(name) {
+    return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  }
+
+  function titleCase(slug) {
+    return slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  }
+
+  function loadMovementPage() {
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get('slug');
+
+    if (!slug) {
+      document.getElementById('movement-header').innerHTML = '<p class="text-muted">No movement specified.</p>';
+      return;
+    }
+
+    const movementName = titleCase(slug);
+    const info = MOVEMENT_INFO[slug];
+
+    // Set page title & SEO meta
+    document.title = `${movementName} - CrossFit Movement Guide | HomeWODrx`;
+    document.querySelector('meta[name="description"]').setAttribute(
+      'content',
+      info
+        ? `Learn the ${movementName} CrossFit movement. ${info.description.substring(0, 120)}`
+        : `Find every CrossFit workout that includes ${movementName} on HomeWODrx.`
+    );
+    document.querySelector('meta[property="og:title"]').setAttribute('content', `${movementName} - HomeWODrx`);
+
+    // Render header
+    document.getElementById('movement-header').innerHTML = `
+      <div class="movement-hero">
+        <div class="breadcrumb">
+          <a href="/workouts.html">Workouts</a> âº
+          <a href="/workouts.html?movement=${slug}">Filter by ${movementName}</a> âº
+          Movement Guide
+        </div>
+        <h1>${movementName}</h1>
+        ${info ? `<p class="text-muted" style="max-width: 680px; line-height: 1.6;">${info.description}</p>` : `<p class="text-muted">Find every workout that includes ${movementName}.</p>`}
+        ${info && info.muscles ? `<p style="margin-top: 0.75rem;"><strong>Primary muscles:</strong> <span class="text-muted">${info.muscles}</span></p>` : ''}
+      </div>
+      ${info && info.tips ? `
+        <div class="movement-tips">
+          <h3>Coaching Cues</h3>
+          <ul>
+            ${info.tips.map(tip => `<li>${tip}</li>`).join('')}
+          </ul>
+        </div>
+      ` : ''}
+    `;
+
+    // Find all benchmarks that include this movement
+    const matchingWorkouts = BENCHMARKS.filter(b =>
+      b.movements && b.movements.some(m => slugify(m.name) === slug)
+    );
+
+    document.getElementById('workout-count').textContent = matchingWorkouts.length;
+
+    if (matchingWorkouts.length === 0) {
+      document.getElementById('workouts-grid').innerHTML = `
+        <div class="empty-state" style="grid-column: 1/-1;">
+          <p>No benchmark workouts found for <strong>${movementName}</strong>.</p>
+          <p style="margin-top: 0.5rem;"><a href="/workouts.html" style="color: var(--orange);">Browse all workouts â</a></p>
+        </div>
+      `;
+    } else {
+      document.getElementById('workouts-grid').innerHTML = matchingWorkouts.map(w => `
+        <a href="/workout.html?slug=${w.slug}" style="text-decoration: none;">
+          <div class="card">
+            <h4>${w.name}</h4>
+            <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 0.75rem;">
+              ${w.format} â¢ ${w.duration_estimate}
+            </p>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <span class="badge badge-orange">${w.difficulty}</span>
+              <span class="badge badge-orange">${w.body_focus}</span>
+              ${w.category === 'girl' ? '<span class="badge">The Girls</span>' : ''}
+              ${w.category === 'hero' ? '<span class="badge">Hero WOD</span>' : ''}
+            </div>
+          </div>
+        </a>
+      `).join('');
+    }
+
+    document.getElementById('movement-content').style.display = '';
+  }
+
+  document.addEventListener('DOMContentLoaded', loadMovementPage);
+</script>
+</body>
+</html>
