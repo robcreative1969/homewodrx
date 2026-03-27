@@ -53,7 +53,7 @@
   <!-- MOVEMENT FILTER BANNER (shown when ?movement= param is active) -->
   <div id="movement-filter-banner" style="display: none;" class="movement-filter-banner">
     <span>Filtering by movement: <strong id="movement-filter-label"></strong></span>
-    <button class="clear-btn" onclick="clearMovementFilter()">â Clear filter</button>
+    <button class="clear-btn" onclick="clearMovementFilter()">× Clear filter</button>
   </div>
 
   <!-- FILTER BAR -->
@@ -264,7 +264,7 @@
 
     if (displayed.length === 0) {
       const emptyMsg = currentFilters.movement
-        ? `No workouts found that include <strong>${titleCase(currentFilters.movement)}</strong>. <a href="/movement.html?slug=${currentFilters.movement}" style="color:var(--orange);">View movement guide â</a>`
+        ? `No workouts found that include <strong>${titleCase(currentFilters.movement)}</strong>. <a href="/movement.html?slug=${currentFilters.movement}" style="color:var(--orange);">View movement guide →</a>`
         : 'No workouts found. Try adjusting your filters.';
       container.innerHTML = `<div style="grid-column: 1/-1;"><p class="text-muted">${emptyMsg}</p></div>`;
       document.getElementById('load-more-btn').style.display = 'none';
@@ -279,7 +279,7 @@
           <div class="card">
             <h4>${w.name}</h4>
             <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 0.5rem;">
-              ${w.format} â¢ ${w.duration_estimate}
+              ${w.format} • ${w.duration_estimate}
             </p>
             <div style="margin-bottom: 1rem;">
               ${w.equipment ? w.equipment.map(e => `<span class="badge badge-orange" style="font-size: 0.8rem;">${e}</span>`).join('') : ''}
