@@ -381,7 +381,7 @@ function renderFeaturedWOD(featured) {
           ${(bm.movements||[]).slice(0,3).map(m => `<div style="padding:4px 0">• <strong style="color:var(--tx)">${escHtml(m.name)}</strong> <span style="color:var(--or)">${escHtml(String(m.reps||''))}</span></div>`).join('')}
           ${bm.movements?.length > 3 ? `<div style="color:var(--mu);font-size:11px;margin-top:4px">+${bm.movements.length-3} more movements</div>` : ''}
         </div>`;
-      linkEl.href = `/workouts/${bm.slug}`;
+      linkEl.href = `/workout.html?slug=${bm.slug}`;
       return;
     }
   }
@@ -390,7 +390,7 @@ function renderFeaturedWOD(featured) {
   titleEl.textContent = 'Cindy';
   metaEl.innerHTML = `<span class="chip chip-or">AMRAP</span><span class="chip chip-mu">20 min</span><span class="chip chip-mu">The Girls</span>`;
   bodyEl.innerHTML = `<p style="font-size:13px;color:var(--mu)">As many rounds as possible in 20 minutes of: 5 Pull-Ups, 10 Push-Ups, 15 Air Squats. A classic benchmark for endurance and bodyweight efficiency.</p>`;
-  linkEl.href = '/workouts/cindy';
+  linkEl.href = '/workout.html?slug=cindy';
 }
 
 function renderBenchmarkGrid() {
@@ -401,7 +401,7 @@ function renderBenchmarkGrid() {
   ].slice(0, 6);
 
   grid.innerHTML = picks.map(b => `
-    <a class="bm-card" href="/workouts/${b.slug}">
+    <a class="bm-card" href="/workout.html?slug=${b.slug}">
       <h4>${escHtml(b.name)}</h4>
       <div class="bm-cat">${b.category==='girl'?'👧 The Girls':b.category==='hero'?'🦸 Hero WOD':'⚡ Benchmark'}</div>
       <div class="bm-meta">${escHtml(b.format||'')} · ${escHtml(b.duration_estimate||'')}</div>
@@ -434,7 +434,7 @@ async function renderActivity() {
       </a>
       <div class="act-info">
         <strong><a href="/u/${encodeURIComponent(r.username||'')}" style="color:var(--tx);text-decoration:none">${escHtml(r.username||'athlete')}</a></strong>
-        <div class="act-wod">completed <a href="/workouts/${encodeURIComponent(r.benchmark_slug||'')}" style="color:var(--orl);text-decoration:none">${escHtml(workoutName)}</a></div>
+        <div class="act-wod">completed <a href="/workout.html?slug=${encodeURIComponent(r.benchmark_slug||'')}" style="color:var(--orl);text-decoration:none">${escHtml(workoutName)}</a></div>
       </div>
       <div>
         <div class="act-score">${escHtml(r.score_display||r.score||'')}</div>
