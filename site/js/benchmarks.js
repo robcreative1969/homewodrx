@@ -1079,6 +1079,40 @@ const BENCHMARKS = [
 // ============================================================================
 
 /**
+ * Returns a smart one-line format description for workout cards.
+ * Examples: "20 min AMRAP", "21-15-9 · For Time", "3 Rounds · For Time", "30 min EMOM"
+ */
+function formatWodMeta(w) {
+  const fmt = (w.format || '').trim();
+  const dur = (w.duration_estimate || '').trim();
+
+  if (fmt === 'AMRAP') return dur ? dur + ' AMRAP' : 'AMRAP';
+  if (fmt === 'EMOM') return dur ? dur + ' EMOM' : 'EMOM';
+
+  if (fmt === 'For Time') {
+    if (w.movements && w.movements.length) {
+      const firstReps = (w.movements[0].reps || '').trim();
+      const em = String.fromCharCode(0x2013);
+      const schemeRx = new RegExp('^[0-9]+\\s*[' + em + '-]');
+      const replaceRx = new RegExp('\\s*[' + em + '-]\\s*', 'g');
+      if (schemeRx.test(firstReps)) {
+        return firstReps.replace(replaceRx, '-') + ' \u00b7 For Time';
+      }
+      const m = firstReps.match(/^(\d+)\s*rounds?/i);
+      if (m) return m[1] + ' Rounds \u00b7 For Time';
+    }
+    return 'For Time';
+  }
+
+  if (fmt === 'Circuit') {
+    if (w.scoring_type === 'total_reps') return dur ? dur + ' Circuit \u00b7 Max Reps' : 'Circuit \u00b7 Max Reps';
+    return dur ? dur + ' Circuit' : 'Circuit';
+  }
+
+  return fmt;
+}
+
+/**
  * Returns a full movement summary for workout cards including reps and RX weights.
  * Example: "21-15-9 Thrusters (95/65 lb) · 21-15-9 Pull-Ups"
  */
