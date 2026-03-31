@@ -1072,3 +1072,54 @@ const BENCHMARKS = [
     tips: ['Start conservatively', 'Break early to avoid failure', 'You\'ll hit a wall when single-digit numbers become impossible']
   }
 ];
+
+
+// ============================================================================
+// CARD DISPLAY HELPERS
+// ============================================================================
+
+/**
+ * Returns a smart one-line format description for workout cards.
+ * Examples: "20 min AMRAP", "21-15-9 · For Time", "3 Rounds · For Time", "30 min EMOM"
+ */
+function formatWodMeta(w) {
+  const fmt = (w.format || '').trim();
+  const dur = (w.duration_estimate || '').trim();
+
+  if (fmt === 'AMRAP') return dur ? dur + ' AMRAP' : 'AMRAP';
+  if (fmt === 'EMOM') return dur ? dur + ' EMOM' : 'EMOM';
+
+  if (fmt === 'For Time') {
+    if (w.movements && w.movements.length) {
+      const firstReps = (w.movements[0].reps || '').trim();
+      // Descending rep scheme: "21 – 15 – 9" or "50 – 40 – 30 – 20 – 10"
+      const emDash = '\u2013';
+      const schemeRx = new RegExp('^[0-9]+\\s*[' + String.fromCharCode(0x2013) + '-]');
+      const replaceRx = new RegExp('\\s*[' + String.fromCharCode(0x2013) + '-]\\s*', 'g');
+      if (schemeRx.test(firstReps)) {
+        return firstReps.replace(replaceRx, '-') + ' · For Time';
+      }
+      // Rounds-based: "5 rounds", "3 rounds"
+      const m = firstReps.match(/^(\d+)\s*rounds?/i);
+      if (m) return m[1] + ' Rounds · For Time';
+    }
+    return 'For Time';
+  }
+
+  if (fmt === 'Circuit') {
+    if (w.scoring_type === 'total_reps') return dur ? dur + ' Circuit · Max Reps' : 'Circuit · Max Reps';
+    return dur ? dur + ' Circuit' : 'Circuit';
+  }
+
+  return fmt;
+}
+
+/**
+ * Returns movement names for workout cards (max 3 + count of remaining).
+ */
+function summarizeMovements(w) {
+  if (!w.movements || !w.movements.length) return '';
+  const names = w.movements.map(m => m.name);
+  if (names.length <= 3) return names.join(' · ');
+  return names.slice(0, 3).join(' · ') + ' +' + (names.length - 3) + ' more';
+}
