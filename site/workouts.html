@@ -151,7 +151,7 @@
     difficulty: 'all',
     focus: 'all',
     search: '',
-    movement: null   // slug of active movement filter
+    movement: null
   };
   let displayCount = 12;
 
@@ -163,7 +163,6 @@
     return slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   }
 
-  // Read movement param from URL on page load
   function checkMovementParam() {
     const params = new URLSearchParams(window.location.search);
     const movement = params.get('movement');
@@ -172,7 +171,6 @@
       const label = titleCase(movement);
       document.getElementById('movement-filter-label').textContent = label;
       document.getElementById('movement-filter-banner').style.display = 'flex';
-      // Update page title for SEO
       document.title = `${label} Workouts - HomeWODrx`;
       document.querySelector('meta[name="description"]').setAttribute(
         'content',
@@ -186,7 +184,6 @@
     document.getElementById('movement-filter-banner').style.display = 'none';
     document.getElementById('movement-filter-label').textContent = '';
     document.title = 'Browse Workouts - HomeWODrx';
-    // Remove movement param from URL without reloading
     const url = new URL(window.location.href);
     url.searchParams.delete('movement');
     history.replaceState({}, '', url);
@@ -198,10 +195,8 @@
     container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
     try {
-      // Load benchmarks
       allWorkouts = [...BENCHMARKS];
 
-      // Load user workouts
       const userWorkouts = await db.getWorkouts({ isPublic: true, limit: 1000 });
       if (userWorkouts && userWorkouts.length > 0) {
         allWorkouts = allWorkouts.concat(userWorkouts.map(w => ({
@@ -226,7 +221,6 @@
       if (currentFilters.focus !== 'all' && w.body_focus !== currentFilters.focus) return false;
       if (currentFilters.search && !w.name.toLowerCase().includes(currentFilters.search.toLowerCase())) return false;
 
-      // Movement filter: only show workouts that include this movement
       if (currentFilters.movement) {
         if (!w.movements || w.movements.length === 0) return false;
         const hasMovement = w.movements.some(m => slugify(m.name) === currentFilters.movement);
@@ -236,7 +230,6 @@
       return true;
     });
 
-    // Sort
     const sortBy = document.getElementById('sort-select').value;
     if (sortBy === 'alphabetical') {
       filteredWorkouts.sort((a, b) => a.name.localeCompare(b.name));
@@ -247,7 +240,6 @@
       const diffOrder = { 'beginner': 1, 'intermediate': 2, 'advanced': 3 };
       filteredWorkouts.sort((a, b) => (diffOrder[b.difficulty] || 0) - (diffOrder[a.difficulty] || 0));
     } else {
-      // Newest first (benchmarks first, then by date)
       filteredWorkouts.sort((a, b) => {
         const aIsUser = a.category === 'user' ? 1 : 0;
         const bIsUser = b.category === 'user' ? 1 : 0;
@@ -278,15 +270,13 @@
         <a href="${href}" style="text-decoration: none;">
           <div class="card">
             <h4>${w.name}</h4>
-            <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 0.5rem;">
-              ${w.format} • ${w.duration_estimate}
+            <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 0.4rem;">
+              ${formatWodMeta(w)}
             </p>
-            <div style="margin-bottom: 1rem;">
-              ${w.equipment ? w.equipment.map(e => `<span class="badge badge-orange" style="font-size: 0.8rem;">${e}</span>`).join('') : ''}
-            </div>
+            <p style="font-size: 0.85rem; color: var(--mu, #888); margin-bottom: 0.75rem;">
+              ${summarizeMovements(w)}
+            </p>
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <span class="badge badge-orange">${w.difficulty}</span>
-              <span class="badge badge-orange">${w.body_focus}</span>
               ${isUser ? '<span class="badge badge-success">Community</span>' : ''}
             </div>
           </div>
@@ -294,7 +284,6 @@
       `;
     }).join('');
 
-    // Show load more button
     const loadMoreBtn = document.getElementById('load-more-btn');
     if (filteredWorkouts.length > displayCount) {
       loadMoreBtn.style.display = 'inline-block';
@@ -304,7 +293,6 @@
   }
 
   function setupFilterListeners() {
-    // Type filters
     document.querySelectorAll('#type-filters .chip').forEach(chip => {
       chip.addEventListener('click', (e) => {
         document.querySelectorAll('#type-filters .chip').forEach(c => c.classList.remove('active'));
@@ -315,7 +303,6 @@
       });
     });
 
-    // Format filters
     document.querySelectorAll('#format-filters .chip').forEach(chip => {
       chip.addEventListener('click', (e) => {
         document.querySelectorAll('#format-filters .chip').forEach(c => c.classList.remove('active'));
@@ -326,7 +313,6 @@
       });
     });
 
-    // Difficulty filters
     document.querySelectorAll('#difficulty-filters .chip').forEach(chip => {
       chip.addEventListener('click', (e) => {
         document.querySelectorAll('#difficulty-filters .chip').forEach(c => c.classList.remove('active'));
@@ -337,7 +323,6 @@
       });
     });
 
-    // Focus filters
     document.querySelectorAll('#focus-filters .chip').forEach(chip => {
       chip.addEventListener('click', (e) => {
         document.querySelectorAll('#focus-filters .chip').forEach(c => c.classList.remove('active'));
@@ -348,17 +333,14 @@
       });
     });
 
-    // Search
     document.getElementById('search-input').addEventListener('input', (e) => {
       currentFilters.search = e.target.value;
       displayCount = 12;
       applyFilters();
     });
 
-    // Sort
     document.getElementById('sort-select').addEventListener('change', applyFilters);
 
-    // Load more
     document.getElementById('load-more-btn').addEventListener('click', () => {
       displayCount += 12;
       renderWorkouts();
