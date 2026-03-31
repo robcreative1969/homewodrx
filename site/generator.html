@@ -33,8 +33,8 @@
 .bf-card:hover{border-color:var(--orl)}
 .bf-card.sel{border-color:var(--or);background:rgba(232,83,10,.15)}
 .bf-card .icon{font-size:20px;margin-bottom:4px;display:block}
-.bf-card .name{font-size:12px;font-weight:700;margin-bottom:2px}
-.bf-card .sub{font-size:10px;color:var(--mu)}
+.bf-card .name{font-size:12px;font-weight:700;margin-bottom:2px;display:block}
+.bf-card .sub{font-size:10px;color:var(--mu);display:block}
 
 /* pills */
 .pill-group{display:flex;flex-wrap:wrap;gap:8px}
@@ -617,8 +617,10 @@ function setupEquipmentGrid() {
 function setupBodyFocusGrid() {
   document.querySelectorAll('#bf-grid .bf-card').forEach(card => {
     card.addEventListener('click', () => {
-      document.querySelectorAll('#bf-grid .bf-card').forEach(c => c.classList.remove('sel'));
-      card.classList.add('sel');
+      const isSelected = card.classList.contains('sel');
+      const selectedCount = document.querySelectorAll('#bf-grid .bf-card.sel').length;
+      if (isSelected && selectedCount === 1) return;
+      card.classList.toggle('sel');
     });
   });
 }
@@ -641,7 +643,8 @@ function generateWorkout() {
   const equipment = getSelected('eq-grid','data-val');
   if (!equipment.length) { showToast('Select at least one equipment option.','error'); return; }
 
-  const bodyFocus = document.querySelector('#bf-grid .sel')?.getAttribute('data-val') || 'full-body';
+  const bodyFocuses = getSelected('bf-grid','data-val');
+  if (!bodyFocuses.length) bodyFocuses.push('full-body');
   const level = document.querySelector('#level-group .sel')?.getAttribute('data-val') || 'intermediate';
   const formatPref = document.querySelector('#format-group .sel')?.getAttribute('data-val') || 'any';
   const duration = parseInt(document.getElementById('dur-slider').value);
@@ -650,7 +653,7 @@ function generateWorkout() {
   btn.classList.add('loading'); btn.disabled = true;
 
   setTimeout(() => {
-    const workout = buildWorkout(equipment, bodyFocus, level, formatPref, duration);
+    const workout = buildWorkout(equipment, bodyFocuses, level, formatPref, duration);
     currentWorkout = workout;
     renderWorkout(workout);
     btn.classList.remove('loading'); btn.disabled = false;
@@ -658,21 +661,21 @@ function generateWorkout() {
   }, 600);
 }
 
-function buildWorkout(equipment, bodyFocus, level, formatPref, duration) {
-  const pool = buildPool(equipment, level, bodyFocus);
+function buildWorkout(equipment, bodyFocuses, level, formatPref, duration) {
+  const pool = buildPool(equipment, level, bodyFocuses);
   const formats = formatPref === 'any' ? ['amrap','emom','fortime','circuit'] : [formatPref];
   const format = formats[Math.floor(Math.random() * formats.length)];
 
   let workout;
-  if (format === 'amrap')      workout = genAMRAP(pool, level, duration, bodyFocus);
-  else if (format === 'emom')  workout = genEMOM(pool, level, duration, bodyFocus);
+  if (format === 'amrap')        workout = genAMRAP(pool, level, duration, bodyFocuses);
+  else if (format === 'emom')    workout = genEMOM(pool, level, duration, bodyFocuses);
   else if (format === 'fortime') workout = genForTime(pool, level);
-  else                         workout = genCircuit(pool, level, duration, bodyFocus);
+  else                           workout = genCircuit(pool, level, duration, bodyFocuses);
 
-  return { ...workout, equipment, bodyFocus, level, duration, generatedAt: new Date().toISOString() };
+  return { ...workout, equipment, bodyFocus: bodyFocuses, level, duration, generatedAt: new Date().toISOString() };
 }
 
-function buildPool(equipment, level, bodyFocus) {
+function buildPool(equipment, level, bodyFocuses) {
   let moves = [...(MOVEMENT_DB.bodyweight || [])];
   equipment.forEach(eq => { if (eq !== 'bodyweight' && MOVEMENT_DB[eq]) moves.push(...MOVEMENT_DB[eq]); });
   if (level === 'beginner') moves = moves.filter(m => !/(muscle.up|snatch|toes.to.bar|double under|turkish)/i.test(m.name));
@@ -683,7 +686,14 @@ function buildPool(equipment, level, bodyFocus) {
     'core': ['core'], 'push': ['push'], 'pull': ['pull'],
     'legs-glutes': ['lower','legs-glutes'], 'cardio': ['cardio','full'],
   };
-  const tags = BF_TAGS[bodyFocus];
+  const focuses = Array.isArray(bodyFocuses) ? bodyFocuses : [bodyFocuses];
+  let tags = null;
+  if (!focuses.includes('full-body')) {
+    const tagSet = new Set();
+    focuses.forEach(bf => { const t = BF_TAGS[bf]; if (t) t.forEach(tag => tagSet.add(tag)); });
+    if (tagSet.size) tags = [...tagSet];
+  }
+  if (false) { // replaced
   if (tags) {
     const primary = moves.filter(m => m.tags && m.tags.some(t => tags.includes(t)));
     if (primary.length >= 3) moves = primary;
@@ -786,7 +796,7 @@ function renderWorkout(w) {
   document.getElementById('wod-sub').textContent = `Generated for you · ${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}`;
   document.getElementById('wod-meta').innerHTML =
     `<span class="chip">${cap(w.level)}</span>
-     <span class="chip">${cap(w.bodyFocus.replace('-',' '))}</span>
+     <span class="chip">${(Array.isArray(w.bodyFocus)?w.bodyFocus:w.bodyFocus.split(',')).map(bf=>cap(bf.replace('-',' '))).join(' + ')}</span>
      <span class="chip">${w.duration} min</span>
      <span class="chip">${w.equipment.map(e=>cap(e)).join(' + ')}</span>`;
   document.getElementById('wod-desc').textContent = w.description;
@@ -1068,7 +1078,7 @@ async function submitResult() {
       format: currentWorkout.format,
       duration: currentWorkout.duration,
       level: currentWorkout.level,
-      body_focus: currentWorkout.bodyFocus,
+      body_focus: Array.isArray(currentWorkout.bodyFocus) ? currentWorkout.bodyFocus.join(',') : currentWorkout.bodyFocus,
       equipment: currentWorkout.equipment,
       movements: currentWorkout.rows,
       scoring: currentWorkout.scoring,
@@ -1118,7 +1128,7 @@ async function submitSave() {
     format: currentWorkout.format,
     duration: currentWorkout.duration,
     level: currentWorkout.level,
-    body_focus: currentWorkout.bodyFocus,
+    body_focus: Array.isArray(currentWorkout.bodyFocus) ? currentWorkout.bodyFocus.join(',') : currentWorkout.bodyFocus,
     equipment: currentWorkout.equipment,
     movements: currentWorkout.rows,
     scoring: currentWorkout.scoring,
