@@ -404,11 +404,8 @@ function renderBenchmarkGrid() {
     <a class="bm-card" href="/workout.html?slug=${b.slug}">
       <h4>${escHtml(b.name)}</h4>
       <div class="bm-cat">${b.category==='girl'?'👧 The Girls':b.category==='hero'?'🦸 Hero WOD':'⚡ Benchmark'}</div>
-      <div class="bm-meta">${escHtml(b.format||'')} · ${escHtml(b.duration_estimate||'')}</div>
-      <div class="bm-tags">
-        <span class="chip chip-or" style="font-size:9px">${cap(b.difficulty||'intermediate')}</span>
-        <span class="chip chip-mu" style="font-size:9px">${cap((b.body_focus||'full-body').replace('-',' '))}</span>
-      </div>
+      <div class="bm-meta">${escHtml(formatWodMeta(b))}</div>
+      <div class="bm-tags" style="font-size:11px;color:var(--mu,#888)">${escHtml(summarizeMovements(b))}</div>
     </a>`).join('');
 }
 
