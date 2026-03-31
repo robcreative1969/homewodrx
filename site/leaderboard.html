@@ -311,7 +311,7 @@ function renderRows() {
     const catLabel = bench ? { girl:'Girl', hero:'Hero', benchmark:'Benchmark' }[bench.category] || '' : 'User WOD';
     const catClass = bench ? `cat-${bench.category}` : 'cat-user';
     const link = r.benchmark_slug
-      ? `/workouts/${r.benchmark_slug}`
+      ? `/workout.html?slug=${r.benchmark_slug}`
       : `/workout.html?slug=${r.workout_id}`;
     const tr = document.createElement('tr');
     tr.innerHTML = `
