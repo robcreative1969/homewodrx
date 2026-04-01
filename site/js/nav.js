@@ -42,6 +42,7 @@ const Nav = {
       { text: 'Workouts', href: '/workouts.html', page: 'workouts' },
       { text: 'Movements', href: '/movements.html', page: 'movements' },
       { text: 'Generator', href: '/generator.html', page: 'generator' },
+      { text: 'Search', href: '/search.html', page: 'search' },
       { text: 'Leaderboard', href: '/leaderboard.html', page: 'leaderboard' }
     ];
 
