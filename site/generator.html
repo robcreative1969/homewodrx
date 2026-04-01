@@ -701,6 +701,7 @@ function buildPool(equipment, level, bodyFocuses) {
     'core': ['core'], 'push': ['push'], 'pull': ['pull'],
     'legs-glutes': ['lower','legs-glutes'], 'cardio': ['cardio','full'],
   };
+  // Build unified tag set across all selected focuses; null means include everything
   const focuses = Array.isArray(bodyFocuses) ? bodyFocuses : [bodyFocuses];
   let tags = null;
   if (!focuses.includes('full-body')) {
@@ -708,7 +709,6 @@ function buildPool(equipment, level, bodyFocuses) {
     focuses.forEach(bf => { const t = BF_TAGS[bf]; if (t) t.forEach(tag => tagSet.add(tag)); });
     if (tagSet.size) tags = [...tagSet];
   }
-  if (false) { // replaced
   if (tags) {
     const primary = moves.filter(m => m.tags && m.tags.some(t => tags.includes(t)));
     if (primary.length >= 3) moves = primary;
