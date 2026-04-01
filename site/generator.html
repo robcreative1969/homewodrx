@@ -242,15 +242,15 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
   <!-- Body Focus -->
   <div class="section">
     <div class="slabel">Step 2</div>
-    <div class="stitle">What do you want to target?</div>
+    <div class="stitle">What do you want to target? <span style="font-size:12px;font-weight:500;color:var(--mu);margin-left:6px">— select one or more</span></div>
     <div class="bf-grid" id="bf-grid">
-      <label class="bf-card sel" data-val="full-body"><span class="icon">🔥</span><span class="name">Full Body</span><span class="sub">Everything</span></label>
+      <label class="bf-card sel" data-val="full-body" data-exclusive="true"><span class="icon">🔥</span><span class="name">Full Body</span><span class="sub">All muscle groups</span></label>
       <label class="bf-card" data-val="upper-body"><span class="icon">💪</span><span class="name">Upper Body</span><span class="sub">Push + Pull</span></label>
       <label class="bf-card" data-val="lower-body"><span class="icon">🦵</span><span class="name">Lower Body</span><span class="sub">Legs + Hips</span></label>
       <label class="bf-card" data-val="core"><span class="icon">🎯</span><span class="name">Core</span><span class="sub">Abs + Stability</span></label>
-      <label class="bf-card" data-val="push"><span class="icon">🤜</span><span class="name">Push</span><span class="sub">Chest, Tri, Shoulder</span></label>
-      <label class="bf-card" data-val="pull"><span class="icon">🤛</span><span class="name">Pull</span><span class="sub">Back + Biceps</span></label>
-      <label class="bf-card" data-val="legs-glutes"><span class="icon">🍑</span><span class="name">Legs & Glutes</span><span class="sub">Posterior Chain</span></label>
+      <label class="bf-card" data-val="push"><span class="icon">🤜</span><span class="name">Push</span><span class="sub">Chest · Triceps · Shoulders</span></label>
+      <label class="bf-card" data-val="pull"><span class="icon">🤛</span><span class="name">Pull</span><span class="sub">Back · Biceps</span></label>
+      <label class="bf-card" data-val="legs-glutes"><span class="icon">🍑</span><span class="name">Legs &amp; Glutes</span><span class="sub">Posterior Chain</span></label>
       <label class="bf-card" data-val="cardio"><span class="icon">❤️</span><span class="name">Cardio</span><span class="sub">Conditioning</span></label>
     </div>
   </div>
@@ -618,9 +618,24 @@ function setupBodyFocusGrid() {
   document.querySelectorAll('#bf-grid .bf-card').forEach(card => {
     card.addEventListener('click', () => {
       const isSelected = card.classList.contains('sel');
+      const isExclusive = card.getAttribute('data-exclusive') === 'true'; // "Full Body"
       const selectedCount = document.querySelectorAll('#bf-grid .bf-card.sel').length;
-      if (isSelected && selectedCount === 1) return;
-      card.classList.toggle('sel');
+
+      if (isExclusive) {
+        // Clicking "Full Body": select it and deselect everything else
+        document.querySelectorAll('#bf-grid .bf-card').forEach(c => c.classList.remove('sel'));
+        card.classList.add('sel');
+      } else {
+        // Clicking a specific focus: deselect "Full Body", then toggle this card
+        document.querySelectorAll('#bf-grid .bf-card[data-exclusive]').forEach(c => c.classList.remove('sel'));
+        if (isSelected && selectedCount === 1) {
+          // Last specific item — revert to Full Body instead of leaving nothing selected
+          document.querySelector('#bf-grid .bf-card[data-exclusive]').classList.add('sel');
+          card.classList.remove('sel');
+        } else {
+          card.classList.toggle('sel');
+        }
+      }
     });
   });
 }
