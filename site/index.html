@@ -477,7 +477,7 @@ function closeHomeAuthModal() {
 
 function switchHomeAuthTab(tab) {
   const isLogin = tab === 'login';
-  document.getElementById('home-auth-title').textContent = isLogin ? 'Welcome Back' : 'Create Account';
+  document.getElementById('home-auth-title').textContent = isLogin ? 'Sign In to Log Results' : 'Create Account';
   document.getElementById('home-auth-sub').textContent = isLogin ? 'Sign in to log results and track workouts.' : 'Join HomeWODrx — it\'s free.';
   document.getElementById('home-login-form').style.display = isLogin ? 'block' : 'none';
   document.getElementById('home-signup-form').style.display = isLogin ? 'none' : 'block';
@@ -577,7 +577,7 @@ async function submitHomeDailyResult() {
 <div id="home-auth-modal">
   <div class="hm">
     <button class="hm-close" onclick="closeHomeAuthModal()">✕</button>
-    <h2 id="home-auth-title">Welcome Back</h2>
+    <h2 id="home-auth-title">Sign In to Log Results</h2>
     <p class="hmsub" id="home-auth-sub">Sign in to log results and track workouts.</p>
     <div id="home-auth-error" class="hmerr"></div>
     <div id="home-login-form">
