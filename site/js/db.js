@@ -36,7 +36,6 @@ const db = {
 
   async signUp(email, password, username) {
     if (!supabaseClient) {
-      // Demo mode: store user in localStorage
       const user = {
         id: 'user_' + Math.random().toString(36).substr(2, 9),
         email,
@@ -53,7 +52,6 @@ const db = {
     });
 
     if (!error && data?.user) {
-      // Create profile
       await supabaseClient.from('profiles').insert({
         id: data.user.id,
         username
@@ -65,7 +63,6 @@ const db = {
 
   async signIn(email, password) {
     if (!supabaseClient) {
-      // Demo mode: verify in localStorage
       const user = JSON.parse(localStorage.getItem('demo_user') || '{}');
       if (user.email === email) {
         localStorage.setItem('demo_auth_token', 'demo_token_' + user.id);
@@ -106,7 +103,6 @@ const db = {
 
   async getProfile(userId) {
     if (!supabaseClient) {
-      // Demo mode
       const user = JSON.parse(localStorage.getItem('demo_user') || '{}');
       if (user.id === userId) {
         return {
@@ -157,7 +153,6 @@ const db = {
 
   async saveWorkout(workout) {
     if (!supabaseClient) {
-      // Demo mode: store in localStorage
       const workouts = JSON.parse(localStorage.getItem('demo_workouts') || '[]');
       const newWorkout = {
         id: 'workout_' + Math.random().toString(36).substr(2, 9),
@@ -178,11 +173,24 @@ const db = {
     return { data: data?.[0], error };
   },
 
+  async deleteWorkout(workoutId) {
+    if (!supabaseClient) {
+      const workouts = JSON.parse(localStorage.getItem('demo_workouts') || '[]');
+      localStorage.setItem('demo_workouts', JSON.stringify(workouts.filter(w => w.id !== workoutId)));
+      return { error: null };
+    }
+    const { error } = await supabaseClient
+      .from('workouts')
+      .delete()
+      .eq('id', workoutId);
+    if (error) throw new Error(error.message);
+    return { error: null };
+  },
+
   async getWorkouts(options = {}) {
     const { isPublic = true, userId = null, limit = 100, offset = 0 } = options;
 
     if (!supabaseClient) {
-      // Demo mode
       const workouts = JSON.parse(localStorage.getItem('demo_workouts') || '[]');
       let filtered = isPublic ? workouts.filter(w => w.is_public) : workouts;
       if (userId) {
@@ -226,7 +234,6 @@ const db = {
 
   async saveResult(result) {
     if (!supabaseClient) {
-      // Demo mode
       const results = JSON.parse(localStorage.getItem('demo_results') || '[]');
       const newResult = {
         id: 'result_' + Math.random().toString(36).substr(2, 9),
@@ -252,12 +259,11 @@ const db = {
     const { benchmarkSlug = null, workoutId = null, userId = null, limit = 100, offset = 0 } = options;
 
     if (!supabaseClient) {
-      // Demo mode
       const results = JSON.parse(localStorage.getItem('demo_results') || '[]');
       let filtered = results;
       if (benchmarkSlug) filtered = filtered.filter(r => r.benchmark_slug === benchmarkSlug);
       if (workoutId) filtered = filtered.filter(r => r.workout_id === workoutId);
-      if (userId) filtered = filtered.filter(r => r.user_id === userId);
+      if (userId) filtered = filtered.filter(r =>(r.user_id === userId);
       return filtered.slice(offset, offset + limit);
     }
 
@@ -337,7 +343,6 @@ const db = {
 
   async setFeatured(type, id, isFeatured) {
     if (!supabaseClient) {
-      // Demo mode: store in localStorage
       const featured = JSON.parse(localStorage.getItem('demo_featured') || '[]');
       if (isFeatured) {
         if (!featured.find(f => f.id === id)) {
@@ -351,13 +356,11 @@ const db = {
       return { error: null };
     }
 
-    // Admin only - update via dashboard
     return { error: null };
   },
 
   async getFeatured() {
     if (!supabaseClient) {
-      // Demo mode: return a rotating featured workout by day of week
       const benchmarks = BENCHMARKS;
       const dayOfWeek = new Date().getDay();
       const featured = benchmarks[dayOfWeek % benchmarks.length];
@@ -376,7 +379,6 @@ const db = {
       .single();
 
     if (!data) {
-      // Fall back to auto-selection by day of week
       const benchmarks = BENCHMARKS;
       const dayOfWeek = new Date().getDay();
       const featured = benchmarks[dayOfWeek % benchmarks.length];
@@ -392,9 +394,6 @@ const db = {
 
   async incrementViews(type, id) {
     if (!supabaseClient) return;
-
-    const table = type === 'benchmark' ? 'benchmarks' : 'workouts';
-    // Demo mode: skip
     return;
   },
 
