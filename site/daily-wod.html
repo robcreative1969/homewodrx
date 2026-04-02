@@ -10,6 +10,7 @@
   <script src="/js/config.js"></script>
   <script src="/js/db.js"></script>
   <script src="/js/benchmarks.js"></script>
+  <script src="/js/movements.js"></script>
   <script src="/js/daily-wod.js"></script>
   <script src="/js/nav.js"></script>
   <style>
@@ -331,7 +332,7 @@
       if (e.target === document.getElementById('result-modal')) closeResultModal();
     });
   });
-  </script>
+</script>
 
 <!-- AUTH MODAL -->
 <style>
@@ -353,7 +354,7 @@
   #workout-auth-modal .wamerr{background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);color:#E74C3C;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
   @keyframes slideInToast{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
 </style>
-<div id="worko��uth-modal">
+<div id="workout-auth-modal">
   <div class="wam">
     <button class="wam-close" onclick="closeWorkoutAuthModal()">&#x2715;</button>
     <h2 id="workout-auth-title">Sign In to Log Result</h2>
