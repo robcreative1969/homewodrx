@@ -252,40 +252,7 @@
 </main>
 
 <!-- FOOTER -->
-<footer style="border-top:1px solid var(--bd);padding:40px 20px;margin-top:40px">
-  <div style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:32px">
-    <div>
-      <div style="font-size:18px;font-weight:900;margin-bottom:12px">⚡ HomeWODrx</div>
-      <p style="font-size:13px;color:var(--mu);line-height:1.7">The complete platform for home and garage gym athletes.</p>
-    </div>
-    <div>
-      <div style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Workouts</div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <a href="/workouts.html" style="color:var(--tx);font-size:13px;text-decoration:none">Named Benchmarks</a>
-        <a href="/generator.html" style="color:var(--tx);font-size:13px;text-decoration:none">WOD Generator</a>
-        <a href="/generator.html" style="color:var(--tx);font-size:13px;text-decoration:none">Community WODs</a>
-      </div>
-    </div>
-    <div>
-      <div style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Community</div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <a href="/leaderboard.html" style="color:var(--tx);font-size:13px;text-decoration:none">Leaderboard</a>
-        <a href="/generator.html" style="color:var(--tx);font-size:13px;text-decoration:none">Log a Result</a>
-      </div>
-    </div>
-    <div>
-      <div style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Account</div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <a href="/generator.html" style="color:var(--tx);font-size:13px;text-decoration:none">Sign Up Free</a>
-        <a href="/generator.html" style="color:var(--tx);font-size:13px;text-decoration:none">Log In</a>
-        <a href="/admin.html" style="color:var(--mu);font-size:12px;text-decoration:none">Admin</a>
-      </div>
-    </div>
-  </div>
-  <div style="max-width:1080px;margin:32px auto 0;padding-top:20px;border-top:1px solid var(--bd);text-align:center;font-size:12px;color:var(--mu)">
-    &copy; 2026 HomeWODrx &middot; Built for athletes, by athletes. &middot; Named benchmark workouts are common knowledge in the fitness community.
-  </div>
-</footer>
+<script src="/js/footer.js"></script>
 
 <script>
 // Inline movement DB for DailyWOD (small version for index)
@@ -363,7 +330,7 @@ function renderDailyWOD(wod) {
   const fullViewLink = document.getElementById('dwod-full-view-link');
   if (fullViewLink) {
     const date = wod.date || new Date().toISOString().split('T')[0];
-    fullViewLink.href = '/daily-wod.html?date=' + date;
+    fullViewLink.href = `/daily-wod.html?date=${date}`;
   }
 }
 
