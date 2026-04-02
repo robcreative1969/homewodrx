@@ -12,7 +12,7 @@
 <script src="/js/benchmarks.js"></script>
 <script src="/js/nav.js"></script>
 <style>
-.lb-page{max-width:1000px;margin:0 auto;padding:32px 20px 80px}
+.lb-page{max-width:1400px;margin:0 auto;padding:32px 20px 80px}
 .lb-header{margin-bottom:28px}
 .lb-header h1{font-size:clamp(24px,4vw,34px);font-weight:900;margin-bottom:6px}
 .lb-header p{color:var(--mu);font-size:14px}
@@ -92,7 +92,7 @@
         <input type="text" id="f-search" placeholder="e.g. Fran, Cindy, @username…">
       </div>
       <div class="filter-group">
-        <label>Workout Type</label>
+        <label>Stats</label>
         <select id="f-type">
           <option value="">All Types</option>
           <option value="girl">The Girls</option>
@@ -179,7 +179,7 @@
         <tr>
           <th style="width:40px">Rank</th>
           <th>Athlete</th>
-          <th>Workout</th>
+          <th>Wcrkut</th>
           <th>Score</th>
           <th>Notes</th>
           <th>Date</th>
@@ -189,7 +189,7 @@
     </table>
   </div>
   <div id="lb-empty" class="empty" style="display:none">
-    <div class="ei">🏋️</div>
+    <div class="ei">🏯️</div>
     <p>No results match your filters. Try broadening the search.</p>
   </div>
   <button class="load-more" id="load-more-btn" onclick="loadMore()" style="display:none">Load More Results</button>
@@ -307,7 +307,6 @@ function renderRows() {
     const rankClass = rank === 1 ? 'r1' : rank === 2 ? 'r2' : rank === 3 ? 'r3' : 'rn';
     const bench = r.benchmark_slug ? benchmarkMap[r.benchmark_slug] : null;
     const wodTitle = bench ? bench.name : (r.workout_title || 'Custom Workout');
-    const wodSlug = r.benchmark_slug || r.workout_id || '';
     const catLabel = bench ? { girl:'Girl', hero:'Hero', benchmark:'Benchmark' }[bench.category] || '' : 'User WOD';
     const catClass = bench ? `cat-${bench.category}` : 'cat-user';
     const link = r.benchmark_slug
@@ -323,14 +322,14 @@ function renderRows() {
         </div>
       </td>
       <td>
-        <a href="${link}" class="wod-link">${wodTitle}</a>
+        <a href="${link}" class="wof-link">${wodTitle}</a>
         <div style="margin-top:3px"><span class="cat-chip ${catClass}">${catLabel}</span></div>
       </td>
       <td>
         <div class="score-val">${r.score_display}</div>
         ${r.is_rx ? '<span class="rx-badge">Rx</span>' : ''}
       </td>
-      <td class="notes-cell" title="${r.notes||''}">${r.notes || '—'}</td>
+      <td class="notes-cell" title="${r.notes||''}">${r.notes || '└'}</td>
       <td style="font-size:12px;color:var(--mu);white-space:nowrap">${r.date || ''}</td>`;
     tbody.appendChild(tr);
   });
@@ -367,5 +366,5 @@ document.getElementById('f-search').addEventListener('keydown', e => {
 
 init();
 </script>
-</body>
-</html>
+<script src="/js/footer.js"></script>
+</body></html>
