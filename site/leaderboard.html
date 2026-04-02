@@ -64,7 +64,7 @@
 .load-more{display:block;width:100%;padding:13px;margin-top:16px;background:var(--dk3);color:var(--mu);border:1px solid var(--bd);border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s}
 .load-more:hover{border-color:var(--or);color:var(--or)}
 .empty{text-align:center;padding:48px 20px;color:var(--mu)}
-.empty .ei{font-size:40px;margin-bottom:12px}
+.empty .ei{font-size:40px;margin-bottom:12py}
 @media(max-width:600px){.filter-row{grid-template-columns:1fr}.stats-bar{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
@@ -92,7 +92,7 @@
         <input type="text" id="f-search" placeholder="e.g. Fran, Cindy, @username…">
       </div>
       <div class="filter-group">
-        <label>Stats</label>
+        <label>Workout Type</label>
         <select id="f-type">
           <option value="">All Types</option>
           <option value="girl">The Girls</option>
@@ -179,7 +179,7 @@
         <tr>
           <th style="width:40px">Rank</th>
           <th>Athlete</th>
-          <th>Wcrkut</th>
+          <th>Workout</th>
           <th>Score</th>
           <th>Notes</th>
           <th>Date</th>
@@ -189,7 +189,7 @@
     </table>
   </div>
   <div id="lb-empty" class="empty" style="display:none">
-    <div class="ei">🏯️</div>
+    <div class="ei">🏋️</div>
     <p>No results match your filters. Try broadening the search.</p>
   </div>
   <button class="load-more" id="load-more-btn" onclick="loadMore()" style="display:none">Load More Results</button>
@@ -322,14 +322,14 @@ function renderRows() {
         </div>
       </td>
       <td>
-        <a href="${link}" class="wof-link">${wodTitle}</a>
+        <a href="${link}" class="wod-link">${wodTitle}</a>
         <div style="margin-top:3px"><span class="cat-chip ${catClass}">${catLabel}</span></div>
       </td>
       <td>
         <div class="score-val">${r.score_display}</div>
         ${r.is_rx ? '<span class="rx-badge">Rx</span>' : ''}
       </td>
-      <td class="notes-cell" title="${r.notes||''}">${r.notes || '└'}</td>
+      <td class="notes-cell" title="${r.notes||''}">${r.notes || '—'}</td>
       <td style="font-size:12px;color:var(--mu);white-space:nowrap">${r.date || ''}</td>`;
     tbody.appendChild(tr);
   });
@@ -367,4 +367,5 @@ document.getElementById('f-search').addEventListener('keydown', e => {
 init();
 </script>
 <script src="/js/footer.js"></script>
-</body></html>
+</body>
+</html>
