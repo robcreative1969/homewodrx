@@ -18,10 +18,151 @@
       display: block;
       text-decoration: none;
       color: inherit;
-      background: var(--dark-surface, #1e1e1e);
-      border: 1px solid var(--dark-border, #333);
-      border-radius: 8px;
-      padding: 1.25rem;
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: var(--border-radius-lg);
+      padding: var(--spacing-lg);
+      transition: border-color 0.2s, transform 0.15s;
+    }
+    .movement-card:hover {
+      border-color: var(--orange, #f97316);
+      transform: translateY(-2px);
+    }
+    .movement-card h3 {
+      margin: 0 0 0.4rem;
+      font-size: 1.05rem;
+    }
+    .movement-card .muscles {
+      font-size: 0.82rem;
+      color: var(--text-muted, #888);
+      margin-bottom: 0.6rem;
+      line-height: 1.4;
+    }
+    .movement-card .workout-count {
+      font-size: 0.8rem;
+      color: var(--orange, #f97316);
+      font-weight: 600;
+    }
+    .category-heading {
+      margin: 2.5rem 0 1rem;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted, #888);
+      border-bottom: 1px solid var(--dark-border, #333);
+      padding-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body data-nav-init="true" data-active-page="movements">
+<main class="container">
+  <section style="margin-bottom: 2rem; padding: 2rem 0;">
+    <h1>Movement Library</h1>
+    <p class="text-muted">Every CrossFit movement — coaching cues, muscle groups, and the workouts that use them.</p>
+  </section>
+
+  <h2 class="category-heading">Gymnastics</h2>
+  <div class="grid grid-cols-3" id="gymnastics-grid"></div>
+
+  <h2 class="category-heading">Weightlifting &amp; Barbell</h2>
+  <div class="grid grid-cols-3" id="barbell-grid"></div>
+
+  <h2 class="category-heading">Monostructural / Cardio</h2>
+  <div class="grid grid-cols-3" id="cardio-grid"></div>
+
+  <h2 class="category-heading">Bodyweight</h2>
+  <div class="grid grid-cols-3" id="bodyweight-grid"></div>
+</main>
+
+<script src="/js/footer.js"></script>
+
+<script>
+const MOVEMENTS = {
+  gymnastics: [
+    { slug: 'pull-ups',            name: 'Pull-Ups',            muscles: 'Lats, biceps, rhomboids, core' },
+    { slug: 'push-ups',            name: 'Push-Ups',            muscles: 'Chest, triceps, anterior deltoids, core' },
+    { slug: 'muscle-ups',          name: 'Muscle-Ups',          muscles: 'Lats, biceps, chest, triceps, core' },
+    { slug: 'handstand-push-ups',  name: 'Handstand Push-Ups',  muscles: 'Shoulders, triceps, upper traps, core' },
+    { slug: 'rope-climbs',         name: 'Rope Climbs',         muscles: 'Biceps, lats, forearms, core' },
+    { slug: 'box-jumps',           name: 'Box Jumps',           muscles: 'Quads, glutes, calves, hip flexors' },
+  ],
+  barbell: [
+    { slug: 'deadlifts',           name: 'Deadlifts',           muscles: 'Hamstrings, glutes, lower back, traps' },
+    { slug: 'cleans',              name: 'Cleans',              muscles: 'Hamstrings, glutes, traps, upper back' },
+    { slug: 'snatches',            name: 'Snatches',            muscles: 'Hamstrings, glutes, traps, shoulders' },
+    { slug: 'thrusters',           name: 'Thrusters',           muscles: 'Quads, glutes, shoulders, triceps, core' },
+    { slug: 'kettlebell-swings',   name: 'Kettlebell Swings',   muscles: 'Hamstrings, glutes, lower back, core' },
+    { slug: 'wall-balls',          name: 'Wall Balls',          muscles: 'Quads, glutes, shoulders, core' },
+  ],
+  cardio: [
+    { slug: 'running',             name: 'Running',             muscles: 'Quads, hamstrings, calves, glutes' },
+    { slug: 'rowing',              name: 'Rowing',              muscles: 'Legs, back, core, arms — full body' },
+    { slug: 'double-unders',       name: 'Double-Unders',       muscles: 'Calves, shoulders, wrists, cardio' },
+  ],
+  bodyweight: [
+    { slug: 'air-squats',          name: 'Air Squats',          muscles: 'Quads, glutes, hamstrings, core' },
+    { slug: 'burpees',             name: 'Burpees',             muscles: 'Full body — chest, shoulders, quads, core' },
+    { slug: 'sit-ups',             name: 'Sit-Ups',             muscles: 'Rectus abdominis, hip flexors' },
+  ]
+};
+
+function slugify(name) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+function getWorkoutCount(slug) {
+  return BENCHMARKS.filter(b =>
+    b.movements && b.movements.some(m => slugify(m.name) === slug)
+  ).length;
+}
+
+function renderGrid(gridId, movements) {
+  const el = document.getElementById(gridId);
+  if (!el) return;
+  el.innerHTML = movements.map(m => {
+    const count = getWorkoutCount(m.slug);
+    const countLabel = count > 0 ? `${count} benchmark${count === 1 ? '' : 's'}` : 'Movement guide';
+    return `<a href="/movement.html?slug=${m.slug}" class="movement-card">
+      <h3>${m.name}</h3>
+      <p class="muscles">${m.muscles}</p>
+      <span class="workout-count">${countLabel} →</span>
+    </a>`;
+  }).join('');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderGrid('gymnastics-grid',  MOVEMENTS.gymnastics);
+  renderGrid('barbell-grid',     MOVEMENTS.barbell);
+  renderGrid('cardio-grid',      MOVEMENTS.cardio);
+  renderGrid('bodyweight-grid',  MOVEMENTS.bodyweight);
+});
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CrossFit Movement Library - HomeWODrx</title>
+  <meta name="description" content="Browse every CrossFit movement with coaching cues, muscle groups, and scaling options. Find every workout that includes each movement.">
+  <meta property="og:title" content="CrossFit Movement Library - HomeWODrx">
+  <meta property="og:description" content="Learn CrossFit movements with coaching tips and find every workout that includes them.">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/db.js"></script>
+  <script src="/js/benchmarks.js"></script>
+  <script src="/js/nav.js"></script>
+  <style>
+    .movement-card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: var(--border-radius-lg);
+      padding: var(--spacing-lg);
       transition: border-color 0.2s, transform 0.15s;
     }
     .movement-card:hover {
