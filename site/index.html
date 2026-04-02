@@ -152,7 +152,7 @@
             <div style="margin-top:12px;font-size:11px;color:var(--mu)" id="dwod-scoring"></div>
           </div>
           <div class="wod-card-footer">
-            <a href="/generator.html" class="wod-footer-btn wfb-pri">📝 Log Result</a>
+            <button class="wod-footer-btn wfb-pri" onclick="handleLogResult()">📝 Log Result</button>
             <a href="/generator.html" class="wod-footer-btn wfb-sec">Full View →</a>
           </div>
         </div>
@@ -218,7 +218,7 @@
       <div class="feature-card">
         <div class="ficon">📅</div>
         <h3>Daily WOD</h3>
-        <p>A fresh, auto-generated workout every day — same for every visitor. Deterministic algorithm means no two days are the same. <a href="/">Try it today →</a></p>
+        <p>A fresh, auto-generated workout every day — same for every visitor. Deterministic algorithm means no two days are the same. <a href="/generator.html">Try it today →</a></p>
       </div>
       <div class="feature-card">
         <div class="ficon">⚡</div>
@@ -238,12 +238,12 @@
       <div class="feature-card">
         <div class="ficon">🌍</div>
         <h3>Community Workouts</h3>
-        <p>Share your custom WODs with the community. Others can do your workout, log results, and compete on the leaderboard. <a href="/workouts.html">Share a WOD →</a></p>
+        <p>Share your custom WODs with the community. Others can do your workout, log results, and compete on the leaderboard. <a href="/generator.html">Share a WOD →</a></p>
       </div>
       <div class="feature-card">
         <div class="ficon">👤</div>
         <h3>Athlete Profiles</h3>
-        <p>Track your results, personal records, and workout history. Build your profile and show the community what you're made of. <a href="/signup.html">Get started →</a></p>
+        <p>Track your results, personal records, and workout history. Build your profile and show the community what you're made of. <a href="/generator.html">Get started →</a></p>
       </div>
     </div>
   </div>
@@ -276,8 +276,8 @@
     <div>
       <div style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Account</div>
       <div style="display:flex;flex-direction:column;gap:8px">
-        <a href="/signup.html" style="color:var(--tx);font-size:13px;text-decoration:none">Sign Up Free</a>
-        <a href="/login.html" style="color:var(--tx);font-size:13px;text-decoration:none">Log In</a>
+        <a href="/generator.html" style="color:var(--tx);font-size:13px;text-decoration:none">Sign Up Free</a>
+        <a href="/generator.html" style="color:var(--tx);font-size:13px;text-decoration:none">Log In</a>
         <a href="/admin.html" style="color:var(--mu);font-size:12px;text-decoration:none">Admin</a>
       </div>
     </div>
@@ -450,6 +450,101 @@ function formatDate(d) {
 }
 
 document.addEventListener('DOMContentLoaded', initHomepage);
+
+// ── AUTH MODAL ─────────────────────────────────────────────────
+async function handleLogResult() {
+  const user = await db.getUser();
+  if (user) {
+    window.location.href = '/generator.html';
+  } else {
+    openHomeAuthModal('login');
+  }
+}
+
+function openHomeAuthModal(mode = 'login') {
+  switchHomeAuthTab(mode);
+  document.getElementById('home-auth-modal').classList.add('open');
+}
+
+function closeHomeAuthModal() {
+  document.getElementById('home-auth-modal').classList.remove('open');
+  document.getElementById('home-auth-error').textContent = '';
+  document.getElementById('home-auth-error').style.display = 'none';
+}
+
+function switchHomeAuthTab(tab) {
+  const isLogin = tab === 'login';
+  document.getElementById('home-auth-title').textContent = isLogin ? 'Welcome Back' : 'Create Account';
+  document.getElementById('home-auth-sub').textContent = isLogin ? 'Sign in to log results and track workouts.' : 'Join HomeWODrx — it\'s free.';
+  document.getElementById('home-login-form').style.display = isLogin ? 'block' : 'none';
+  document.getElementById('home-signup-form').style.display = isLogin ? 'none' : 'block';
+}
+
+async function submitHomeLogin() {
+  const email = document.getElementById('home-li-email').value.trim();
+  const pass  = document.getElementById('home-li-pass').value;
+  const errEl = document.getElementById('home-auth-error');
+  errEl.style.display = 'none';
+  if (!email || !pass) { errEl.textContent = 'Please enter email and password.'; errEl.style.display = 'block'; return; }
+  const { user, error } = await db.signIn(email, pass);
+  if (error) { errEl.textContent = error.message || 'Sign in failed.'; errEl.style.display = 'block'; return; }
+  closeHomeAuthModal();
+  window.location.href = '/generator.html';
+}
+
+async function submitHomeSignup() {
+  const username = document.getElementById('home-su-user').value.trim();
+  const email    = document.getElementById('home-su-email').value.trim();
+  const pass     = document.getElementById('home-su-pass').value;
+  const errEl    = document.getElementById('home-auth-error');
+  errEl.style.display = 'none';
+  if (!username || !email || !pass) { errEl.textContent = 'Please fill in all fields.'; errEl.style.display = 'block'; return; }
+  const { user, error } = await db.signUp(email, pass, username);
+  if (error) { errEl.textContent = error.message || 'Sign up failed.'; errEl.style.display = 'block'; return; }
+  closeHomeAuthModal();
+  window.location.href = '/generator.html';
+}
 </script>
+
+<!-- AUTH MODAL -->
+<style>
+  #home-auth-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:900;align-items:center;justify-content:center;padding:20px}
+  #home-auth-modal.open{display:flex}
+  #home-auth-modal .hm{background:#1E1E2C;border:1px solid #2E2E42;border-radius:14px;padding:28px 28px 24px;width:100%;max-width:380px;position:relative}
+  #home-auth-modal .hm-close{position:absolute;top:14px;right:16px;background:none;border:none;color:#888899;font-size:20px;cursor:pointer;line-height:1}
+  #home-auth-modal .hm-close:hover{color:#EAEAF0}
+  #home-auth-modal h2{font-size:20px;font-weight:900;margin-bottom:4px;color:#EAEAF0}
+  #home-auth-modal .hmsub{color:#888899;font-size:13px;margin-bottom:18px}
+  #home-auth-modal .hmfield{margin-bottom:14px}
+  #home-auth-modal .hmfield label{display:block;font-size:11px;font-weight:700;color:#888899;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+  #home-auth-modal .hmfield input{width:100%;background:#16161F;border:1px solid #2E2E42;border-radius:8px;padding:10px 12px;color:#EAEAF0;font-size:14px;outline:none;font-family:inherit;box-sizing:border-box}
+  #home-auth-modal .hmfield input:focus{border-color:#E8530A}
+  #home-auth-modal .hmbtn{width:100%;padding:13px;background:#E8530A;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;margin-top:4px}
+  #home-auth-modal .hmbtn:hover{background:#FF6B2B}
+  #home-auth-modal .hmlink{text-align:center;margin-top:12px;font-size:13px;color:#888899}
+  #home-auth-modal .hmlink a{color:#E8530A;cursor:pointer;text-decoration:none}
+  #home-auth-modal .hmerr{background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);color:#E74C3C;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
+</style>
+<div id="home-auth-modal">
+  <div class="hm">
+    <button class="hm-close" onclick="closeHomeAuthModal()">✕</button>
+    <h2 id="home-auth-title">Welcome Back</h2>
+    <p class="hmsub" id="home-auth-sub">Sign in to log results and track workouts.</p>
+    <div id="home-auth-error" class="hmerr"></div>
+    <div id="home-login-form">
+      <div class="hmfield"><label>Email</label><input type="email" id="home-li-email" placeholder="you@email.com"></div>
+      <div class="hmfield"><label>Password</label><input type="password" id="home-li-pass" placeholder="Your password" onkeydown="if(event.key==='Enter')submitHomeLogin()"></div>
+      <button class="hmbtn" onclick="submitHomeLogin()">Sign In →</button>
+      <p class="hmlink">No account? <a onclick="switchHomeAuthTab('signup')">Sign up free</a></p>
+    </div>
+    <div id="home-signup-form" style="display:none">
+      <div class="hmfield"><label>Username</label><input type="text" id="home-su-user" placeholder="e.g. firebreather_rob" maxlength="20"></div>
+      <div class="hmfield"><label>Email</label><input type="email" id="home-su-email" placeholder="you@email.com"></div>
+      <div class="hmfield"><label>Password</label><input type="password" id="home-su-pass" placeholder="Min 6 characters" onkeydown="if(event.key==='Enter')submitHomeSignup()"></div>
+      <button class="hmbtn" onclick="submitHomeSignup()">Create Account →</button>
+      <p class="hmlink">Already have one? <a onclick="switchHomeAuthTab('login')">Log in</a></p>
+    </div>
+  </div>
+</div>
 </body>
 </html>
