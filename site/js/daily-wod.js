@@ -182,6 +182,7 @@ const DailyWOD = {
       difficulty,
       bodyFocus,
       equipment,
+      duration,
       isManual: false,
       generatedAt: new Date().toISOString()
     };
@@ -189,14 +190,12 @@ const DailyWOD = {
 
   // ── Movement pool builder ──────────────────────────────────────
   _buildPool(equipment, level, bodyFocus, rng) {
-    // Use the same movement DB as the generator (MOVEMENT_DB must be loaded)
     if (typeof MOVEMENT_DB === 'undefined') return [];
     let moves = [...(MOVEMENT_DB.bodyweight || [])];
     equipment.forEach(eq => { if (eq !== 'bodyweight' && MOVEMENT_DB[eq]) moves.push(...MOVEMENT_DB[eq]); });
     if (level === 'beginner') moves = moves.filter(m => !/(muscle.up|snatch|toes.to.bar|double under|turkish)/i.test(m.name));
     if (level === 'intermediate') moves = moves.filter(m => !/(muscle.up)/i.test(m.name));
 
-    // Body focus filter
     const BF_TAGS = {
       'full-body': null,
       'upper-body': ['push','pull'],
@@ -258,7 +257,7 @@ const DailyWOD = {
     const sel = this._balancedPick(pool, count, rng);
     return {
       title: `${duration}-Minute AMRAP`,
-      format: 'AMRAP',
+      format: 'amrap',
       description: `Complete as many rounds as possible in ${duration} minutes. Pace yourself — the goal is consistent rounds from start to finish.`,
       rows: sel.map(m => ({ movement: m.name, reps: String(this._getReps(m, level)), tip: m.tip })),
       scoring: 'Record total rounds + reps (e.g. "8 rounds + 12 reps").'
@@ -270,38 +269,24 @@ const DailyWOD = {
     const sel = this._balancedPick(pool, movCount, rng);
     return {
       title: `${duration}-Minute EMOM`,
-      format: 'EMOM',
-      description: `Every Minute On the Minute for ${duration} minutes. Complete the designated work at the top of each minute; rest whatever remains.`,
-      rows: sel.map((m, i) => ({ movement: m.name, reps: `Min ${i+1} (repeat): ${this._getReps(m, level)} reps`, tip: m.tip })),
-      scoring: 'Track whether you finish each minute before the next starts.'
-    };
-  },
+      format: 'emom',
+      description: `Every Minute On the Minute for ${duration} minutes. Complete the designated work at thH�وXX�Z[�]N��\��]]�\��[XZ[�˘����Έ�[�X\
 
-  _genForTime(pool, level, rng) {
-    const schemes = {
-      beginner: [15,12,9], intermediate: [21,15,9], advanced: [30,20,10]
-    };
-    const scheme = schemes[level];
-    const sel = this._balancedPick(pool, 3, rng);
-    return {
-      title: `For Time — ${scheme.join('-')}`,
-      format: 'For Time',
-      description: `Complete all rounds for time using the ${scheme.join('-')} rep scheme. Push the pace.`,
-      rows: sel.map(m => ({ movement: m.name, reps: scheme.join(' – ') + ' reps', tip: m.tip })),
-      scoring: 'Record your finish time.'
-    };
-  },
-
-  _genCircuit(pool, level, duration, bodyFocus, rng) {
-    const movCount = duration <= 15 ? 4 : duration <= 30 ? 5 : 6;
-    const rounds = duration <= 15 ? 3 : duration <= 30 ? 4 : 5;
-    const sel = this._balancedPick(pool, movCount, rng);
-    return {
-      title: `${rounds}-Round Circuit`,
-      format: 'Circuit',
-      description: `Complete all ${movCount} movements back-to-back with minimal rest. Rest 60 seconds between rounds. ${rounds} rounds total.`,
-      rows: sel.map(m => ({ movement: m.name, reps: String(this._getReps(m, level)), tip: m.tip })),
-      scoring: 'Record total time and round splits.'
-    };
-  }
-};
+KJHO�
+�[ݙ[Y[��K��[YK�\ΈZ[�	�J�_H
+�\X]
+N�	�\˗��]�\�K]�[
+_H�\�\�K�\JJK���ܚ[�Έ	��X���]\�[�H�[�\�XX�Z[�]H�Y�ܙHH�^�\�ˉNK����[��ܕ[YJ��]�[���H�ۜ���[Y\�H�Y�[��\���MKL�WK[�\�YYX]N�̌KMKWKY�[��Y����LB�N�ۜ���[YHH��[Y\��]�[N�ۜ��[H\˗ؘ[[��YX��������N�]\��]N��܈[YH8�%	���[YK���[�	�I�_X��ܛX]�	ٛܝ[YI��\�ܚ\[ێ���\]H[��[���܈[YH\�[��H	���[YK���[�	�I�_H�\��[YK�\�HX�K�����Έ�[�X\
+HO�
+�[ݙ[Y[��K��[YK�\Έ��[YK���[�	�8�$�	�H
+�	��\��\�K�\JJK���ܚ[�Έ	ԙX�ܙ[�\��[�\�[YK�NK����[��\��Z]
+��]�[\�][ۋ��Q���\����H�ۜ�[ݐ��[�H\�][ۈHMH�
+�\�][ۈH��
+H�
+��ۜ���[��H\�][ۈHMH���\�][ۈH��
+�
+N�ۜ��[H\˗ؘ[[��YX����[ݐ��[����N�]\��]N�	ܛ�[��KT��[��\��Z]��ܛX]�	��\��Z]	��\�ܚ\[ێ���\]H[	�[ݐ��[�H[ݙ[Y[���X��]�X�X���]Z[�[X[�\���\�
+��X�ۙ��]�Y[���[�ˈ	ܛ�[��H��[���[�����Έ�[�X\
+HO�
+�[ݙ[Y[��K��[YK�\Έ��[��\˗��]�\�K]�[
+JK\�K�\JJK���ܚ[�Έ	ԙX�ܙ�[[YH[���[��]ˉNB�N�
