@@ -12,6 +12,8 @@
   <script src="/js/config.js"></script>
   <script src="/js/db.js"></script>
   <script src="/js/benchmarks.js"></script>
+  <script src="/js/movements.js"></script>
+  <script src="/js/daily-wod.js"></script>
   <script src="/js/nav.js"></script>
   <style>
     .movement-filter-banner {
@@ -66,6 +68,7 @@
         <button class="chip" data-type="hero">Heroes</button>
         <button class="chip" data-type="benchmark">Community Benchmarks</button>
         <button class="chip" data-type="user">User-Generated</button>
+        <button class="chip" data-type="daily">Daily WODs</button>
       </div>
     </div>
     <div class="filter-section">
@@ -128,19 +131,7 @@
 </main>
 
 <!-- FOOTER -->
-<footer>
-  <div class="footer-container">
-    <div class="footer-content">
-      <div class="footer-section">
-        <h4>HomeWODrx</h4>
-        <p>The platform for every athlete.</p>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>&copy; 2025 HomeWODrx. Built for athletes, by athletes.</p>
-    </div>
-  </div>
-</footer>
+<script src="/js/footer.js"></script>
 
 <script>
   let allWorkouts = [];
@@ -206,11 +197,62 @@
         })));
       }
 
+      // Add the last 30 daily WODs so site content grows automatically each day
+      const dailyWods = await generateRecentDailyWods(30);
+      if (dailyWods.length > 0) {
+        allWorkouts = allWorkouts.concat(dailyWods);
+      }
+
       applyFilters();
     } catch (error) {
       console.error('Error loading workouts:', error);
       container.innerHTML = '<p class="text-muted">Error loading workouts. Please try again.</p>';
     }
+  }
+
+  // Generate workout entries for the last N days from DailyWOD engine
+  async function generateRecentDailyWods(days) {
+    if (typeof DailyWOD === 'undefined') return [];
+    const wods = [];
+    const today = new Date();
+    // Fetch config once to avoid repeated Supabase calls
+    const config = await DailyWOD.getConfig().catch(() => DailyWOD.defaultConfig);
+    for (let i = 0; i < days; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      try {
+        const dayOfWeek = new Date(dateStr + 'T12:00:00').getDay();
+        const seed = DailyWOD.getSeedForDate(dateStr);
+        const rng = DailyWOD.seededRng(seed);
+        const difficulty = config.difficultyByDay[dayOfWeek] || 'intermediate';
+        const bodyFocus  = config.bodyFocusByDay[dayOfWeek]  || 'full-body';
+        const format     = config.formatByDay[dayOfWeek]     || 'amrap';
+        const durRange   = config.durationByDay[dayOfWeek]   || [20, 30];
+        const duration   = durRange[0] + Math.floor(rng() * (durRange[1] - durRange[0] + 1));
+        const equipment  = config.equipment || ['bodyweight'];
+        const pool = DailyWOD._buildPool(equipment, difficulty, bodyFocus, rng);
+        let wod;
+        if (format === 'amrap')        wod = DailyWOD._genAMRAP(pool, difficulty, duration, bodyFocus, rng);
+        else if (format === 'emom')    wod = DailyWOD._genEMOM(pool, difficulty, duration, bodyFocus, rng);
+        else if (format === 'fortime') wod = DailyWOD._genForTime(pool, difficulty, rng);
+        else                           wod = DailyWOD._genCircuit(pool, difficulty, duration, bodyFocus, rng);
+        if (wod) {
+          const dateLabel = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+          wods.push({
+            name: `Daily WOD \u2014 ${dateLabel}`,
+            category: 'daily',
+            format: wod.format,
+            difficulty: difficulty,
+            body_focus: bodyFocus,
+            movements: (wod.rows || []).map(r => ({ name: r.movement })),
+            _date: dateStr,
+            _title: wod.title
+          });
+        }
+      } catch (e) { /* skip this date */ }
+    }
+    return wods;
   }
 
   function applyFilters() {
@@ -240,10 +282,16 @@
       const diffOrder = { 'beginner': 1, 'intermediate': 2, 'advanced': 3 };
       filteredWorkouts.sort((a, b) => (diffOrder[b.difficulty] || 0) - (diffOrder[a.difficulty] || 0));
     } else {
+      const catOrder = { 'girl': 0, 'hero': 1, 'benchmark': 2, 'user': 3, 'daily': 4 };
       filteredWorkouts.sort((a, b) => {
-        const aIsUser = a.category === 'user' ? 1 : 0;
-        const bIsUser = b.category === 'user' ? 1 : 0;
-        return aIsUser - bIsUser;
+        const ao = catOrder[a.category] ?? 3;
+        const bo = catOrder[b.category] ?? 3;
+        if (ao !== bo) return ao - bo;
+        // Daily WODs: newest first
+        if (a.category === 'daily' && b.category === 'daily') {
+          return (b._date || '').localeCompare(a._date || '');
+        }
+        return 0;
       });
     }
 
@@ -264,8 +312,11 @@
     }
 
     container.innerHTML = displayed.map(w => {
-      const isUser = w.category === 'user';
-      const href = isUser ? `/workout.html?id=${w.id}` : `/workout.html?slug=${w.slug}`;
+      const isUser  = w.category === 'user';
+      const isDaily = w.category === 'daily';
+      const href = isDaily
+        ? `/daily-wod.html?date=${w._date}`
+        : (isUser ? `/workout.html?id=${w.id}` : `/workout.html?slug=${w.slug}`);
       return `
         <a href="${href}" style="text-decoration: none;">
           <div class="card">
@@ -277,7 +328,8 @@
               ${summarizeMovements(w)}
             </p>
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              ${isUser ? '<span class="badge badge-success">Community</span>' : ''}
+              ${isUser  ? '<span class="badge badge-success">Community</span>' : ''}
+              ${isDaily ? '<span class="badge badge-orange">Daily WOD</span>' : ''}
             </div>
           </div>
         </a>
