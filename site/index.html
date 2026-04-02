@@ -312,6 +312,8 @@ const MOVEMENT_DB = {
   ]
 };
 
+let currentDailyWod = null;
+
 async function initHomepage() {
   const today = new Date();
   const dateStr = today.toISOString().split('T')[0];
@@ -336,6 +338,7 @@ async function initHomepage() {
 }
 
 function renderDailyWOD(wod) {
+  currentDailyWod = wod;
   document.getElementById('dwod-title-skel').style.display = 'none';
   document.getElementById('dwod-title').style.display = 'block';
   document.getElementById('dwod-title').textContent = wod.title;
@@ -455,7 +458,7 @@ document.addEventListener('DOMContentLoaded', initHomepage);
 async function handleLogResult() {
   const user = await db.getUser();
   if (user) {
-    window.location.href = '/generator.html';
+    openHomeDailyResultModal();
   } else {
     openHomeAuthModal('login');
   }
@@ -489,7 +492,7 @@ async function submitHomeLogin() {
   const { user, error } = await db.signIn(email, pass);
   if (error) { errEl.textContent = error.message || 'Sign in failed.'; errEl.style.display = 'block'; return; }
   closeHomeAuthModal();
-  window.location.href = '/generator.html';
+  openHomeDailyResultModal();
 }
 
 async function submitHomeSignup() {
@@ -502,7 +505,53 @@ async function submitHomeSignup() {
   const { user, error } = await db.signUp(email, pass, username);
   if (error) { errEl.textContent = error.message || 'Sign up failed.'; errEl.style.display = 'block'; return; }
   closeHomeAuthModal();
-  window.location.href = '/generator.html';
+  openHomeDailyResultModal();
+}
+
+// ── DAILY RESULT MODAL ────────────────────────────────────────
+function openHomeDailyResultModal() {
+  document.getElementById('home-result-modal').classList.add('open');
+}
+function closeHomeDailyResultModal() {
+  document.getElementById('home-result-modal').classList.remove('open');
+  document.getElementById('home-result-score').value = '';
+  document.getElementById('home-result-notes').value = '';
+  document.getElementById('home-result-rx').checked = false;
+  const errEl = document.getElementById('home-result-error');
+  errEl.textContent = ''; errEl.style.display = 'none';
+}
+async function submitHomeDailyResult() {
+  const user = await db.getUser();
+  if (!user) { closeHomeDailyResultModal(); openHomeAuthModal('login'); return; }
+  const score = document.getElementById('home-result-score').value.trim();
+  const notes = document.getElementById('home-result-notes').value.trim();
+  const isRx  = document.getElementById('home-result-rx').checked;
+  const errEl = document.getElementById('home-result-error');
+  if (!score) { errEl.textContent = 'Please enter your score.'; errEl.style.display = 'block'; return; }
+  const wod = currentDailyWod || {};
+  try {
+    const result = {
+      user_id: user.id,
+      username: user.email?.split('@')[0] || 'unknown',
+      benchmark_slug: wod.slug || null,
+      workout_id: wod.id || null,
+      score_display: score,
+      score_seconds: null,
+      score_rounds: null,
+      score_reps: null,
+      is_rx: isRx,
+      notes: notes,
+      date: new Date().toISOString().split('T')[0]
+    };
+    const { error } = await db.saveResult(result);
+    if (error) throw error;
+    closeHomeDailyResultModal();
+    // brief success feedback
+    const btn = document.querySelector('.wod-footer-btn.wfb-pri');
+    if (btn) { const orig = btn.textContent; btn.textContent = '✅ Logged!'; setTimeout(() => btn.textContent = orig, 2500); }
+  } catch(e) {
+    errEl.textContent = 'Error saving result. Please try again.'; errEl.style.display = 'block';
+  }
 }
 </script>
 
@@ -543,6 +592,54 @@ async function submitHomeSignup() {
       <div class="hmfield"><label>Password</label><input type="password" id="home-su-pass" placeholder="Min 6 characters" onkeydown="if(event.key==='Enter')submitHomeSignup()"></div>
       <button class="hmbtn" onclick="submitHomeSignup()">Create Account →</button>
       <p class="hmlink">Already have one? <a onclick="switchHomeAuthTab('login')">Log in</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- DAILY RESULT MODAL -->
+<style>
+  #home-result-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:900;align-items:center;justify-content:center;padding:20px}
+  #home-result-modal.open{display:flex}
+  #home-result-modal .hrm{background:#1E1E2C;border:1px solid #2E2E42;border-radius:14px;padding:28px 28px 24px;width:100%;max-width:400px;position:relative}
+  #home-result-modal .hrm-close{position:absolute;top:14px;right:16px;background:none;border:none;color:#888899;font-size:20px;cursor:pointer;line-height:1}
+  #home-result-modal .hrm-close:hover{color:#EAEAF0}
+  #home-result-modal h2{font-size:20px;font-weight:900;margin-bottom:4px;color:#EAEAF0}
+  #home-result-modal .hrmsub{color:#888899;font-size:13px;margin-bottom:18px}
+  #home-result-modal .hrmfield{margin-bottom:14px}
+  #home-result-modal .hrmfield label{display:block;font-size:11px;font-weight:700;color:#888899;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+  #home-result-modal .hrmfield input[type=text],#home-result-modal .hrmfield textarea{width:100%;background:#16161F;border:1px solid #2E2E42;border-radius:8px;padding:10px 12px;color:#EAEAF0;font-size:14px;outline:none;font-family:inherit;box-sizing:border-box}
+  #home-result-modal .hrmfield input[type=text]:focus,#home-result-modal .hrmfield textarea:focus{border-color:#E8530A}
+  #home-result-modal .hrmfield textarea{resize:vertical;min-height:70px}
+  #home-result-modal .hrmfield.hrm-rx{display:flex;align-items:center;gap:8px}
+  #home-result-modal .hrmfield.hrm-rx label{text-transform:none;font-size:13px;font-weight:600;letter-spacing:0;margin-bottom:0;color:#EAEAF0;cursor:pointer}
+  #home-result-modal .hrmbtns{display:flex;gap:10px;margin-top:18px}
+  #home-result-modal .hrmbtn-cancel{flex:1;padding:12px;background:transparent;color:#888899;border:1px solid #2E2E42;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}
+  #home-result-modal .hrmbtn-cancel:hover{border-color:#EAEAF0;color:#EAEAF0}
+  #home-result-modal .hrmbtn-submit{flex:2;padding:12px;background:#E8530A;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer}
+  #home-result-modal .hrmbtn-submit:hover{background:#FF6B2B}
+  #home-result-modal .hrmerr{background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);color:#E74C3C;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
+</style>
+<div id="home-result-modal">
+  <div class="hrm">
+    <button class="hrm-close" onclick="closeHomeDailyResultModal()">×</button>
+    <h2>Log Your Result</h2>
+    <p class="hrmsub">Record your score for today's WOD.</p>
+    <div id="home-result-error" class="hrmerr"></div>
+    <div class="hrmfield">
+      <label>Your Score</label>
+      <input type="text" id="home-result-score" placeholder="e.g., 4:32 or 15 rounds">
+    </div>
+    <div class="hrmfield">
+      <label>Notes (Optional)</label>
+      <textarea id="home-result-notes" placeholder="Scaled weight? Modifications? How did it feel?"></textarea>
+    </div>
+    <div class="hrmfield hrm-rx">
+      <input type="checkbox" id="home-result-rx">
+      <label for="home-result-rx">Completed RX (Prescribed weight)</label>
+    </div>
+    <div class="hrmbtns">
+      <button class="hrmbtn-cancel" onclick="closeHomeDailyResultModal()">Cancel</button>
+      <button class="hrmbtn-submit" onclick="submitHomeDailyResult()">Log Result</button>
     </div>
   </div>
 </div>
