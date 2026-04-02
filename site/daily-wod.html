@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily WOD - HomeWODrx</title>
+  <meta name="description" content="Today's auto-generated daily workout on HomeWODrx.">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/db.js"></script>
+  <script src="/js/benchmarks.js"></script>
+  <script src="/js/daily-wod.js"></script>
+  <script src="/js/nav.js"></script>
+  <style>
+    .dwod-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--orange, #f97316);
+      margin-bottom: 6px;
+    }
+    .dwod-badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--orange, #f97316);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+  </style>
+</head>
+<body data-nav-init="true" data-active-page="workouts">
+<main class="container">
+
+  <div id="wod-header" class="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <div id="wod-details" style="display:none;">
+    <section class="section">
+      <div id="description-section"></div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <h2>Movements</h2>
+      </div>
+      <div id="movements-table"></div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <h2>Log Your Result</h2>
+      </div>
+      <div id="log-result-section"></div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <h2>Leaderboard</h2>
+      </div>
+      <div class="filter-chips" id="leaderboard-filters">
+        <button class="chip active" data-period="day">Today</button>
+        <button class="chip" data-period="week">This Week</button>
+        <button class="chip" data-period="all">All Time</button>
+      </div>
+      <div id="leaderboard-table" style="margin-top: 1.5rem;"></div>
+    </section>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-container">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>HomeWODrx</h4>
+        <p>The platform for every athlete.</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 HomeWODrx. Built for athletes, by athletes.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- RESULT MODAL -->
+<div class="modal-overlay" id="result-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">Log Your Result</h2>
+      <button class="modal-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="result-error" style="display:none;background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);color:#E74C3C;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px"></div>
+      <div class="form-group">
+        <label>Your Score</label>
+        <input type="text" id="result-score" placeholder="e.g., 4:32 or 15 rounds">
+      </div>
+      <div class="form-group">
+        <label>Notes (Optional)</label>
+        <textarea id="result-notes" placeholder="Scaled weight? Modifications? How did it feel?"></textarea>
+      </div>
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="result-rx">
+          Completed RX (Prescribed weight)
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeResultModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitResult()">Log Result</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentWod = null;
+  let leaderboardPeriod = 'day';
+
+  async function loadDailyWod() {
+    const params = new URLSearchParams(window.location.search);
+    const dateStr = params.get('date') || new Date().toISOString().split('T')[0];
+
+    try {
+      const wod = await DailyWOD.generate(dateStr);
+      currentWod = wod;
+      renderHeader(wod, dateStr);
+      renderDetails(wod);
+      loadLeaderboard('day', dateStr);
+      document.title = `Daily WOD – ${dateStr} - HomeWODrx`;
+      document.getElementById('wod-details').style.display = '';
+    } catch (err) {
+      console.error('Error loading daily WOD:', err);
+      document.getElementById('wod-header').innerHTML = '<p class="text-muted">Error loading today\'s workout.</p>';
+    }
+  }
+
+  function renderHeader(wod, dateStr) {
+    const formatted = new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    document.getElementById('wod-header').innerHTML = `
+      <div style="padding: 2rem 0; margin-bottom: 2rem; border-bottom: 1px solid var(--dark-border);">
+        <div class="dwod-badge">
+          <span class="dwod-badge-dot"></span>
+          Daily WOD &mdash; ${formatted}
+          ${wod.isManual ? '<span style="color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0"> &bull; Curated</span>' : ''}
+        </div>
+        <h1>${escHtml(wod.title || 'Daily Workout')}</h1>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1.5rem;">
+          <span class="badge badge-orange">${escHtml(wod.format || 'AMRAP')}</span>
+          <span class="badge badge-orange">${wod.duration || 20} min</span>
+          <span class="badge badge-orange">${cap(wod.difficulty || 'Intermediate')}</span>
+          ${wod.bodyFocus ? `<span class="badge badge-orange">${cap(wod.bodyFocus)}</span>` : ''}
+        </div>
+        <div style="display:flex;gap:1rem;">
+          <button class="btn btn-primary" onclick="openResultModal()">Log Your Result</button>
+          <a href="/workouts.html" class="btn btn-secondary">Browse Workouts</a>
+        </div>
+      </div>`;
+  }
+
+  function escHtml(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function cap(s) {
+    return String(s||'').replace(/-/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  function renderDetails(wod) {
+    // Description / scoring
+    const scoringNote = wod.scoring ? `<div style="margin-top:1rem;"><h4>Scoring</h4><p>${escHtml(wod.scoring)}</p></div>` : '';
+    const timerNote = wod.format === 'amrap'
+      ? `<p>Complete as many rounds and reps as possible of the movements below in <strong>${wod.duration} minutes</strong>.</p>`
+      : wod.format === 'emom'
+      ? `<p>Every minute on the minute for <strong>${wod.duration} minutes</strong>, complete the prescribed movements.</p>`
+      : wod.format === 'fortime'
+      ? `<p>Complete all rounds and reps for time.</p>`
+      : `<p>Complete <strong>${wod.duration} minutes</strong> of structured intervals.</p>`;
+
+    document.getElementById('description-section').innerHTML = timerNote + scoringNote;
+
+    // Movements table
+    const rows = wod.rows || [];
+    if (rows.length > 0) {
+      document.getElementById('movements-table').innerHTML = `
+        <table>
+          <thead><tr><th>Movement</th><th>Reps / Duration</th></tr></thead>
+          <tbody>
+            ${rows.map(r => `<tr>
+              <td>${escHtml(r.movement || r.name || '')}</td>
+              <td>${escHtml(String(r.reps || r.duration || '-'))}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>`;
+    }
+
+    // Equipment
+    if (wod.equipment && wod.equipment.length > 0 && !(wod.equipment.length === 1 && wod.equipment[0] === 'bodyweight')) {
+      document.getElementById('movements-table').innerHTML += `
+        <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--dark-border,#333);">
+          <h4 style="margin-bottom:0.5rem;">Equipment</h4>
+          <p>${wod.equipment.map(e => escHtml(cap(e))).join(', ')}</p>
+        </div>`;
+    }
+
+    // Log result section
+    document.getElementById('log-result-section').innerHTML =
+      `<p class="text-muted" style="margin-bottom:1rem;">Record your score for today's workout.</p>
+       <button class="btn btn-primary" onclick="openResultModal()">Log Your Result</button>`;
+  }
+
+  async function loadLeaderboard(period, dateStr) {
+    dateStr = dateStr || new Date().toISOString().split('T')[0];
+    leaderboardPeriod = period;
+    const container = document.getElementById('leaderboard-table');
+    container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+    try {
+      let results = await db.getResults({ dailyWodDate: dateStr, limit: 100 });
+      if (!results || results.length === 0) {
+        // Fallback: try fetching by a daily-wod slug pattern
+        results = [];
+      }
+      const now = new Date();
+      if (period === 'week') {
+        const weekAgo = new Date(); weekAgo.setDate(now.getDate() - 7);
+        results = results.filter(r => new Date(r.date) >= weekAgo);
+      } else if (period === 'day') {
+        results = results.filter(r => (r.date || '').startsWith(dateStr));
+      }
+      if (results.length === 0) {
+        container.innerHTML = '<p class="text-muted">No results yet — be the first to log one!</p>';
+        return;
+      }
+      results.sort((a, b) => (a.score_seconds || 999999) - (b.score_seconds || 999999));
+      container.innerHTML = `<table><thead><tr><th>Rank</th><th>Athlete</th><th>Score</th><th>Rx</th><th>Date</th></tr></thead><tbody>
+        ${results.slice(0, 20).map((r, i) => `<tr>
+          <td class="leaderboard-rank rank-${i+1<=3?i+1:''}">${i+1}</td>
+          <td>${escHtml(r.username || 'Athlete')}</td>
+          <td><strong>${escHtml(r.score_display || '-')}</strong></td>
+          <td>${r.is_rx ? 'RX' : 'Scaled'}</td>
+          <td class="text-muted">${new Date(r.date).toLocaleDateString()}</td>
+        </tr>`).join('')}
+      </tbody></table>`;
+    } catch (e) {
+      container.innerHTML = '<p class="text-muted">Leaderboard unavailable.</p>';
+    }
+  }
+
+  async function openResultModal() {
+    const user = await db.getUser();
+    if (!user) { openWorkoutAuthModal(); return; }
+    document.getElementById('result-modal').classList.add('active');
+  }
+
+  function closeResultModal() {
+    document.getElementById('result-modal').classList.remove('active');
+  }
+
+  async function submitResult() {
+    const user = await db.getUser();
+    if (!user) { openWorkoutAuthModal(); return; }
+    const score = document.getElementById('result-score').value;
+    const notes = document.getElementById('result-notes').value;
+    const isRx  = document.getElementById('result-rx').checked;
+    const dateStr = new URLSearchParams(window.location.search).get('date') || new Date().toISOString().split('T')[0];
+    if (!score) {
+      const errEl = document.getElementById('result-error');
+      errEl.textContent = 'Please enter your score.';
+      errEl.style.display = 'block';
+      return;
+    }
+    try {
+      const result = {
+        user_id: user.id,
+        username: user.email?.split('@')[0] || 'unknown',
+        benchmark_slug: null,
+        workout_id: null,
+        daily_wod_date: dateStr,
+        score_display: score,
+        score_seconds: null,
+        is_rx: isRx,
+        notes: notes,
+        date: new Date().toISOString().split('T')[0]
+      };
+      const { error } = await db.saveResult(result);
+      if (error) throw error;
+      closeResultModal();
+      document.getElementById('result-score').value = '';
+      document.getElementById('result-notes').value = '';
+      document.getElementById('result-rx').checked = false;
+      document.getElementById('result-error').style.display = 'none';
+      showToast('Result logged! 🏋️', 'success');
+      loadLeaderboard(leaderboardPeriod, dateStr);
+    } catch (e) {
+      const errEl = document.getElementById('result-error');
+      errEl.textContent = 'Error logging result. Please try again.';
+      errEl.style.display = 'block';
+    }
+  }
+
+  function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    toast.style.cssText = `position:fixed;bottom:24px;right:24px;background:${type==='success'?'#22C55E':'#E8530A'};color:#fff;padding:12px 20px;border-radius:10px;font-weight:700;font-size:14px;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.4);animation:slideInToast .3s ease-out`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3500);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadDailyWod();
+    document.querySelectorAll('#leaderboard-filters .chip').forEach(chip => {
+      chip.addEventListener('click', e => {
+        document.querySelectorAll('#leaderboard-filters .chip').forEach(c => c.classList.remove('active'));
+        e.target.classList.add('active');
+        const dateStr = new URLSearchParams(window.location.search).get('date') || new Date().toISOString().split('T')[0];
+        loadLeaderboard(e.target.dataset.period, dateStr);
+      });
+    });
+    document.querySelector('.modal-close').addEventListener('click', closeResultModal);
+    document.getElementById('result-modal').addEventListener('click', e => {
+      if (e.target === document.getElementById('result-modal')) closeResultModal();
+    });
+  });
+  </script>
+
+<!-- AUTH MODAL -->
+<style>
+  #workout-auth-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:900;align-items:center;justify-content:center;padding:20px}
+  #workout-auth-modal.active{display:flex}
+  #workout-auth-modal .wam{background:var(--dark-card,#1E1E2C);border:1px solid var(--dark-border,#2E2E42);border-radius:14px;padding:28px 28px 24px;width:100%;max-width:380px;position:relative}
+  #workout-auth-modal .wam-close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--text-muted,#888899);font-size:20px;cursor:pointer;line-height:1}
+  #workout-auth-modal .wam-close:hover{color:var(--text-primary,#EAEAF0)}
+  #workout-auth-modal h2{font-size:20px;font-weight:900;margin-bottom:4px}
+  #workout-auth-modal .wamsub{color:var(--text-muted,#888899);font-size:13px;margin-bottom:18px}
+  #workout-auth-modal .wamfield{margin-bottom:14px}
+  #workout-auth-modal .wamfield label{display:block;font-size:11px;font-weight:700;color:var(--text-muted,#888899);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+  #workout-auth-modal .wamfield input{width:100%;background:#16161F;border:1px solid var(--dark-border,#2E2E42);border-radius:8px;padding:10px 12px;color:var(--text-primary,#EAEAF0);font-size:14px;outline:none;font-family:inherit;box-sizing:border-box}
+  #workout-auth-modal .wamfield input:focus{border-color:var(--orange,#E8530A)}
+  #workout-auth-modal .wambtn{width:100%;padding:13px;background:var(--orange,#E8530A);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;margin-top:4px}
+  #workout-auth-modal .wambtn:hover{background:#FF6B2B}
+  #workout-auth-modal .wamlink{text-align:center;margin-top:12px;font-size:13px;color:var(--text-muted,#888899)}
+  #workout-auth-modal .wamlink a{color:var(--orange,#E8530A);cursor:pointer;text-decoration:none}
+  #workout-auth-modal .wamerr{background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);color:#E74C3C;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
+  @keyframes slideInToast{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+</style>
+<div id="worko��uth-modal">
+  <div class="wam">
+    <button class="wam-close" onclick="closeWorkoutAuthModal()">&#x2715;</button>
+    <h2 id="workout-auth-title">Sign In to Log Result</h2>
+    <p class="wamsub" id="workout-auth-sub">Sign in to record your results and appear on the leaderboard.</p>
+    <div id="workout-auth-error" class="wamerr"></div>
+    <div id="workout-login-form">
+      <div class="wamfield"><label>Email</label><input type="email" id="workout-li-email" placeholder="you@email.com"></div>
+      <div class="wamfield"><label>Password</label><input type="password" id="workout-li-pass" placeholder="Your password" onkeydown="if(event.key==='Enter')submitWorkoutLogin()"></div>
+      <button class="wambtn" onclick="submitWorkoutLogin()">Sign In &#x2192;</button>
+      <p class="wamlink">No account? <a onclick="switchWorkoutAuthTab('signup')">Sign up free</a></p>
+    </div>
+    <div id="workout-signup-form" style="display:none">
+      <div class="wamfield"><label>Username</label><input type="text" id="workout-su-user" placeholder="e.g. firebreather_rob" maxlength="20"></div>
+      <div class="wamfield"><label>Email</label><input type="email" id="workout-su-email" placeholder="you@email.com"></div>
+      <div class="wamfield"><label>Password</label><input type="password" id="workout-su-pass" placeholder="Min 6 characters" onkeydown="if(event.key==='Enter')submitWorkoutSignup()"></div>
+      <button class="wambtn" onclick="submitWorkoutSignup()">Create Account &#x2192;</button>
+      <p class="wamlink">Already have one? <a onclick="switchWorkoutAuthTab('login')">Log in</a></p>
+    </div>
+  </div>
+</div>
+<script>
+  function openWorkoutAuthModal(mode = 'login') {
+    switchWorkoutAuthTab(mode);
+    document.getElementById('workout-auth-modal').classList.add('active');
+  }
+  function closeWorkoutAuthModal() {
+    document.getElementById('workout-auth-modal').classList.remove('active');
+    const errEl = document.getElementById('workout-auth-error');
+    errEl.textContent = ''; errEl.style.display = 'none';
+  }
+  function switchWorkoutAuthTab(tab) {
+    const isLogin = tab === 'login';
+    document.getElementById('workout-auth-title').textContent = isLogin ? 'Sign In to Log Result' : 'Create Account';
+    document.getElementById('workout-auth-sub').textContent = isLogin ? 'Sign in to record your results and appear on the leaderboard.' : 'Join HomeWODrx free — track results and compete.';
+    document.getElementById('workout-login-form').style.display = isLogin ? 'block' : 'none';
+    document.getElementById('workout-signup-form').style.display = isLogin ? 'none' : 'block';
+  }
+  async function submitWorkoutLogin() {
+    const email = document.getElementById('workout-li-email').value.trim();
+    const pass  = document.getElementById('workout-li-pass').value;
+    const errEl = document.getElementById('workout-auth-error');
+    errEl.style.display = 'none';
+    if (!email || !pass) { errEl.textContent = 'Please enter email and password.'; errEl.style.display = 'block'; return; }
+    const { user, error } = await db.signIn(email, pass);
+    if (error) { errEl.textContent = error.message || 'Sign in failed.'; errEl.style.display = 'block'; return; }
+    closeWorkoutAuthModal();
+    document.getElementById('result-modal').classList.add('active');
+  }
+  async function submitWorkoutSignup() {
+    const username = document.getElementById('workout-su-user').value.trim();
+    const email    = document.getElementById('workout-su-email').value.trim();
+    const pass     = document.getElementById('workout-su-pass').value;
+    const errEl    = document.getElementById('workout-auth-error');
+    errEl.style.display = 'none';
+    if (!username || !email || !pass) { errEl.textContent = 'Please fill in all fields.'; errEl.style.display = 'block'; return; }
+    const { user, error } = await db.signUp(email, pass, username);
+    if (error) { errEl.textContent = error.message || 'Sign up failed.'; errEl.style.display = 'block'; return; }
+    closeWorkoutAuthModal();
+    document.getElementById('result-modal').classList.add('active');
+  }
+</script>
+</body>
+</html>
