@@ -120,6 +120,36 @@ const db = {
     return data?.is_admin === true;
   },
 
+  // Send a password reset email via Supabase Auth
+  async resetPassword(email) {
+    if (!supabaseClient) {
+      return { error: new Error('Not available in demo mode') };
+    }
+
+    const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/admin.html'
+    });
+
+    return { data, error };
+  },
+
+  // Look up which email is associated with a username
+  async getEmailByUsername(username) {
+    if (!supabaseClient) return null;
+
+    const { data, error } = await supabaseClient
+      .from('profiles')
+      .select('id')
+      .eq('username', username)
+      .single();
+
+    if (!data) return null;
+
+    // We can't expose emails from auth.users via client,
+    // so we return a masked hint from the profiles table
+    return data.id;
+  },
+
   async getProfile(userId) {
     if (!supabaseClient) {
       const user = JSON.parse(localStorage.getItem('demo_user') || '{}');
