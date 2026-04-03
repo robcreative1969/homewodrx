@@ -13,6 +13,7 @@
   <script src="/js/db.js"></script>
   <script src="/js/benchmarks.js"></script>
   <script src="/js/movements.js"></script>
+  <script src="/js/movement-db.js"></script>
   <script src="/js/daily-wod.js"></script>
   <script src="/js/nav.js"></script>
   <style>
@@ -136,6 +137,22 @@
 <script>
   let allWorkouts = [];
   let filteredWorkouts = [];
+  let pageUser = null;
+  const ADMIN_EMAILS = ['rob@carlbloom.com'];
+  function canDeleteWorkout(w) {
+    if (!pageUser || !w || w.category !== 'user') return false;
+    if (ADMIN_EMAILS.includes(pageUser.email)) return true;
+    return w.user_id && w.user_id === pageUser.id;
+  }
+  async function deleteWorkoutCard(id, event) {
+    event.preventDefault(); event.stopPropagation();
+    if (!confirm('Delete this workout? This cannot be undone.')) return;
+    try {
+      await db.deleteWorkout(id);
+      allWorkouts = allWorkouts.filter(w => w.id !== id);
+      applyFilters();
+    } catch(e) { alert('Error deleting workout.'); }
+  }
   let currentFilters = {
     type: 'all',
     format: 'all',
@@ -327,9 +344,10 @@
             <p style="font-size: 0.85rem; color: var(--mu, #888); margin-bottom: 0.75rem;">
               ${summarizeMovements(w)}
             </p>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
               ${isUser  ? '<span class="badge badge-success">Community</span>' : ''}
               ${isDaily ? '<span class="badge badge-orange">Daily WOD</span>' : ''}
+              ${isUser && canDeleteWorkout(w) ? `<button onclick="deleteWorkoutCard('${w.id}',event)" style="margin-left:auto;background:rgba(231,76,60,0.12);border:1px solid rgba(231,76,60,0.35);color:#E74C3C;border-radius:6px;padding:3px 10px;font-size:0.75rem;cursor:pointer;font-weight:600;">🗑</button>` : ''}
             </div>
           </div>
         </a>
@@ -399,7 +417,8 @@
     });
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
+    pageUser = await db.getUser().catch(() => null);
     checkMovementParam();
     setupFilterListeners();
     loadWorkouts();
