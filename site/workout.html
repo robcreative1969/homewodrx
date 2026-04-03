@@ -246,7 +246,7 @@
         </tbody></table>`;
     }
     if (w.equipment && w.equipment.length > 0) {
-      document.getElementById('movements-table').innerHTML += `<div class="equipment-section"><h4 style="margin-bottom:0.75rem;">Equipment Needed</h4><p class="text-muted" style="font-size:0.85rem;margin-bottom:0.75rem;">Links are Amazon affiliate links &#8212; helps support HomeWODrx at no cost to you.</p>${w.equipment.map(e=>`<a href="${getEquipmentLink(e)}" class="equipment-chip" target="_blank" rel="noopener">${e}</a>`).join('')}</div>`;
+      document.getElementById('movements-table').innerHTML += `<div class="equipment-section"><h4 style="margin-bottom:0.75rem;">Gear for This Workout</h4><p class="text-muted" style="font-size:0.85rem;margin-bottom:0.75rem;">Links are Amazon affiliate links &#8212; helps support HomeWODrx at no cost to you.</p>${w.equipment.map(e=>`<a href="${getEquipmentLink(e)}" class="equipment-chip" target="_blank" rel="noopener">${e}</a>`).join('')}</div>`;
     }
     document.getElementById('log-result-section').innerHTML = `<p class="text-muted" style="margin-bottom:1rem;">Record your time, rounds, or reps.</p><button class="btn btn-primary" onclick="openResultModal()">Log Your Result</button>`;
   }
