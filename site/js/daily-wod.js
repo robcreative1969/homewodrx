@@ -191,6 +191,7 @@ const DailyWOD = {
       rings: 'Rings'
     };
     const usedEqKeys = [...new Set((workout.rows || []).map(r => r._eq).filter(Boolean))];
+    const isBodyweightOnly = usedEqKeys.every(k => k === 'bodyweight');
     const usedEquipment = usedEqKeys
       .filter(k => k !== 'bodyweight')
       .map(k => EQUIPMENT_LABELS[k] || k);
@@ -204,6 +205,7 @@ const DailyWOD = {
       difficulty,
       bodyFocus,
       equipment: usedEquipment,
+      isBodyweightOnly,
       duration,
       isManual: false,
       generatedAt: new Date().toISOString()
