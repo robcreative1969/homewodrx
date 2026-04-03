@@ -142,6 +142,32 @@
   let currentWorkout = null;
   let currentResults = [];
   let leaderboardPeriod = 'week';
+  let currentUser = null;
+
+  const ADMIN_EMAILS = ['rob@carlbloom.com'];
+
+  function isAdmin(user) {
+    return user && ADMIN_EMAILS.includes(user.email);
+  }
+
+  function canManageWorkout(w) {
+    if (!currentUser || !w) return false;
+    if (isAdmin(currentUser)) return true;
+    return w.user_id && w.user_id === currentUser.id;
+  }
+
+  async function deleteCurrentWorkout() {
+    if (!currentWorkout || !canManageWorkout(currentWorkout)) return;
+    const title = currentWorkout.title || currentWorkout.name;
+    if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
+    try {
+      await db.deleteWorkout(currentWorkout.id);
+      showToast('Workout deleted.', 'success');
+      setTimeout(() => { window.location.href = '/workouts.html'; }, 1200);
+    } catch (e) {
+      showToast('Error deleting workout.', 'error');
+    }
+  }
 
   const AFFILIATE_TAG = 'homewodrx0f-20';
 
@@ -186,7 +212,7 @@
         if (!currentWorkout) { document.getElementById('workout-header').innerHTML = '<p class="text-muted">Workout not found.</p>'; return; }
       }
       renderWorkoutHeader(); renderWorkoutDetails(); renderRelatedWorkouts(); loadLeaderboard();
-      document.title = `${currentWorkout.name} - HomeWODrx`;
+      document.title = `${currentWorkout.title || currentWorkout.name} - HomeWODrx`;
       document.querySelector('meta[name="description"]').setAttribute('content', `${currentWorkout.name}: ${currentWorkout.description ? currentWorkout.description.substring(0,155) : 'View this CrossFit workout on HomeWODrx.'}`);
       document.getElementById('workout-details').style.display = '';
     } catch (error) {
@@ -201,8 +227,8 @@
     const createdBy = w.username ? `Created by ${w.username}` : '';
     document.getElementById('workout-header').innerHTML = `
       <div style="padding: 2rem 0; margin-bottom: 2rem; border-bottom: 1px solid var(--dark-border);">
-        <h1>${w.name}</h1>
-        <p class="text-muted">${isBenchmark ? (w.category==='girl'?'Girl WOD':w.category==='hero'?'Hero WOD':'Benchmark'):'User WOD'} ${createdBy ? '- '+createdBy:''}</p>
+        <h1>${w.title || w.name}</h1>
+        <p class="text-muted">${isBenchmark ? (w.category==='girl'?'Girl WOD':w.category==='hero'?'Hero WOD':'Benchmark'):'Community WOD'} ${createdBy ? '- '+createdBy:''}</p>
         <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem;">
           <span class="badge badge-orange">${w.format}</span>
           <span class="badge badge-orange">${w.duration_estimate}</span>
@@ -213,6 +239,9 @@
           <button class="btn btn-primary" onclick="openResultModal()">Log Your Result</button>
           ${isBenchmark ? `<a href="/workouts.html" class="btn btn-secondary">Browse Similar</a>` : ''}
         </div>
+        ${canManageWorkout(w) ? `<div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <button onclick="deleteCurrentWorkout()" style="background:rgba(231,76,60,0.12);border:1px solid rgba(231,76,60,0.4);color:#E74C3C;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:0.85rem;font-weight:600;">🗑 Delete Workout</button>
+        </div>` : ''}
       </div>`;
   }
 
@@ -225,7 +254,7 @@
     if (w.movements && w.movements.length > 0) {
       document.getElementById('movements-table').innerHTML = `
         <table><thead><tr><th>Movement</th><th>Reps / Duration</th><th>Rx (Men / Women)</th><th>Tip</th></tr></thead><tbody>
-          ${w.movements.map(m => `<tr><td><a href="/movement.html?slug=${slugify(m.name)}" class="movement-link">${m.name}</a></td><td>${m.reps||'-'}</td><td><span class="text-muted">${m.rx_men||''} / ${m.rx_women||''}</span></td><td><span class="text-muted" style="font-size:0.9rem;">${m.tip||''}</span></td></tr>`).join('')}
+          ${w.movements.map(m => { const mn = m.name || m.movement || ''; return `<tr><td><a href="/movement.html?slug=${slugify(mn)}" class="movement-link">${mn}</a></td><td>${m.reps||'-'}</td><td><span class="text-muted">${m.rx_men||''} / ${m.rx_women||''}</span></td><td><span class="text-muted" style="font-size:0.9rem;">${m.tip||''}</span></td></tr>`; }).join('')}
         </tbody></table>`;
     }
     if (w.equipment && w.equipment.length > 0) {
@@ -256,10 +285,10 @@
   function renderRelatedWorkouts() {
     const w = currentWorkout;
     if (!w || !BENCHMARKS) return;
-    const wMovements = (w.movements||[]).map(m=>slugify(m.name));
+    const wMovements = (w.movements||[]).map(m=>slugify(m.name||m.movement||''));
     const related = BENCHMARKS
       .filter(b=>b.slug!==w.slug)
-      .map(b=>({...b,_score:(b.category===w.category?2:0)+wMovements.filter(m=>(b.movements||[]).map(m=>slugify(m.name)).includes(m)).length}))
+      .map(b=>({...b,_score:(b.category===w.category?2:0)+wMovements.filter(m=>(b.movements||[]).map(m=>slugify(m.name||m.movement||'')).includes(m)).length}))
       .filter(b=>b._score>0).sort((a,b)=>b._score-a._score).slice(0,3);
     document.getElementById('related-workouts').innerHTML = related.length ?
       related.map(b=>`<a href="/workout.html?slug=${b.slug}" style="text-decoration:none;"><div class="card"><h4>${b.name}</h4><p class="text-muted">${b.format}</p><div><span class="badge badge-orange">${b.difficulty}</span><span class="badge badge-orange">${b.duration_estimate}</span></div></div></a>`).join('') :
@@ -354,7 +383,8 @@
     setTimeout(() => toast.remove(), 3500);
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
+    currentUser = await db.getUser().catch(() => null);
     loadWorkout();
     document.querySelectorAll('#leaderboard-filters .chip').forEach(chip => {
       chip.addEventListener('click', e => {
