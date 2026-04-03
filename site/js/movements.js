@@ -8,7 +8,7 @@
 //   i     - intermediate reps
 //   a     - advanced reps
 //   tip   - coaching cue (optional)
-// =========================================================================
+// ============================================================================
 
 const MOVEMENT_DB = {
 
@@ -22,7 +22,7 @@ const MOVEMENT_DB = {
     { name: 'Hand-Release Push-Ups', tags: ['push'],       b: 8,  i: 15, a: 20, tip: 'Lift hands at the bottom of each rep.' },
     { name: 'Tricep Dips',        tags: ['push'],          b: 8,  i: 15, a: 25, tip: 'Use a chair; keep elbows close.' },
 
-    // ── PULL ─────────────────────────────────────────────────────────────
+    // ── PULL ──────────────────────────────────────────────────────────────
     { name: 'Inverted Rows',      tags: ['pull'],          b: 8,  i: 12, a: 20, tip: 'Use a table edge; body straight.' },
     { name: 'Superman Hold',      tags: ['pull'],          b: 10, i: 15, a: 20, tip: 'Lift chest and legs simultaneously; squeeze glutes.' },
     { name: 'Prone Cobra',        tags: ['pull'],          b: 10, i: 15, a: 20, tip: 'Squeeze shoulder blades at the top.' },
@@ -32,7 +32,7 @@ const MOVEMENT_DB = {
     { name: 'Air Squats',         tags: ['lower'],         b: 15, i: 25, a: 40, tip: 'Break parallel; chest up, knees track toes.' },
     { name: 'Jump Squats',        tags: ['lower', 'cardio'], b: 8, i: 15, a: 25, tip: 'Land soft; absorb through hips and knees.' },
     { name: 'Reverse Lunges',     tags: ['lower'],         b: 10, i: 16, a: 24, tip: 'Step back; front shin stays vertical.' },
-    { name: 'Walking Lunges',     tags: ['lower'],         b: 10, i: 20, a: 30, tip: 'Alternate legs; keep torso:epright.' },
+    { name: 'Walking Lunges',     tags: ['lower'],         b: 10, i: 20, a: 30, tip: 'Alternate legs; keep torso upright.' },
     { name: 'Lateral Lunges',     tags: ['lower'],         b: 10, i: 16, a: 24, tip: 'Push hips back as you step wide.' },
     { name: 'Bulgarian Split Squats', tags: ['lower'],     b: 8,  i: 12, a: 20, tip: 'Rear foot elevated; front knee stays over toes.' },
     { name: 'Glute Bridges',      tags: ['lower', 'legs-glutes'], b: 15, i: 20, a: 30, tip: 'Drive hips up; squeeze glutes hard at top.' },
@@ -63,7 +63,7 @@ const MOVEMENT_DB = {
     { name: 'Squat Thrusts',      tags: ['full', 'cardio'], b: 10, i: 15, a: 20, tip: 'Jump feet to hands from plank; stand tall.' },
     { name: 'Up-Downs',           tags: ['full', 'cardio'], b: 8,  i: 12, a: 20, tip: 'Lower to plank; stand up fast. No push-up.' },
 
-    // ── CARDIO ────────────────────────────────────────────────────────────
+    // ── CARDIO ─────────────────────────────────────────────────────────────
     { name: 'Jumping Jacks',      tags: ['cardio'],        b: 30, i: 50, a: 70, tip: 'Full arm extension overhead each rep.' },
     { name: 'High Knees',         tags: ['cardio'],        b: 20, i: 40, a: 60, tip: 'Drive knees to hip height; pump arms.' },
     { name: 'Butt Kickers',       tags: ['cardio', 'lower'], b: 20, i: 40, a: 60, tip: 'Kick heels to glutes; stay on the balls of your feet.' },
@@ -117,9 +117,18 @@ const MOVEMENT_DB = {
     { name: 'DB Lateral Raises',  tags: ['push'],            b: 10, i: 15, a: 20 },
   ],
 
-  jumpropе: [
+  jumprope: [
     { name: 'Single-Unders',      tags: ['cardio'],          b: 30, i: 50, a: 75 },
     { name: 'Double-Unders',      tags: ['cardio'],          b: 15, i: 30, a: 50 },
     { name: 'Jump Rope Intervals', tags: ['cardio'],         b: 30, i: 45, a: 60 },
+  ],
+
+  resistancebands: [
+    { name: 'Banded Squats',       tags: ['lower'],                  b: 15, i: 25, a: 35, tip: 'Band above knees; push knees out.' },
+    { name: 'Banded Pull-Aparts',  tags: ['pull'],                   b: 15, i: 25, a: 35, tip: 'Arms straight; squeeze shoulder blades.' },
+    { name: 'Banded Hip Thrusts',  tags: ['lower', 'legs-glutes'],   b: 15, i: 25, a: 35, tip: 'Band across hips; drive through heels.' },
+    { name: 'Banded Face Pulls',   tags: ['pull'],                   b: 15, i: 25, a: 35, tip: 'Pull to nose; elbows high and wide.' },
+    { name: 'Banded Rows',         tags: ['pull'],                   b: 12, i: 20, a: 30, tip: 'Anchor low; row to chest.' },
+    { name: 'Banded Chest Press',  tags: ['push'],                   b: 12, i: 20, a: 30, tip: 'Anchor behind; press forward.' },
   ]
 };

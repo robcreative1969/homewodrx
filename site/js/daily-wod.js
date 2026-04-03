@@ -10,7 +10,8 @@ const DailyWOD = {
   // Default admin config (can be overridden in Supabase daily_wod_config table)
   defaultConfig: {
     // Equipment assumed available for daily WODs
-    equipment: ['bodyweight'],
+    // Common home gym gear: bodyweight + kettlebell, dumbbells, pull-up bar, jump rope, resistance bands
+    equipment: ['bodyweight', 'kettlebell', 'dumbbell', 'pullupbar', 'jumprope', 'resistancebands'],
     // Difficulty by day of week (0=Sun, 1=Mon, ..., 6=Sat)
     difficultyByDay: {
       0: 'beginner',      // Sunday: recovery/easy
@@ -176,12 +177,33 @@ const DailyWOD = {
     else if (format === 'fortime') workout = this._genForTime(pool, difficulty, rng);
     else                           workout = this._genCircuit(pool, difficulty, duration, bodyFocus, rng);
 
+    // Derive actual equipment needed from selected movements (not the full config pool)
+    const EQUIPMENT_LABELS = {
+      bodyweight: 'Bodyweight',
+      kettlebell: 'Kettlebell',
+      dumbbell: 'Dumbbell',
+      pullupbar: 'Pull-Up Bar',
+      jumprope: 'Jump Rope',
+      resistancebands: 'Resistance Bands',
+      barbell: 'Barbell',
+      box: 'Box',
+      medicineball: 'Medicine Ball',
+      rings: 'Rings'
+    };
+    const usedEqKeys = [...new Set((workout.rows || []).map(r => r._eq).filter(Boolean))];
+    const usedEquipment = usedEqKeys
+      .filter(k => k !== 'bodyweight')
+      .map(k => EQUIPMENT_LABELS[k] || k);
+
+    // Clean internal _eq tags from rows before returning
+    if (workout.rows) workout.rows.forEach(r => delete r._eq);
+
     return {
       ...workout,
       date: dateStr,
       difficulty,
       bodyFocus,
-      equipment,
+      equipment: usedEquipment,
       duration,
       isManual: false,
       generatedAt: new Date().toISOString()
@@ -191,8 +213,8 @@ const DailyWOD = {
   // ── Movement pool builder ──────────────────────────────────────
   _buildPool(equipment, level, bodyFocus, rng) {
     if (typeof MOVEMENT_DB === 'undefined') return [];
-    let moves = [...(MOVEMENT_DB.bodyweight || [])];
-    equipment.forEach(eq => { if (eq !== 'bodyweight' && MOVEMENT_DB[eq]) moves.push(...MOVEMENT_DB[eq]); });
+    let moves = (MOVEMENT_DB.bodyweight || []).map(m => ({ ...m, _eq: 'bodyweight' }));
+    equipment.forEach(eq => { if (eq !== 'bodyweight' && MOVEMENT_DB[eq]) moves.push(...MOVEMENT_DB[eq].map(m => ({ ...m, _eq: eq }))); });
     if (level === 'beginner') moves = moves.filter(m => !/(muscle.up|snatch|toes.to.bar|double under|turkish)/i.test(m.name));
     if (level === 'intermediate') moves = moves.filter(m => !/(muscle.up)/i.test(m.name));
 
@@ -259,7 +281,7 @@ const DailyWOD = {
       title: `${duration}-Minute AMRAP`,
       format: 'amrap',
       description: `Complete as many rounds as possible in ${duration} minutes. Pace yourself — the goal is consistent rounds from start to finish.`,
-      rows: sel.map(m => ({ movement: m.name, reps: String(this._getReps(m, level)), tip: m.tip })),
+      rows: sel.map(m => ({ movement: m.name, reps: String(this._getReps(m, level)), tip: m.tip, _eq: m._eq })),
       scoring: 'Record total rounds + reps (e.g. "8 rounds + 12 reps").'
     };
   },
@@ -271,7 +293,7 @@ const DailyWOD = {
       title: `${duration}-Minute EMOM`,
       format: 'emom',
       description: `Every Minute On the Minute for ${duration} minutes. Complete the designated work at the top of each minute; rest whatever remains.`,
-      rows: sel.map((m, i) => ({ movement: m.name, reps: `Min ${i+1} (repeat): ${this._getReps(m, level)} reps`, tip: m.tip })),
+      rows: sel.map((m, i) => ({ movement: m.name, reps: `Min ${i+1} (repeat): ${this._getReps(m, level)} reps`, tip: m.tip, _eq: m._eq })),
       scoring: 'Track whether you finish each minute before the next starts.'
     };
   },
@@ -286,7 +308,7 @@ const DailyWOD = {
       title: `For Time — ${scheme.join('-')}`,
       format: 'fortime',
       description: `Complete all rounds for time using the ${scheme.join('-')} rep scheme. Push the pace.`,
-      rows: sel.map(m => ({ movement: m.name, reps: scheme.join(' – ') + ' reps', tip: m.tip })),
+      rows: sel.map(m => ({ movement: m.name, reps: scheme.join(' – ') + ' reps', tip: m.tip, _eq: m._eq })),
       scoring: 'Record your finish time.'
     };
   },
@@ -299,7 +321,7 @@ const DailyWOD = {
       title: `${rounds}-Round Circuit`,
       format: 'circuit',
       description: `Complete all ${movCount} movements back-to-back with minimal rest. Rest 60 seconds between rounds. ${rounds} rounds total.`,
-      rows: sel.map(m => ({ movement: m.name, reps: String(this._getReps(m, level)), tip: m.tip })),
+      rows: sel.map(m => ({ movement: m.name, reps: String(this._getReps(m, level)), tip: m.tip, _eq: m._eq })),
       scoring: 'Record total time and round splits.'
     };
   }
