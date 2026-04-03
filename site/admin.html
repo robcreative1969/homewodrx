@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="/css/style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
+:root{--dk:#111118;--dk2:#1E1E2C;--bd:#2E2E42;--or:#E8530A;--orl:#FF6B35;--tx:#EAEAF0;--mu:#888899;--card:#1E1E2C}
 .admin-page{max-width:960px;margin:0 auto;padding:32px 20px 80px}
 .admin-lock{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
 .lock-card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:40px;width:100%;max-width:400px;text-align:center}
@@ -57,6 +58,24 @@
 .day-card select{width:100%;background:var(--dk2);border:1px solid var(--bd);border-radius:5px;padding:5px 4px;color:var(--tx);font-size:11px;outline:none;margin-bottom:4px}
 .day-card select:focus{border-color:var(--or)}
 
+.cal-card{background:var(--dk2);border:1px solid var(--bd);border-radius:10px;padding:14px;cursor:pointer;transition:all .2s}
+.cal-card:hover{border-color:var(--orl);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.cal-card.selected{border-color:var(--or);box-shadow:0 0 0 1px var(--or)}
+.cal-card.today{border-color:var(--or)}
+.cal-detail{background:var(--dk2);border:1px solid var(--or);border-radius:12px;padding:20px;margin-top:16px;animation:fadeSlide .25s ease}
+.cal-detail .detail-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+.cal-detail .detail-header h3{font-size:18px;font-weight:800;margin:0}
+.cal-detail .detail-actions{display:flex;gap:8px}
+.cal-detail .edit-btn{padding:8px 16px;background:var(--or);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.cal-detail .edit-btn:hover{background:var(--orl)}
+.cal-detail .close-btn{padding:8px 12px;background:none;border:1px solid var(--bd);border-radius:7px;color:var(--mu);font-size:13px;cursor:pointer;transition:all .15s}
+.cal-detail .close-btn:hover{border-color:var(--or);color:var(--tx)}
+.cal-detail table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+.cal-detail th{padding:7px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;border-bottom:1px solid var(--bd)}
+.cal-detail td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.05)}
+.cal-detail tr:last-child td{border-bottom:none}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
 .table{width:100%;border-collapse:collapse;font-size:13px}
 .table th{padding:9px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--bd);background:var(--dk2)}
 .table td{padding:10px 12px;border-bottom:1px solid var(--bd);vertical-align:middle}
@@ -93,6 +112,17 @@
 .approve-btn:hover{background:rgba(39,174,96,.3)}
 .reject-btn{padding:6px 12px;background:none;border:1px solid rgba(231,76,60,.4);color:#e74c3c;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
 .reject-btn:hover{background:rgba(231,76,60,.1)}
+
+.action-btn{padding:5px 10px;background:none;border:1px solid var(--bd);color:var(--mu);border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;margin-right:4px}
+.action-btn:hover{border-color:var(--or);color:var(--or)}
+.movement-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:16px}
+.movement-card{background:var(--dk2);border:1px solid var(--bd);border-radius:8px;padding:12px;font-size:12px}
+.movement-card h4{font-size:13px;font-weight:700;margin:0 0 8px 0;color:var(--or)}
+.movement-card .prop{margin:4px 0;display:flex;justify-content:space-between}
+.movement-card .prop label{color:var(--mu);font-size:11px}
+.movement-card .prop span{color:var(--tx);font-weight:600}
+.movement-card .tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
+.movement-card .tag{display:inline-block;background:rgba(232,83,10,.15);color:var(--or);font-size:10px;padding:2px 6px;border-radius:3px}
 </style>
 </head>
 <body style="background:var(--dk);color:var(--tx);font-family:'Segoe UI',system-ui,sans-serif">
@@ -134,17 +164,18 @@
     <button class="tab-btn" onclick="showAdminTab('nominations')">🏆 Nominations</button>
     <button class="tab-btn" onclick="showAdminTab('results')">📊 Recent Results</button>
     <button class="tab-btn" onclick="showAdminTab('config')">⚙️ WOD Config</button>
+    <button class="tab-btn" onclick="showAdminTab('athletes')">👥 Athletes</button>
+    <button class="tab-btn" onclick="showAdminTab('workouts')">🏋️ Workouts</button>
+    <button class="tab-btn" onclick="showAdminTab('movements')">💪 Movements</button>
   </div>
 
   <!-- ─── TAB: DAILY WOD ──────────────────────────────────── -->
   <div id="tab-daily" class="tab-pane active">
-
     <div class="section">
       <h2>📅 Today's Daily WOD</h2>
       <p class="desc">Today's auto-generated workout. You can override it with a custom workout below.</p>
       <div class="alert alert-info vis" id="daily-status">Loading today's WOD...</div>
       <div id="today-wod-preview"></div>
-
       <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
         <button class="save-btn" onclick="refreshDailyWOD()">🔄 Regenerate Today</button>
         <button class="save-btn" style="background:var(--dk2);color:var(--tx);border:1px solid var(--bd)" onclick="showOverrideForm()">✏️ Manual Override</button>
@@ -183,9 +214,7 @@
       <div class="field"><label>Description</label><textarea id="ov-desc" placeholder="Workout description, intent, tips..."></textarea></div>
       <div class="field">
         <label>Movements (one per line: Movement Name | Reps | Tip)</label>
-        <textarea id="ov-movements" rows="6" placeholder="Air Squats | 21 | Heels down
-Push-Ups | 15 | Chest to floor
-Sit-Ups | 9 | Full range"></textarea>
+        <textarea id="ov-movements" rows="6" placeholder="Air Squats | 21 | Heels down&#10;Push-Ups | 15 | Chest to floor&#10;Sit-Ups | 9 | Full range"></textarea>
       </div>
       <div class="field"><label>Scoring Note</label><input type="text" id="ov-scoring" placeholder="e.g. Record total rounds + reps"></div>
       <div style="display:flex;gap:10px;margin-top:8px">
@@ -205,7 +234,7 @@ Sit-Ups | 9 | Full range"></textarea>
   <div id="tab-featured" class="tab-pane">
     <div class="section">
       <h2>⭐ Featured WOD Scheduler</h2>
-      <p class="desc">Set which workout is featured on the homepage for any date. Can be a named benchmark or a community workout.</p>
+      <p class="desc">Set which workout is featured on the homepage for any date.</p>
       <div class="alert" id="featured-alert"></div>
       <div class="grid-2">
         <div class="field"><label>Feature Date</label><input type="date" id="feat-date"></div>
@@ -221,19 +250,16 @@ Sit-Ups | 9 | Full range"></textarea>
         <select id="feat-benchmark"><option value="">Choose a workout...</option></select>
       </div>
       <div id="feat-community-wrap" class="field" style="display:none">
-        <label>Community Workout ID (from Supabase workouts table)</label>
+        <label>Community Workout ID</label>
         <input type="text" id="feat-workout-id" placeholder="e.g. uuid-from-supabase">
       </div>
       <div class="field"><label>Notes (internal only)</label><input type="text" id="feat-notes" placeholder="e.g. National fitness day promotion"></div>
       <button class="save-btn" onclick="saveFeatured()">💾 Set Featured WOD</button>
     </div>
-
     <div class="section">
       <h2>📋 Upcoming Featured WODs</h2>
       <p class="desc">Scheduled featured workouts for the next 14 days.</p>
-      <div id="featured-schedule">
-        <p style="color:var(--mu);font-size:14px">Connect Supabase to see the featured schedule.</p>
-      </div>
+      <div id="featured-schedule"><p style="color:var(--mu);font-size:14px">Connect Supabase to see the featured schedule.</p></div>
     </div>
   </div>
 
@@ -241,11 +267,9 @@ Sit-Ups | 9 | Full range"></textarea>
   <div id="tab-nominations" class="tab-pane">
     <div class="section">
       <h2>🏆 Nomination Queue</h2>
-      <p class="desc">Community workouts submitted for Featured WOD consideration. Approve or reject below.</p>
+      <p class="desc">Community workouts submitted for Featured WOD consideration.</p>
       <div class="alert" id="nom-alert"></div>
-      <div id="nom-table-wrap">
-        <p style="color:var(--mu);font-size:14px">Connect Supabase to see nominations.</p>
-      </div>
+      <div id="nom-table-wrap"><p style="color:var(--mu);font-size:14px">Connect Supabase to see nominations.</p></div>
     </div>
   </div>
 
@@ -262,9 +286,7 @@ Sit-Ups | 9 | Full range"></textarea>
           <option value="community">Community Workouts Only</option>
         </select>
       </div>
-      <div id="results-table-wrap">
-        <p style="color:var(--mu);font-size:14px">Connect Supabase to see results.</p>
-      </div>
+      <div id="results-table-wrap"><p style="color:var(--mu);font-size:14px">Connect Supabase to see results.</p></div>
     </div>
   </div>
 
@@ -272,30 +294,149 @@ Sit-Ups | 9 | Full range"></textarea>
   <div id="tab-config" class="tab-pane">
     <div class="section">
       <h2>⚙️ Daily WOD Auto-Generation Config</h2>
-      <p class="desc">These parameters control what gets auto-generated each day. Changes take effect immediately for future dates.</p>
+      <p class="desc">These parameters control what gets auto-generated each day.</p>
       <div class="alert" id="config-alert"></div>
-
       <h3 style="font-size:14px;font-weight:700;margin-bottom:12px">Equipment Available for Daily WODs</h3>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px" id="config-equipment">
-        <!-- populated by JS -->
-      </div>
-
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px" id="config-equipment"></div>
       <h3 style="font-size:14px;font-weight:700;margin:20px 0 12px">Difficulty by Day of Week</h3>
-      <div class="day-grid" id="config-difficulty"><!-- populated by JS --></div>
-
+      <div class="day-grid" id="config-difficulty"></div>
       <h3 style="font-size:14px;font-weight:700;margin:20px 0 12px">Body Focus by Day of Week</h3>
-      <div class="day-grid" id="config-focus"><!-- populated by JS --></div>
-
+      <div class="day-grid" id="config-focus"></div>
       <h3 style="font-size:14px;font-weight:700;margin:20px 0 12px">Workout Format by Day of Week</h3>
-      <div class="day-grid" id="config-format"><!-- populated by JS --></div>
-
+      <div class="day-grid" id="config-format"></div>
       <h3 style="font-size:14px;font-weight:700;margin:20px 0 12px">Duration Range (minutes) by Day of Week</h3>
-      <div class="day-grid" id="config-duration"><!-- populated by JS --></div>
-
+      <div class="day-grid" id="config-duration"></div>
       <div style="margin-top:24px">
         <button class="save-btn" onclick="saveConfig()">💾 Save Config</button>
         <button class="del-btn" style="margin-left:10px" onclick="resetConfig()">↩ Reset to Defaults</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ─── TAB: ATHLETES ────────────────────────────────────── -->
+  <div id="tab-athletes" class="tab-pane">
+    <div class="section">
+      <h2>👥 Athletes Management</h2>
+      <p class="desc">Manage user profiles and athlete data.</p>
+      <div class="alert" id="athletes-alert"></div>
+      <div style="display:flex;gap:10px;margin-bottom:20px">
+        <input type="text" id="athletes-search" placeholder="Search by username..." style="flex:1;background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none" onkeyup="searchAthletes()">
+        <select id="athletes-sort" onchange="loadAthletes()" style="background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none;min-width:150px">
+          <option value="created">Newest First</option>
+          <option value="username">Username (A-Z)</option>
+          <option value="results">Most Results</option>
+        </select>
+      </div>
+      <div style="display:flex;align-items:center;margin-bottom:16px;gap:10px">
+        <span style="font-size:13px;color:var(--mu)"><strong id="athletes-count">0</strong> total athletes</span>
+      </div>
+      <div id="athletes-table-wrap"><p style="color:var(--mu);font-size:14px">Loading athletes...</p></div>
+      <div style="display:flex;gap:10px;margin-top:20px">
+        <button class="save-btn" onclick="loadMoreAthletes()">📥 Load More</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── TAB: WORKOUTS ───────────────────────────────────── -->
+  <div id="tab-workouts" class="tab-pane">
+    <div class="section">
+      <h2>🏋️ Workouts Management</h2>
+      <p class="desc">Manage community workouts.</p>
+      <button class="save-btn" onclick="showCreateWorkoutForm()" style="margin-bottom:20px">➕ Create New Workout</button>
+      <div class="alert" id="workouts-alert"></div>
+      <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+        <input type="text" id="workouts-search" placeholder="Search by title..." style="flex:1;min-width:200px;background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none" onkeyup="searchWorkouts()">
+        <select id="workouts-format" onchange="loadWorkouts()" style="background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none">
+          <option value="">All Formats</option>
+          <option value="AMRAP">AMRAP</option>
+          <option value="EMOM">EMOM</option>
+          <option value="For Time">For Time</option>
+          <option value="Circuit">Circuit</option>
+        </select>
+        <select id="workouts-level" onchange="loadWorkouts()" style="background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none">
+          <option value="">All Levels</option>
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="advanced">Advanced</option>
+        </select>
+        <select id="workouts-status" onchange="loadWorkouts()" style="background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none">
+          <option value="">All Status</option>
+          <option value="public">Public Only</option>
+          <option value="private">Private Only</option>
+          <option value="featured">Featured</option>
+        </select>
+      </div>
+      <div style="display:flex;align-items:center;margin-bottom:16px;gap:10px">
+        <span style="font-size:13px;color:var(--mu)"><strong id="workouts-count">0</strong> workouts</span>
+      </div>
+      <div id="workouts-table-wrap"><p style="color:var(--mu);font-size:14px">Loading workouts...</p></div>
+    </div>
+    <div id="create-workout-form" class="section" style="display:none;margin-top:20px">
+      <h2>➕ Create Workout</h2>
+      <div class="alert" id="create-workout-alert"></div>
+      <div class="grid-2">
+        <div class="field"><label>Title</label><input type="text" id="cw-title" placeholder="Workout name"></div>
+        <div class="field"><label>Creator</label><input type="text" id="cw-creator" placeholder="Username" readonly style="opacity:.6"></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>Format</label><select id="cw-format"><option>AMRAP</option><option>EMOM</option><option>For Time</option><option>Circuit</option></select></div>
+        <div class="field"><label>Duration (min)</label><input type="number" id="cw-duration" value="20" min="5" max="90"></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>Difficulty</label><select id="cw-level"><option value="beginner">Beginner</option><option value="intermediate" selected>Intermediate</option><option value="advanced">Advanced</option></select></div>
+        <div class="field"><label>Body Focus</label><select id="cw-focus"><option value="full-body" selected>Full Body</option><option value="upper-body">Upper Body</option><option value="lower-body">Lower Body</option><option value="core">Core</option><option value="legs-glutes">Legs & Glutes</option><option value="cardio">Cardio</option></select></div>
+      </div>
+      <div class="field"><label>Equipment (comma-separated)</label><input type="text" id="cw-equipment" placeholder="e.g. dumbbells, kettlebell, barbell"></div>
+      <div class="field"><label>Description</label><textarea id="cw-description" placeholder="Workout description and intent..."></textarea></div>
+      <div class="field"><label>Movements (JSON array of {name, reps, tip})</label><textarea id="cw-movements" rows="6" placeholder='[{"name":"Air Squats","reps":"21","tip":"Heels down"}]'></textarea></div>
+      <div class="field"><label>Scoring</label><input type="text" id="cw-scoring" placeholder="e.g. Total rounds + reps"></div>
+      <div class="grid-2">
+        <div class="field"><label><input type="checkbox" id="cw-public" checked> Public</label></div>
+        <div class="field"><label><input type="checkbox" id="cw-featured"> Featured</label></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <button class="save-btn" onclick="saveNewWorkout()">💾 Create</button>
+        <button class="del-btn" onclick="cancelCreateWorkout()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── TAB: MOVEMENTS ───────────────────────────────────── -->
+  <div id="tab-movements" class="tab-pane">
+    <div class="section">
+      <h2>💪 Movement Browser</h2>
+      <p class="desc">Browse available movements for daily WODs. Read-only reference.</p>
+      <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+        <select id="movements-equipment" onchange="filterMovements()" style="background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none">
+          <option value="">All Equipment</option>
+          <option value="bodyweight">Bodyweight</option>
+          <option value="pullupbar">Pull-up Bar</option>
+          <option value="kettlebell">Kettlebell</option>
+          <option value="dumbbells">Dumbbells</option>
+          <option value="barbell">Barbell</option>
+          <option value="resistancebands">Bands</option>
+          <option value="jumprope">Jump Rope</option>
+          <option value="box">Box</option>
+          <option value="medicineball">Medicine Ball</option>
+          <option value="rings">Rings</option>
+        </select>
+        <select id="movements-tag" onchange="filterMovements()" style="background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none">
+          <option value="">All Tags</option>
+          <option value="lower">Lower Body</option>
+          <option value="upper-body">Upper Body</option>
+          <option value="push">Push</option>
+          <option value="pull">Pull</option>
+          <option value="core">Core</option>
+          <option value="cardio">Cardio</option>
+          <option value="full">Full Body</option>
+          <option value="legs-glutes">Legs & Glutes</option>
+        </select>
+        <input type="text" id="movements-search" placeholder="Search by name..." style="flex:1;min-width:200px;background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none" onkeyup="filterMovements()">
+      </div>
+      <div style="display:flex;align-items:center;margin-bottom:16px;gap:10px">
+        <span style="font-size:13px;color:var(--mu)"><strong id="movements-count">0</strong> movements</span>
+      </div>
+      <div id="movements-list"></div>
     </div>
   </div>
 
@@ -305,10 +446,9 @@ Sit-Ups | 9 | Full range"></textarea>
 <script src="/js/config.js"></script>
 <script src="/js/db.js"></script>
 <script src="/js/benchmarks.js"></script>
+<script src="/js/movement-db.js"></script>
 
-<!-- Inline Daily WOD engine (copy of daily-wod.js logic, standalone) -->
 <script>
-// ── DAILY WOD ENGINE (inline for admin) ──────────────────────
 const MOVEMENT_DB_ADMIN = {
   bodyweight:[
     {name:"Air Squats",b:[15,20],i:[20,25],a:[25,30],tags:["lower"]},
@@ -344,106 +484,71 @@ const AdminDailyWOD = {
     formatByDay: {0:'circuit',1:'amrap',2:'fortime',3:'emom',4:'amrap',5:'fortime',6:'circuit'},
     durationByDay: {0:[15,20],1:[20,25],2:[20,30],3:[20,25],4:[20,30],5:[25,35],6:[20,30]}
   },
-  seededRng(seed) {
-    let s = seed;
-    return () => { s = (Math.imul(1664525, s) + 1013904223) | 0; return ((s >>> 0) / 4294967296); };
-  },
-  getSeedForDate(dateStr) {
-    const [y, m, d] = dateStr.split('-').map(Number);
-    return y * 10000 + m * 100 + d;
-  },
-  seededPick(arr, rng, n = 1) {
-    const shuffled = [...arr];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(rng() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return n === 1 ? shuffled[0] : shuffled.slice(0, n);
-  },
-  buildPool(equipment, level, bodyFocus, rng) {
-    let moves = [...(MOVEMENT_DB_ADMIN.bodyweight || [])];
-    equipment.forEach(eq => { if (eq !== 'bodyweight' && MOVEMENT_DB_ADMIN[eq]) moves.push(...MOVEMENT_DB_ADMIN[eq]); });
-    if (level === 'beginner') moves = moves.filter(m => !/(muscle.up|snatch|toes|double under|turkish)/i.test(m.name));
-    const BF_TAGS = {'full-body':null,'upper-body':['push','pull'],'lower-body':['lower','legs-glutes'],'core':['core'],'push':['push'],'pull':['pull'],'legs-glutes':['lower','legs-glutes'],'cardio':['cardio','full'],'upper':['push','pull']};
-    const tags = BF_TAGS[bodyFocus];
-    if (tags) { const p = moves.filter(m => m.tags && m.tags.some(t => tags.includes(t))); if (p.length >= 3) moves = p; }
+  seededRng(seed) { let s=seed; return ()=>{s=(Math.imul(1664525,s)+1013904223)|0;return((s>>>0)/4294967296);}; },
+  getSeedForDate(dateStr) { const[y,m,d]=dateStr.split('-').map(Number); return y*10000+m*100+d; },
+  buildPool(equipment,level,bodyFocus,rng) {
+    let moves=[...(MOVEMENT_DB_ADMIN.bodyweight||[])];
+    equipment.forEach(eq=>{if(eq!=='bodyweight'&&MOVEMENT_DB_ADMIN[eq])moves.push(...MOVEMENT_DB_ADMIN[eq]);});
+    if(level==='beginner')moves=moves.filter(m=>!/(muscle.up|snatch|toes|double under|turkish)/i.test(m.name));
+    const BF_TAGS={'full-body':null,'upper-body':['push','pull'],'lower-body':['lower','legs-glutes'],'core':['core'],'push':['push'],'pull':['pull'],'legs-glutes':['lower','legs-glutes'],'cardio':['cardio','full'],'upper':['push','pull']};
+    const tags=BF_TAGS[bodyFocus];
+    if(tags){const p=moves.filter(m=>m.tags&&m.tags.some(t=>tags.includes(t)));if(p.length>=3)moves=p;}
     return moves;
   },
-  getReps(m, level) {
-    const r = m[level === 'beginner' ? 'b' : level === 'intermediate' ? 'i' : 'a'];
-    return Array.isArray(r) ? r[0] : r;
-  },
-  balancedPick(pool, count, rng) {
-    const b = {lower:[],push:[],pull:[],core:[],full:[],other:[]};
-    pool.forEach(m => {
-      const t = m.tags||[];
-      if (t.includes('full')) b.full.push(m); else if(t.includes('lower')) b.lower.push(m);
-      else if(t.includes('push')) b.push.push(m); else if(t.includes('pull')) b.pull.push(m);
-      else if(t.includes('core')) b.core.push(m); else b.other.push(m);
-    });
-    const order = count>=5?['lower','push','pull','core','full']:count===4?['lower','push','pull','core']:count===3?['lower','push','core']:['lower','push'];
+  getReps(m,level){const r=m[level==='beginner'?'b':level==='intermediate'?'i':'a'];return Array.isArray(r)?r[0]:r;},
+  balancedPick(pool,count,rng){
+    const b={lower:[],push:[],pull:[],core:[],full:[],other:[]};
+    pool.forEach(m=>{const t=m.tags||[];if(t.includes('full'))b.full.push(m);else if(t.includes('lower'))b.lower.push(m);else if(t.includes('push'))b.push.push(m);else if(t.includes('pull'))b.pull.push(m);else if(t.includes('core'))b.core.push(m);else b.other.push(m);});
+    const order=count>=5?['lower','push','pull','core','full']:count===4?['lower','push','pull','core']:count===3?['lower','push','core']:['lower','push'];
     const result=[];
-    order.forEach(cat => { const bk=[...b[cat]]; if(bk.length){const idx=Math.floor(rng()*bk.length);result.push(bk[idx]);} });
-    while(result.length < count) {
-      const rem = Object.values(b).flat().filter(m=>!result.includes(m));
-      if(!rem.length) break;
-      result.push(rem[Math.floor(rng()*rem.length)]);
-    }
+    order.forEach(cat=>{const bk=[...b[cat]];if(bk.length){const idx=Math.floor(rng()*bk.length);result.push(bk[idx]);}});
+    while(result.length<count){const rem=Object.values(b).flat().filter(m=>!result.includes(m));if(!rem.length)break;result.push(rem[Math.floor(rng()*rem.length)]);}
     return result;
   },
-  generate(dateStr, config) {
-    config = config || this.defaultConfig;
-    const dayOfWeek = new Date(dateStr + 'T12:00:00').getDay();
-    const seed = this.getSeedForDate(dateStr);
-    const rng = this.seededRng(seed);
-    const difficulty = config.difficultyByDay[dayOfWeek] || 'intermediate';
-    const bodyFocus = config.bodyFocusByDay[dayOfWeek] || 'full-body';
-    const format = config.formatByDay[dayOfWeek] || 'amrap';
-    const durRange = config.durationByDay[dayOfWeek] || [20,30];
-    const duration = durRange[0] + Math.floor(rng() * (durRange[1] - durRange[0] + 1));
-    const equipment = config.equipment || ['bodyweight'];
-    const pool = this.buildPool(equipment, difficulty, bodyFocus, rng);
-    const fmtMap = {amrap:'AMRAP',emom:'EMOM',fortime:'For Time',circuit:'Circuit'};
-    const count = format==='amrap'?(duration<=15?3:duration<=25?4:5):format==='emom'?Math.min(4,Math.max(2,Math.floor(duration/4))):format==='fortime'?3:(duration<=15?4:duration<=30?5:6);
-    const sel = this.balancedPick(pool, count, rng);
-    let title, rows, scoring;
-    if(format==='amrap'){title=`${duration}-Min AMRAP`;scoring='Total rounds + reps';rows=sel.map(m=>({movement:m.name,reps:String(this.getReps(m,difficulty)),tip:''}))}
-    else if(format==='emom'){title=`${duration}-Min EMOM`;scoring='Finish each minute';rows=sel.map((m,i)=>({movement:m.name,reps:`Min ${i+1}: ${this.getReps(m,difficulty)} reps`,tip:''}))}
-    else if(format==='fortime'){const s={beginner:[15,12,9],intermediate:[21,15,9],advanced:[30,20,10]}[difficulty];title=`For Time ${s.join('-')}`;scoring='Record finish time';rows=sel.map(m=>({movement:m.name,reps:s.join('-')+' reps',tip:''}))}
-    else{const r=duration<=15?3:duration<=30?4:5;title=`${r}-Round Circuit`;scoring='Total time + splits';rows=sel.map(m=>({movement:m.name,reps:String(this.getReps(m,difficulty)),tip:''}))}
-    return { title, format: fmtMap[format]||format, duration, difficulty, bodyFocus, equipment, rows, scoring, date: dateStr, isManual: false };
+  generate(dateStr,config){
+    config=config||this.defaultConfig;
+    const dayOfWeek=new Date(dateStr+'T12:00:00').getDay();
+    const seed=this.getSeedForDate(dateStr);
+    const rng=this.seededRng(seed);
+    const difficulty=config.difficultyByDay[dayOfWeek]||'intermediate';
+    const bodyFocus=config.bodyFocusByDay[dayOfWeek]||'full-body';
+    const format=config.formatByDay[dayOfWeek]||'amrap';
+    const durRange=config.durationByDay[dayOfWeek]||[20,30];
+    const duration=durRange[0]+Math.floor(rng()*(durRange[1]-durRange[0]+1));
+    const equipment=config.equipment||['bodyweight'];
+    const pool=this.buildPool(equipment,difficulty,bodyFocus,rng);
+    const fmtMap={amrap:'AMRAP',emom:'EMOM',fortime:'For Time',circuit:'Circuit'};
+    const count=format==='amrap'?(duration<=15?3:duration<=25?4:5):format==='emom'?Math.min(4,Math.max(2,Math.floor(duration/4))):format==='fortime'?3:(duration<=15?4:duration<=30?5:6);
+    const sel=this.balancedPick(pool,count,rng);
+    let title,rows,scoring;
+    if(format==='amrap'){title=`${duration}-Min AMRAP`;scoring='Total rounds + reps';rows=sel.map(m=>({movement:m.name,reps:String(this.getReps(m,difficulty)),tip:''}));}
+    else if(format==='emom'){title=`${duration}-Min EMOM`;scoring='Finish each minute';rows=sel.map((m,i)=>({movement:m.name,reps:`Min ${i+1}: ${this.getReps(m,difficulty)} reps`,tip:''}));}
+    else if(format==='fortime'){const s={beginner:[15,12,9],intermediate:[21,15,9],advanced:[30,20,10]}[difficulty];title=`For Time ${s.join('-')}`;scoring='Record finish time';rows=sel.map(m=>({movement:m.name,reps:s.join('-')+' reps',tip:''}));}
+    else{const r=duration<=15?3:duration<=30?4:5;title=`${r}-Round Circuit`;scoring='Total time + splits';rows=sel.map(m=>({movement:m.name,reps:String(this.getReps(m,difficulty)),tip:''}));}
+    return{title,format:fmtMap[format]||format,duration,difficulty,bodyFocus,equipment,rows,scoring,date:dateStr,isManual:false};
   }
 };
 
-// ── ADMIN STATE ───────────────────────────────────────────────
-let adminConfig = null;
-const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+let adminConfig=null;
+const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-// ── PASSWORD CHECK ────────────────────────────────────────────
-function checkPassword() {
-  const pass = document.getElementById('admin-pass').value;
-  if (pass === CONFIG.ADMIN_PASSWORD) {
-    sessionStorage.setItem('admin_auth', '1');
-    document.getElementById('lock-screen').style.display = 'none';
-    document.getElementById('admin-panel').style.display = 'block';
+function checkPassword(){
+  const pass=document.getElementById('admin-pass').value;
+  if(pass===CONFIG.ADMIN_PASSWORD){
+    sessionStorage.setItem('admin_auth','1');
+    document.getElementById('lock-screen').style.display='none';
+    document.getElementById('admin-panel').style.display='block';
     initAdmin();
-  } else {
-    document.getElementById('lock-error').classList.add('vis');
-  }
+  }else{document.getElementById('lock-error').classList.add('vis');}
 }
-function adminLogout() {
-  sessionStorage.removeItem('admin_auth');
-  location.reload();
-}
-// Auto-unlock if already authed this session
-if (sessionStorage.getItem('admin_auth') === '1') {
-  document.getElementById('lock-screen').style.display = 'none';
-  document.getElementById('admin-panel').style.display = 'block';
-  document.addEventListener('DOMContentLoaded', initAdmin);
+function adminLogout(){sessionStorage.removeItem('admin_auth');location.reload();}
+if(sessionStorage.getItem('admin_auth')==='1'){
+  document.getElementById('lock-screen').style.display='none';
+  document.getElementById('admin-panel').style.display='block';
+  document.addEventListener('DOMContentLoaded',initAdmin);
 }
 
-// ── INIT ──────────────────────────────────────────────────────
-async function initAdmin() {
+async function initAdmin(){
   await loadConfig();
   populateBenchmarkSelect();
   setTodayDate();
@@ -453,57 +558,47 @@ async function initAdmin() {
   renderConfigUI();
 }
 
-function setTodayDate() {
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('ov-date').value = today;
-  document.getElementById('feat-date').value = today;
+function setTodayDate(){
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('ov-date').value=today;
+  document.getElementById('feat-date').value=today;
 }
 
-async function loadStats() {
-  if (!supabaseClient) {
-    document.getElementById('stat-workouts').textContent = '—';
-    document.getElementById('stat-results').textContent = '—';
-    document.getElementById('stat-users').textContent = '—';
-    document.getElementById('stat-nominations').textContent = '—';
+async function loadStats(){
+  if(!supabaseClient){
+    ['stat-workouts','stat-results','stat-users','stat-nominations'].forEach(id=>document.getElementById(id).textContent='—');
     return;
   }
-  try {
-    const [w, r, p, n] = await Promise.all([
+  try{
+    const[w,r,p,n]=await Promise.all([
       supabaseClient.from('workouts').select('*',{count:'exact',head:true}),
       supabaseClient.from('results').select('*',{count:'exact',head:true}),
       supabaseClient.from('profiles').select('*',{count:'exact',head:true}),
       supabaseClient.from('workouts').select('*',{count:'exact',head:true}).eq('nomination_pending',true)
     ]);
-    document.getElementById('stat-workouts').textContent = w.count || 0;
-    document.getElementById('stat-results').textContent = r.count || 0;
-    document.getElementById('stat-users').textContent = p.count || 0;
-    document.getElementById('stat-nominations').textContent = n.count || 0;
-  } catch(e) { console.log('Stats error', e); }
+    document.getElementById('stat-workouts').textContent=w.count||0;
+    document.getElementById('stat-results').textContent=r.count||0;
+    document.getElementById('stat-users').textContent=p.count||0;
+    document.getElementById('stat-nominations').textContent=n.count||0;
+  }catch(e){console.log('Stats error',e);}
 }
 
-// ── DAILY WOD ─────────────────────────────────────────────────
-async function loadTodayWOD() {
-  const today = new Date().toISOString().split('T')[0];
-  const statusEl = document.getElementById('daily-status');
-
-  // Check for manual override
-  let override = null;
-  if (supabaseClient) {
-    const { data } = await supabaseClient.from('daily_wods').select('*').eq('wod_date', today).single();
-    if (data?.workout_data) { override = data.workout_data; }
+async function loadTodayWOD(){
+  const today=new Date().toISOString().split('T')[0];
+  const statusEl=document.getElementById('daily-status');
+  let override=null;
+  if(supabaseClient){
+    const{data}=await supabaseClient.from('daily_wods').select('*').eq('wod_date',today).single();
+    if(data?.workout_data)override=data.workout_data;
   }
-
-  const wod = override || AdminDailyWOD.generate(today, adminConfig);
-  statusEl.textContent = override
-    ? `⚠️ Manual override active for ${today}`
-    : `✅ Auto-generated for ${today} (deterministic — same for all visitors)`;
-  statusEl.className = `alert ${override ? 'alert-info' : 'alert-ok'} vis`;
-
-  renderWODPreview('today-wod-preview', wod);
+  const wod=override||AdminDailyWOD.generate(today,adminConfig);
+  statusEl.textContent=override?`⚠️ Manual override active for ${today}`:`✅ Auto-generated for ${today}`;
+  statusEl.className=`alert ${override?'alert-info':'alert-ok'} vis`;
+  renderWODPreview('today-wod-preview',wod);
 }
 
-function renderWODPreview(containerId, wod) {
-  document.getElementById(containerId).innerHTML = `
+function renderWODPreview(containerId,wod){
+  document.getElementById(containerId).innerHTML=`
     <div class="wod-preview">
       <h3>${escHtml(wod.title)}</h3>
       <div class="meta">
@@ -511,340 +606,443 @@ function renderWODPreview(containerId, wod) {
         <span class="pill pill-mu">${cap(wod.difficulty||'intermediate')}</span>
         <span class="pill pill-mu">${wod.duration||20} min</span>
         <span class="pill pill-mu">${cap((wod.bodyFocus||wod.body_focus||'full-body').replace('-',' '))}</span>
-        ${wod.isManual ? '<span class="pill pill-pu">Manual</span>' : '<span class="pill pill-bl">Auto</span>'}
+        ${wod.isManual?'<span class="pill pill-pu">Manual</span>':'<span class="pill pill-bl">Auto</span>'}
       </div>
       <table>
         <thead><tr><th>Movement</th><th>Reps</th></tr></thead>
-        <tbody>${(wod.rows||[]).map(r => `<tr><td>${escHtml(r.movement||r.name||'')}</td><td style="color:var(--or);font-weight:700">${escHtml(String(r.reps||''))}</td></tr>`).join('')}</tbody>
+        <tbody>${(wod.rows||[]).map(r=>`<tr><td>${escHtml(r.movement||r.name||'')}</td><td style="color:var(--or);font-weight:700">${escHtml(String(r.reps||''))}</td></tr>`).join('')}</tbody>
       </table>
       <p style="color:var(--mu);font-size:12px;margin-top:10px">📊 Scoring: ${escHtml(wod.scoring||'')}</p>
     </div>`;
 }
 
-async function refreshDailyWOD() {
-  if (!confirm('Regenerate today\'s WOD? This will remove any manual override for today.')) return;
-  const today = new Date().toISOString().split('T')[0];
-  if (supabaseClient) {
-    await supabaseClient.from('daily_wods').delete().eq('wod_date', today).eq('is_manual', true);
-  }
+async function refreshDailyWOD(){
+  if(!confirm('Regenerate today\'s WOD?'))return;
+  const today=new Date().toISOString().split('T')[0];
+  if(supabaseClient)await supabaseClient.from('daily_wods').delete().eq('wod_date',today).eq('is_manual',true);
   await loadTodayWOD();
-  showAlert('daily-status', 'Daily WOD regenerated.', 'ok');
+  showAlert('daily-status','Daily WOD regenerated.','ok');
 }
 
-function showOverrideForm() {
-  const f = document.getElementById('override-form');
-  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+function showOverrideForm(){
+  const f=document.getElementById('override-form');
+  f.style.display=f.style.display==='none'?'block':'none';
 }
 
-async function saveOverride() {
-  const date = document.getElementById('ov-date').value;
-  const title = document.getElementById('ov-title').value.trim();
-  const format = document.getElementById('ov-format').value;
-  const duration = parseInt(document.getElementById('ov-duration').value) || 20;
-  const level = document.getElementById('ov-level').value;
-  const bodyFocus = document.getElementById('ov-focus').value;
-  const desc = document.getElementById('ov-desc').value.trim();
-  const scoring = document.getElementById('ov-scoring').value.trim();
-  const movText = document.getElementById('ov-movements').value.trim();
-
-  if (!date || !title || !movText) {
-    showAlert('override-alert', 'Please fill in date, title, and movements.', 'err');
-    return;
-  }
-
-  const rows = movText.split('\n').filter(l => l.trim()).map(line => {
-    const parts = line.split('|').map(s => s.trim());
-    return { movement: parts[0] || '', reps: parts[1] || '', tip: parts[2] || '' };
-  });
-
-  const workoutData = { title, format, duration, difficulty: level, bodyFocus, description: desc, rows, scoring, isManual: true };
-
-  if (supabaseClient) {
-    const { error } = await supabaseClient.from('daily_wods').upsert({ wod_date: date, workout_data: workoutData, is_manual: true }, { onConflict: 'wod_date' });
-    if (error) { showAlert('override-alert', error.message, 'err'); return; }
-  } else {
-    localStorage.setItem(`daily_wod_override_${date}`, JSON.stringify(workoutData));
-  }
-
-  showAlert('override-alert', `Override saved for ${date}!`, 'ok');
-  if (date === new Date().toISOString().split('T')[0]) await loadTodayWOD();
+async function saveOverride(){
+  const date=document.getElementById('ov-date').value;
+  const title=document.getElementById('ov-title').value.trim();
+  const format=document.getElementById('ov-format').value;
+  const duration=parseInt(document.getElementById('ov-duration').value)||20;
+  const level=document.getElementById('ov-level').value;
+  const bodyFocus=document.getElementById('ov-focus').value;
+  const desc=document.getElementById('ov-desc').value.trim();
+  const scoring=document.getElementById('ov-scoring').value.trim();
+  const movText=document.getElementById('ov-movements').value.trim();
+  if(!date||!title||!movText){showAlert('override-alert','Please fill in date, title, and movements.','err');return;}
+  const rows=movText.split('\n').filter(l=>l.trim()).map(line=>{const parts=line.split('|').map(s=>s.trim());return{movement:parts[0]||'',reps:parts[1]||'',tip:parts[2]||''};});
+  const workoutData={title,format,duration,difficulty:level,bodyFocus,description:desc,rows,scoring,isManual:true};
+  if(supabaseClient){
+    const{error}=await supabaseClient.from('daily_wods').upsert({wod_date:date,workout_data:workoutData,is_manual:true},{onConflict:'wod_date'});
+    if(error){showAlert('override-alert',error.message,'err');return;}
+  }else{localStorage.setItem(`daily_wod_override_${date}`,JSON.stringify(workoutData));}
+  showAlert('override-alert',`Override saved for ${date}!`,'ok');
+  if(date===new Date().toISOString().split('T')[0])await loadTodayWOD();
   await loadWODCalendar();
 }
 
-async function deleteOverride() {
-  const date = document.getElementById('ov-date').value;
-  if (!date || !confirm(`Delete manual override for ${date}?`)) return;
-  if (supabaseClient) {
-    await supabaseClient.from('daily_wods').delete().eq('wod_date', date);
-  } else {
-    localStorage.removeItem(`daily_wod_override_${date}`);
-  }
-  showAlert('override-alert', `Override deleted for ${date}.`, 'ok');
-  if (date === new Date().toISOString().split('T')[0]) await loadTodayWOD();
+async function deleteOverride(){
+  const date=document.getElementById('ov-date').value;
+  if(!date||!confirm(`Delete manual override for ${date}?`))return;
+  if(supabaseClient)await supabaseClient.from('daily_wods').delete().eq('wod_date',date);
+  else localStorage.removeItem(`daily_wod_override_${date}`);
+  showAlert('override-alert',`Override deleted for ${date}.`,'ok');
+  if(date===new Date().toISOString().split('T')[0])await loadTodayWOD();
 }
 
-async function loadWODCalendar() {
-  const cal = document.getElementById('wod-calendar');
-  const today = new Date();
-  let html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">';
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(today); d.setDate(today.getDate() + i);
-    const dateStr = d.toISOString().split('T')[0];
-    let override = null;
-    if (supabaseClient) {
-      const { data } = await supabaseClient.from('daily_wods').select('workout_data').eq('wod_date', dateStr).single();
-      if (data?.workout_data) override = data.workout_data;
-    }
-    const wod = override || AdminDailyWOD.generate(dateStr, adminConfig);
-    const isToday = i === 0;
-    html += `<div style="background:var(--dk2);border:1px solid ${isToday?'var(--or)':'var(--bd)'};border-radius:10px;padding:14px">
+let calendarWods={};
+let selectedCalDate=null;
+
+async function loadWODCalendar(){
+  const cal=document.getElementById('wod-calendar');
+  const today=new Date();
+  calendarWods={};
+  let html='<div id="cal-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">';
+  for(let i=0;i<7;i++){
+    const d=new Date(today);d.setDate(today.getDate()+i);
+    const dateStr=d.toISOString().split('T')[0];
+    let override=null;
+    if(supabaseClient){const{data}=await supabaseClient.from('daily_wods').select('workout_data').eq('wod_date',dateStr).single();if(data?.workout_data)override=data.workout_data;}
+    const wod=override||AdminDailyWOD.generate(dateStr,adminConfig);
+    calendarWods[dateStr]=wod;
+    const isToday=i===0;
+    const movCount=(wod.rows||[]).length;
+    html+=`<div class="cal-card${isToday?' today':''}${selectedCalDate===dateStr?' selected':''}" id="cal-card-${dateStr}" onclick="selectCalDate('${dateStr}')" title="Click to view full workout">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <span style="font-size:11px;font-weight:700;color:${isToday?'var(--or)':'var(--mu)'}">
-          ${isToday?'TODAY':DAYS[d.getDay()]} · ${d.toLocaleDateString('en-US',{month:'short',day:'numeric'})}
-        </span>
-        ${override ? '<span class="pill pill-pu" style="font-size:10px">Manual</span>' : '<span class="pill pill-bl" style="font-size:10px">Auto</span>'}
+        <span style="font-size:11px;font-weight:700;color:${isToday?'var(--or)':'var(--mu)'}">${isToday?'TODAY':DAYS[d.getDay()]} · ${d.toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>
+        ${override?'<span class="pill pill-pu" style="font-size:10px">Manual</span>':'<span class="pill pill-bl" style="font-size:10px">Auto</span>'}
       </div>
-      <div style="font-size:14px;font-weight:700;margin-bottom:6px">${escHtml(wod.title)}</div>
-      <div style="font-size:11px;color:var(--mu)">${cap(wod.difficulty||'')} · ${cap((wod.bodyFocus||'full-body').replace('-',' '))}</div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:4px">${escHtml(wod.title)}</div>
+      <div style="font-size:11px;color:var(--mu);margin-bottom:6px">${cap(wod.difficulty||'')} · ${cap((wod.bodyFocus||'full-body').replace('-',' '))}</div>
+      <div style="font-size:11px;color:var(--or)">${movCount} movement${movCount!==1?'s':''} · ${wod.duration||20} min</div>
     </div>`;
   }
-  html += '</div>';
-  cal.innerHTML = html;
+  html+='</div><div id="cal-detail-wrap"></div>';
+  cal.innerHTML=html;
+  if(selectedCalDate&&calendarWods[selectedCalDate])renderCalDetail(selectedCalDate);
 }
 
-// ── FEATURED WOD ──────────────────────────────────────────────
-function populateBenchmarkSelect() {
-  const sel = document.getElementById('feat-benchmark');
-  if (typeof BENCHMARKS !== 'undefined') {
-    BENCHMARKS.forEach(b => {
-      const opt = document.createElement('option');
-      opt.value = b.slug; opt.textContent = `${b.name} (${b.category||'benchmark'})`;
-      sel.appendChild(opt);
-    });
+function selectCalDate(dateStr){
+  if(selectedCalDate===dateStr){selectedCalDate=null;document.getElementById('cal-detail-wrap').innerHTML='';document.querySelectorAll('.cal-card').forEach(c=>c.classList.remove('selected'));return;}
+  selectedCalDate=dateStr;
+  document.querySelectorAll('.cal-card').forEach(c=>c.classList.remove('selected'));
+  const card=document.getElementById('cal-card-'+dateStr);
+  if(card)card.classList.add('selected');
+  renderCalDetail(dateStr);
+}
+
+function renderCalDetail(dateStr){
+  const wod=calendarWods[dateStr];
+  if(!wod)return;
+  const wrap=document.getElementById('cal-detail-wrap');
+  const d=new Date(dateStr+'T12:00:00');
+  const dateLabel=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  const rows=(wod.rows||[]).map(r=>`<tr><td style="font-weight:600">${escHtml(r.movement||r.name||'')}</td><td style="color:var(--or);font-weight:700">${escHtml(String(r.reps||''))}</td>${r.tip?`<td style="color:var(--mu);font-size:12px">${escHtml(r.tip)}</td>`:'<td></td>'}</tr>`).join('');
+  wrap.innerHTML=`<div class="cal-detail">
+    <div class="detail-header">
+      <div>
+        <div style="font-size:12px;color:var(--mu);margin-bottom:4px">${dateLabel}</div>
+        <h3>${escHtml(wod.title)}</h3>
+      </div>
+      <div class="detail-actions">
+        <button class="edit-btn" onclick="openOverrideForDate('${dateStr}')">✏️ Override This Day</button>
+        <button class="close-btn" onclick="selectCalDate('${dateStr}')">✕</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+      <span class="pill pill-or">${escHtml(wod.format||'')}</span>
+      <span class="pill pill-mu">${cap(wod.difficulty||'intermediate')}</span>
+      <span class="pill pill-mu">${wod.duration||20} min</span>
+      <span class="pill pill-mu">${cap((wod.bodyFocus||wod.body_focus||'full-body').replace('-',' '))}</span>
+      ${wod.isManual?'<span class="pill pill-pu">Manual Override</span>':'<span class="pill pill-bl">Auto-Generated</span>'}
+    </div>
+    ${wod.description?`<p style="color:var(--tx);font-size:13px;margin-bottom:12px">${escHtml(wod.description)}</p>`:''}
+    <table>
+      <thead><tr><th>Movement</th><th>Reps</th><th>Tip</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <p style="color:var(--mu);font-size:12px;margin-top:12px">📊 Scoring: ${escHtml(wod.scoring||'')}</p>
+  </div>`;
+  wrap.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function openOverrideForDate(dateStr){
+  const f=document.getElementById('override-form');
+  f.style.display='block';
+  document.getElementById('ov-date').value=dateStr;
+  const wod=calendarWods[dateStr];
+  if(wod){
+    document.getElementById('ov-title').value=wod.title||'';
+    document.getElementById('ov-format').value=wod.format||'AMRAP';
+    document.getElementById('ov-duration').value=wod.duration||20;
+    document.getElementById('ov-level').value=wod.difficulty||'intermediate';
+    document.getElementById('ov-focus').value=wod.bodyFocus||wod.body_focus||'full-body';
+    document.getElementById('ov-desc').value=wod.description||'';
+    document.getElementById('ov-scoring').value=wod.scoring||'';
+    document.getElementById('ov-movements').value=(wod.rows||[]).map(r=>[r.movement||r.name||'',r.reps||'',r.tip||''].join(' | ')).join('\n');
+  }
+  f.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function populateBenchmarkSelect(){
+  const sel=document.getElementById('feat-benchmark');
+  if(typeof BENCHMARKS!=='undefined'){
+    BENCHMARKS.forEach(b=>{const opt=document.createElement('option');opt.value=b.slug;opt.textContent=`${b.name} (${b.category||'benchmark'})`;sel.appendChild(opt);});
   }
   loadFeaturedSchedule();
 }
 
-function toggleFeaturedType() {
-  const type = document.getElementById('feat-type').value;
-  document.getElementById('feat-benchmark-wrap').style.display = type === 'benchmark' ? 'block' : 'none';
-  document.getElementById('feat-community-wrap').style.display = type === 'community' ? 'block' : 'none';
+function toggleFeaturedType(){
+  const type=document.getElementById('feat-type').value;
+  document.getElementById('feat-benchmark-wrap').style.display=type==='benchmark'?'block':'none';
+  document.getElementById('feat-community-wrap').style.display=type==='community'?'block':'none';
 }
 
-async function saveFeatured() {
-  const date = document.getElementById('feat-date').value;
-  const type = document.getElementById('feat-type').value;
-  const notes = document.getElementById('feat-notes').value.trim();
-  if (!date) { showAlert('featured-alert', 'Please select a date.', 'err'); return; }
-
-  let row = { feature_date: date, featured_type: 'manual', notes };
-  if (type === 'benchmark') {
-    row.benchmark_slug = document.getElementById('feat-benchmark').value;
-    if (!row.benchmark_slug) { showAlert('featured-alert', 'Please select a benchmark.', 'err'); return; }
-  } else {
-    row.workout_id = document.getElementById('feat-workout-id').value.trim();
-    if (!row.workout_id) { showAlert('featured-alert', 'Please enter a workout ID.', 'err'); return; }
-  }
-
-  if (supabaseClient) {
-    const { error } = await supabaseClient.from('featured').upsert(row, { onConflict: 'feature_date' });
-    if (error) { showAlert('featured-alert', error.message, 'err'); return; }
-    showAlert('featured-alert', `Featured WOD set for ${date}!`, 'ok');
-    await loadFeaturedSchedule();
-  } else {
-    showAlert('featured-alert', 'Connect Supabase to save featured WODs. (Demo mode — changes not persisted)', 'info');
-  }
+async function saveFeatured(){
+  const date=document.getElementById('feat-date').value;
+  const type=document.getElementById('feat-type').value;
+  const notes=document.getElementById('feat-notes').value.trim();
+  if(!date){showAlert('featured-alert','Please select a date.','err');return;}
+  let row={feature_date:date,featured_type:'manual',notes};
+  if(type==='benchmark'){row.benchmark_slug=document.getElementById('feat-benchmark').value;if(!row.benchmark_slug){showAlert('featured-alert','Please select a benchmark.','err');return;}}
+  else{row.workout_id=document.getElementById('feat-workout-id').value.trim();if(!row.workout_id){showAlert('featured-alert','Please enter a workout ID.','err');return;}}
+  if(supabaseClient){const{error}=await supabaseClient.from('featured').upsert(row,{onConflict:'feature_date'});if(error){showAlert('featured-alert',error.message,'err');return;}showAlert('featured-alert',`Featured WOD set for ${date}!`,'ok');await loadFeaturedSchedule();}
+  else showAlert('featured-alert','Connect Supabase to save featured WODs.','info');
 }
 
-async function loadFeaturedSchedule() {
-  if (!supabaseClient) return;
-  const today = new Date().toISOString().split('T')[0];
-  const future = new Date(); future.setDate(future.getDate() + 14);
-  const futureStr = future.toISOString().split('T')[0];
-  const { data } = await supabaseClient.from('featured').select('*').gte('feature_date', today).lte('feature_date', futureStr).order('feature_date');
-  const wrap = document.getElementById('featured-schedule');
-  if (!data?.length) { wrap.innerHTML = '<p style="color:var(--mu);font-size:14px">No featured workouts scheduled yet.</p>'; return; }
-  wrap.innerHTML = `<table class="table">
-    <thead><tr><th>Date</th><th>Workout</th><th>Type</th><th>Notes</th></tr></thead>
-    <tbody>${data.map(f => `<tr>
-      <td style="font-weight:700">${f.feature_date}</td>
-      <td>${f.benchmark_slug ? `<a href="/workouts/${f.benchmark_slug}" style="color:var(--orl)">${f.benchmark_slug}</a>` : f.workout_id || '—'}</td>
-      <td><span class="pill ${f.featured_type==='manual'?'pill-pu':'pill-bl'}">${f.featured_type}</span></td>
-      <td style="color:var(--mu);font-size:12px">${escHtml(f.notes||'')}</td>
-    </tr>`).join('')}
-    </tbody></table>`;
+async function loadFeaturedSchedule(){
+  if(!supabaseClient)return;
+  const today=new Date().toISOString().split('T')[0];
+  const future=new Date();future.setDate(future.getDate()+14);
+  const{data}=await supabaseClient.from('featured').select('*').gte('feature_date',today).lte('feature_date',future.toISOString().split('T')[0]).order('feature_date');
+  const wrap=document.getElementById('featured-schedule');
+  if(!data?.length){wrap.innerHTML='<p style="color:var(--mu);font-size:14px">No featured workouts scheduled yet.</p>';return;}
+  wrap.innerHTML=`<table class="table"><thead><tr><th>Date</th><th>Workout</th><th>Type</th><th>Notes</th></tr></thead><tbody>${data.map(f=>`<tr><td style="font-weight:700">${f.feature_date}</td><td>${f.benchmark_slug?`<a href="/workout.html?slug=${f.benchmark_slug}" style="color:var(--orl)">${f.benchmark_slug}</a>`:f.workout_id||'—'}</td><td><span class="pill ${f.featured_type==='manual'?'pill-pu':'pill-bl'}">${f.featured_type}</span></td><td style="color:var(--mu);font-size:12px">${escHtml(f.notes||'')}</td></tr>`).join('')}</tbody></table>`;
 }
 
-// ── NOMINATIONS ───────────────────────────────────────────────
-async function loadNominations() {
-  if (!supabaseClient) return;
-  const { data } = await supabaseClient.from('workouts').select('*').eq('nomination_pending', true).order('created_at', {ascending:false});
-  const wrap = document.getElementById('nom-table-wrap');
-  if (!data?.length) { wrap.innerHTML = '<p style="color:var(--mu);font-size:14px">No pending nominations.</p>'; return; }
-  wrap.innerHTML = `<table class="table">
-    <thead><tr><th>Workout</th><th>By</th><th>Format</th><th>Results</th><th>Actions</th></tr></thead>
-    <tbody>${data.map(w => `<tr>
-      <td style="font-weight:700">${escHtml(w.title)}</td>
-      <td style="color:var(--mu)">${escHtml(w.username||'')}</td>
-      <td><span class="pill pill-or">${escHtml(w.format||'')}</span></td>
-      <td>${w.result_count||0}</td>
-      <td style="display:flex;gap:6px">
-        <button class="approve-btn" onclick="approveNomination('${w.id}')">✓ Approve</button>
-        <button class="reject-btn" onclick="rejectNomination('${w.id}')">✕ Reject</button>
-      </td>
-    </tr>`).join('')}
-    </tbody></table>`;
+async function loadNominations(){
+  if(!supabaseClient)return;
+  const{data}=await supabaseClient.from('workouts').select('*').eq('nomination_pending',true).order('created_at',{ascending:false});
+  const wrap=document.getElementById('nom-table-wrap');
+  if(!data?.length){wrap.innerHTML='<p style="color:var(--mu);font-size:14px">No pending nominations.</p>';return;}
+  wrap.innerHTML=`<table class="table"><thead><tr><th>Workout</th><th>By</th><th>Format</th><th>Results</th><th>Actions</th></tr></thead><tbody>${data.map(w=>`<tr><td style="font-weight:700">${escHtml(w.title)}</td><td style="color:var(--mu)">${escHtml(w.username||'')}</td><td><span class="pill pill-or">${escHtml(w.format||'')}</span></td><td>${w.result_count||0}</td><td style="display:flex;gap:6px"><button class="approve-btn" onclick="approveNomination('${w.id}')">✓ Approve</button><button class="reject-btn" onclick="rejectNomination('${w.id}')">✕ Reject</button></td></tr>`).join('')}</tbody></table>`;
 }
 
-async function approveNomination(id) {
-  if (!supabaseClient) return;
-  const today = new Date().toISOString().split('T')[0];
-  await supabaseClient.from('workouts').update({ nomination_pending: false, is_featured: true, featured_type: 'nominated' }).eq('id', id);
-  showAlert('nom-alert', 'Nomination approved! Workout marked as featured.', 'ok');
-  await loadNominations();
+async function approveNomination(id){
+  if(!supabaseClient)return;
+  await supabaseClient.from('workouts').update({nomination_pending:false,is_featured:true,featured_type:'nominated'}).eq('id',id);
+  showAlert('nom-alert','Nomination approved!','ok');await loadNominations();
 }
 
-async function rejectNomination(id) {
-  if (!supabaseClient) return;
-  await supabaseClient.from('workouts').update({ nomination_pending: false }).eq('id', id);
-  showAlert('nom-alert', 'Nomination rejected.', 'info');
-  await loadNominations();
+async function rejectNomination(id){
+  if(!supabaseClient)return;
+  await supabaseClient.from('workouts').update({nomination_pending:false}).eq('id',id);
+  showAlert('nom-alert','Nomination rejected.','info');await loadNominations();
 }
 
-// ── RESULTS ───────────────────────────────────────────────────
-async function loadResults() {
-  if (!supabaseClient) return;
-  const filter = document.getElementById('results-filter').value;
-  let query = supabaseClient.from('results').select('*').order('created_at', {ascending:false}).limit(50);
-  if (filter === 'benchmark') query = query.not('benchmark_slug','is',null);
-  else if (filter === 'community') query = query.not('workout_id','is',null);
-  const { data } = await query;
-  const wrap = document.getElementById('results-table-wrap');
-  if (!data?.length) { wrap.innerHTML = '<p style="color:var(--mu);font-size:14px">No results found.</p>'; return; }
-  wrap.innerHTML = `<table class="table">
-    <thead><tr><th>Athlete</th><th>Workout</th><th>Score</th><th>Rx</th><th>Date</th></tr></thead>
-    <tbody>${data.map(r => `<tr>
-      <td><a href="/u/${encodeURIComponent(r.username||'')}" style="color:var(--tx);font-weight:700;text-decoration:none">${escHtml(r.username||'')}</a></td>
-      <td style="color:var(--mu)">${r.benchmark_slug ? `<a href="/workouts/${r.benchmark_slug}" style="color:var(--orl)">${r.benchmark_slug}</a>` : `<span style="font-size:11px">${r.workout_id?.slice(0,8)||'user'}</span>`}</td>
-      <td style="font-weight:700;color:var(--orl)">${escHtml(r.score_display||'')}</td>
-      <td>${r.is_rx ? '<span class="pill pill-gr">Rx</span>' : '<span class="pill pill-mu">Scaled</span>'}</td>
-      <td style="color:var(--mu);font-size:12px">${r.date||''}</td>
-    </tr>`).join('')}
-    </tbody></table>`;
+async function loadResults(){
+  if(!supabaseClient)return;
+  const filter=document.getElementById('results-filter').value;
+  let query=supabaseClient.from('results').select('*').order('created_at',{ascending:false}).limit(50);
+  if(filter==='benchmark')query=query.not('benchmark_slug','is',null);
+  else if(filter==='community')query=query.not('workout_id','is',null);
+  const{data}=await query;
+  const wrap=document.getElementById('results-table-wrap');
+  if(!data?.length){wrap.innerHTML='<p style="color:var(--mu);font-size:14px">No results found.</p>';return;}
+  wrap.innerHTML=`<table class="table"><thead><tr><th>Athlete</th><th>Workout</th><th>Score</th><th>Rx</th><th>Date</th></tr></thead><tbody>${data.map(r=>`<tr><td><a href="/u/${encodeURIComponent(r.username||'')}" style="color:var(--tx);font-weight:700;text-decoration:none">${escHtml(r.username||'')}</a></td><td style="color:var(--mu)">${r.benchmark_slug?`<a href="/workout.html?slug=${r.benchmark_slug}" style="color:var(--orl)">${r.benchmark_slug}</a>`:`<span style="font-size:11px">${r.workout_id?.slice(0,8)||'user'}</span>`}</td><td style="font-weight:700;color:var(--orl)">${escHtml(r.score_display||'')}</td><td>${r.is_rx?'<span class="pill pill-gr">Rx</span>':'<span class="pill pill-mu">Scaled</span>'}</td><td style="color:var(--mu);font-size:12px">${r.date||''}</td></tr>`).join('')}</tbody></table>`;
 }
 
-// ── CONFIG ────────────────────────────────────────────────────
-async function loadConfig() {
-  if (supabaseClient) {
-    const { data } = await supabaseClient.from('daily_wod_config').select('config').eq('id',1).single();
-    if (data?.config) {
-      adminConfig = { ...AdminDailyWOD.defaultConfig, ...data.config };
-      return;
-    }
-  }
-  const saved = localStorage.getItem('daily_wod_config');
-  if (saved) try { adminConfig = { ...AdminDailyWOD.defaultConfig, ...JSON.parse(saved) }; return; } catch(e) {}
-  adminConfig = { ...AdminDailyWOD.defaultConfig };
+async function loadConfig(){
+  if(supabaseClient){const{data}=await supabaseClient.from('daily_wod_config').select('config').eq('id',1).single();if(data?.config){adminConfig={...AdminDailyWOD.defaultConfig,...data.config};return;}}
+  const saved=localStorage.getItem('daily_wod_config');
+  if(saved)try{adminConfig={...AdminDailyWOD.defaultConfig,...JSON.parse(saved)};return;}catch(e){}
+  adminConfig={...AdminDailyWOD.defaultConfig};
 }
 
-function renderConfigUI() {
-  const eqOptions = ['bodyweight','pullupbar','kettlebell','dumbbells','barbell','resistancebands','jumprope','box','medicineball','rings'];
-  const eqLabels = {bodyweight:'Bodyweight',pullupbar:'Pull-up Bar',kettlebell:'Kettlebell',dumbbells:'Dumbbells',barbell:'Barbell',resistancebands:'Bands',jumprope:'Jump Rope',box:'Plyo Box',medicineball:'Med Ball',rings:'Rings'};
-  document.getElementById('config-equipment').innerHTML = eqOptions.map(eq => `
-    <label style="display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--dk2);border:2px solid ${(adminConfig.equipment||[]).includes(eq)?'var(--or)':'var(--bd)'};border-radius:7px;cursor:pointer;font-size:12px;font-weight:700;user-select:none;transition:all .15s" onclick="toggleEquipment(this,'${eq}')">
-      <span id="eq-check-${eq}" style="color:${(adminConfig.equipment||[]).includes(eq)?'var(--or)':'var(--mu)'}">${(adminConfig.equipment||[]).includes(eq)?'✓':'○'}</span>
-      ${eqLabels[eq]||eq}
-    </label>`).join('');
-
-  // Difficulty, focus, format, duration selects per day
-  ['difficulty','focus','format','duration'].forEach(type => {
-    document.getElementById(`config-${type}`).innerHTML = DAYS.map((day, i) => {
-      let inner = '';
-      if (type === 'difficulty') {
-        const val = (adminConfig.difficultyByDay||{})[i] || 'intermediate';
-        inner = `<select id="cfg-diff-${i}"><option value="beginner" ${val==='beginner'?'selected':''}>Beginner</option><option value="intermediate" ${val==='intermediate'?'selected':''}>Intermediate</option><option value="advanced" ${val==='advanced'?'selected':''}>Advanced</option></select>`;
-      } else if (type === 'focus') {
-        const val = (adminConfig.bodyFocusByDay||{})[i] || 'full-body';
-        const opts = [['full-body','Full Body'],['upper-body','Upper'],['lower-body','Lower'],['core','Core'],['cardio','Cardio'],['legs-glutes','Legs/Glutes']];
-        inner = `<select id="cfg-focus-${i}">${opts.map(o=>`<option value="${o[0]}" ${val===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select>`;
-      } else if (type === 'format') {
-        const val = (adminConfig.formatByDay||{})[i] || 'amrap';
-        inner = `<select id="cfg-fmt-${i}"><option value="amrap" ${val==='amrap'?'selected':''}>AMRAP</option><option value="emom" ${val==='emom'?'selected':''}>EMOM</option><option value="fortime" ${val==='fortime'?'selected':''}>For Time</option><option value="circuit" ${val==='circuit'?'selected':''}>Circuit</option></select>`;
-      } else {
-        const [mn,mx] = (adminConfig.durationByDay||{})[i] || [20,30];
-        inner = `<input type="number" id="cfg-dur-min-${i}" value="${mn}" min="5" max="90" style="width:48%;margin-right:4%">
-                 <input type="number" id="cfg-dur-max-${i}" value="${mx}" min="5" max="90" style="width:48%">`;
-      }
+function renderConfigUI(){
+  const eqOptions=['bodyweight','pullupbar','kettlebell','dumbbells','barbell','resistancebands','jumprope','box','medicineball','rings'];
+  const eqLabels={bodyweight:'Bodyweight',pullupbar:'Pull-up Bar',kettlebell:'Kettlebell',dumbbells:'Dumbbells',barbell:'Barbell',resistancebands:'Bands',jumprope:'Jump Rope',box:'Plyo Box',medicineball:'Med Ball',rings:'Rings'};
+  document.getElementById('config-equipment').innerHTML=eqOptions.map(eq=>`<label style="display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--dk2);border:2px solid ${(adminConfig.equipment||[]).includes(eq)?'var(--or)':'var(--bd)'};border-radius:7px;cursor:pointer;font-size:12px;font-weight:700;user-select:none;transition:all .15s" onclick="toggleEquipment(this,'${eq}')"><span id="eq-check-${eq}" style="color:${(adminConfig.equipment||[]).includes(eq)?'var(--or)':'var(--mu)'}">${(adminConfig.equipment||[]).includes(eq)?'✓':'○'}</span>${eqLabels[eq]||eq}</label>`).join('');
+  ['difficulty','focus','format','duration'].forEach(type=>{
+    document.getElementById(`config-${type}`).innerHTML=DAYS.map((day,i)=>{
+      let inner='';
+      if(type==='difficulty'){const val=(adminConfig.difficultyByDay||{})[i]||'intermediate';inner=`<select id="cfg-diff-${i}"><option value="beginner" ${val==='beginner'?'selected':''}>Beginner</option><option value="intermediate" ${val==='intermediate'?'selected':''}>Intermediate</option><option value="advanced" ${val==='advanced'?'selected':''}>Advanced</option></select>`;}
+      else if(type==='focus'){const val=(adminConfig.bodyFocusByDay||{})[i]||'full-body';const opts=[['full-body','Full Body'],['upper-body','Upper'],['lower-body','Lower'],['core','Core'],['cardio','Cardio'],['legs-glutes','Legs/Glutes']];inner=`<select id="cfg-focus-${i}">${opts.map(o=>`<option value="${o[0]}" ${val===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select>`;}
+      else if(type==='format'){const val=(adminConfig.formatByDay||{})[i]||'amrap';inner=`<select id="cfg-fmt-${i}"><option value="amrap" ${val==='amrap'?'selected':''}>AMRAP</option><option value="emom" ${val==='emom'?'selected':''}>EMOM</option><option value="fortime" ${val==='fortime'?'selected':''}>For Time</option><option value="circuit" ${val==='circuit'?'selected':''}>Circuit</option></select>`;}
+      else{const[mn,mx]=(adminConfig.durationByDay||{})[i]||[20,30];inner=`<input type="number" id="cfg-dur-min-${i}" value="${mn}" min="5" max="90" style="width:48%;margin-right:4%"><input type="number" id="cfg-dur-max-${i}" value="${mx}" min="5" max="90" style="width:48%">`;}
       return `<div class="day-card"><div class="day-name">${day}</div>${inner}</div>`;
     }).join('');
   });
 }
 
-function toggleEquipment(el, eq) {
-  const idx = adminConfig.equipment.indexOf(eq);
-  const check = document.getElementById(`eq-check-${eq}`);
-  if (idx >= 0) {
-    if (adminConfig.equipment.length <= 1) return; // keep at least one
-    adminConfig.equipment.splice(idx, 1);
-    el.style.borderColor = 'var(--bd)'; check.textContent = '○'; check.style.color = 'var(--mu)';
-  } else {
-    adminConfig.equipment.push(eq);
-    el.style.borderColor = 'var(--or)'; check.textContent = '✓'; check.style.color = 'var(--or)';
-  }
+function toggleEquipment(el,eq){
+  const idx=adminConfig.equipment.indexOf(eq);
+  const check=document.getElementById(`eq-check-${eq}`);
+  if(idx>=0){if(adminConfig.equipment.length<=1)return;adminConfig.equipment.splice(idx,1);el.style.borderColor='var(--bd)';check.textContent='○';check.style.color='var(--mu)';}
+  else{adminConfig.equipment.push(eq);el.style.borderColor='var(--or)';check.textContent='✓';check.style.color='var(--or)';}
 }
 
-async function saveConfig() {
-  // Read all values from UI
-  const cfg = {
-    equipment: adminConfig.equipment,
-    difficultyByDay: {}, bodyFocusByDay: {}, formatByDay: {}, durationByDay: {}
-  };
-  for (let i = 0; i < 7; i++) {
-    cfg.difficultyByDay[i] = document.getElementById(`cfg-diff-${i}`)?.value || 'intermediate';
-    cfg.bodyFocusByDay[i] = document.getElementById(`cfg-focus-${i}`)?.value || 'full-body';
-    cfg.formatByDay[i] = document.getElementById(`cfg-fmt-${i}`)?.value || 'amrap';
-    const mn = parseInt(document.getElementById(`cfg-dur-min-${i}`)?.value) || 20;
-    const mx = parseInt(document.getElementById(`cfg-dur-max-${i}`)?.value) || 30;
-    cfg.durationByDay[i] = [Math.min(mn,mx), Math.max(mn,mx)];
+async function saveConfig(){
+  const cfg={equipment:adminConfig.equipment,difficultyByDay:{},bodyFocusByDay:{},formatByDay:{},durationByDay:{}};
+  for(let i=0;i<7;i++){
+    cfg.difficultyByDay[i]=document.getElementById(`cfg-diff-${i}`)?.value||'intermediate';
+    cfg.bodyFocusByDay[i]=document.getElementById(`cfg-focus-${i}`)?.value||'full-body';
+    cfg.formatByDay[i]=document.getElementById(`cfg-fmt-${i}`)?.value||'amrap';
+    const mn=parseInt(document.getElementById(`cfg-dur-min-${i}`)?.value)||20;
+    const mx=parseInt(document.getElementById(`cfg-dur-max-${i}`)?.value)||30;
+    cfg.durationByDay[i]=[Math.min(mn,mx),Math.max(mn,mx)];
   }
-  adminConfig = { ...adminConfig, ...cfg };
-
-  if (supabaseClient) {
-    const { error } = await supabaseClient.from('daily_wod_config').upsert({ id: 1, config: cfg }, { onConflict: 'id' });
-    if (error) { showAlert('config-alert', error.message, 'err'); return; }
-  } else {
-    localStorage.setItem('daily_wod_config', JSON.stringify(cfg));
-  }
-  showAlert('config-alert', 'Config saved! Future daily WODs will use these settings.', 'ok');
+  adminConfig={...adminConfig,...cfg};
+  if(supabaseClient){const{error}=await supabaseClient.from('daily_wod_config').upsert({id:1,config:cfg},{onConflict:'id'});if(error){showAlert('config-alert',error.message,'err');return;}}
+  else localStorage.setItem('daily_wod_config',JSON.stringify(cfg));
+  showAlert('config-alert','Config saved!','ok');
   await loadWODCalendar();
 }
 
-function resetConfig() {
-  if (!confirm('Reset config to defaults?')) return;
-  adminConfig = { ...AdminDailyWOD.defaultConfig };
-  renderConfigUI();
-  showAlert('config-alert', 'Config reset to defaults (not yet saved).', 'info');
-}
+function resetConfig(){if(!confirm('Reset config to defaults?'))return;adminConfig={...AdminDailyWOD.defaultConfig};renderConfigUI();showAlert('config-alert','Config reset to defaults (not yet saved).','info');}
 
-// ── TABS ──────────────────────────────────────────────────────
-function showAdminTab(tab) {
-  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+function showAdminTab(tab){
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById(`tab-${tab}`).classList.add('active');
   event.target.classList.add('active');
-  if (tab === 'nominations') loadNominations();
-  if (tab === 'results') loadResults();
+  if(tab==='nominations')loadNominations();
+  if(tab==='results')loadResults();
+  if(tab==='athletes')loadAthletes();
+  if(tab==='workouts')loadWorkouts();
+  if(tab==='movements')filterMovements();
 }
 
-// ── UTILITIES ─────────────────────────────────────────────────
-function showAlert(id, msg, type) {
-  const el = document.getElementById(id);
-  el.textContent = msg;
-  el.className = `alert alert-${type} vis`;
-  setTimeout(() => el.classList.remove('vis'), 4000);
+function showAlert(id,msg,type){
+  const el=document.getElementById(id);
+  el.textContent=msg;el.className=`alert alert-${type} vis`;
+  setTimeout(()=>el.classList.remove('vis'),4000);
 }
-function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
-function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):'';}
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ═════════════════════════════════════════════════════════════════
+// ATHLETES TAB
+// ═════════════════════════════════════════════════════════════════
+let athletesData=[],athletesPage=0,athletesSearch='';
+async function loadAthletes(){
+  if(!supabaseClient){document.getElementById('athletes-table-wrap').innerHTML='<p style="color:var(--mu)">Connect Supabase to see athletes.</p>';return;}
+  try{
+    const sort=document.getElementById('athletes-sort').value;
+    let query=supabaseClient.from('profiles').select('*').limit(50);
+    if(sort==='username')query=query.order('username');
+    else if(sort==='results')query=query.order('total_results',{ascending:false});
+    else query=query.order('created_at',{ascending:false});
+    const{data,count}=await query;
+    athletesData=data||[];
+    athletesPage=0;
+    document.getElementById('athletes-count').textContent=count||0;
+    renderAthletesTable();
+  }catch(e){showAlert('athletes-alert','Error loading athletes: '+e.message,'err');}
+}
+function searchAthletes(){
+  athletesSearch=document.getElementById('athletes-search').value.toLowerCase();
+  renderAthletesTable();
+}
+function renderAthletesTable(){
+  const filtered=athletesData.filter(a=>a.username?.toLowerCase().includes(athletesSearch));
+  const displayed=filtered.slice(0,(athletesPage+1)*50);
+  if(!displayed.length){document.getElementById('athletes-table-wrap').innerHTML='<p style="color:var(--mu)">No athletes found.</p>';return;}
+  let html=`<table class="table"><thead><tr><th>Username</th><th>Bio</th><th>Results</th><th>Joined</th><th>Actions</th></tr></thead><tbody>`;
+  displayed.forEach(a=>{
+    const joined=a.created_at?new Date(a.created_at).toLocaleDateString():'—';
+    html+=`<tr><td style="font-weight:700">${escHtml(a.username||'')}</td><td style="color:var(--mu);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(a.bio||'')}</td><td>${a.total_results||0}</td><td style="font-size:12px;color:var(--mu)">${joined}</td><td style="display:flex;gap:4px;flex-wrap:wrap"><button class="action-btn" onclick="editAthlete('${escHtml(a.id)}','${escHtml(a.username)}','${escHtml(a.bio)}','${escHtml(a.avatar_color)}')">Edit</button><button class="action-btn" onclick="deleteAthlete('${escHtml(a.id)}','${escHtml(a.username)}')">Delete</button></td></tr>`;
+  });
+  html+=`</tbody></table>`;
+  document.getElementById('athletes-table-wrap').innerHTML=html;
+}
+function loadMoreAthletes(){athletesPage++;renderAthletesTable();}
+async function editAthlete(id,username,bio,avatarColor){
+  const newUsername=prompt('Edit username:',username);
+  if(newUsername===null)return;
+  const newBio=prompt('Edit bio:',bio);
+  if(newBio===null)return;
+  const newColor=prompt('Edit avatar color (hex):',avatarColor);
+  if(newColor===null)return;
+  if(!supabaseClient)return;
+  const{error}=await supabaseClient.from('profiles').update({username:newUsername,bio:newBio,avatar_color:newColor}).eq('id',id);
+  if(error)showAlert('athletes-alert','Error: '+error.message,'err');
+  else{showAlert('athletes-alert','Athlete updated!','ok');await loadAthletes();}
+}
+async function deleteAthlete(id,username){
+  if(!confirm(`Delete athlete "${username}" and all their data?`))return;
+  if(!supabaseClient)return;
+  const{error}=await supabaseClient.from('profiles').delete().eq('id',id);
+  if(error)showAlert('athletes-alert','Error: '+error.message,'err');
+  else{showAlert('athletes-alert','Athlete deleted!','ok');await loadAthletes();}
+}
+
+// ═════════════════════════════════════════════════════════════════
+// WORKOUTS TAB
+// ═════════════════════════════════════════════════════════════════
+let workoutsData=[],workoutsSearch='';
+async function loadWorkouts(){
+  if(!supabaseClient){document.getElementById('workouts-table-wrap').innerHTML='<p style="color:var(--mu)">Connect Supabase to see workouts.</p>';return;}
+  try{
+    const format=document.getElementById('workouts-format').value;
+    const level=document.getElementById('workouts-level').value;
+    const status=document.getElementById('workouts-status').value;
+    let query=supabaseClient.from('workouts').select('*',{count:'exact'});
+    if(format)query=query.eq('format',format);
+    if(level)query=query.eq('level',level);
+    if(status==='public')query=query.eq('is_public',true);
+    else if(status==='private')query=query.eq('is_public',false);
+    else if(status==='featured')query=query.eq('is_featured',true);
+    const{data,count}=await query.order('created_at',{ascending:false});
+    workoutsData=data||[];
+    document.getElementById('workouts-count').textContent=count||0;
+    renderWorkoutsTable();
+  }catch(e){showAlert('workouts-alert','Error loading workouts: '+e.message,'err');}
+}
+function searchWorkouts(){
+  workoutsSearch=document.getElementById('workouts-search').value.toLowerCase();
+  renderWorkoutsTable();
+}
+function renderWorkoutsTable(){
+  const filtered=workoutsData.filter(w=>w.title?.toLowerCase().includes(workoutsSearch));
+  if(!filtered.length){document.getElementById('workouts-table-wrap').innerHTML='<p style="color:var(--mu)">No workouts found.</p>';return;}
+  let html=`<table class="table"><thead><tr><th>Title</th><th>Creator</th><th>Format</th><th>Duration</th><th>Level</th><th>Focus</th><th>Public</th><th>Featured</th><th>Results</th><th>Actions</th></tr></thead><tbody>`;
+  filtered.forEach(w=>{
+    html+=`<tr><td style="font-weight:700;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(w.title)}">${escHtml(w.title)}</td><td style="color:var(--mu);font-size:12px">${escHtml(w.username||'')}</td><td><span class="pill pill-or">${escHtml(w.format||'')}</span></td><td>${w.duration}m</td><td>${cap(w.level||'')}</td><td style="font-size:11px">${cap((w.body_focus||'').replace('-',' '))}</td><td>${w.is_public?'<span class="pill pill-gr">Yes</span>':'<span class="pill pill-mu">No</span>'}</td><td>${w.is_featured?'<span class="pill pill-or">⭐</span>':'—'}</td><td>${w.result_count||0}</td><td style="display:flex;gap:4px;flex-wrap:wrap"><button class="action-btn" onclick="editWorkout('${w.id}')">Edit</button><button class="action-btn" onclick="deleteWorkout('${w.id}','${escHtml(w.title)}')">Delete</button></td></tr>`;
+  });
+  html+=`</tbody></table>`;
+  document.getElementById('workouts-table-wrap').innerHTML=html;
+}
+function showCreateWorkoutForm(){document.getElementById('create-workout-form').style.display='block';document.getElementById('cw-title').focus();}
+function cancelCreateWorkout(){document.getElementById('create-workout-form').style.display='none';document.getElementById('create-workout-alert').classList.remove('vis');}
+async function saveNewWorkout(){
+  const title=document.getElementById('cw-title').value.trim();
+  const format=document.getElementById('cw-format').value;
+  const duration=parseInt(document.getElementById('cw-duration').value)||20;
+  const level=document.getElementById('cw-level').value;
+  const focus=document.getElementById('cw-focus').value;
+  const equipment=(document.getElementById('cw-equipment').value||'').split(',').map(e=>e.trim()).filter(e=>e);
+  const description=document.getElementById('cw-description').value.trim();
+  const scoring=document.getElementById('cw-scoring').value.trim();
+  const isPublic=document.getElementById('cw-public').checked;
+  const isFeatured=document.getElementById('cw-featured').checked;
+  if(!title){showAlert('create-workout-alert','Please enter a title.','err');return;}
+  let movements=[];
+  try{movements=JSON.parse(document.getElementById('cw-movements').value||'[]');}catch(e){showAlert('create-workout-alert','Invalid movements JSON.','err');return;}
+  if(!supabaseClient){showAlert('create-workout-alert','Connect Supabase to create workouts.','err');return;}
+  const{data,error}=await supabaseClient.from('workouts').insert({title,format,duration,level,body_focus:focus,equipment,description,movements,scoring,is_public:isPublic,is_featured:isFeatured,username:'admin',user_id:null}).select();
+  if(error){showAlert('create-workout-alert','Error: '+error.message,'err');return;}
+  showAlert('create-workout-alert','Workout created!','ok');
+  cancelCreateWorkout();
+  document.getElementById('create-workout-form').reset();
+  await loadWorkouts();
+}
+async function editWorkout(id){alert('Inline edit coming soon. For now, edit via database or contact dev.');}
+async function deleteWorkout(id,title){
+  if(!confirm(`Delete workout "${title}"?`))return;
+  if(!supabaseClient)return;
+  const{error}=await supabaseClient.from('workouts').delete().eq('id',id);
+  if(error)showAlert('workouts-alert','Error: '+error.message,'err');
+  else{showAlert('workouts-alert','Workout deleted!','ok');await loadWorkouts();}
+}
+
+// ═════════════════════════════════════════════════════════════════
+// MOVEMENTS TAB
+// ═════════════════════════════════════════════════════════════════
+function filterMovements(){
+  const equipment=document.getElementById('movements-equipment').value;
+  const tag=document.getElementById('movements-tag').value;
+  const search=document.getElementById('movements-search').value.toLowerCase();
+  const cats=equipment?[equipment]:Object.keys(MOVEMENT_DB);
+  let all=[];
+  cats.forEach(cat=>{if(MOVEMENT_DB[cat])all.push(...MOVEMENT_DB[cat].map(m=>({...m,category:cat})))});
+  let filtered=all.filter(m=>{
+    if(tag&&(!m.tags||!m.tags.includes(tag)))return false;
+    if(search&&!m.name.toLowerCase().includes(search))return false;
+    return true;
+  });
+  document.getElementById('movements-count').textContent=filtered.length;
+  let html='<div class="movement-grid">';
+  filtered.forEach(m=>{
+    const reps=(m.b||[])[0];
+    const isTimed=m.timed;
+    html+=`<div class="movement-card"><h4>${escHtml(m.name)}</h4><div class="prop"><label>Category:</label><span>${escHtml(m.category)}</span></div><div class="prop"><label>Beginner:</label><span>${isTimed?m.b[0]:m.b[0]+'-'+m.b[1]}</span></div><div class="prop"><label>Intermediate:</label><span>${isTimed?m.i[0]:m.i[0]+'-'+m.i[1]}</span></div><div class="prop"><label>Advanced:</label><span>${isTimed?m.a[0]:m.a[0]+'-'+m.a[1]}</span></div><div style="color:var(--mu);font-size:11px;margin-top:8px;line-height:1.4">${escHtml(m.tip||'')}</div>`;
+    if(m.tags?.length)html+=`<div class="tags">${m.tags.map(t=>`<span class="tag">${escHtml(t)}</span>`).join('')}</div>`;
+    html+=`</div>`;
+  });
+  html+='</div>';
+  document.getElementById('movements-list').innerHTML=html;
+}
 </script>
 </body>
 </html>
