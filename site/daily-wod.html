@@ -42,6 +42,28 @@
       font-weight: 600;
     }
     .movement-link:hover { text-decoration: underline; }
+    .equipment-chip {
+      display: inline-block;
+      background: var(--dark-surface, #1e1e1e);
+      border: 1px solid var(--dark-border, #333);
+      border-radius: 8px;
+      padding: 8px 16px;
+      margin: 4px 6px 4px 0;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.2s;
+    }
+    .equipment-chip:hover {
+      border-color: var(--orange, #f97316);
+      color: var(--orange, #f97316);
+    }
+    .equipment-section {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--dark-border, #333);
+    }
   </style>
 </head>
 <body data-nav-init="true" data-active-page="workouts">
@@ -123,6 +145,24 @@
   let currentWod = null;
   let leaderboardPeriod = 'day';
 
+  // ── Amazon Affiliate ──────────────────────────────────────
+  const AFFILIATE_TAG = 'homewodrx0f-20';
+  const EQUIPMENT_LINKS = {
+    'kettlebell': `https://www.amazon.com/s?k=kettlebell&tag=${AFFILIATE_TAG}`,
+    'dumbbell': `https://www.amazon.com/s?k=dumbbell&tag=${AFFILIATE_TAG}`,
+    'pull-up bar': `https://www.amazon.com/s?k=pull-up+bar&tag=${AFFILIATE_TAG}`,
+    'jump rope': `https://www.amazon.com/s?k=crossfit+jump+rope&tag=${AFFILIATE_TAG}`,
+    'resistance bands': `https://www.amazon.com/s?k=resistance+bands&tag=${AFFILIATE_TAG}`,
+    'barbell': `https://www.amazon.com/s?k=barbell&tag=${AFFILIATE_TAG}`,
+    'box': `https://www.amazon.com/s?k=plyo+box&tag=${AFFILIATE_TAG}`,
+    'medicine ball': `https://www.amazon.com/s?k=medicine+ball&tag=${AFFILIATE_TAG}`,
+    'rings': `https://www.amazon.com/s?k=gymnastics+rings&tag=${AFFILIATE_TAG}`,
+  };
+  function getEquipmentLink(equipment) {
+    const key = equipment.toLowerCase().trim();
+    return EQUIPMENT_LINKS[key] || `https://www.amazon.com/s?k=${encodeURIComponent(equipment)}&tag=${AFFILIATE_TAG}`;
+  }
+
   async function loadDailyWod() {
     const params = new URLSearchParams(window.location.search);
     const dateStr = params.get('date') || new Date().toISOString().split('T')[0];
@@ -202,12 +242,13 @@
         </table>`;
     }
 
-    // Equipment
-    if (wod.equipment && wod.equipment.length > 0 && !(wod.equipment.length === 1 && wod.equipment[0] === 'bodyweight')) {
+    // Equipment — Amazon affiliate chips (matching workout page style)
+    if (wod.equipment && wod.equipment.length > 0) {
       document.getElementById('movements-table').innerHTML += `
-        <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--dark-border,#333);">
-          <h4 style="margin-bottom:0.5rem;">Equipment</h4>
-          <p>${wod.equipment.map(e => escHtml(cap(e))).join(', ')}</p>
+        <div class="equipment-section">
+          <h4 style="margin-bottom:0.75rem;">Equipment Needed</h4>
+          <p class="text-muted" style="font-size:0.85rem;margin-bottom:0.75rem;">Links are Amazon affiliate links &#8212; helps support HomeWODrx at no cost to you.</p>
+          ${wod.equipment.map(e => `<a href="${getEquipmentLink(e)}" class="equipment-chip" target="_blank" rel="noopener">${escHtml(e)}</a>`).join('')}
         </div>`;
     }
 
