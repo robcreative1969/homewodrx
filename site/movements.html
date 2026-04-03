@@ -72,6 +72,9 @@
 
   <h2 class="category-heading">Bodyweight</h2>
   <div class="grid grid-cols-3" id="bodyweight-grid"></div>
+
+  <h2 class="category-heading" id="community-heading" style="display:none;">Community Movements</h2>
+  <div class="grid grid-cols-3" id="community-grid"></div>
 </main>
 
 <script src="/js/footer.js"></script>
@@ -130,11 +133,57 @@ function renderGrid(gridId, movements) {
   }).join('');
 }
 
+// All slugs already in the hardcoded MOVEMENTS list
+const ALL_KNOWN_SLUGS = new Set([
+  ...MOVEMENTS.gymnastics,
+  ...MOVEMENTS.barbell,
+  ...MOVEMENTS.cardio,
+  ...MOVEMENTS.bodyweight
+].map(m => m.slug));
+
+async function loadCommunityMovements() {
+  try {
+    const userWorkouts = await db.getWorkouts({ isPublic: true, limit: 1000 });
+    // Extract unique movement slugs from user workouts, excluding known ones
+    const communityMap = {}; // slug -> { name, count }
+    for (const w of userWorkouts) {
+      if (!w.movements) continue;
+      for (const m of w.movements) {
+        const rawName = m.movement || m.name || '';
+        if (!rawName) continue;
+        const slug = slugify(rawName);
+        if (ALL_KNOWN_SLUGS.has(slug)) continue; // already shown above
+        if (!communityMap[slug]) {
+          communityMap[slug] = { name: rawName, count: 0 };
+        }
+        communityMap[slug].count++;
+      }
+    }
+    const communityMovements = Object.entries(communityMap)
+      .sort((a, b) => b[1].count - a[1].count); // most-used first
+
+    if (communityMovements.length === 0) return;
+
+    document.getElementById('community-heading').style.display = '';
+    document.getElementById('community-grid').innerHTML = communityMovements.map(([slug, info]) => {
+      const label = info.count > 0 ? `${info.count} community WOD${info.count === 1 ? '' : 's'}` : 'Community movement';
+      return `<a href="/movement.html?slug=${slug}" class="movement-card">
+        <h3 style="text-transform:capitalize">${info.name}</h3>
+        <p class="muscles">Community-submitted movement</p>
+        <span class="workout-count">${label} →</span>
+      </a>`;
+    }).join('');
+  } catch (e) {
+    // silent fail
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   renderGrid('gymnastics-grid',  MOVEMENTS.gymnastics);
   renderGrid('barbell-grid',     MOVEMENTS.barbell);
   renderGrid('cardio-grid',      MOVEMENTS.cardio);
   renderGrid('bodyweight-grid',  MOVEMENTS.bodyweight);
+  loadCommunityMovements();
 });
 </script>
 </body>
