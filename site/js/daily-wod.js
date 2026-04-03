@@ -270,23 +270,37 @@ const DailyWOD = {
     return {
       title: `${duration}-Minute EMOM`,
       format: 'emom',
-      description: `Every Minute On the Minute for ${duration} minutes. Complete the designated work at thH�وXX�Z[�]N��\��]]�\��[XZ[�˘����Έ�[�X\
+      description: `Every Minute On the Minute for ${duration} minutes. Complete the designated work at the top of each minute; rest whatever remains.`,
+      rows: sel.map((m, i) => ({ movement: m.name, reps: `Min ${i+1} (repeat): ${this._getReps(m, level)} reps`, tip: m.tip })),
+      scoring: 'Track whether you finish each minute before the next starts.'
+    };
+  },
 
-KJHO�
-�[ݙ[Y[��K��[YK�\ΈZ[�	�J�_H
-�\X]
-N�	�\˗��]�\�K]�[
-_H�\�\�K�\JJK���ܚ[�Έ	��X���]\�[�H�[�\�XX�Z[�]H�Y�ܙHH�^�\�ˉNK����[��ܕ[YJ��]�[���H�ۜ���[Y\�H�Y�[��\���MKL�WK[�\�YYX]N�̌KMKWKY�[��Y����LB�N�ۜ���[YHH��[Y\��]�[N�ۜ��[H\˗ؘ[[��YX��������N�]\��]N��܈[YH8�%	���[YK���[�	�I�_X��ܛX]�	ٛܝ[YI��\�ܚ\[ێ���\]H[��[���܈[YH\�[��H	���[YK���[�	�I�_H�\��[YK�\�HX�K�����Έ�[�X\
-HO�
-�[ݙ[Y[��K��[YK�\Έ��[YK���[�	�8�$�	�H
-�	��\��\�K�\JJK���ܚ[�Έ	ԙX�ܙ[�\��[�\�[YK�NK����[��\��Z]
-��]�[\�][ۋ��Q���\����H�ۜ�[ݐ��[�H\�][ۈHMH�
-�\�][ۈH��
-H�
-��ۜ���[��H\�][ۈHMH���\�][ۈH��
-�
-N�ۜ��[H\˗ؘ[[��YX����[ݐ��[����N�]\��]N�	ܛ�[��KT��[��\��Z]��ܛX]�	��\��Z]	��\�ܚ\[ێ���\]H[	�[ݐ��[�H[ݙ[Y[���X��]�X�X���]Z[�[X[�\���\�
-��X�ۙ��]�Y[���[�ˈ	ܛ�[��H��[���[�����Έ�[�X\
-HO�
-�[ݙ[Y[��K��[YK�\Έ��[��\˗��]�\�K]�[
-JK\�K�\JJK���ܚ[�Έ	ԙX�ܙ�[[YH[���[��]ˉNB�N�
+  _genForTime(pool, level, rng) {
+    const schemes = {
+      beginner: [15,12,9], intermediate: [21,15,9], advanced: [30,20,10]
+    };
+    const scheme = schemes[level];
+    const sel = this._balancedPick(pool, 3, rng);
+    return {
+      title: `For Time — ${scheme.join('-')}`,
+      format: 'fortime',
+      description: `Complete all rounds for time using the ${scheme.join('-')} rep scheme. Push the pace.`,
+      rows: sel.map(m => ({ movement: m.name, reps: scheme.join(' – ') + ' reps', tip: m.tip })),
+      scoring: 'Record your finish time.'
+    };
+  },
+
+  _genCircuit(pool, level, duration, bodyFocus, rng) {
+    const movCount = duration <= 15 ? 4 : duration <= 30 ? 5 : 6;
+    const rounds = duration <= 15 ? 3 : duration <= 30 ? 4 : 5;
+    const sel = this._balancedPick(pool, movCount, rng);
+    return {
+      title: `${rounds}-Round Circuit`,
+      format: 'circuit',
+      description: `Complete all ${movCount} movements back-to-back with minimal rest. Rest 60 seconds between rounds. ${rounds} rounds total.`,
+      rows: sel.map(m => ({ movement: m.name, reps: String(this._getReps(m, level)), tip: m.tip })),
+      scoring: 'Record total time and round splits.'
+    };
+  }
+};

@@ -263,7 +263,7 @@ const db = {
       let filtered = results;
       if (benchmarkSlug) filtered = filtered.filter(r => r.benchmark_slug === benchmarkSlug);
       if (workoutId) filtered = filtered.filter(r => r.workout_id === workoutId);
-      if (userId) filtered = filtered.filter(r =>(r.user_id === userId);
+      if (userId) filtered = filtered.filter(r => r.user_id === userId);
       return filtered.slice(offset, offset + limit);
     }
 
