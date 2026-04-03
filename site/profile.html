@@ -50,7 +50,16 @@
 .tab-content.active{display:block}
 .edit-bio{background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:8px 14px;color:var(--mu);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;margin-top:8px}
 .edit-bio:hover{border-color:var(--or);color:var(--or)}
-.card-link{text-decoration:none;color:inherit;display:block}
+.wod-overlay{position:fixed;top:60px;left:0;right:0;bottom:0;z-index:900;background:var(--bg);overflow-y:auto;display:none}
+.wod-overlay.open{display:block}
+.wod-overlay .inner{max-width:800px;margin:0 auto;padding:32px 20px 80px}
+.back-btn{background:none;border:none;color:var(--or);font-size:14px;font-weight:700;cursor:pointer;padding:8px 0;margin-bottom:20px}
+.back-btn:hover{text-decoration:underline}
+.wod-detail-title{font-size:28px;font-weight:900;margin-bottom:8px}
+.wod-detail-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.wod-section{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:20px;margin-bottom:16px}
+.wod-section h3{font-size:13px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.wod-section pre{white-space:pre-wrap;font-family:inherit;font-size:14px;line-height:1.7;color:var(--tx)}
 @media(max-width:600px){.prof-header{flex-direction:column;text-align:center}.prof-grid{grid-template-columns:1fr}.stats-bar{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
@@ -148,9 +157,18 @@
 </div>
 </main>
 
+<!-- WOD Detail Overlay -->
+<div class="wod-overlay" id="wod-detail-overlay">
+  <div class="inner">
+    <button class="back-btn" onclick="closeWodDetail()">← Back to Profile</button>
+    <div id="wod-detail-content"></div>
+  </div>
+</div>
+
 <script>
 let currentUser = null;
 let profileData = null;
+let profileWorkouts = [];
 let isOwnProfile = false;
 
 function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
@@ -165,6 +183,38 @@ function getAvatarColor(userId) {
   const colors = ['#E8530A', '#FF6B35', '#FF8C42', '#FFA500', '#FFB84D'];
   const hash = (userId || '').split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   return colors[hash % colors.length];
+}
+
+// ── WOD Detail ──
+async function openWodDetail(workoutId) {
+  const w = profileWorkouts.find(x => x.id === workoutId) || await db.getWorkoutById(workoutId);
+  if (!w) return;
+
+  let movementsHtml = '';
+  if (w.movements) {
+    const moves = Array.isArray(w.movements) ? w.movements : (typeof w.movements === 'string' ? w.movements.split(',') : []);
+    movementsHtml = moves.map(m => typeof m === 'object' ? `${m.name || m.movement || ''}${m.reps ? ' \u00d7 ' + m.reps : ''}` : m.trim()).filter(Boolean).join('\n');
+  }
+
+  document.getElementById('wod-detail-content').innerHTML = `
+    <h1 class="wod-detail-title">${escHtml(w.title)}</h1>
+    <div class="wod-detail-meta">
+      <span class="badge badge-or">${escHtml(w.format || 'AMRAP')}</span>
+      <span class="badge badge-mu">${cap(w.level || 'intermediate')}</span>
+      ${w.duration ? `<span class="badge badge-mu">${escHtml(String(w.duration))} min</span>` : ''}
+      ${w.equipment ? `<span class="badge badge-mu">${escHtml(w.equipment)}</span>` : ''}
+    </div>
+    ${w.description ? `<div class="wod-section"><h3>Description</h3><pre>${escHtml(w.description)}</pre></div>` : ''}
+    ${movementsHtml ? `<div class="wod-section"><h3>Movements</h3><pre>${escHtml(movementsHtml)}</pre></div>` : ''}
+    ${w.scoring ? `<div class="wod-section"><h3>Scoring</h3><pre>${escHtml(w.scoring)}</pre></div>` : ''}`;
+
+  document.getElementById('wod-detail-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeWodDetail() {
+  document.getElementById('wod-detail-overlay').classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 // ── Tab Switching ──
@@ -292,8 +342,11 @@ async function loadProfile() {
     workoutsEmpty.style.display = 'block';
   } else {
     workoutsEmpty.style.display = 'none';
+    // Store workouts for detail view
+    profileWorkouts = workouts;
+
     grid.innerHTML = workouts.map(w => `
-      <div class="prof-card">
+      <div class="prof-card" onclick="openWodDetail('${escHtml(w.id)}')" style="cursor:pointer">
         <div class="prof-card-meta">
           <span class="badge badge-or">${escHtml(w.format || 'AMRAP')}</span>
           <span class="badge badge-mu">${cap(w.level || 'intermediate')}</span>
@@ -335,5 +388,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   loadProfile();
 });
 </script>
+
+<!-- FOOTER -->
+<script src="/js/footer.js"></script>
 </body>
 </html>
