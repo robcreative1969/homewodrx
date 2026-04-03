@@ -163,6 +163,16 @@
     return EQUIPMENT_LINKS[key] || `https://www.amazon.com/s?k=${encodeURIComponent(equipment)}&tag=${AFFILIATE_TAG}`;
   }
 
+  // Bodyweight essentials — shown on bodyweight-only WODs
+  const BODYWEIGHT_ESSENTIALS = [
+    { label: 'Exercise Mat',    url: `https://www.amazon.com/s?k=thick+exercise+mat+home+workout&tag=${AFFILIATE_TAG}` },
+    { label: 'Ab Wheel',        url: `https://www.amazon.com/s?k=ab+roller+wheel&tag=${AFFILIATE_TAG}` },
+    { label: 'Foam Roller',     url: `https://www.amazon.com/s?k=foam+roller+muscle+recovery&tag=${AFFILIATE_TAG}` },
+    { label: 'Parallettes',     url: `https://www.amazon.com/s?k=parallettes+push+up&tag=${AFFILIATE_TAG}` },
+    { label: 'Knee Sleeves',    url: `https://www.amazon.com/s?k=knee+sleeves+crossfit&tag=${AFFILIATE_TAG}` },
+    { label: 'Workout Timer',   url: `https://www.amazon.com/s?k=interval+timer+crossfit&tag=${AFFILIATE_TAG}` },
+  ];
+
   async function loadDailyWod() {
     const params = new URLSearchParams(window.location.search);
     const dateStr = params.get('date') || new Date().toISOString().split('T')[0];
@@ -196,6 +206,7 @@
           <span class="badge badge-orange">${wod.duration || 20} min</span>
           <span class="badge badge-orange">${cap(wod.difficulty || 'Intermediate')}</span>
           ${wod.bodyFocus ? `<span class="badge badge-orange">${cap(wod.bodyFocus)}</span>` : ''}
+          ${wod.isBodyweightOnly ? '<span class="badge badge-orange">Bodyweight</span>' : ''}
         </div>
         <div style="display:flex;gap:1rem;">
           <button class="btn btn-primary" onclick="openResultModal()">Log Your Result</button>
@@ -242,13 +253,24 @@
         </table>`;
     }
 
-    // Equipment — Amazon affiliate chips (matching workout page style)
+    // Equipment / Essentials — Amazon affiliate chips
+    const eqContainer = document.getElementById('movements-table');
     if (wod.equipment && wod.equipment.length > 0) {
-      document.getElementById('movements-table').innerHTML += `
+      // Equipment-based WOD: show required gear as affiliate links
+      eqContainer.innerHTML += `
         <div class="equipment-section">
-          <h4 style="margin-bottom:0.75rem;">Equipment Needed</h4>
+          <h4 style="margin-bottom:0.75rem;">Gear for This Workout</h4>
           <p class="text-muted" style="font-size:0.85rem;margin-bottom:0.75rem;">Links are Amazon affiliate links &#8212; helps support HomeWODrx at no cost to you.</p>
           ${wod.equipment.map(e => `<a href="${getEquipmentLink(e)}" class="equipment-chip" target="_blank" rel="noopener">${escHtml(e)}</a>`).join('')}
+        </div>`;
+    }
+    if (wod.isBodyweightOnly) {
+      // Bodyweight-only WOD: show bodyweight essentials
+      eqContainer.innerHTML += `
+        <div class="equipment-section">
+          <h4 style="margin-bottom:0.75rem;">Bodyweight Essentials</h4>
+          <p class="text-muted" style="font-size:0.85rem;margin-bottom:0.75rem;">No equipment required &#8212; but these can level up your home workouts. Affiliate links help support HomeWODrx at no cost to you.</p>
+          ${BODYWEIGHT_ESSENTIALS.map(p => `<a href="${p.url}" class="equipment-chip" target="_blank" rel="noopener">${escHtml(p.label)}</a>`).join('')}
         </div>`;
     }
 
