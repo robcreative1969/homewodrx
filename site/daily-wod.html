@@ -36,6 +36,12 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0.4; }
     }
+    .movement-link {
+      color: var(--orange, #f97316);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .movement-link:hover { text-decoration: underline; }
   </style>
 </head>
 <body data-nav-init="true" data-active-page="workouts">
@@ -164,6 +170,9 @@
   function cap(s) {
     return String(s||'').replace(/-/g,' ').replace(/\b\w/g, c => c.toUpperCase());
   }
+  function slugify(name) {
+    return String(name||'').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  }
 
   function renderDetails(wod) {
     // Description / scoring
@@ -185,10 +194,10 @@
         <table>
           <thead><tr><th>Movement</th><th>Reps / Duration</th></tr></thead>
           <tbody>
-            ${rows.map(r => `<tr>
-              <td>${escHtml(r.movement || r.name || '')}</td>
+            ${rows.map(r => { const mn = r.movement || r.name || ''; return `<tr>
+              <td><a href="/movement.html?slug=${slugify(mn)}" class="movement-link">${escHtml(mn)}</a></td>
               <td>${escHtml(String(r.reps || r.duration || '-'))}</td>
-            </tr>`).join('')}
+            </tr>`; }).join('')}
           </tbody>
         </table>`;
     }
