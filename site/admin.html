@@ -9,7 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 :root{--dk:#111118;--dk2:#1E1E2C;--bd:#2E2E42;--or:#E8530A;--orl:#FF6B35;--tx:#EAEAF0;--mu:#888899;--card:#1E1E2C}
-.admin-page{max-width:960px;margin:0 auto;padding:32px 20px 80px}
+.admin-page{max-width:1200px;margin:0 auto;padding:32px 20px 80px}
 .admin-lock{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
 .lock-card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:40px;width:100%;max-width:400px;text-align:center}
 .lock-card .icon{font-size:48px;margin-bottom:16px}
@@ -28,8 +28,8 @@
 .logout-btn{padding:8px 14px;background:none;border:1px solid var(--bd);border-radius:7px;color:var(--mu);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
 .logout-btn:hover{border-color:var(--or);color:var(--orl)}
 
-.tab-nav{display:flex;gap:0;border-bottom:1px solid var(--bd);margin-bottom:28px;overflow-x:auto}
-.tab-btn{padding:12px 20px;font-size:13px;font-weight:700;color:var(--mu);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:all .15s}
+.tab-nav{display:flex;gap:0;border-bottom:1px solid var(--bd);margin-bottom:28px;flex-wrap:wrap}
+.tab-btn{padding:12px 18px;font-size:13px;font-weight:700;color:var(--mu);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:all .15s}
 .tab-btn:hover{color:var(--tx)}
 .tab-btn.active{color:var(--or);border-bottom-color:var(--or)}
 .tab-pane{display:none}
@@ -646,7 +646,7 @@ async function sendPasswordReset(){
     return;
   }
 
-  const {error}=await db.resetPassword(email);
+  const {error}=await db.resetPassword(email, '/admin.html');
   if(error){
     errEl.textContent='Something went wrong. Please try again.';
     errEl.style.display='block';
@@ -1101,14 +1101,14 @@ async function loadAthletes(){
   if(!supabaseClient){document.getElementById('athletes-table-wrap').innerHTML='<p style="color:var(--mu)">Connect Supabase to see athletes.</p>';return;}
   try{
     const sort=document.getElementById('athletes-sort').value;
-    let query=supabaseClient.from('profiles').select('*').limit(50);
+    let query=supabaseClient.from('profiles').select('*',{count:'exact'}).limit(50);
     if(sort==='username')query=query.order('username');
     else if(sort==='results')query=query.order('total_results',{ascending:false});
     else query=query.order('created_at',{ascending:false});
     const{data,count}=await query;
     athletesData=data||[];
     athletesPage=0;
-    document.getElementById('athletes-count').textContent=count||0;
+    document.getElementById('athletes-count').textContent=count??athletesData.length;
     renderAthletesTable();
   }catch(e){showAlert('athletes-alert','Error loading athletes: '+e.message,'err');}
 }
@@ -1120,10 +1120,11 @@ function renderAthletesTable(){
   const filtered=athletesData.filter(a=>a.username?.toLowerCase().includes(athletesSearch));
   const displayed=filtered.slice(0,(athletesPage+1)*50);
   if(!displayed.length){document.getElementById('athletes-table-wrap').innerHTML='<p style="color:var(--mu)">No athletes found.</p>';return;}
-  let html=`<table class="table"><thead><tr><th>Username</th><th>Bio</th><th>Results</th><th>Joined</th><th>Actions</th></tr></thead><tbody>`;
+  let html=`<table class="table"><thead><tr><th>Username</th><th>Status</th><th>Bio</th><th>Results</th><th>Joined</th><th>Actions</th></tr></thead><tbody>`;
   displayed.forEach(a=>{
     const joined=a.created_at?new Date(a.created_at).toLocaleDateString():'—';
-    html+=`<tr><td style="font-weight:700">${escHtml(a.username||'')}</td><td style="color:var(--mu);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(a.bio||'')}</td><td>${a.total_results||0}</td><td style="font-size:12px;color:var(--mu)">${joined}</td><td style="display:flex;gap:4px;flex-wrap:wrap"><button class="action-btn" onclick="editAthlete('${escHtml(a.id)}','${escHtml(a.username)}','${escHtml(a.bio)}','${escHtml(a.avatar_color)}')">Edit</button><button class="action-btn" onclick="deleteAthlete('${escHtml(a.id)}','${escHtml(a.username)}')">Delete</button></td></tr>`;
+    const statusHtml=getAthleteStatusHtml(a.last_seen);
+    html+=`<tr><td style="font-weight:700">${escHtml(a.username||'')}</td><td style="font-size:12px;white-space:nowrap">${statusHtml}</td><td style="color:var(--mu);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(a.bio||'')}</td><td>${a.total_results||0}</td><td style="font-size:12px;color:var(--mu)">${joined}</td><td style="display:flex;gap:4px;flex-wrap:wrap"><button class="action-btn" onclick="editAthlete('${escHtml(a.id)}','${escHtml(a.username)}','${escHtml(a.bio)}','${escHtml(a.avatar_color)}')">Edit</button><button class="action-btn" onclick="deleteAthlete('${escHtml(a.id)}','${escHtml(a.username)}')">Delete</button><button class="action-btn" onclick="sendAthleteReset('${escHtml(a.id)}','${escHtml(a.username)}')">Reset PW</button></td></tr>`;
   });
   html+=`</tbody></table>`;
   document.getElementById('athletes-table-wrap').innerHTML=html;
@@ -1147,6 +1148,40 @@ async function deleteAthlete(id,username){
   const{error}=await supabaseClient.from('profiles').delete().eq('id',id);
   if(error)showAlert('athletes-alert','Error: '+error.message,'err');
   else{showAlert('athletes-alert','Athlete deleted!','ok');await loadAthletes();}
+}
+
+function getAthleteStatusHtml(lastSeen){
+  if(!lastSeen) return '<span style="color:var(--mu)">Never</span>';
+  const now=new Date();
+  const seen=new Date(lastSeen);
+  const diffMin=Math.floor((now-seen)/60000);
+  // Consider "online" if active within last 15 minutes
+  if(diffMin<15){
+    return '<span style="color:#58d68d"><span style="display:inline-block;width:8px;height:8px;background:#58d68d;border-radius:50%;margin-right:5px"></span>Online</span>';
+  }
+  // Otherwise show relative "last seen" time
+  let timeAgo;
+  if(diffMin<60) timeAgo=diffMin+'m ago';
+  else if(diffMin<1440) timeAgo=Math.floor(diffMin/60)+'h ago';
+  else if(diffMin<10080) timeAgo=Math.floor(diffMin/1440)+'d ago';
+  else timeAgo=seen.toLocaleDateString();
+  return '<span style="color:var(--mu)"><span style="display:inline-block;width:8px;height:8px;background:var(--bd);border-radius:50%;margin-right:5px"></span>'+timeAgo+'</span>';
+}
+
+async function sendAthleteReset(id,username){
+  if(!supabaseClient){showAlert('athletes-alert','Not available in demo mode.','err');return;}
+  // Look up the athlete's email from auth - we need to find it from the profiles + auth
+  // Since we can't access auth.users from client, we'll look for email in the user metadata
+  // For now, prompt admin for the athlete's email
+  const email=prompt(`Send password reset email for "${username}".\nEnter the athlete's email address:`);
+  if(!email)return;
+  try{
+    const{error}=await supabaseClient.auth.resetPasswordForEmail(email,{
+      redirectTo:window.location.origin+'/login.html'
+    });
+    if(error) showAlert('athletes-alert','Error sending reset: '+error.message,'err');
+    else showAlert('athletes-alert','Password reset email sent to '+email+'!','ok');
+  }catch(e){showAlert('athletes-alert','Error: '+e.message,'err');}
 }
 
 // ═════════════════════════════════════════════════════════════════

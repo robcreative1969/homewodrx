@@ -154,6 +154,31 @@
       border-top: 1px solid var(--dark-border);
       margin: 1.5rem 0;
     }
+
+    .recovery-link {
+      color: var(--orange);
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+    .recovery-link:hover {
+      text-decoration: underline;
+    }
+    .recovery-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.25rem;
+      margin-top: 1rem;
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 1rem;
+      color: var(--orange);
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body data-nav-init="true" data-active-page="">
@@ -169,45 +194,113 @@
       <div class="auth-error" id="auth-error"></div>
       <div class="auth-success" id="auth-success"></div>
 
-      <form id="login-form">
-        <div class="form-group">
-          <label class="form-label" for="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            class="form-input"
-            placeholder="you@example.com"
-            required
-            autocomplete="email"
-          />
+      <!-- Login Form -->
+      <div id="login-view">
+        <form id="login-form">
+          <div class="form-group">
+            <label class="form-label" for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              class="form-input"
+              placeholder="you@example.com"
+              required
+              autocomplete="email"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              class="form-input"
+              placeholder="••••••••"
+              required
+              autocomplete="current-password"
+            />
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-submit" id="submit-btn">
+            Log In
+          </button>
+        </form>
+
+        <div class="recovery-links">
+          <a href="#" class="recovery-link" onclick="showView('forgot-password');return false">Forgot password?</a>
+          <a href="#" class="recovery-link" onclick="showView('forgot-email');return false">Forgot email?</a>
         </div>
 
-        <div class="form-group">
-          <label class="form-label" for="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            class="form-input"
-            placeholder="••••••••"
-            required
-            autocomplete="current-password"
-          />
+        <hr class="divider">
+
+        <div class="auth-footer">
+          Don&#39;t have an account? <a href="/signup.html">Sign up free</a>
         </div>
+      </div>
 
-        <button type="submit" class="btn btn-primary btn-submit" id="submit-btn">
-          Log In
-        </button>
-      </form>
+      <!-- Forgot Password View -->
+      <div id="forgot-password-view" style="display:none">
+        <h1 class="auth-title">Reset Password</h1>
+        <p class="auth-subtitle">Enter your email and we'll send a password reset link.</p>
+        <div class="auth-error" id="reset-error"></div>
+        <div class="auth-success" id="reset-success"></div>
+        <div class="form-group">
+          <label class="form-label" for="reset-email">Email</label>
+          <input type="email" id="reset-email" class="form-input" placeholder="you@example.com" autocomplete="email" />
+        </div>
+        <button class="btn btn-primary btn-submit" onclick="sendReset()">Send Reset Link</button>
+        <a href="#" class="back-link" onclick="showView('login');return false">&larr; Back to login</a>
+      </div>
 
-      <hr class="divider">
+      <!-- Forgot Email View -->
+      <div id="forgot-email-view" style="display:none">
+        <h1 class="auth-title">Find Your Email</h1>
+        <p class="auth-subtitle">Enter your username and we'll help you find your account.</p>
+        <div class="auth-error" id="lookup-error"></div>
+        <div class="auth-success" id="lookup-success"></div>
+        <div class="form-group">
+          <label class="form-label" for="lookup-username">Username</label>
+          <input type="text" id="lookup-username" class="form-input" placeholder="Your username" />
+        </div>
+        <button class="btn btn-primary btn-submit" onclick="lookupMyEmail()">Look Up Email</button>
+        <a href="#" class="back-link" onclick="showView('login');return false">&larr; Back to login</a>
+      </div>
 
-      <div class="auth-footer">
-        Don&#39;t have an account? <a href="/signup.html">Sign up free</a>
+      <!-- New Password View (shown after clicking reset link in email) -->
+      <div id="new-password-view" style="display:none">
+        <h1 class="auth-title">Set New Password</h1>
+        <p class="auth-subtitle">Enter your new password below.</p>
+        <div class="auth-error" id="newpass-error"></div>
+        <div class="auth-success" id="newpass-success"></div>
+        <div class="form-group">
+          <label class="form-label" for="new-pass">New Password</label>
+          <input type="password" id="new-pass" class="form-input" placeholder="Min 8 characters" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="new-pass-confirm">Confirm Password</label>
+          <input type="password" id="new-pass-confirm" class="form-input" placeholder="Re-enter password" />
+        </div>
+        <button class="btn btn-primary btn-submit" onclick="setNewPassword()">Set New Password</button>
       </div>
     </div>
   </main>
 
   <script>
+    // ─── View switching ───
+    function showView(view) {
+      ['login','forgot-password','forgot-email','new-password'].forEach(v => {
+        const el = document.getElementById(v + '-view');
+        if (el) el.style.display = v === view ? 'block' : 'none';
+      });
+      // Hide the top title/subtitle when showing sub-views (they have their own)
+      const titleEl = document.querySelector('.auth-title');
+      const subtitleEl = document.querySelector('.auth-subtitle');
+      if (view === 'login') {
+        document.getElementById('login-view').style.display = 'block';
+      }
+    }
+
+    // ─── Login form ───
     document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -217,11 +310,9 @@
       const errorEl = document.getElementById('auth-error');
       const successEl = document.getElementById('auth-success');
 
-      // Reset messages
       errorEl.className = 'auth-error';
       successEl.className = 'auth-success';
 
-      // Loading state
       submitBtn.disabled = true;
       submitBtn.textContent = 'Logging in...';
 
@@ -251,6 +342,106 @@
         submitBtn.textContent = 'Log In';
       }
     });
+
+    // ─── Forgot Password ───
+    async function sendReset() {
+      const email = document.getElementById('reset-email').value.trim();
+      const errEl = document.getElementById('reset-error');
+      const okEl = document.getElementById('reset-success');
+      errEl.className = 'auth-error'; okEl.className = 'auth-success';
+
+      if (!email) {
+        errEl.textContent = 'Please enter your email address.';
+        errEl.className = 'auth-error visible';
+        return;
+      }
+
+      const { error } = await db.resetPassword(email, '/login.html');
+      if (error) {
+        errEl.textContent = 'Something went wrong. Please try again.';
+        errEl.className = 'auth-error visible';
+      } else {
+        okEl.textContent = 'Reset link sent! Check your inbox for an email with a reset link.';
+        okEl.className = 'auth-success visible';
+      }
+    }
+
+    // ─── Forgot Email (username lookup) ───
+    async function lookupMyEmail() {
+      const username = document.getElementById('lookup-username').value.trim();
+      const errEl = document.getElementById('lookup-error');
+      const okEl = document.getElementById('lookup-success');
+      errEl.className = 'auth-error'; okEl.className = 'auth-success';
+
+      if (!username) {
+        errEl.textContent = 'Please enter your username.';
+        errEl.className = 'auth-error visible';
+        return;
+      }
+
+      if (!supabaseClient) {
+        errEl.textContent = 'Not available in demo mode.';
+        errEl.className = 'auth-error visible';
+        return;
+      }
+
+      const { data } = await supabaseClient
+        .from('profiles')
+        .select('id')
+        .ilike('username', username)
+        .single();
+
+      if (!data) {
+        errEl.textContent = 'No account found with that username.';
+        errEl.className = 'auth-error visible';
+        return;
+      }
+
+      okEl.innerHTML = 'Account found for <strong>' + username + '</strong>! If you don\'t remember the email, contact the site admin for help. Or try the <a href="#" onclick="showView(\'forgot-password\');return false" style="color:#22c55e;text-decoration:underline">password reset</a> if you remember it.';
+      okEl.className = 'auth-success visible';
+    }
+
+    // ─── Set New Password (after clicking reset link in email) ───
+    async function setNewPassword() {
+      const pass = document.getElementById('new-pass').value;
+      const confirm = document.getElementById('new-pass-confirm').value;
+      const errEl = document.getElementById('newpass-error');
+      const okEl = document.getElementById('newpass-success');
+      errEl.className = 'auth-error'; okEl.className = 'auth-success';
+
+      if (!pass || pass.length < 8) {
+        errEl.textContent = 'Password must be at least 8 characters.';
+        errEl.className = 'auth-error visible';
+        return;
+      }
+      if (pass !== confirm) {
+        errEl.textContent = 'Passwords do not match.';
+        errEl.className = 'auth-error visible';
+        return;
+      }
+
+      const { error } = await supabaseClient.auth.updateUser({ password: pass });
+      if (error) {
+        errEl.textContent = 'Failed to update password: ' + error.message;
+        errEl.className = 'auth-error visible';
+      } else {
+        okEl.textContent = 'Password updated! Redirecting to login...';
+        okEl.className = 'auth-success visible';
+        setTimeout(() => { showView('login'); }, 2000);
+      }
+    }
+
+    // ─── Handle password reset redirect (Supabase appends tokens to URL hash) ───
+    (async function checkResetRedirect() {
+      await initSupabase();
+      if (!supabaseClient) return;
+
+      const hash = window.location.hash;
+      if (hash && (hash.includes('access_token') || hash.includes('type=recovery'))) {
+        // User arrived from a password reset email
+        showView('new-password');
+      }
+    })();
   </script>
 </body>
 </html>
