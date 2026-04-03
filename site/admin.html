@@ -132,11 +132,49 @@
   <div class="lock-card">
     <div class="icon">🔐</div>
     <h1>Admin Panel</h1>
-    <p>Sign in with your admin account to access site controls.</p>
-    <input type="email" id="admin-email" placeholder="Email address" style="margin-bottom:8px" onkeydown="if(event.key==='Enter')document.getElementById('admin-pass').focus()">
-    <input type="password" id="admin-pass" placeholder="Password" onkeydown="if(event.key==='Enter')adminLogin()">
-    <button class="lock-btn" onclick="adminLogin()">Sign In →</button>
-    <div class="lock-error" id="lock-error">Incorrect password. Try again.</div>
+    <p id="lock-subtitle">Sign in with your admin account to access site controls.</p>
+    <!-- Sign In Form (default) -->
+    <div id="login-form">
+      <input type="email" id="admin-email" placeholder="Email address" style="margin-bottom:8px" onkeydown="if(event.key==='Enter')document.getElementById('admin-pass').focus()">
+      <input type="password" id="admin-pass" placeholder="Password" onkeydown="if(event.key==='Enter')adminLogin()">
+      <button class="lock-btn" onclick="adminLogin()">Sign In →</button>
+      <div class="lock-error" id="lock-error"></div>
+      <div style="margin-top:16px;display:flex;justify-content:center;gap:16px;font-size:12px">
+        <a href="#" onclick="showForgotPassword();return false" style="color:var(--or);text-decoration:none">Forgot password?</a>
+        <a href="#" onclick="showForgotEmail();return false" style="color:var(--or);text-decoration:none">Forgot email?</a>
+      </div>
+    </div>
+    <!-- Forgot Password Form -->
+    <div id="forgot-password-form" style="display:none">
+      <p style="color:var(--mu);font-size:13px;margin-bottom:16px">Enter your email and we'll send a password reset link.</p>
+      <input type="email" id="reset-email" placeholder="Email address" style="margin-bottom:12px" onkeydown="if(event.key==='Enter')sendPasswordReset()">
+      <button class="lock-btn" onclick="sendPasswordReset()">Send Reset Link →</button>
+      <div class="lock-error" id="reset-error"></div>
+      <div class="lock-success" id="reset-success" style="display:none;color:#58d68d;font-size:13px;margin-top:8px"></div>
+      <div style="margin-top:16px;font-size:12px">
+        <a href="#" onclick="showLoginForm();return false" style="color:var(--or);text-decoration:none">← Back to sign in</a>
+      </div>
+    </div>
+    <!-- Forgot Email Form -->
+    <div id="forgot-email-form" style="display:none">
+      <p style="color:var(--mu);font-size:13px;margin-bottom:16px">Enter your username and we'll show you a hint of the email on file.</p>
+      <input type="text" id="lookup-username" placeholder="Username" style="margin-bottom:12px" onkeydown="if(event.key==='Enter')lookupEmail()">
+      <button class="lock-btn" onclick="lookupEmail()">Look Up Email →</button>
+      <div class="lock-error" id="lookup-error"></div>
+      <div class="lock-success" id="lookup-success" style="display:none;color:#58d68d;font-size:13px;margin-top:8px"></div>
+      <div style="margin-top:16px;font-size:12px">
+        <a href="#" onclick="showLoginForm();return false" style="color:var(--or);text-decoration:none">← Back to sign in</a>
+      </div>
+    </div>
+    <!-- New Password Form (shown after clicking reset link) -->
+    <div id="new-password-form" style="display:none">
+      <p style="color:var(--mu);font-size:13px;margin-bottom:16px">Enter your new password below.</p>
+      <input type="password" id="new-pass" placeholder="New password" style="margin-bottom:8px">
+      <input type="password" id="new-pass-confirm" placeholder="Confirm new password" style="margin-bottom:12px" onkeydown="if(event.key==='Enter')updatePassword()">
+      <button class="lock-btn" onclick="updatePassword()">Set New Password →</button>
+      <div class="lock-error" id="newpass-error"></div>
+      <div class="lock-success" id="newpass-success" style="display:none;color:#58d68d;font-size:13px;margin-top:8px"></div>
+    </div>
   </div>
 </div>
 
@@ -537,11 +575,11 @@ async function adminLogin(){
   const email=document.getElementById('admin-email').value.trim();
   const pass=document.getElementById('admin-pass').value;
   const errEl=document.getElementById('lock-error');
-  errEl.classList.remove('vis');
+  errEl.style.display='none';
 
   if(!email||!pass){
     errEl.textContent='Please enter your email and password.';
-    errEl.classList.add('vis');
+    errEl.style.display='block';
     return;
   }
 
@@ -549,7 +587,7 @@ async function adminLogin(){
   const {user,error}=await db.signIn(email,pass);
   if(error||!user){
     errEl.textContent='Invalid email or password.';
-    errEl.classList.add('vis');
+    errEl.style.display='block';
     return;
   }
 
@@ -558,7 +596,7 @@ async function adminLogin(){
   if(!isAdmin){
     await db.signOut();
     errEl.textContent='This account does not have admin access.';
-    errEl.classList.add('vis');
+    errEl.style.display='block';
     return;
   }
 
@@ -573,9 +611,132 @@ async function adminLogout(){
   location.reload();
 }
 
+// --- Forgot Password / Email helpers ---
+function showForgotPassword(){
+  document.getElementById('login-form').style.display='none';
+  document.getElementById('forgot-password-form').style.display='block';
+  document.getElementById('forgot-email-form').style.display='none';
+  document.getElementById('new-password-form').style.display='none';
+  document.getElementById('lock-subtitle').textContent='Reset your password';
+}
+function showForgotEmail(){
+  document.getElementById('login-form').style.display='none';
+  document.getElementById('forgot-password-form').style.display='none';
+  document.getElementById('forgot-email-form').style.display='block';
+  document.getElementById('new-password-form').style.display='none';
+  document.getElementById('lock-subtitle').textContent='Look up your email';
+}
+function showLoginForm(){
+  document.getElementById('login-form').style.display='block';
+  document.getElementById('forgot-password-form').style.display='none';
+  document.getElementById('forgot-email-form').style.display='none';
+  document.getElementById('new-password-form').style.display='none';
+  document.getElementById('lock-subtitle').textContent='Sign in with your admin account to access site controls.';
+}
+
+async function sendPasswordReset(){
+  const email=document.getElementById('reset-email').value.trim();
+  const errEl=document.getElementById('reset-error');
+  const okEl=document.getElementById('reset-success');
+  errEl.style.display='none'; okEl.style.display='none';
+
+  if(!email){
+    errEl.textContent='Please enter your email address.';
+    errEl.style.display='block';
+    return;
+  }
+
+  const {error}=await db.resetPassword(email);
+  if(error){
+    errEl.textContent='Something went wrong. Please try again.';
+    errEl.style.display='block';
+  }else{
+    okEl.textContent='Reset link sent! Check your inbox for an email from Supabase.';
+    okEl.style.display='block';
+  }
+}
+
+async function lookupEmail(){
+  const username=document.getElementById('lookup-username').value.trim();
+  const errEl=document.getElementById('lookup-error');
+  const okEl=document.getElementById('lookup-success');
+  errEl.style.display='none'; okEl.style.display='none';
+
+  if(!username){
+    errEl.textContent='Please enter your username.';
+    errEl.style.display='block';
+    return;
+  }
+
+  if(!supabaseClient){
+    errEl.textContent='Not available in demo mode.';
+    errEl.style.display='block';
+    return;
+  }
+
+  // Look up the profile by username, then get the email from auth
+  const {data,error}=await supabaseClient
+    .from('profiles')
+    .select('id')
+    .ilike('username',username)
+    .single();
+
+  if(!data){
+    errEl.textContent='No account found with that username.';
+    errEl.style.display='block';
+    return;
+  }
+
+  // We can't expose the full email for security, but we can
+  // check auth.users via a server function. For now, show a helpful message.
+  okEl.innerHTML='Account found! Your admin can look up the email for username <strong>'+username+'</strong>. Or try the password reset if you remember the email.';
+  okEl.style.display='block';
+}
+
+async function updatePassword(){
+  const pass=document.getElementById('new-pass').value;
+  const confirm=document.getElementById('new-pass-confirm').value;
+  const errEl=document.getElementById('newpass-error');
+  const okEl=document.getElementById('newpass-success');
+  errEl.style.display='none'; okEl.style.display='none';
+
+  if(!pass||pass.length<6){
+    errEl.textContent='Password must be at least 6 characters.';
+    errEl.style.display='block';
+    return;
+  }
+  if(pass!==confirm){
+    errEl.textContent='Passwords do not match.';
+    errEl.style.display='block';
+    return;
+  }
+
+  const {error}=await supabaseClient.auth.updateUser({password:pass});
+  if(error){
+    errEl.textContent='Failed to update password: '+error.message;
+    errEl.style.display='block';
+  }else{
+    okEl.textContent='Password updated! Redirecting to sign in...';
+    okEl.style.display='block';
+    setTimeout(()=>{ showLoginForm(); },2000);
+  }
+}
+
 // Auto-login: check if already signed in with admin privileges
+// Also handle password reset redirect (Supabase appends #access_token=... to URL)
 (async function checkExistingSession(){
   await initSupabase();
+
+  // Check if this is a password reset callback
+  const hash=window.location.hash;
+  if(hash && hash.includes('type=recovery')){
+    // Supabase recovery flow — show new password form
+    document.getElementById('login-form').style.display='none';
+    document.getElementById('new-password-form').style.display='block';
+    document.getElementById('lock-subtitle').textContent='Set your new password';
+    return;
+  }
+
   const user=await db.getUser();
   if(user){
     const isAdmin=await db.isAdmin();
