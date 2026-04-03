@@ -76,6 +76,14 @@ const db = {
       password
     });
 
+    // Update last_seen timestamp on successful login
+    if (!error && data?.user) {
+      supabaseClient.from('profiles')
+        .update({ last_seen: new Date().toISOString() })
+        .eq('id', data.user.id)
+        .then(() => {});
+    }
+
     return { user: data?.user, error };
   },
 
@@ -101,6 +109,17 @@ const db = {
     return data?.user || null;
   },
 
+  // Update last_seen timestamp for the current user (call on page loads)
+  async updateLastSeen() {
+    if (!supabaseClient) return;
+    const user = await this.getUser();
+    if (!user) return;
+    supabaseClient.from('profiles')
+      .update({ last_seen: new Date().toISOString() })
+      .eq('id', user.id)
+      .then(() => {});
+  },
+
   // Check if the currently logged-in user is an admin
   async isAdmin() {
     const user = await this.getUser();
@@ -121,13 +140,14 @@ const db = {
   },
 
   // Send a password reset email via Supabase Auth
-  async resetPassword(email) {
+  async resetPassword(email, redirectPath) {
     if (!supabaseClient) {
       return { error: new Error('Not available in demo mode') };
     }
 
+    const redirect = redirectPath || window.location.pathname;
     const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + '/admin.html'
+      redirectTo: window.location.origin + redirect
     });
 
     return { data, error };

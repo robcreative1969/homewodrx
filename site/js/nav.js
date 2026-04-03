@@ -9,6 +9,8 @@ const Nav = {
     await this.ensureSupabase();
 
     const currentUser = await db.getUser();
+    // Track last activity for online status
+    if (currentUser) db.updateLastSeen();
     const navHtml = this.render(activePage, currentUser);
 
     // Inject nav at the top of the page
