@@ -132,9 +132,10 @@
   <div class="lock-card">
     <div class="icon">🔐</div>
     <h1>Admin Panel</h1>
-    <p>Enter the admin password to access site controls.</p>
-    <input type="password" id="admin-pass" placeholder="Enter password" onkeydown="if(event.key==='Enter')checkPassword()">
-    <button class="lock-btn" onclick="checkPassword()">Unlock →</button>
+    <p>Sign in with your admin account to access site controls.</p>
+    <input type="email" id="admin-email" placeholder="Email address" style="margin-bottom:8px" onkeydown="if(event.key==='Enter')document.getElementById('admin-pass').focus()">
+    <input type="password" id="admin-pass" placeholder="Password" onkeydown="if(event.key==='Enter')adminLogin()">
+    <button class="lock-btn" onclick="adminLogin()">Sign In →</button>
     <div class="lock-error" id="lock-error">Incorrect password. Try again.</div>
   </div>
 </div>
@@ -532,21 +533,61 @@ const AdminDailyWOD = {
 let adminConfig=null;
 const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-function checkPassword(){
+async function adminLogin(){
+  const email=document.getElementById('admin-email').value.trim();
   const pass=document.getElementById('admin-pass').value;
-  if(pass===CONFIG.ADMIN_PASSWORD){
-    sessionStorage.setItem('admin_auth','1');
-    document.getElementById('lock-screen').style.display='none';
-    document.getElementById('admin-panel').style.display='block';
-    initAdmin();
-  }else{document.getElementById('lock-error').classList.add('vis');}
-}
-function adminLogout(){sessionStorage.removeItem('admin_auth');location.reload();}
-if(sessionStorage.getItem('admin_auth')==='1'){
+  const errEl=document.getElementById('lock-error');
+  errEl.classList.remove('vis');
+
+  if(!email||!pass){
+    errEl.textContent='Please enter your email and password.';
+    errEl.classList.add('vis');
+    return;
+  }
+
+  // Sign in via Supabase Auth
+  const {user,error}=await db.signIn(email,pass);
+  if(error||!user){
+    errEl.textContent='Invalid email or password.';
+    errEl.classList.add('vis');
+    return;
+  }
+
+  // Check admin flag in profiles table
+  const isAdmin=await db.isAdmin();
+  if(!isAdmin){
+    await db.signOut();
+    errEl.textContent='This account does not have admin access.';
+    errEl.classList.add('vis');
+    return;
+  }
+
+  // Success — show admin panel
   document.getElementById('lock-screen').style.display='none';
   document.getElementById('admin-panel').style.display='block';
-  document.addEventListener('DOMContentLoaded',initAdmin);
+  initAdmin();
 }
+
+async function adminLogout(){
+  await db.signOut();
+  location.reload();
+}
+
+// Auto-login: check if already signed in with admin privileges
+(async function checkExistingSession(){
+  await initSupabase();
+  const user=await db.getUser();
+  if(user){
+    const isAdmin=await db.isAdmin();
+    if(isAdmin){
+      document.getElementById('lock-screen').style.display='none';
+      document.getElementById('admin-panel').style.display='block';
+      initAdmin();
+      return;
+    }
+  }
+  // Not logged in or not admin — show lock screen (already visible by default)
+})();
 
 async function initAdmin(){
   await loadConfig();
