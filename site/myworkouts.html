@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Workouts — HomeWODrx</title>
+<meta name="description" content="View and manage your saved and generated workouts on HomeWODrx.">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/js/db.js"></script>
+<script src="/js/benchmarks.js"></script>
+<script src="/js/nav.js"></script>
+<style>
+.myw-page{max-width:1200px;margin:0 auto;padding:32px 20px 80px}
+.myw-header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:28px}
+.myw-header h1{font-size:clamp(24px,4vw,34px);font-weight:900;margin-bottom:4px}
+.myw-header p{color:var(--mu);font-size:14px}
+.myw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.myw-card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:20px;transition:border-color .15s}
+.myw-card:hover{border-color:var(--or)}
+.myw-card-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.myw-card h3{font-size:16px;font-weight:800;margin-bottom:4px}
+.myw-actions{display:flex;gap:8px;margin-top:12px}
+.myw-btn{padding:8px 14px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .15s}
+.myw-btn.pri{background:var(--or);color:#fff}.myw-btn.pri:hover{background:var(--orl)}
+.myw-btn.sec{background:var(--dk3);color:var(--mu);border:1px solid var(--bd)}.myw-btn.sec:hover{color:var(--tx);border-color:var(--mu)}
+.myw-btn.del{background:transparent;color:var(--danger);border:1px solid var(--danger);opacity:.7}.myw-btn.del:hover{opacity:1}
+.badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;display:inline-block}
+.badge-or{background:rgba(232,83,10,.15);color:var(--orl);border:1px solid rgba(232,83,10,.3)}
+.badge-mu{background:rgba(136,136,153,.15);color:var(--mu);border:1px solid rgba(136,136,153,.3)}
+.badge-gr{background:rgba(39,174,96,.15);color:#27ae60;border:1px solid rgba(39,174,96,.3)}
+.empty-state{text-align:center;padding:60px 20px;color:var(--mu)}
+.empty-state .icon{font-size:48px;margin-bottom:16px}
+.empty-state h3{font-size:20px;font-weight:800;color:var(--tx);margin-bottom:8px}
+.empty-state p{margin-bottom:20px;font-size:14px}
+.abtn{display:block;width:100%;padding:12px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;text-align:center;text-decoration:none;transition:all .15s}
+.abtn.pri{background:var(--or);color:#fff}.abtn.pri:hover{background:var(--orl)}
+.stats-bar{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:24px}
+.stat-card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px;text-align:center}
+.stat-card .val{font-size:24px;font-weight:900;color:var(--or)}
+.stat-card .lbl{font-size:10px;color:var(--mu);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-top:4px}
+
+/* ── WOD Detail Overlay ── */
+.wod-overlay{position:fixed;inset:0;z-index:1000;background:var(--bg);overflow-y:auto;display:none}
+.wod-overlay.open{display:block}
+.wod-overlay .inner{max-width:800px;margin:0 auto;padding:32px 20px 80px}
+.back-btn{background:none;border:none;color:var(--or);font-size:14px;font-weight:700;cursor:pointer;padding:8px 0;margin-bottom:20px}
+.back-btn:hover{text-decoration:underline}
+.wod-detail-title{font-size:28px;font-weight:900;margin-bottom:8px}
+.wod-detail-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.wod-section{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:20px;margin-bottom:16px}
+.wod-section h3{font-size:13px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.wod-section pre{white-space:pre-wrap;font-family:inherit;font-size:14px;line-height:1.7;color:var(--tx)}
+
+/* ── Result Modal ── */
+.modal-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:28px;max-width:420px;width:90%;position:relative}
+.modal-close{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--mu);font-size:20px;cursor:pointer}
+.modal h2{font-size:20px;font-weight:900;margin-bottom:6px}
+.modal .msub{color:var(--mu);font-size:13px;margin-bottom:20px}
+.modal label{display:block;font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.modal input,.modal select,.modal textarea{width:100%;background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:10px;color:var(--tx);font-size:14px;outline:none;font-family:inherit;margin-bottom:14px}
+.modal input:focus,.modal select:focus,.modal textarea:focus{border-color:var(--or)}
+.msg{padding:10px 14px;border-radius:7px;font-size:13px;font-weight:600;margin-bottom:14px;display:none}
+.msg.vis{display:block}
+.msg.err{background:rgba(239,68,68,.12);color:var(--danger);border:1px solid rgba(239,68,68,.3)}
+.msg.ok{background:rgba(34,197,94,.12);color:var(--success);border:1px solid rgba(34,197,94,.3)}
+@media(max-width:600px){.myw-grid{grid-template-columns:1fr}.stats-bar{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body data-nav-init="true" data-active-page="myworkouts">
+
+<main>
+<div class="myw-page">
+
+  <!-- Auth wall (shown if not logged in) -->
+  <div id="myw-auth-wall" style="display:none">
+    <div class="empty-state">
+      <div class="icon">🔐</div>
+      <h3>Sign in to view your workouts</h3>
+      <p>Create a free account to save workouts, track results, and monitor your progress over time.</p>
+      <a href="/login.html" class="abtn pri" style="max-width:200px;margin:0 auto">Sign In</a>
+    </div>
+  </div>
+
+  <!-- Main content (shown when logged in) -->
+  <div id="myw-content" style="display:none">
+    <div class="myw-header">
+      <div>
+        <h1>My Workouts</h1>
+        <p id="myw-subtitle">Your saved and generated workouts</p>
+      </div>
+      <a href="/generator.html" class="abtn pri" style="flex:unset;padding:10px 18px;width:auto">+ Generate New</a>
+    </div>
+
+    <div class="stats-bar" id="myw-stats">
+      <div class="stat-card"><div class="val" id="stat-total">0</div><div class="lbl">Total WODs</div></div>
+      <div class="stat-card"><div class="val" id="stat-public">0</div><div class="lbl">Public</div></div>
+      <div class="stat-card"><div class="val" id="stat-private">0</div><div class="lbl">Private</div></div>
+    </div>
+
+    <div class="myw-grid" id="myw-grid"></div>
+
+    <div id="myw-empty" class="empty-state" style="display:none">
+      <div class="icon">💪</div>
+      <h3>No saved workouts yet</h3>
+      <p>Generate a workout and save it here to track your progress.</p>
+      <a href="/generator.html" class="abtn pri" style="max-width:200px;margin:0 auto">Generate a Workout</a>
+    </div>
+  </div>
+
+</div>
+</main>
+
+<!-- WOD Detail Overlay -->
+<div class="wod-overlay" id="wod-detail-overlay">
+  <div class="inner">
+    <button class="back-btn" onclick="closeWodDetail()">← Back to My Workouts</button>
+    <div id="wod-detail-content"></div>
+  </div>
+</div>
+
+<!-- Log Result Modal -->
+<div class="modal-overlay" id="result-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('result-modal')">✕</button>
+    <h2>Log Result</h2>
+    <p class="msub" id="result-modal-wod">—</p>
+    <div class="msg err" id="result-error"></div>
+    <div class="msg ok" id="result-success"></div>
+    <input type="hidden" id="result-workout-id">
+    <label>Score / Time</label>
+    <input type="text" id="result-score" placeholder="e.g. 12:34 or 225 reps">
+    <label>Rx?</label>
+    <select id="result-rx"><option value="true">Yes — Rx</option><option value="false">Scaled</option></select>
+    <label>Notes (optional)</label>
+    <textarea id="result-notes" rows="2" placeholder="How did it feel?"></textarea>
+    <button class="abtn pri" onclick="submitResult()" style="margin-top:4px">Save Result</button>
+  </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('delete-modal')">✕</button>
+    <h2>Delete Workout?</h2>
+    <p class="msub">This action cannot be undone. The workout and all its data will be permanently removed.</p>
+    <input type="hidden" id="delete-workout-id">
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="abtn pri" style="background:var(--danger)" onclick="confirmDelete()">Delete</button>
+      <button class="abtn sec" style="background:var(--dk3);color:var(--mu);border:1px solid var(--bd)" onclick="closeModal('delete-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentUser = null;
+let myWorkouts = [];
+
+function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+function formatDate(d) {
+  if (!d) return '';
+  const dt = new Date(d);
+  return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+// ── Load Workouts ──
+async function loadMyWorkouts() {
+  currentUser = await db.getUser();
+  if (!currentUser) {
+    document.getElementById('myw-auth-wall').style.display = 'block';
+    document.getElementById('myw-content').style.display = 'none';
+    return;
+  }
+  document.getElementById('myw-auth-wall').style.display = 'none';
+  document.getElementById('myw-content').style.display = 'block';
+  document.getElementById('myw-subtitle').textContent = `Saved workouts for ${currentUser.email?.split('@')[0] || 'you'}`;
+
+  myWorkouts = await db.getWorkouts({ userId: currentUser.id });
+
+  // Stats
+  document.getElementById('stat-total').textContent = myWorkouts.length;
+  document.getElementById('stat-public').textContent = myWorkouts.filter(w => w.is_public || w.isPublic).length;
+  document.getElementById('stat-private').textContent = myWorkouts.filter(w => !(w.is_public || w.isPublic)).length;
+
+  const grid = document.getElementById('myw-grid');
+  const empty = document.getElementById('myw-empty');
+
+  if (!myWorkouts.length) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  grid.innerHTML = myWorkouts.map(w => `
+    <div class="myw-card">
+      <div class="myw-card-meta">
+        <span class="badge badge-or">${escHtml(w.format || 'AMRAP')}</span>
+        <span class="badge badge-mu">${cap(w.level || 'intermediate')}</span>
+        <span class="badge ${w.is_public || w.isPublic ? 'badge-gr' : 'badge-mu'}">${w.is_public || w.isPublic ? '🌍 Public' : '🔒 Private'}</span>
+      </div>
+      <h3>${escHtml(w.title)}</h3>
+      <p style="color:var(--mu);font-size:12px;margin-bottom:12px">${formatDate(w.created_at || w.createdAt)}</p>
+      <div class="myw-actions">
+        <button class="myw-btn pri" onclick="openResultModal('${escHtml(w.id)}','${escHtml(w.title)}')">Log Result</button>
+        <button class="myw-btn sec" onclick="openWodDetail('${escHtml(w.id)}')">View</button>
+        <button class="myw-btn del" onclick="openDeleteModal('${escHtml(w.id)}')">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+// ── WOD Detail ──
+async function openWodDetail(workoutId) {
+  const w = myWorkouts.find(x => x.id === workoutId) || await db.getWorkoutById(workoutId);
+  if (!w) return;
+
+  // Build movements list
+  let movementsHtml = '';
+  if (w.movements) {
+    const moves = Array.isArray(w.movements) ? w.movements : (typeof w.movements === 'string' ? w.movements.split(',') : []);
+    movementsHtml = moves.map(m => typeof m === 'object' ? `${m.name || m.movement || ''}${m.reps ? ' × ' + m.reps : ''}` : m.trim()).filter(Boolean).join('\n');
+  }
+
+  document.getElementById('wod-detail-content').innerHTML = `
+    <h1 class="wod-detail-title">${escHtml(w.title)}</h1>
+    <div class="wod-detail-meta">
+      <span class="badge badge-or">${escHtml(w.format || 'AMRAP')}</span>
+      <span class="badge badge-mu">${cap(w.level || 'intermediate')}</span>
+      ${w.duration ? `<span class="badge badge-mu">${escHtml(String(w.duration))} min</span>` : ''}
+      ${w.equipment ? `<span class="badge badge-mu">${escHtml(w.equipment)}</span>` : ''}
+    </div>
+    ${w.description ? `<div class="wod-section"><h3>Description</h3><pre>${escHtml(w.description)}</pre></div>` : ''}
+    ${movementsHtml ? `<div class="wod-section"><h3>Movements</h3><pre>${escHtml(movementsHtml)}</pre></div>` : ''}
+    ${w.scoring ? `<div class="wod-section"><h3>Scoring</h3><pre>${escHtml(w.scoring)}</pre></div>` : ''}
+    <div style="margin-top:20px;display:flex;gap:10px">
+      <button class="myw-btn pri" onclick="openResultModal('${escHtml(w.id)}','${escHtml(w.title)}')">Log Result</button>
+      <button class="myw-btn del" onclick="closeWodDetail();openDeleteModal('${escHtml(w.id)}')">Delete Workout</button>
+    </div>`;
+
+  document.getElementById('wod-detail-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeWodDetail() {
+  document.getElementById('wod-detail-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ── Modals ──
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function openResultModal(workoutId, title) {
+  document.getElementById('result-workout-id').value = workoutId;
+  document.getElementById('result-modal-wod').textContent = title;
+  document.getElementById('result-score').value = '';
+  document.getElementById('result-notes').value = '';
+  document.getElementById('result-error').classList.remove('vis');
+  document.getElementById('result-success').classList.remove('vis');
+  openModal('result-modal');
+}
+
+async function submitResult() {
+  const workoutId = document.getElementById('result-workout-id').value;
+  const score = document.getElementById('result-score').value.trim();
+  const isRx = document.getElementById('result-rx').value === 'true';
+  const notes = document.getElementById('result-notes').value.trim();
+
+  if (!score) {
+    document.getElementById('result-error').textContent = 'Please enter a score or time.';
+    document.getElementById('result-error').classList.add('vis');
+    return;
+  }
+
+  try {
+    await db.saveResult({
+      workout_id: workoutId,
+      user_id: currentUser.id,
+      username: currentUser.email?.split('@')[0] || 'athlete',
+      score_display: score,
+      is_rx: isRx,
+      notes: notes,
+      date: new Date().toISOString().split('T')[0]
+    });
+    document.getElementById('result-success').textContent = 'Result saved!';
+    document.getElementById('result-success').classList.add('vis');
+    document.getElementById('result-error').classList.remove('vis');
+    setTimeout(() => closeModal('result-modal'), 1200);
+  } catch (e) {
+    document.getElementById('result-error').textContent = e.message || 'Failed to save result.';
+    document.getElementById('result-error').classList.add('vis');
+  }
+}
+
+function openDeleteModal(workoutId) {
+  document.getElementById('delete-workout-id').value = workoutId;
+  openModal('delete-modal');
+}
+
+async function confirmDelete() {
+  const workoutId = document.getElementById('delete-workout-id').value;
+  try {
+    await db.deleteWorkout(workoutId);
+    closeModal('delete-modal');
+    closeWodDetail();
+    loadMyWorkouts(); // Refresh
+  } catch (e) {
+    alert('Failed to delete: ' + (e.message || 'Unknown error'));
+  }
+}
+
+// ── Init ──
+document.addEventListener('DOMContentLoaded', async () => {
+  await Nav.init('myworkouts');
+  loadMyWorkouts();
+});
+</script>
+</body>
+</html>
