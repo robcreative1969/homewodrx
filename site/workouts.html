@@ -209,8 +209,11 @@
       if (userWorkouts && userWorkouts.length > 0) {
         allWorkouts = allWorkouts.concat(userWorkouts.map(w => ({
           ...w,
+          name: w.title || w.name || 'Untitled Workout',
+          difficulty: w.difficulty || w.level || 'intermediate',
           category: 'user',
-          slug: w.id
+          slug: w.id,
+          movements: (w.movements || []).map(m => ({ ...m, name: m.name || m.movement || '' }))
         })));
       }
 
@@ -278,7 +281,7 @@
       if (currentFilters.format !== 'all' && w.format.toLowerCase() !== currentFilters.format.toLowerCase()) return false;
       if (currentFilters.difficulty !== 'all' && w.difficulty !== currentFilters.difficulty) return false;
       if (currentFilters.focus !== 'all' && w.body_focus !== currentFilters.focus) return false;
-      if (currentFilters.search && !w.name.toLowerCase().includes(currentFilters.search.toLowerCase())) return false;
+      if (currentFilters.search && !(w.name || w.title || '').toLowerCase().includes(currentFilters.search.toLowerCase())) return false;
 
       if (currentFilters.movement) {
         if (!w.movements || w.movements.length === 0) return false;
