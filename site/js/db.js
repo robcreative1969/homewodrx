@@ -101,6 +101,25 @@ const db = {
     return data?.user || null;
   },
 
+  // Check if the currently logged-in user is an admin
+  async isAdmin() {
+    const user = await this.getUser();
+    if (!user) return false;
+
+    if (!supabaseClient) {
+      // Demo mode: no admin access
+      return false;
+    }
+
+    const { data, error } = await supabaseClient
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', user.id)
+      .single();
+
+    return data?.is_admin === true;
+  },
+
   async getProfile(userId) {
     if (!supabaseClient) {
       const user = JSON.parse(localStorage.getItem('demo_user') || '{}');

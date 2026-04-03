@@ -7,17 +7,15 @@
 //        - Project URL (SUPABASE_URL)
 //        - anon/public key (SUPABASE_ANON_KEY)
 // STEP 4: Paste them below
-// STEP 5: Set your own admin password for /admin.html
+// STEP 5: Admin access is now handled via Supabase Auth (no password in source code)
 
 const SUPABASE_URL = 'https://irtppmztpcakanhefljs.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlydHBwbXp0cGNha2FuaGVmbGpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1NDcxMTcsImV4cCI6MjA5MDEyMzExN30.MmuqyE12kFNJN62JElt6vYMzDJ0z-_SMgMwZRLB0rwg';
-const ADMIN_PASSWORD = 'HomeWODrx2026!';
 
 // Don't edit below this line
 const CONFIG = {
   SUPABASE_URL,
   SUPABASE_ANON_KEY,
-  ADMIN_PASSWORD,
   isConfigured: () => {
     return SUPABASE_URL !== 'YOUR_SUPABASE_URL' &&
            SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY';
