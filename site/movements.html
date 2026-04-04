@@ -135,7 +135,7 @@ async function loadMovements() {
 
   try {
     // Fetch all movements ordered by category then name
-    const { data: movements, error } = await supabase
+    const { data: movements, error } = await supabaseClient
       .from('movements')
       .select('slug, name, muscles, category')
       .order('category')
@@ -207,7 +207,10 @@ async function loadCommunityMovements(knownSlugs) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', loadMovements);
+document.addEventListener('DOMContentLoaded', async () => {
+  await initSupabase();
+  loadMovements();
+});
 </script>
 </body>
 </html>

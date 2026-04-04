@@ -126,7 +126,7 @@
     // ── 1. Load movement from Supabase ────────────────────────────────────────
     let info = null;
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from('movements')
         .select('name, slug, muscles, description, tips, daily_wod_eligible, category')
         .eq('slug', slug)
@@ -267,7 +267,10 @@
     document.getElementById('movement-content').style.display = '';
   }
 
-  document.addEventListener('DOMContentLoaded', loadMovementPage);
+  document.addEventListener('DOMContentLoaded', async () => {
+    await initSupabase();
+    loadMovementPage();
+  });
 </script>
 </body>
 </html>
