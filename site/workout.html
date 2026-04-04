@@ -193,7 +193,7 @@
     const id = params.get('id');
     try {
       if (slug) {
-        currentWorkout = BENCHMARKS.find(b => b.slug === slug);
+        currentWorkout = await db.getBenchmarkBySlug(slug);
         if (!currentWorkout) { document.getElementById('workout-header').innerHTML = '<p class="text-muted">Workout not found.</p>'; return; }
       } else if (id) {
         currentWorkout = await db.getWorkoutById(id);
@@ -270,11 +270,12 @@
     } catch (e) { container.innerHTML = '<p class="text-muted">Error loading leaderboard.</p>'; }
   }
 
-  function renderRelatedWorkouts() {
+  async function renderRelatedWorkouts() {
     const w = currentWorkout;
-    if (!w || !BENCHMARKS) return;
+    if (!w) return;
+    const allBenchmarks = await db.getAllBenchmarks();
     const wMovements = (w.movements||[]).map(m=>slugify(m.name||m.movement||''));
-    const related = BENCHMARKS
+    const related = allBenchmarks
       .filter(b=>b.slug!==w.slug)
       .map(b=>({...b,_score:(b.category===w.category?2:0)+wMovements.filter(m=>(b.movements||[]).map(m=>slugify(m.name||m.movement||'')).includes(m)).length}))
       .filter(b=>b._score>0).sort((a,b)=>b._score-a._score).slice(0,3);

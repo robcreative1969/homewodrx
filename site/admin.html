@@ -206,6 +206,7 @@
     <button class="tab-btn" onclick="showAdminTab('config')">⚙️ WOD Config</button>
     <button class="tab-btn" onclick="showAdminTab('athletes')">👥 Athletes</button>
     <button class="tab-btn" onclick="showAdminTab('workouts')">🏋️ Workouts</button>
+    <button class="tab-btn" onclick="showAdminTab('benchmarks')">🥇 Benchmarks</button>
     <button class="tab-btn" onclick="showAdminTab('movements')">💪 Movements</button>
   </div>
 
@@ -437,6 +438,106 @@
       <div style="display:flex;gap:10px;margin-top:8px">
         <button class="save-btn" onclick="saveNewWorkout()">💾 Create</button>
         <button class="del-btn" onclick="cancelCreateWorkout()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── TAB: BENCHMARKS ─────────────────────────────────── -->
+  <div id="tab-benchmarks" class="tab-pane">
+    <div class="section">
+      <h2>🥇 Benchmark Workouts</h2>
+      <p class="desc">Manage all named benchmarks — Girls, Heroes, and classic CrossFit WODs. Changes appear live on the site.</p>
+      <button class="save-btn" onclick="openBenchmarkForm(null)" style="margin-bottom:20px">➕ Add Benchmark</button>
+      <div class="alert" id="benchmarks-alert"></div>
+      <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+        <select id="bm-category-filter" onchange="loadBenchmarksAdmin()" style="background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none">
+          <option value="">All Categories</option>
+          <option value="girl">The Girls</option>
+          <option value="hero">Hero WODs</option>
+          <option value="benchmark">Other Benchmarks</option>
+        </select>
+        <select id="bm-difficulty-filter" onchange="renderBenchmarksTable()" style="background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none">
+          <option value="">All Difficulties</option>
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="advanced">Advanced</option>
+        </select>
+        <input type="text" id="bm-search" placeholder="Search by name or slug..." style="flex:1;min-width:200px;background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none" oninput="renderBenchmarksTable()">
+      </div>
+      <div style="display:flex;align-items:center;margin-bottom:16px">
+        <span style="font-size:13px;color:var(--mu)"><strong id="bm-count">0</strong> benchmarks</span>
+      </div>
+      <div id="bm-table-wrap"><p style="color:var(--mu)">Loading benchmarks...</p></div>
+    </div>
+
+    <!-- Benchmark Edit / Create Form -->
+    <div id="bm-form-section" class="section" style="display:none;margin-top:20px">
+      <h2 id="bm-form-title">➕ Add Benchmark</h2>
+      <div class="alert" id="bm-form-alert"></div>
+      <input type="hidden" id="bmf-id">
+      <div class="grid-2">
+        <div class="field"><label>Name</label><input type="text" id="bmf-name" placeholder="e.g. Fran" oninput="autoBmSlug()"></div>
+        <div class="field"><label>Slug</label><input type="text" id="bmf-slug" placeholder="e.g. fran" onchange="this.dataset.manual='1'"></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>Category</label>
+          <select id="bmf-category">
+            <option value="girl">The Girls</option>
+            <option value="hero">Hero WOD</option>
+            <option value="benchmark" selected>Other Benchmark</option>
+          </select>
+        </div>
+        <div class="field"><label>Format</label>
+          <select id="bmf-format">
+            <option value="For Time">For Time</option>
+            <option value="AMRAP">AMRAP</option>
+            <option value="EMOM">EMOM</option>
+            <option value="Circuit">Circuit</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>Duration Estimate</label><input type="text" id="bmf-duration" placeholder="e.g. 5–10 min"></div>
+        <div class="field"><label>Difficulty</label>
+          <select id="bmf-difficulty">
+            <option value="beginner">Beginner</option>
+            <option value="intermediate" selected>Intermediate</option>
+            <option value="advanced">Advanced</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>Body Focus</label>
+          <select id="bmf-body-focus">
+            <option value="full-body" selected>Full Body</option>
+            <option value="upper-body">Upper Body</option>
+            <option value="lower-body">Lower Body</option>
+            <option value="core">Core</option>
+            <option value="conditioning">Conditioning</option>
+          </select>
+        </div>
+        <div class="field"><label>Scoring Type</label>
+          <select id="bmf-scoring-type">
+            <option value="time">Time</option>
+            <option value="rounds_reps">Rounds + Reps</option>
+            <option value="total_reps">Total Reps</option>
+            <option value="weight">Weight</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Equipment (comma-separated)</label><input type="text" id="bmf-equipment" placeholder="e.g. barbell, pull-up bar, kettlebell"></div>
+      <div class="field"><label>Description</label><textarea id="bmf-description" rows="3" placeholder="What is this workout? What's its story and intent?"></textarea></div>
+      <div class="field">
+        <label>Movements (one per line: Name | Reps | Tip | Rx Men | Rx Women)</label>
+        <textarea id="bmf-movements" rows="5" placeholder="Thrusters | 21-15-9 | Drive from the hips | 95 lb | 65 lb&#10;Pull-Ups | 21-15-9 | Kip if needed | |"></textarea>
+      </div>
+      <div class="field"><label>Scoring Notes</label><textarea id="bmf-scoring-notes" rows="2" placeholder="e.g. Sub-3 min is elite. Sub-5 min is very strong."></textarea></div>
+      <div class="field"><label>Tips (one tip per line)</label><textarea id="bmf-tips" rows="3" placeholder="Break thrusters before you have to, not when you need to.&#10;Rest at the top of the pull-up, not the bottom."></textarea></div>
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <button class="save-btn" onclick="saveBenchmark()">💾 Save Benchmark</button>
+        <button class="del-btn" id="bmf-delete-btn" style="display:none" onclick="deleteBenchmarkFromForm()">🗑 Delete</button>
+        <button class="del-btn" onclick="closeBenchmarkForm()">Cancel</button>
       </div>
     </div>
   </div>
@@ -1005,9 +1106,12 @@ function openOverrideForDate(dateStr){
   f.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-function populateBenchmarkSelect(){
+async function populateBenchmarkSelect(){
   const sel=document.getElementById('feat-benchmark');
-  if(typeof BENCHMARKS!=='undefined'){
+  if(supabaseClient){
+    const{data}=await supabaseClient.from('benchmark_workouts').select('slug,name,category').order('category').order('name');
+    if(data&&data.length){data.forEach(b=>{const opt=document.createElement('option');opt.value=b.slug;opt.textContent=`${b.name} (${b.category||'benchmark'})`;sel.appendChild(opt);});}
+  } else if(typeof BENCHMARKS!=='undefined'){
     BENCHMARKS.forEach(b=>{const opt=document.createElement('option');opt.value=b.slug;opt.textContent=`${b.name} (${b.category||'benchmark'})`;sel.appendChild(opt);});
   }
   loadFeaturedSchedule();
@@ -1131,6 +1235,7 @@ function showAdminTab(tab){
   if(tab==='results')loadResults();
   if(tab==='athletes')loadAthletes();
   if(tab==='workouts')loadWorkouts();
+  if(tab==='benchmarks')loadBenchmarksAdmin();
   if(tab==='movements')loadMovementsAdmin();
 }
 
@@ -1506,6 +1611,196 @@ async function deleteMovementFromForm(){
   showAlert('movements-alert','Movement deleted.','ok');
   closeMovementForm();
   await loadMovementsAdmin();
+}
+
+// ═════════════════════════════════════════════════════════════════
+// BENCHMARKS TAB
+// ═════════════════════════════════════════════════════════════════
+let benchmarksData=[];
+
+async function loadBenchmarksAdmin(){
+  if(!supabaseClient){
+    document.getElementById('bm-table-wrap').innerHTML='<p style="color:var(--mu)">Connect Supabase to manage benchmarks.</p>';
+    return;
+  }
+  try{
+    const category=document.getElementById('bm-category-filter').value;
+    let query=supabaseClient
+      .from('benchmark_workouts')
+      .select('id,name,slug,category,format,difficulty,body_focus,scoring_type,equipment,movements,description,scoring_notes,tips,duration_estimate')
+      .order('category').order('name');
+    if(category)query=query.eq('category',category);
+    const{data,error}=await query;
+    if(error)throw error;
+    benchmarksData=data||[];
+    renderBenchmarksTable();
+  }catch(e){
+    showAlert('benchmarks-alert','Error loading benchmarks: '+e.message,'err');
+  }
+}
+
+function renderBenchmarksTable(){
+  const search=(document.getElementById('bm-search')?.value||'').toLowerCase();
+  const difficulty=document.getElementById('bm-difficulty-filter')?.value||'';
+  let filtered=benchmarksData.filter(b=>{
+    if(search&&!b.name.toLowerCase().includes(search)&&!b.slug.toLowerCase().includes(search))return false;
+    if(difficulty&&b.difficulty!==difficulty)return false;
+    return true;
+  });
+  document.getElementById('bm-count').textContent=filtered.length;
+  if(!filtered.length){
+    document.getElementById('bm-table-wrap').innerHTML='<p style="color:var(--mu)">No benchmarks match your filters.</p>';
+    return;
+  }
+  const catLabel={girl:'Girl WOD',hero:'Hero WOD',benchmark:'Benchmark'};
+  let html=`<table class="table"><thead><tr>
+    <th>Name</th><th>Category</th><th>Format</th><th>Difficulty</th><th>Body Focus</th><th>Movements</th><th>Actions</th>
+  </tr></thead><tbody>`;
+  filtered.forEach(b=>{
+    const movCount=Array.isArray(b.movements)?b.movements.length:0;
+    html+=`<tr>
+      <td style="font-weight:700"><a href="/workout.html?slug=${escHtml(b.slug)}" target="_blank" style="color:var(--orl);text-decoration:none">${escHtml(b.name)}</a></td>
+      <td><span class="pill ${b.category==='girl'?'pill-or':b.category==='hero'?'pill-pu':'pill-bl'}">${catLabel[b.category]||b.category}</span></td>
+      <td style="font-size:12px">${escHtml(b.format||'')}</td>
+      <td><span class="pill pill-mu">${cap(b.difficulty||'')}</span></td>
+      <td style="font-size:12px;color:var(--mu)">${cap((b.body_focus||'').replace('-',' '))}</td>
+      <td style="color:var(--mu)">${movCount} mvmt${movCount!==1?'s':''}</td>
+      <td><button class="action-btn" onclick="openBenchmarkFormById('${escHtml(b.id)}')">Edit</button></td>
+    </tr>`;
+  });
+  html+=`</tbody></table>`;
+  document.getElementById('bm-table-wrap').innerHTML=html;
+}
+
+function openBenchmarkFormById(id){
+  const b=benchmarksData.find(x=>x.id===id);
+  if(b)openBenchmarkForm(b);
+}
+
+function autoBmSlug(){
+  const name=document.getElementById('bmf-name').value;
+  const slugEl=document.getElementById('bmf-slug');
+  if(!slugEl.dataset.manual){
+    slugEl.value=name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  }
+}
+
+function openBenchmarkForm(b){
+  const section=document.getElementById('bm-form-section');
+  const titleEl=document.getElementById('bm-form-title');
+  const delBtn=document.getElementById('bmf-delete-btn');
+  document.getElementById('bm-form-alert').classList.remove('vis');
+
+  if(b){
+    titleEl.textContent='✏️ Edit Benchmark';
+    delBtn.style.display='inline-block';
+    document.getElementById('bmf-id').value=b.id||'';
+    document.getElementById('bmf-name').value=b.name||'';
+    document.getElementById('bmf-slug').value=b.slug||'';
+    document.getElementById('bmf-slug').dataset.manual='1';
+    document.getElementById('bmf-category').value=b.category||'benchmark';
+    document.getElementById('bmf-format').value=b.format||'For Time';
+    document.getElementById('bmf-duration').value=b.duration_estimate||'';
+    document.getElementById('bmf-difficulty').value=b.difficulty||'intermediate';
+    document.getElementById('bmf-body-focus').value=b.body_focus||'full-body';
+    document.getElementById('bmf-scoring-type').value=b.scoring_type||'time';
+    document.getElementById('bmf-equipment').value=Array.isArray(b.equipment)?b.equipment.join(', '):(b.equipment||'');
+    document.getElementById('bmf-description').value=b.description||'';
+    const movText=Array.isArray(b.movements)
+      ?b.movements.map(m=>[m.name||'',m.reps||'',m.tip||'',m.rx_men||'',m.rx_women||''].join(' | ')).join('\n'):'';
+    document.getElementById('bmf-movements').value=movText;
+    document.getElementById('bmf-scoring-notes').value=b.scoring_notes||'';
+    const tips=Array.isArray(b.tips)?b.tips.join('\n'):(typeof b.tips==='string'?b.tips:'');
+    document.getElementById('bmf-tips').value=tips;
+  }else{
+    titleEl.textContent='➕ Add Benchmark';
+    delBtn.style.display='none';
+    document.getElementById('bmf-id').value='';
+    document.getElementById('bmf-name').value='';
+    document.getElementById('bmf-slug').value='';
+    delete document.getElementById('bmf-slug').dataset.manual;
+    document.getElementById('bmf-category').value='benchmark';
+    document.getElementById('bmf-format').value='For Time';
+    document.getElementById('bmf-duration').value='';
+    document.getElementById('bmf-difficulty').value='intermediate';
+    document.getElementById('bmf-body-focus').value='full-body';
+    document.getElementById('bmf-scoring-type').value='time';
+    document.getElementById('bmf-equipment').value='';
+    document.getElementById('bmf-description').value='';
+    document.getElementById('bmf-movements').value='';
+    document.getElementById('bmf-scoring-notes').value='';
+    document.getElementById('bmf-tips').value='';
+  }
+
+  section.style.display='block';
+  section.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function closeBenchmarkForm(){
+  document.getElementById('bm-form-section').style.display='none';
+}
+
+async function saveBenchmark(){
+  const id=document.getElementById('bmf-id').value;
+  const name=document.getElementById('bmf-name').value.trim();
+  const slug=document.getElementById('bmf-slug').value.trim();
+  if(!name||!slug){showAlert('bm-form-alert','Name and slug are required.','err');return;}
+
+  const movText=document.getElementById('bmf-movements').value.trim();
+  const movements=movText?movText.split('\n').filter(l=>l.trim()).map(line=>{
+    const parts=line.split('|').map(s=>s.trim());
+    return{name:parts[0]||'',reps:parts[1]||'',tip:parts[2]||'',rx_men:parts[3]||'',rx_women:parts[4]||''};
+  }):[];
+
+  const tipsRaw=document.getElementById('bmf-tips').value;
+  const tips=tipsRaw.split('\n').map(t=>t.trim()).filter(t=>t);
+
+  const equipmentRaw=document.getElementById('bmf-equipment').value;
+  const equipment=equipmentRaw.split(',').map(e=>e.trim()).filter(e=>e);
+
+  const row={
+    name,slug,
+    category:document.getElementById('bmf-category').value,
+    format:document.getElementById('bmf-format').value,
+    duration_estimate:document.getElementById('bmf-duration').value.trim()||null,
+    difficulty:document.getElementById('bmf-difficulty').value,
+    body_focus:document.getElementById('bmf-body-focus').value,
+    scoring_type:document.getElementById('bmf-scoring-type').value,
+    equipment,
+    description:document.getElementById('bmf-description').value.trim()||null,
+    movements,
+    scoring_notes:document.getElementById('bmf-scoring-notes').value.trim()||null,
+    tips,
+    updated_at:new Date().toISOString()
+  };
+
+  if(!supabaseClient){showAlert('bm-form-alert','Connect Supabase to save benchmarks.','err');return;}
+
+  let error;
+  if(id){
+    ({error}=await supabaseClient.from('benchmark_workouts').update(row).eq('id',id));
+  }else{
+    ({error}=await supabaseClient.from('benchmark_workouts').insert(row));
+  }
+
+  if(error){showAlert('bm-form-alert','Error: '+error.message,'err');return;}
+
+  showAlert('bm-form-alert',id?'Benchmark updated!':'Benchmark created!','ok');
+  showAlert('benchmarks-alert',id?'Benchmark updated!':'Benchmark created!','ok');
+  closeBenchmarkForm();
+  await loadBenchmarksAdmin();
+}
+
+async function deleteBenchmarkFromForm(){
+  const id=document.getElementById('bmf-id').value;
+  const name=document.getElementById('bmf-name').value;
+  if(!id||!confirm(`Delete benchmark "${name}"? This removes it from all pages and cannot be undone.`))return;
+  if(!supabaseClient)return;
+  const{error}=await supabaseClient.from('benchmark_workouts').delete().eq('id',id);
+  if(error){showAlert('bm-form-alert','Error: '+error.message,'err');return;}
+  showAlert('benchmarks-alert','Benchmark deleted.','ok');
+  closeBenchmarkForm();
+  await loadBenchmarksAdmin();
 }
 </script>
 </body>

@@ -203,7 +203,8 @@
     container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
     try {
-      allWorkouts = [...BENCHMARKS];
+      // Load benchmarks from Supabase (falls back to BENCHMARKS JS array if Supabase unavailable)
+      allWorkouts = await db.getAllBenchmarks();
 
       const userWorkouts = await db.getWorkouts({ isPublic: true, limit: 1000 });
       if (userWorkouts && userWorkouts.length > 0) {
