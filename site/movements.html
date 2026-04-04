@@ -52,6 +52,11 @@
       border-bottom: 1px solid var(--dark-border, #333);
       padding-bottom: 0.5rem;
     }
+    .movements-loading {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-muted, #888);
+    }
   </style>
 </head>
 <body data-nav-init="true" data-active-page="movements">
@@ -61,230 +66,136 @@
     <p class="text-muted">Every CrossFit movement — coaching cues, muscle groups, and the workouts that use them.</p>
   </section>
 
-  <h2 class="category-heading">Gymnastics &amp; Pull-Up Bar</h2>
-  <div class="grid grid-cols-3" id="gymnastics-grid"></div>
-
-  <h2 class="category-heading">Bodyweight — Push</h2>
-  <div class="grid grid-cols-3" id="push-grid"></div>
-
-  <h2 class="category-heading">Bodyweight — Lower Body</h2>
-  <div class="grid grid-cols-3" id="lower-grid"></div>
-
-  <h2 class="category-heading">Bodyweight — Core</h2>
-  <div class="grid grid-cols-3" id="core-grid"></div>
-
-  <h2 class="category-heading">Bodyweight — Full Body &amp; Cardio</h2>
-  <div class="grid grid-cols-3" id="fullbody-grid"></div>
-
-  <h2 class="category-heading">Weightlifting &amp; Barbell</h2>
-  <div class="grid grid-cols-3" id="barbell-grid"></div>
-
-  <h2 class="category-heading">Kettlebell</h2>
-  <div class="grid grid-cols-3" id="kettlebell-grid"></div>
-
-  <h2 class="category-heading">Dumbbell</h2>
-  <div class="grid grid-cols-3" id="dumbbell-grid"></div>
-
-  <h2 class="category-heading">Monostructural / Cardio</h2>
-  <div class="grid grid-cols-3" id="cardio-grid"></div>
-
-  <h2 class="category-heading" id="community-heading" style="display:none;">Community Movements</h2>
-  <div class="grid grid-cols-3" id="community-grid"></div>
+  <div id="movements-root">
+    <div class="movements-loading"><div class="spinner"></div></div>
+  </div>
 </main>
 
 <script src="/js/footer.js"></script>
 
 <script>
-const MOVEMENTS = {
-  gymnastics: [
-    { slug: 'pull-ups',              name: 'Pull-Ups',              muscles: 'Lats, biceps, rhomboids, core' },
-    { slug: 'chin-ups',              name: 'Chin-Ups',              muscles: 'Biceps, lats, rhomboids, core' },
-    { slug: 'kipping-pull-ups',      name: 'Kipping Pull-Ups',      muscles: 'Lats, biceps, core, shoulders' },
-    { slug: 'chest-to-bar-pull-ups', name: 'Chest-to-Bar Pull-Ups', muscles: 'Lats, biceps, rhomboids, rear deltoids' },
-    { slug: 'jumping-pull-ups',      name: 'Jumping Pull-Ups',      muscles: 'Lats, biceps, rhomboids, core' },
-    { slug: 'muscle-ups',            name: 'Muscle-Ups',            muscles: 'Lats, biceps, chest, triceps, core' },
-    { slug: 'burpee-muscle-ups',     name: 'Burpee Muscle-Ups',     muscles: 'Full body — lats, biceps, chest, triceps, quads' },
-    { slug: 'handstand-push-ups',    name: 'Handstand Push-Ups',    muscles: 'Shoulders, triceps, upper traps, core' },
-    { slug: 'ring-dips',             name: 'Ring Dips',             muscles: 'Pectorals, triceps, anterior deltoids, core' },
-    { slug: 'rope-climbs',           name: 'Rope Climbs',           muscles: 'Biceps, lats, forearms, core' },
-    { slug: 'toes-to-bar',           name: 'Toes-to-Bar',           muscles: 'Hip flexors, rectus abdominis, lats' },
-    { slug: 'knees-to-elbows',       name: 'Knees-to-Elbows',       muscles: 'Hip flexors, abs, lats, forearms' },
-    { slug: 'hanging-knee-raises',   name: 'Hanging Knee Raises',   muscles: 'Hip flexors, lower abs, forearms' },
-    { slug: 'hanging-l-hold',        name: 'Hanging L-Hold',        muscles: 'Hip flexors, abs, lats, forearms' },
-    { slug: 'box-jumps',             name: 'Box Jumps',             muscles: 'Quads, glutes, calves, hip flexors' },
-    { slug: 'pistol-squats',         name: 'Pistol Squats',         muscles: 'Quads, glutes, hamstrings, core, ankle stabilizers' },
-    { slug: 'back-extensions',       name: 'Back Extensions',       muscles: 'Erector spinae, glutes, hamstrings, core' },
-  ],
-  push: [
-    { slug: 'push-ups',              name: 'Push-Ups',              muscles: 'Pectorals, triceps, anterior deltoids' },
-    { slug: 'wide-push-ups',         name: 'Wide Push-Ups',         muscles: 'Outer pectorals, anterior deltoids, triceps' },
-    { slug: 'diamond-push-ups',      name: 'Diamond Push-Ups',      muscles: 'Triceps, inner pectorals, anterior deltoids' },
-    { slug: 'pike-push-ups',         name: 'Pike Push-Ups',         muscles: 'Shoulders, triceps, upper traps' },
-    { slug: 'decline-push-ups',      name: 'Decline Push-Ups',      muscles: 'Upper pectorals, anterior deltoids, triceps' },
-    { slug: 'hand-release-push-ups', name: 'Hand-Release Push-Ups', muscles: 'Pectorals, triceps, anterior deltoids' },
-    { slug: 'tricep-dips',           name: 'Tricep Dips',           muscles: 'Triceps, anterior deltoids, lower pectorals' },
-  ],
-  lower: [
-    { slug: 'air-squats',            name: 'Air Squats',            muscles: 'Quads, glutes, hamstrings, core' },
-    { slug: 'jump-squats',           name: 'Jump Squats',           muscles: 'Quads, glutes, hamstrings, calves' },
-    { slug: 'sumo-squats',           name: 'Sumo Squats',           muscles: 'Adductors, glutes, quads, hamstrings' },
-    { slug: 'cossack-squats',        name: 'Cossack Squats',        muscles: 'Adductors, glutes, quads, hip flexors' },
-    { slug: 'bulgarian-split-squats',name: 'Bulgarian Split Squats',muscles: 'Quads, glutes, hamstrings, hip flexors' },
-    { slug: 'reverse-lunges',        name: 'Reverse Lunges',        muscles: 'Quads, glutes, hamstrings, core' },
-    { slug: 'walking-lunges',        name: 'Walking Lunges',        muscles: 'Quads, glutes, hamstrings, hip flexors' },
-    { slug: 'lateral-lunges',        name: 'Lateral Lunges',        muscles: 'Adductors, glutes, quads, hamstrings' },
-    { slug: 'glute-bridges',         name: 'Glute Bridges',         muscles: 'Glutes, hamstrings, core' },
-    { slug: 'single-leg-glute-bridge',name:'Single-Leg Glute Bridge',muscles:'Glutes, hamstrings, core, hip stabilizers' },
-    { slug: 'step-ups',              name: 'Step-Ups',              muscles: 'Quads, glutes, hamstrings, core' },
-    { slug: 'wall-sit',              name: 'Wall Sit',              muscles: 'Quads, glutes, hamstrings, calves' },
-    { slug: 'good-mornings',         name: 'Good Mornings',         muscles: 'Hamstrings, glutes, erector spinae' },
-  ],
-  core: [
-    { slug: 'sit-ups',               name: 'Sit-Ups',               muscles: 'Rectus abdominis, hip flexors' },
-    { slug: 'v-ups',                 name: 'V-Ups',                 muscles: 'Rectus abdominis, hip flexors, core' },
-    { slug: 'hollow-holds',          name: 'Hollow Holds',          muscles: 'Rectus abdominis, transverse abs, hip flexors' },
-    { slug: 'plank-hold',            name: 'Plank Hold',            muscles: 'Transverse abdominis, glutes, shoulders, lats' },
-    { slug: 'plank-shoulder-taps',   name: 'Plank Shoulder Taps',   muscles: 'Core (anti-rotation), shoulders, glutes' },
-    { slug: 'russian-twists',        name: 'Russian Twists',        muscles: 'Obliques, rectus abdominis, hip flexors' },
-    { slug: 'bicycle-crunches',      name: 'Bicycle Crunches',      muscles: 'Obliques, rectus abdominis, hip flexors' },
-    { slug: 'flutter-kicks',         name: 'Flutter Kicks',         muscles: 'Hip flexors, lower abs, core' },
-    { slug: 'dead-bug',              name: 'Dead Bug',              muscles: 'Transverse abdominis, rectus abdominis, core' },
-    { slug: 'superman-hold',         name: 'Superman Hold',         muscles: 'Erector spinae, glutes, rear deltoids' },
-    { slug: 'prone-cobra',           name: 'Prone Cobra',           muscles: 'Rhomboids, rear deltoids, erector spinae' },
-    { slug: 'mountain-climbers',     name: 'Mountain Climbers',     muscles: 'Core, hip flexors, shoulders' },
-  ],
-  fullbody: [
-    { slug: 'burpees',               name: 'Burpees',               muscles: 'Full body — chest, shoulders, quads, core' },
-    { slug: 'inchworms',             name: 'Inchworms',             muscles: 'Hamstrings, shoulders, core' },
-    { slug: 'bear-crawls',           name: 'Bear Crawls',           muscles: 'Shoulders, core, hip flexors, quads' },
-    { slug: 'sprawls',               name: 'Sprawls',               muscles: 'Hip flexors, glutes, core, cardio' },
-    { slug: 'squat-thrusts',         name: 'Squat Thrusts',         muscles: 'Hip flexors, glutes, quads, core' },
-    { slug: 'up-downs',              name: 'Up-Downs',              muscles: 'Core, hip flexors, glutes, cardio' },
-    { slug: 'inverted-rows',         name: 'Inverted Rows',         muscles: 'Lats, rhomboids, biceps, rear deltoids' },
-    { slug: 'jumping-jacks',         name: 'Jumping Jacks',         muscles: 'Calves, shoulders, adductors, cardio' },
-    { slug: 'high-knees',            name: 'High Knees',            muscles: 'Hip flexors, calves, quads, cardio' },
-    { slug: 'butt-kickers',          name: 'Butt Kickers',          muscles: 'Hamstrings, glutes, calves, cardio' },
-    { slug: 'broad-jumps',           name: 'Broad Jumps',           muscles: 'Quads, glutes, hamstrings, calves' },
-    { slug: 'tuck-jumps',            name: 'Tuck Jumps',            muscles: 'Quads, glutes, hip flexors, calves' },
-    { slug: 'skaters',               name: 'Skaters',               muscles: 'Glutes, adductors, quads, calves' },
-    { slug: 'sprint-25m',            name: 'Sprint (25m)',           muscles: 'Hamstrings, glutes, quads, calves' },
-  ],
-  barbell: [
-    { slug: 'deadlifts',             name: 'Deadlifts',             muscles: 'Hamstrings, glutes, lower back, traps' },
-    { slug: 'deadlift',              name: 'Deadlift',              muscles: 'Hamstrings, glutes, erector spinae, traps' },
-    { slug: 'back-squat',            name: 'Back Squat',            muscles: 'Quads, glutes, hamstrings, erector spinae' },
-    { slug: 'bench-press',           name: 'Bench Press',           muscles: 'Pectorals, anterior deltoids, triceps' },
-    { slug: 'overhead-press',        name: 'Overhead Press',        muscles: 'Anterior deltoids, triceps, upper traps' },
-    { slug: 'push-press',            name: 'Push Press',            muscles: 'Quads, glutes, shoulders, triceps, core' },
-    { slug: 'barbell-row',           name: 'Barbell Row',           muscles: 'Lats, rhomboids, biceps, rear deltoids' },
-    { slug: 'cleans',                name: 'Cleans',                muscles: 'Hamstrings, glutes, traps, upper back' },
-    { slug: 'power-clean',           name: 'Power Clean',           muscles: 'Hamstrings, glutes, traps, upper back, quads' },
-    { slug: 'power-cleans',          name: 'Power Cleans',          muscles: 'Hamstrings, glutes, traps, upper back, quads' },
-    { slug: 'hang-power-cleans',     name: 'Hang Power Cleans',     muscles: 'Hamstrings, glutes, traps, upper back, core' },
-    { slug: 'squat-cleans',          name: 'Squat Cleans',          muscles: 'Hamstrings, glutes, traps, upper back, quads' },
-    { slug: 'clean-and-jerks',       name: 'Clean and Jerks',       muscles: 'Full body — hamstrings, glutes, traps, shoulders' },
-    { slug: 'push-jerks',            name: 'Push Jerks',            muscles: 'Quads, glutes, shoulders, triceps, core' },
-    { slug: 'snatches',              name: 'Snatches',              muscles: 'Hamstrings, glutes, traps, shoulders' },
-    { slug: 'power-snatches',        name: 'Power Snatches',        muscles: 'Hamstrings, glutes, traps, shoulders, quads' },
-    { slug: 'squat-snatches',        name: 'Squat Snatches',        muscles: 'Full body — hamstrings, glutes, traps, shoulders' },
-    { slug: 'overhead-squats',       name: 'Overhead Squats',       muscles: 'Quads, glutes, core, shoulders, lats, traps' },
-    { slug: 'sumo-deadlift-high-pulls', name: 'Sumo Deadlift High Pulls', muscles: 'Hamstrings, glutes, upper back, traps, biceps' },
-    { slug: 'thrusters',             name: 'Thrusters',             muscles: 'Quads, glutes, shoulders, triceps, core' },
-    { slug: 'thruster',              name: 'Thruster',              muscles: 'Quads, glutes, shoulders, triceps, core' },
-    { slug: 'romanian-deadlift',     name: 'Romanian Deadlift',     muscles: 'Hamstrings, glutes, erector spinae' },
-    { slug: 'wall-balls',            name: 'Wall Balls',            muscles: 'Quads, glutes, shoulders, core' },
-  ],
-  kettlebell: [
-    { slug: 'kettlebell-swings',     name: 'Kettlebell Swings',     muscles: 'Hamstrings, glutes, lower back, core' },
-    { slug: 'kb-swings',             name: 'KB Swings',             muscles: 'Hamstrings, glutes, lower back, shoulders' },
-    { slug: 'kb-goblet-squats',      name: 'KB Goblet Squats',      muscles: 'Quads, glutes, hamstrings, core' },
-    { slug: 'kb-turkish-get-up',     name: 'KB Turkish Get-Up',     muscles: 'Shoulders, core, glutes, hip flexors' },
-    { slug: 'kb-clean-press',        name: 'KB Clean & Press',      muscles: 'Hamstrings, glutes, shoulders, triceps' },
-    { slug: 'kb-rows',               name: 'KB Rows',               muscles: 'Lats, rhomboids, biceps, rear deltoids' },
-    { slug: 'kb-deadlift',           name: 'KB Deadlift',           muscles: 'Hamstrings, glutes, erector spinae, traps' },
-    { slug: 'kb-figure-8',           name: 'KB Figure 8',           muscles: 'Grip, core, hip flexors, adductors' },
-    { slug: 'kb-halo',               name: 'KB Halo',               muscles: 'Rotator cuff, deltoids, upper traps, core' },
-  ],
-  dumbbell: [
-    { slug: 'db-dumbbell-thrusters', name: 'DB Thrusters',          muscles: 'Quads, glutes, shoulders, triceps, core' },
-    { slug: 'db-bent-over-row',      name: 'DB Bent-Over Row',      muscles: 'Lats, rhomboids, biceps, rear deltoids' },
-    { slug: 'db-shoulder-press',     name: 'DB Shoulder Press',     muscles: 'Anterior deltoids, triceps, upper traps' },
-    { slug: 'db-romanian-deadlift',  name: 'DB Romanian Deadlift',  muscles: 'Hamstrings, glutes, erector spinae' },
-    { slug: 'db-lunges',             name: 'DB Lunges',             muscles: 'Quads, glutes, hamstrings, core' },
-    { slug: 'db-man-makers',         name: 'DB Man Makers',         muscles: 'Full body — chest, back, shoulders, legs' },
-    { slug: 'db-renegade-row',       name: 'DB Renegade Row',       muscles: 'Lats, core (anti-rotation), shoulders' },
-    { slug: 'db-lateral-raises',     name: 'DB Lateral Raises',     muscles: 'Medial deltoids, supraspinatus, upper traps' },
-  ],
-  cardio: [
-    { slug: 'running',               name: 'Running',               muscles: 'Quads, hamstrings, calves, glutes' },
-    { slug: '400m-run',              name: '400m Run',              muscles: 'Quads, hamstrings, calves, glutes, cardio' },
-    { slug: '800m-run',              name: '800m Run',              muscles: 'Quads, hamstrings, calves, glutes, cardio' },
-    { slug: '1-mile-run',            name: '1 Mile Run',            muscles: 'Quads, hamstrings, calves, glutes, hip flexors' },
-    { slug: '100m-sprint',           name: '100m Sprint',           muscles: 'Hamstrings, glutes, quads, calves' },
-    { slug: 'rowing',                name: 'Rowing',                muscles: 'Legs, back, core, arms — full body' },
-    { slug: '1000m-row',             name: '1000m Row',             muscles: 'Quads, hamstrings, glutes, upper back, arms' },
-    { slug: 'row-for-calories',      name: 'Row for Calories',      muscles: 'Quads, hamstrings, glutes, upper back, arms' },
-    { slug: 'double-unders',         name: 'Double-Unders',         muscles: 'Calves, shoulders, wrists, cardio' },
-    { slug: 'single-unders',         name: 'Single-Unders',         muscles: 'Calves, shoulders, wrists, cardio' },
-    { slug: 'jump-rope-intervals',   name: 'Jump Rope Intervals',   muscles: 'Calves, cardiovascular system, shoulders' },
-  ]
-};
+// ─── Category display config ──────────────────────────────────────────────────
+const CATEGORY_CONFIG = [
+  { key: 'gymnastics', label: 'Gymnastics &amp; Pull-Up Bar',       gridId: 'gymnastics-grid' },
+  { key: 'push',       label: 'Bodyweight — Push',                  gridId: 'push-grid' },
+  { key: 'lower',      label: 'Bodyweight — Lower Body',            gridId: 'lower-grid' },
+  { key: 'core',       label: 'Bodyweight — Core',                  gridId: 'core-grid' },
+  { key: 'fullbody',   label: 'Bodyweight — Full Body &amp; Cardio', gridId: 'fullbody-grid' },
+  { key: 'barbell',    label: 'Weightlifting &amp; Barbell',         gridId: 'barbell-grid' },
+  { key: 'kettlebell', label: 'Kettlebell',                          gridId: 'kettlebell-grid' },
+  { key: 'dumbbell',   label: 'Dumbbell',                           gridId: 'dumbbell-grid' },
+  { key: 'cardio',     label: 'Monostructural / Cardio',            gridId: 'cardio-grid' },
+];
 
+// ─── Slugify helper (matches benchmark movement names to slugs) ───────────────
 function slugify(name) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
+// ─── Count how many benchmarks use this movement slug ────────────────────────
 function getWorkoutCount(slug) {
+  if (typeof BENCHMARKS === 'undefined') return 0;
   return BENCHMARKS.filter(b =>
-    b.movements && b.movements.some(m => slugify(m.name) === slug)
+    b.movements && b.movements.some(m => slugify(m.name || m) === slug)
   ).length;
 }
 
-function renderGrid(gridId, movements) {
-  const el = document.getElementById(gridId);
-  if (!el) return;
-  el.innerHTML = movements.map(m => {
+// ─── Render a grid of movement cards ─────────────────────────────────────────
+function renderGrid(gridEl, movements) {
+  if (!movements.length) {
+    gridEl.innerHTML = '<p class="text-muted" style="font-size:0.85rem;">No movements in this category yet.</p>';
+    return;
+  }
+  gridEl.innerHTML = movements.map(m => {
     const count = getWorkoutCount(m.slug);
     const countLabel = count > 0 ? `${count} benchmark${count === 1 ? '' : 's'}` : 'Movement guide';
     return `<a href="/movement.html?slug=${m.slug}" class="movement-card">
       <h3>${m.name}</h3>
-      <p class="muscles">${m.muscles}</p>
+      <p class="muscles">${m.muscles || ''}</p>
       <span class="workout-count">${countLabel} →</span>
     </a>`;
   }).join('');
 }
 
-// All slugs already in the hardcoded MOVEMENTS list
-const ALL_KNOWN_SLUGS = new Set(
-  Object.values(MOVEMENTS).flat().map(m => m.slug)
-);
+// ─── Build the full page scaffold then populate grids ─────────────────────────
+function buildScaffold() {
+  const root = document.getElementById('movements-root');
+  root.innerHTML = CATEGORY_CONFIG.map(c => `
+    <h2 class="category-heading">${c.label}</h2>
+    <div class="grid grid-cols-3" id="${c.gridId}"></div>
+  `).join('') + `
+    <h2 class="category-heading" id="community-heading" style="display:none;">Community Movements</h2>
+    <div class="grid grid-cols-3" id="community-grid"></div>
+  `;
+}
 
-async function loadCommunityMovements() {
+// ─── Main: load from Supabase, fall back gracefully ──────────────────────────
+async function loadMovements() {
+  buildScaffold();
+
+  try {
+    // Fetch all movements ordered by category then name
+    const { data: movements, error } = await supabase
+      .from('movements')
+      .select('slug, name, muscles, category')
+      .order('category')
+      .order('name');
+
+    if (error) throw error;
+
+    // Group by category
+    const byCategory = {};
+    for (const m of movements) {
+      if (!byCategory[m.category]) byCategory[m.category] = [];
+      byCategory[m.category].push(m);
+    }
+
+    // Render each configured category
+    for (const cfg of CATEGORY_CONFIG) {
+      const gridEl = document.getElementById(cfg.gridId);
+      if (gridEl) renderGrid(gridEl, byCategory[cfg.key] || []);
+    }
+
+    // Build set of known slugs to detect community-only movements
+    const knownSlugs = new Set(movements.map(m => m.slug));
+
+    // Load community movements from user workouts
+    await loadCommunityMovements(knownSlugs);
+
+  } catch (err) {
+    console.error('Failed to load movements from Supabase:', err);
+    document.getElementById('movements-root').innerHTML = `
+      <div class="empty-state">
+        <p>Unable to load movements. Please try again shortly.</p>
+      </div>`;
+  }
+}
+
+// ─── Community movements from user workouts ───────────────────────────────────
+async function loadCommunityMovements(knownSlugs) {
   try {
     const userWorkouts = await db.getWorkouts({ isPublic: true, limit: 1000 });
-    // Extract unique movement slugs from user workouts, excluding known ones
-    const communityMap = {}; // slug -> { name, count }
+    const communityMap = {};
     for (const w of userWorkouts) {
       if (!w.movements) continue;
       for (const m of w.movements) {
         const rawName = m.movement || m.name || '';
         if (!rawName) continue;
         const slug = slugify(rawName);
-        if (ALL_KNOWN_SLUGS.has(slug)) continue; // already shown above
-        if (!communityMap[slug]) {
-          communityMap[slug] = { name: rawName, count: 0 };
-        }
+        if (knownSlugs && knownSlugs.has(slug)) continue;
+        if (!communityMap[slug]) communityMap[slug] = { name: rawName, count: 0 };
         communityMap[slug].count++;
       }
     }
-    const communityMovements = Object.entries(communityMap)
-      .sort((a, b) => b[1].count - a[1].count); // most-used first
 
-    if (communityMovements.length === 0) return;
+    const communityMovements = Object.entries(communityMap)
+      .sort((a, b) => b[1].count - a[1].count);
+
+    if (!communityMovements.length) return;
 
     document.getElementById('community-heading').style.display = '';
     document.getElementById('community-grid').innerHTML = communityMovements.map(([slug, info]) => {
-      const label = info.count > 0 ? `${info.count} community WOD${info.count === 1 ? '' : 's'}` : 'Community movement';
+      const label = `${info.count} community WOD${info.count === 1 ? '' : 's'}`;
       return `<a href="/movement.html?slug=${slug}" class="movement-card">
         <h3 style="text-transform:capitalize">${info.name}</h3>
         <p class="muscles">Community-submitted movement</p>
@@ -292,22 +203,11 @@ async function loadCommunityMovements() {
       </a>`;
     }).join('');
   } catch (e) {
-    // silent fail
+    // Community section is bonus — silent fail is fine
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  renderGrid('gymnastics-grid',  MOVEMENTS.gymnastics);
-  renderGrid('push-grid',        MOVEMENTS.push);
-  renderGrid('lower-grid',       MOVEMENTS.lower);
-  renderGrid('core-grid',        MOVEMENTS.core);
-  renderGrid('fullbody-grid',    MOVEMENTS.fullbody);
-  renderGrid('barbell-grid',     MOVEMENTS.barbell);
-  renderGrid('kettlebell-grid',  MOVEMENTS.kettlebell);
-  renderGrid('dumbbell-grid',    MOVEMENTS.dumbbell);
-  renderGrid('cardio-grid',      MOVEMENTS.cardio);
-  loadCommunityMovements();
-});
+document.addEventListener('DOMContentLoaded', loadMovements);
 </script>
 </body>
 </html>

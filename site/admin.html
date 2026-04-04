@@ -194,6 +194,7 @@
     <div class="stat-card"><div class="num" id="stat-results">—</div><div class="lbl">Total Results</div></div>
     <div class="stat-card"><div class="num" id="stat-users">—</div><div class="lbl">Athletes</div></div>
     <div class="stat-card"><div class="num" id="stat-nominations">—</div><div class="lbl">Nominations Pending</div></div>
+    <div class="stat-card"><div class="num" id="stat-movements">—</div><div class="lbl">Movements in DB</div></div>
   </div>
 
   <!-- Tab Nav -->
@@ -443,39 +444,85 @@
   <!-- ─── TAB: MOVEMENTS ───────────────────────────────────── -->
   <div id="tab-movements" class="tab-pane">
     <div class="section">
-      <h2>💪 Movement Browser</h2>
-      <p class="desc">Browse available movements for daily WODs. Read-only reference.</p>
+      <h2>💪 Movement Library</h2>
+      <p class="desc">Manage all movements — descriptions, coaching tips, rep ranges, and daily WOD eligibility.</p>
+      <button class="save-btn" onclick="openMovementForm(null)" style="margin-bottom:20px">➕ Add Movement</button>
+      <div class="alert" id="movements-alert"></div>
       <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
-        <select id="movements-equipment" onchange="filterMovements()" style="background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none">
-          <option value="">All Equipment</option>
-          <option value="bodyweight">Bodyweight</option>
-          <option value="pullupbar">Pull-up Bar</option>
-          <option value="kettlebell">Kettlebell</option>
-          <option value="dumbbells">Dumbbells</option>
+        <select id="movements-category" onchange="loadMovementsAdmin()" style="background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none">
+          <option value="">All Categories</option>
+          <option value="gymnastics">Gymnastics</option>
+          <option value="push">Bodyweight — Push</option>
+          <option value="lower">Bodyweight — Lower</option>
+          <option value="core">Bodyweight — Core</option>
+          <option value="fullbody">Bodyweight — Full Body</option>
           <option value="barbell">Barbell</option>
-          <option value="resistancebands">Bands</option>
-          <option value="jumprope">Jump Rope</option>
-          <option value="box">Box</option>
-          <option value="medicineball">Medicine Ball</option>
-          <option value="rings">Rings</option>
-        </select>
-        <select id="movements-tag" onchange="filterMovements()" style="background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none">
-          <option value="">All Tags</option>
-          <option value="lower">Lower Body</option>
-          <option value="upper-body">Upper Body</option>
-          <option value="push">Push</option>
-          <option value="pull">Pull</option>
-          <option value="core">Core</option>
+          <option value="kettlebell">Kettlebell</option>
+          <option value="dumbbell">Dumbbell</option>
           <option value="cardio">Cardio</option>
-          <option value="full">Full Body</option>
-          <option value="legs-glutes">Legs & Glutes</option>
         </select>
-        <input type="text" id="movements-search" placeholder="Search by name..." style="flex:1;min-width:200px;background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none" onkeyup="filterMovements()">
+        <select id="movements-eligible" onchange="loadMovementsAdmin()" style="background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none">
+          <option value="">All Eligibility</option>
+          <option value="true">Daily WOD Eligible</option>
+          <option value="false">Not Eligible</option>
+        </select>
+        <select id="movements-has-desc" onchange="loadMovementsAdmin()" style="background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none">
+          <option value="">All</option>
+          <option value="yes">Has Description</option>
+          <option value="no">Missing Description</option>
+        </select>
+        <input type="text" id="movements-search" placeholder="Search by name..." style="flex:1;min-width:200px;background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none" oninput="renderMovementsTable()">
       </div>
       <div style="display:flex;align-items:center;margin-bottom:16px;gap:10px">
         <span style="font-size:13px;color:var(--mu)"><strong id="movements-count">0</strong> movements</span>
       </div>
-      <div id="movements-list"></div>
+      <div id="movements-table-wrap"><p style="color:var(--mu)">Loading movements...</p></div>
+    </div>
+
+    <!-- Movement Create / Edit Form -->
+    <div id="movement-form-section" class="section" style="display:none;margin-top:20px">
+      <h2 id="movement-form-title">➕ Add Movement</h2>
+      <div class="alert" id="movement-form-alert"></div>
+      <input type="hidden" id="mf-id">
+      <div class="grid-2">
+        <div class="field"><label>Name</label><input type="text" id="mf-name" placeholder="e.g. Air Squats" oninput="autoSlug()"></div>
+        <div class="field"><label>Slug (auto-generated)</label><input type="text" id="mf-slug" placeholder="e.g. air-squats"></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>Category</label>
+          <select id="mf-category">
+            <option value="gymnastics">Gymnastics</option>
+            <option value="push">Bodyweight — Push</option>
+            <option value="lower">Bodyweight — Lower</option>
+            <option value="core">Bodyweight — Core</option>
+            <option value="fullbody">Bodyweight — Full Body</option>
+            <option value="barbell">Barbell</option>
+            <option value="kettlebell">Kettlebell</option>
+            <option value="dumbbell">Dumbbell</option>
+            <option value="cardio">Cardio</option>
+          </select>
+        </div>
+        <div class="field"><label>Equipment Category</label><input type="text" id="mf-equipment-cat" placeholder="e.g. barbell, kettlebell, dumbbells"></div>
+      </div>
+      <div class="field"><label>Primary Muscles</label><input type="text" id="mf-muscles" placeholder="e.g. Quadriceps, glutes, core"></div>
+      <div class="field"><label>Description</label><textarea id="mf-description" rows="3" placeholder="What is this movement? Where does it appear in CrossFit?"></textarea></div>
+      <div class="field"><label>Coaching Tips (one tip per line — saved as array)</label><textarea id="mf-tips" rows="5" placeholder="Keep chest up and heels down.&#10;Drive knees out at the bottom.&#10;Break parallel on every rep."></textarea></div>
+      <div class="field"><label>WOD Tip (short one-liner for generator)</label><input type="text" id="mf-wod-tip" placeholder="e.g. Break at hips and knees together"></div>
+      <div class="grid-2">
+        <div class="field"><label><input type="checkbox" id="mf-eligible" style="width:auto;margin-right:6px"> Daily WOD Eligible</label></div>
+        <div class="field"><label><input type="checkbox" id="mf-timed" style="width:auto;margin-right:6px"> Timed (reps are durations e.g. "30s")</label></div>
+      </div>
+      <div style="margin-bottom:8px;font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.5px">Rep Ranges (number or range like "10-15" or "30s" for timed)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px">
+        <div class="field" style="margin:0"><label>Beginner</label><input type="text" id="mf-reps-b" placeholder="e.g. 10-15 or 30s"></div>
+        <div class="field" style="margin:0"><label>Intermediate</label><input type="text" id="mf-reps-i" placeholder="e.g. 15-20"></div>
+        <div class="field" style="margin:0"><label>Advanced</label><input type="text" id="mf-reps-a" placeholder="e.g. 20-25"></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <button class="save-btn" onclick="saveMovement()">💾 Save Movement</button>
+        <button class="del-btn" id="mf-delete-btn" style="display:none" onclick="deleteMovementFromForm()">🗑 Delete</button>
+        <button class="del-btn" onclick="closeMovementForm()">Cancel</button>
+      </div>
     </div>
   </div>
 
@@ -772,16 +819,18 @@ async function loadStats(){
     return;
   }
   try{
-    const[w,r,p,n]=await Promise.all([
+    const[w,r,p,n,mv]=await Promise.all([
       supabaseClient.from('workouts').select('*',{count:'exact',head:true}),
       supabaseClient.from('results').select('*',{count:'exact',head:true}),
       supabaseClient.from('profiles').select('*',{count:'exact',head:true}),
-      supabaseClient.from('workouts').select('*',{count:'exact',head:true}).eq('nomination_pending',true)
+      supabaseClient.from('workouts').select('*',{count:'exact',head:true}).eq('nomination_pending',true),
+      supabaseClient.from('movements').select('*',{count:'exact',head:true})
     ]);
     document.getElementById('stat-workouts').textContent=w.count||0;
     document.getElementById('stat-results').textContent=r.count||0;
     document.getElementById('stat-users').textContent=p.count||0;
     document.getElementById('stat-nominations').textContent=n.count||0;
+    document.getElementById('stat-movements').textContent=mv.count||0;
   }catch(e){console.log('Stats error',e);}
 }
 
@@ -1082,7 +1131,7 @@ function showAdminTab(tab){
   if(tab==='results')loadResults();
   if(tab==='athletes')loadAthletes();
   if(tab==='workouts')loadWorkouts();
-  if(tab==='movements')filterMovements();
+  if(tab==='movements')loadMovementsAdmin();
 }
 
 function showAlert(id,msg,type){
@@ -1256,29 +1305,207 @@ async function deleteWorkout(id,title){
 // ═════════════════════════════════════════════════════════════════
 // MOVEMENTS TAB
 // ═════════════════════════════════════════════════════════════════
-function filterMovements(){
-  const equipment=document.getElementById('movements-equipment').value;
-  const tag=document.getElementById('movements-tag').value;
-  const search=document.getElementById('movements-search').value.toLowerCase();
-  const cats=equipment?[equipment]:Object.keys(MOVEMENT_DB);
-  let all=[];
-  cats.forEach(cat=>{if(MOVEMENT_DB[cat])all.push(...MOVEMENT_DB[cat].map(m=>({...m,category:cat})))});
-  let filtered=all.filter(m=>{
-    if(tag&&(!m.tags||!m.tags.includes(tag)))return false;
-    if(search&&!m.name.toLowerCase().includes(search))return false;
+let movementsData=[];
+
+async function loadMovementsAdmin(){
+  if(!supabaseClient){
+    document.getElementById('movements-table-wrap').innerHTML='<p style="color:var(--mu)">Connect Supabase to manage movements.</p>';
+    return;
+  }
+  try{
+    const category=document.getElementById('movements-category').value;
+    const eligible=document.getElementById('movements-eligible').value;
+    let query=supabaseClient
+      .from('movements')
+      .select('id,name,slug,category,muscles,description,tips,wod_tip,daily_wod_eligible,timed,beginner_reps,intermediate_reps,advanced_reps,equipment_category')
+      .order('category').order('name');
+    if(category)query=query.eq('category',category);
+    if(eligible==='true')query=query.eq('daily_wod_eligible',true);
+    else if(eligible==='false')query=query.eq('daily_wod_eligible',false);
+    const{data,error}=await query;
+    if(error)throw error;
+    movementsData=data||[];
+    renderMovementsTable();
+  }catch(e){
+    showAlert('movements-alert','Error loading movements: '+e.message,'err');
+  }
+}
+
+function renderMovementsTable(){
+  const search=(document.getElementById('movements-search')?.value||'').toLowerCase();
+  const hasDesc=document.getElementById('movements-has-desc')?.value||'';
+  let filtered=movementsData.filter(m=>{
+    if(search&&!m.name.toLowerCase().includes(search)&&!m.slug.toLowerCase().includes(search))return false;
+    if(hasDesc==='yes'&&!m.description)return false;
+    if(hasDesc==='no'&&m.description)return false;
     return true;
   });
   document.getElementById('movements-count').textContent=filtered.length;
-  let html='<div class="movement-grid">';
+  if(!filtered.length){
+    document.getElementById('movements-table-wrap').innerHTML='<p style="color:var(--mu)">No movements match your filters.</p>';
+    return;
+  }
+  let html=`<table class="table"><thead><tr>
+    <th>Name</th><th>Slug</th><th>Category</th><th>Muscles</th>
+    <th>Desc</th><th>Tips</th><th>WOD Eligible</th><th>Actions</th>
+  </tr></thead><tbody>`;
   filtered.forEach(m=>{
-    const reps=(m.b||[])[0];
-    const isTimed=m.timed;
-    html+=`<div class="movement-card"><h4>${escHtml(m.name)}</h4><div class="prop"><label>Category:</label><span>${escHtml(m.category)}</span></div><div class="prop"><label>Beginner:</label><span>${isTimed?m.b[0]:m.b[0]+'-'+m.b[1]}</span></div><div class="prop"><label>Intermediate:</label><span>${isTimed?m.i[0]:m.i[0]+'-'+m.i[1]}</span></div><div class="prop"><label>Advanced:</label><span>${isTimed?m.a[0]:m.a[0]+'-'+m.a[1]}</span></div><div style="color:var(--mu);font-size:11px;margin-top:8px;line-height:1.4">${escHtml(m.tip||'')}</div>`;
-    if(m.tags?.length)html+=`<div class="tags">${m.tags.map(t=>`<span class="tag">${escHtml(t)}</span>`).join('')}</div>`;
-    html+=`</div>`;
+    const tipsCount=Array.isArray(m.tips)?m.tips.length:(m.tips&&typeof m.tips==='object'?Object.keys(m.tips).length:0);
+    html+=`<tr>
+      <td style="font-weight:700">${escHtml(m.name)}</td>
+      <td style="font-size:11px;color:var(--mu)">${escHtml(m.slug)}</td>
+      <td><span class="pill pill-mu" style="font-size:10px">${escHtml(m.category||'')}</span></td>
+      <td style="font-size:12px;color:var(--mu);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(m.muscles||'')}">${escHtml(m.muscles||'—')}</td>
+      <td>${m.description?'<span class="pill pill-gr" style="font-size:10px">✓</span>':'<span class="pill pill-mu" style="font-size:10px">—</span>'}</td>
+      <td style="color:${tipsCount>0?'var(--or)':'var(--mu)'};font-weight:700">${tipsCount>0?tipsCount+' tips':'—'}</td>
+      <td>${m.daily_wod_eligible?'<span class="pill pill-gr">✓ Eligible</span>':'<span class="pill pill-mu">No</span>'}</td>
+      <td><button class="action-btn" onclick="openMovementFormById('${escHtml(m.id)}')">Edit</button></td>
+    </tr>`;
   });
-  html+='</div>';
-  document.getElementById('movements-list').innerHTML=html;
+  html+=`</tbody></table>`;
+  document.getElementById('movements-table-wrap').innerHTML=html;
+}
+
+function parseRepsForDisplay(val){
+  if(val===null||val===undefined)return '';
+  if(typeof val==='string')return val;
+  if(Array.isArray(val))return val.join('-');
+  if(typeof val==='number')return String(val);
+  if(typeof val==='object')return JSON.stringify(val);
+  return String(val);
+}
+
+function parseRepsForSave(str){
+  str=str.trim();
+  if(!str)return null;
+  if(/^\d+-\d+$/.test(str)){const[a,b]=str.split('-').map(Number);return[a,b];}
+  if(/^\d+$/.test(str))return Number(str);
+  return str; // e.g. "30s"
+}
+
+function openMovementFormById(id){
+  const m=movementsData.find(x=>x.id===id);
+  if(m)openMovementForm(m);
+}
+
+function autoSlug(){
+  const name=document.getElementById('mf-name').value;
+  // Only auto-fill if slug is empty or was previously auto-filled
+  const slugEl=document.getElementById('mf-slug');
+  if(!slugEl.dataset.manual){
+    slugEl.value=name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  }
+}
+
+function openMovementForm(m){
+  const section=document.getElementById('movement-form-section');
+  const titleEl=document.getElementById('movement-form-title');
+  const delBtn=document.getElementById('mf-delete-btn');
+  document.getElementById('movement-form-alert').classList.remove('vis');
+
+  // m can be null (create) or a movement object (edit)
+
+  if(m){
+    // Edit mode
+    titleEl.textContent='✏️ Edit Movement';
+    delBtn.style.display='inline-block';
+    document.getElementById('mf-id').value=m.id||'';
+    document.getElementById('mf-name').value=m.name||'';
+    document.getElementById('mf-slug').value=m.slug||'';
+    document.getElementById('mf-slug').dataset.manual='1';
+    document.getElementById('mf-category').value=m.category||'fullbody';
+    document.getElementById('mf-equipment-cat').value=m.equipment_category||'';
+    document.getElementById('mf-muscles').value=m.muscles||'';
+    document.getElementById('mf-description').value=m.description||'';
+    const tips=Array.isArray(m.tips)?m.tips.join('\n'):'';
+    document.getElementById('mf-tips').value=tips;
+    document.getElementById('mf-wod-tip').value=m.wod_tip||'';
+    document.getElementById('mf-eligible').checked=!!m.daily_wod_eligible;
+    document.getElementById('mf-timed').checked=!!m.timed;
+    document.getElementById('mf-reps-b').value=parseRepsForDisplay(m.beginner_reps);
+    document.getElementById('mf-reps-i').value=parseRepsForDisplay(m.intermediate_reps);
+    document.getElementById('mf-reps-a').value=parseRepsForDisplay(m.advanced_reps);
+  }else{
+    // Create mode
+    titleEl.textContent='➕ Add Movement';
+    delBtn.style.display='none';
+    document.getElementById('mf-id').value='';
+    document.getElementById('mf-name').value='';
+    document.getElementById('mf-slug').value='';
+    delete document.getElementById('mf-slug').dataset.manual;
+    document.getElementById('mf-category').value='fullbody';
+    document.getElementById('mf-equipment-cat').value='';
+    document.getElementById('mf-muscles').value='';
+    document.getElementById('mf-description').value='';
+    document.getElementById('mf-tips').value='';
+    document.getElementById('mf-wod-tip').value='';
+    document.getElementById('mf-eligible').checked=false;
+    document.getElementById('mf-timed').checked=false;
+    document.getElementById('mf-reps-b').value='';
+    document.getElementById('mf-reps-i').value='';
+    document.getElementById('mf-reps-a').value='';
+  }
+
+  section.style.display='block';
+  section.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function closeMovementForm(){
+  document.getElementById('movement-form-section').style.display='none';
+}
+
+async function saveMovement(){
+  const id=document.getElementById('mf-id').value;
+  const name=document.getElementById('mf-name').value.trim();
+  const slug=document.getElementById('mf-slug').value.trim();
+  if(!name||!slug){showAlert('movement-form-alert','Name and slug are required.','err');return;}
+
+  const tipsRaw=document.getElementById('mf-tips').value;
+  const tips=tipsRaw.split('\n').map(t=>t.trim()).filter(t=>t);
+
+  const row={
+    name,
+    slug,
+    category:document.getElementById('mf-category').value,
+    equipment_category:document.getElementById('mf-equipment-cat').value.trim()||null,
+    muscles:document.getElementById('mf-muscles').value.trim()||null,
+    description:document.getElementById('mf-description').value.trim()||null,
+    tips:tips,
+    wod_tip:document.getElementById('mf-wod-tip').value.trim()||null,
+    daily_wod_eligible:document.getElementById('mf-eligible').checked,
+    timed:document.getElementById('mf-timed').checked,
+    beginner_reps:parseRepsForSave(document.getElementById('mf-reps-b').value),
+    intermediate_reps:parseRepsForSave(document.getElementById('mf-reps-i').value),
+    advanced_reps:parseRepsForSave(document.getElementById('mf-reps-a').value),
+  };
+
+  if(!supabaseClient){showAlert('movement-form-alert','Connect Supabase to save movements.','err');return;}
+
+  let error;
+  if(id){
+    ({error}=await supabaseClient.from('movements').update(row).eq('id',id));
+  }else{
+    ({error}=await supabaseClient.from('movements').insert(row));
+  }
+
+  if(error){showAlert('movement-form-alert','Error: '+error.message,'err');return;}
+
+  showAlert('movement-form-alert',id?'Movement updated!':'Movement created!','ok');
+  showAlert('movements-alert',id?'Movement updated!':'Movement created!','ok');
+  closeMovementForm();
+  await loadMovementsAdmin();
+}
+
+async function deleteMovementFromForm(){
+  const id=document.getElementById('mf-id').value;
+  const name=document.getElementById('mf-name').value;
+  if(!id||!confirm(`Delete movement "${name}"? This cannot be undone.`))return;
+  if(!supabaseClient)return;
+  const{error}=await supabaseClient.from('movements').delete().eq('id',id);
+  if(error){showAlert('movement-form-alert','Error: '+error.message,'err');return;}
+  showAlert('movements-alert','Movement deleted.','ok');
+  closeMovementForm();
+  await loadMovementsAdmin();
 }
 </script>
 </body>
