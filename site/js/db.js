@@ -489,5 +489,67 @@ const db = {
       w.title.toLowerCase().includes(query.toLowerCase()) ||
       w.description.toLowerCase().includes(query.toLowerCase())
     );
+  },
+
+  // ===== BENCHMARK WORKOUTS =====
+
+  async getBenchmarkBySlug(slug) {
+    if (!supabaseClient) {
+      return (typeof BENCHMARKS !== 'undefined') ? BENCHMARKS.find(b => b.slug === slug) || null : null;
+    }
+    const { data, error } = await supabaseClient
+      .from('benchmark_workouts')
+      .select('*')
+      .eq('slug', slug)
+      .single();
+    if (error || !data) {
+      // Fallback to JS array
+      return (typeof BENCHMARKS !== 'undefined') ? BENCHMARKS.find(b => b.slug === slug) || null : null;
+    }
+    return data;
+  },
+
+  async getAllBenchmarks() {
+    if (!supabaseClient) {
+      return (typeof BENCHMARKS !== 'undefined') ? BENCHMARKS : [];
+    }
+    const { data, error } = await supabaseClient
+      .from('benchmark_workouts')
+      .select('*')
+      .order('category', { ascending: true })
+      .order('name', { ascending: true });
+    if (error || !data || data.length === 0) {
+      return (typeof BENCHMARKS !== 'undefined') ? BENCHMARKS : [];
+    }
+    return data;
+  },
+
+  async saveBenchmark(benchmarkData) {
+    if (!supabaseClient) return { error: new Error('Not available in demo mode') };
+    const { id, ...rest } = benchmarkData;
+    rest.updated_at = new Date().toISOString();
+    if (id) {
+      const { data, error } = await supabaseClient
+        .from('benchmark_workouts')
+        .update(rest)
+        .eq('id', id)
+        .select();
+      return { data: data?.[0], error };
+    } else {
+      const { data, error } = await supabaseClient
+        .from('benchmark_workouts')
+        .insert([rest])
+        .select();
+      return { data: data?.[0], error };
+    }
+  },
+
+  async deleteBenchmark(id) {
+    if (!supabaseClient) return { error: new Error('Not available in demo mode') };
+    const { error } = await supabaseClient
+      .from('benchmark_workouts')
+      .delete()
+      .eq('id', id);
+    return { error };
   }
 };
