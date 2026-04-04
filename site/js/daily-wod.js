@@ -273,6 +273,22 @@ const DailyWOD = {
       if (!rem.length) break;
       result.push(rem[Math.floor(rng() * rem.length)]);
     }
+
+    // Guarantee at least one equipment movement when equipment is in the pool
+    const hasEquipInResult = result.some(m => m._eq && m._eq !== 'bodyweight');
+    const equipInPool = pool.filter(m => m._eq && m._eq !== 'bodyweight');
+    if (!hasEquipInResult && equipInPool.length > 0) {
+      // Pick a random equipment movement from the pool
+      const eqPick = equipInPool[Math.floor(rng() * equipInPool.length)];
+      // Find a bodyweight movement in result that shares a tag with the equipment pick,
+      // so we maintain muscle-group balance when swapping
+      const eqTags = eqPick.tags || [];
+      let swapIdx = result.findIndex(m => m._eq === 'bodyweight' && m.tags && m.tags.some(t => eqTags.includes(t)));
+      // If no tag overlap, swap the last bodyweight slot
+      if (swapIdx === -1) swapIdx = result.length - 1;
+      result[swapIdx] = eqPick;
+    }
+
     return result;
   },
 
