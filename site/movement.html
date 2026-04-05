@@ -12,6 +12,9 @@
   <script src="/js/config.js"></script>
   <script src="/js/db.js"></script>
   <script src="/js/benchmarks.js"></script>
+  <script src="/js/movements.js"></script>
+  <script src="/js/movement-db.js"></script>
+  <script src="/js/daily-wod.js"></script>
   <script src="/js/nav.js"></script>
   <style>
     .movement-hero {
@@ -95,6 +98,52 @@
 
   function titleCase(slug) {
     return slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  }
+
+  // ── Generate the last N daily WODs algorithmically (same engine as workouts.html) ──
+  async function generateRecentDailyWods(days) {
+    if (typeof DailyWOD === 'undefined') return [];
+    const wods = [];
+    const today = new Date();
+    const [config, movementDB] = await Promise.all([
+      DailyWOD.getConfig().catch(() => DailyWOD.defaultConfig),
+      DailyWOD._loadMovements().catch(() => ({}))
+    ]);
+    for (let i = 0; i < days; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      try {
+        const dayOfWeek = new Date(dateStr + 'T12:00:00').getDay();
+        const seed      = DailyWOD.getSeedForDate(dateStr);
+        const rng       = DailyWOD.seededRng(seed);
+        const difficulty = config.difficultyByDay[dayOfWeek] || 'intermediate';
+        const bodyFocus  = config.bodyFocusByDay[dayOfWeek]  || 'full-body';
+        const format     = config.formatByDay[dayOfWeek]     || 'amrap';
+        const durRange   = config.durationByDay[dayOfWeek]   || [20, 30];
+        const duration   = durRange[0] + Math.floor(rng() * (durRange[1] - durRange[0] + 1));
+        const equipment  = config.equipment || ['bodyweight'];
+        const pool = DailyWOD._buildPool(equipment, difficulty, bodyFocus, rng, movementDB);
+        let wod;
+        if (format === 'amrap')        wod = DailyWOD._genAMRAP(pool, difficulty, duration, bodyFocus, rng);
+        else if (format === 'emom')    wod = DailyWOD._genEMOM(pool, difficulty, duration, bodyFocus, rng);
+        else if (format === 'fortime') wod = DailyWOD._genForTime(pool, difficulty, rng);
+        else                           wod = DailyWOD._genCircuit(pool, difficulty, duration, bodyFocus, rng);
+        if (wod) {
+          const dateLabel = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+          wods.push({
+            name: `Daily WOD \u2014 ${dateLabel}`,
+            category: 'daily',
+            format: wod.format,
+            difficulty,
+            body_focus: bodyFocus,
+            movements: (wod.rows || []).map(r => ({ name: r.movement, reps: r.reps })),
+            _date: dateStr,
+          });
+        }
+      } catch (e) { /* skip this date */ }
+    }
+    return wods;
   }
 
   // ── Movement family map: slug → variant slugs that count as the same movement
@@ -209,8 +258,22 @@
       // silent fail
     }
 
+    // Daily WODs — generate last 60 days and filter for this movement
+    let matchingDailyWods = [];
+    try {
+      const recentDailyWods = await generateRecentDailyWods(60);
+      matchingDailyWods = recentDailyWods.filter(w =>
+        w.movements && w.movements.some(m => {
+          const ms = slugify(m.name || '');
+          return ms === slug || family.includes(ms);
+        })
+      );
+    } catch (e) {
+      // silent fail — daily WOD section is optional
+    }
+
     // ── 5. Render workout count + cards ──────────────────────────────────────
-    const totalCount = matchingBenchmarks.length + matchingUserWorkouts.length;
+    const totalCount = matchingBenchmarks.length + matchingUserWorkouts.length + matchingDailyWods.length;
     document.getElementById('workout-count').textContent = totalCount;
 
     if (totalCount === 0) {
@@ -277,7 +340,26 @@
       `;
       }).join('');
 
-      document.getElementById('workouts-grid').innerHTML = benchmarkCards + userCards;
+      const dailyWodCards = matchingDailyWods.map(w => `
+        <a href="/daily-wod.html?date=${w._date}" style="text-decoration: none;">
+          <div class="card">
+            <h4>${w.name}</h4>
+            <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 0.4rem;">
+              ${formatWodMeta(w)}
+            </p>
+            <p style="font-size: 0.85rem; color: var(--text-muted, #888); margin-bottom: 0.75rem;">
+              ${summarizeMovements(w)}
+            </p>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+              <span class="badge badge-orange">${w.difficulty}</span>
+              <span class="badge badge-orange">${w.body_focus}</span>
+              <span class="badge">Daily WOD</span>
+            </div>
+          </div>
+        </a>
+      `).join('');
+
+      document.getElementById('workouts-grid').innerHTML = benchmarkCards + userCards + dailyWodCards;
     }
 
     document.getElementById('movement-content').style.display = '';
