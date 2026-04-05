@@ -178,8 +178,15 @@
     // ── 4. Find matching workouts ─────────────────────────────────────────────
     const family = MOVEMENT_FAMILIES[slug] || [];
 
-    // Benchmarks (from benchmarks.js — still JS until Step 1b)
-    const matchingBenchmarks = (typeof BENCHMARKS !== 'undefined' ? BENCHMARKS : []).filter(b =>
+    // Benchmarks — read from Supabase (all 107 WODs); fall back to JS array
+    let allBenchmarks = [];
+    try {
+      allBenchmarks = await db.getAllBenchmarks();
+    } catch (e) {
+      allBenchmarks = (typeof BENCHMARKS !== 'undefined') ? BENCHMARKS : [];
+    }
+
+    const matchingBenchmarks = allBenchmarks.filter(b =>
       b.movements && b.movements.some(m => {
         const ms = slugify(m.name || '');
         return ms === slug || family.includes(ms);
@@ -214,25 +221,35 @@
         </div>
       `;
     } else {
-      const benchmarkCards = matchingBenchmarks.map(w => `
+      const CATEGORY_LABELS = {
+        girl:      ['badge', 'The Girls'],
+        hero:      ['badge', 'Hero WOD'],
+        open:      ['badge', 'Open WOD'],
+        games:     ['badge', 'Games WOD'],
+        partner:   ['badge', 'Partner WOD'],
+        benchmark: ['badge-benchmark', 'Benchmark'],
+      };
+
+      const benchmarkCards = matchingBenchmarks.map(w => {
+        const [badgeClass, badgeLabel] = CATEGORY_LABELS[w.category] || ['badge', w.category];
+        return `
         <a href="/workout.html?slug=${w.slug}" style="text-decoration: none;">
           <div class="card">
             <h4>${w.name}</h4>
             <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 0.4rem;">
               ${formatWodMeta(w)}
             </p>
-            <p style="font-size: 0.85rem; color: var(--mu, #888); margin-bottom: 0.75rem;">
+            <p style="font-size: 0.85rem; color: var(--text-muted, #888); margin-bottom: 0.75rem;">
               ${summarizeMovements(w)}
             </p>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
               <span class="badge badge-orange">${w.difficulty}</span>
               <span class="badge badge-orange">${w.body_focus}</span>
-              ${w.category === 'girl' ? '<span class="badge">The Girls</span>' : ''}
-              ${w.category === 'hero' ? '<span class="badge">Hero WOD</span>' : ''}
+              <span class="${badgeClass}">${badgeLabel}</span>
             </div>
           </div>
         </a>
-      `).join('');
+      `}).join('');
 
       const userCards = matchingUserWorkouts.map(w => {
         const normalizedW = {
