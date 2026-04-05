@@ -236,8 +236,11 @@
     if (typeof DailyWOD === 'undefined') return [];
     const wods = [];
     const today = new Date();
-    // Fetch config once to avoid repeated Supabase calls
-    const config = await DailyWOD.getConfig().catch(() => DailyWOD.defaultConfig);
+    // Fetch config and movements once to avoid repeated Supabase calls in the loop
+    const [config, movementDB] = await Promise.all([
+      DailyWOD.getConfig().catch(() => DailyWOD.defaultConfig),
+      DailyWOD._loadMovements().catch(() => ({}))
+    ]);
     for (let i = 0; i < days; i++) {
       const d = new Date(today);
       d.setDate(today.getDate() - i);
@@ -252,7 +255,8 @@
         const durRange   = config.durationByDay[dayOfWeek]   || [20, 30];
         const duration   = durRange[0] + Math.floor(rng() * (durRange[1] - durRange[0] + 1));
         const equipment  = config.equipment || ['bodyweight'];
-        const pool = DailyWOD._buildPool(equipment, difficulty, bodyFocus, rng);
+        // Pass pre-loaded movementDB so this loop makes zero extra Supabase calls
+        const pool = DailyWOD._buildPool(equipment, difficulty, bodyFocus, rng, movementDB);
         let wod;
         if (format === 'amrap')        wod = DailyWOD._genAMRAP(pool, difficulty, duration, bodyFocus, rng);
         else if (format === 'emom')    wod = DailyWOD._genEMOM(pool, difficulty, duration, bodyFocus, rng);
