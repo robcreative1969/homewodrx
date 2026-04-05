@@ -1,3 +1,9 @@
 {
-  "outputDirectory": "site"
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/u/:username",     "destination": "/profile.html?user=:username"   },
+    { "source": "/movements/:slug", "destination": "/movement.html?slug=:slug"      },
+    { "source": "/workouts/:slug",  "destination": "/workout.html?slug=:slug"       }
+  ]
 }
