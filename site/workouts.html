@@ -342,19 +342,21 @@
     container.innerHTML = displayed.map(w => {
       const isUser    = w.category === 'user';
       const isDaily   = w.category === 'daily';
-      const isOpen    = w.category === 'open';
-      const isGames   = w.category === 'games';
-      const isPartner = w.category === 'partner';
       const href = isDaily
         ? `/daily-wod.html?date=${w._date}`
         : (isUser ? `/workout.html?id=${w.id}` : `/workout.html?slug=${w.slug}`);
       const categoryBadge = (() => {
-        if (isUser)    return '<span class="badge badge-success">Community</span>';
-        if (isDaily)   return '<span class="badge badge-orange">Daily WOD</span>';
-        if (isOpen)    return '<span class="badge" style="background:rgba(99,102,241,0.15);color:#818cf8;border:1px solid rgba(99,102,241,0.3);">Open WOD</span>';
-        if (isGames)   return '<span class="badge" style="background:rgba(234,179,8,0.15);color:#eab308;border:1px solid rgba(234,179,8,0.3);">Games WOD</span>';
-        if (isPartner) return '<span class="badge" style="background:rgba(20,184,166,0.15);color:#14b8a6;border:1px solid rgba(20,184,166,0.3);">Partner WOD</span>';
-        return '';
+        switch (w.category) {
+          case 'girl':      return '<span class="badge badge-girl">Girl WOD</span>';
+          case 'hero':      return '<span class="badge badge-hero">Hero WOD</span>';
+          case 'open':      return '<span class="badge badge-open">Open WOD</span>';
+          case 'games':     return '<span class="badge badge-games">Games WOD</span>';
+          case 'partner':   return '<span class="badge badge-partner">Partner WOD</span>';
+          case 'benchmark': return '<span class="badge badge-benchmark">Benchmark</span>';
+          case 'user':      return '<span class="badge badge-success">Community</span>';
+          case 'daily':     return '<span class="badge badge-orange">Daily WOD</span>';
+          default:          return '';
+        }
       })();
       return `
         <a href="${href}" style="text-decoration: none;">
