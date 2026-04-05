@@ -4,7 +4,6 @@
   "rewrites": [
     { "source": "/u/:username",       "destination": "/profile.html?user=:username" },
     { "source": "/movements/:slug",   "destination": "/movement.html?slug=:slug"    },
-    { "source": "/workouts/:slug",    "destination": "/workout.html?slug=:slug"     },
-    { "source": "/sitemap.xml",       "destination": "/api/sitemap"                 }
+    { "source": "/workouts/:slug",    "destination": "/workout.html?slug=:slug"     }
   ]
 }
