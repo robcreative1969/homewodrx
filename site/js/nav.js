@@ -20,6 +20,17 @@ const Nav = {
 
     // Attach event listeners
     this.attachEventListeners();
+
+    // Load search module in background (non-blocking)
+    this.loadSearchScript();
+  },
+
+  loadSearchScript() {
+    if (window.Search) return; // already loaded
+    const script = document.createElement('script');
+    script.src = '/js/search.js';
+    // search.js self-inits on load; no callback needed
+    document.head.appendChild(script);
   },
 
   async ensureSupabase() {
@@ -44,7 +55,6 @@ const Nav = {
       { text: 'Workouts', href: '/workouts.html', page: 'workouts' },
       { text: 'Movements', href: '/movements.html', page: 'movements' },
       { text: 'Generator', href: '/generator.html', page: 'generator' },
-      { text: 'Search', href: '/search.html', page: 'search' },
       { text: 'Leaderboard', href: '/leaderboard.html', page: 'leaderboard' }
     ];
 
@@ -81,6 +91,9 @@ const Nav = {
         <div class="nav-links">
           ${linksHtml}
         </div>
+        <button id="nav-search-btn" aria-label="Search (/ or Ctrl+K)" title="Search (/ or Ctrl+K)">
+          🔍 <span class="srch-shortcut-hint">/</span>
+        </button>
         <div class="nav-auth">
           ${authHtml}
         </div>
@@ -101,6 +114,22 @@ const Nav = {
         e.preventDefault();
         await db.signOut();
         window.location.href = '/';
+      });
+    }
+
+    const searchBtn = document.getElementById('nav-search-btn');
+    if (searchBtn) {
+      searchBtn.addEventListener('click', () => {
+        // Search.open() is available once search.js finishes loading.
+        // If clicked immediately on a slow connection, wait briefly.
+        if (window.Search) {
+          window.Search.open();
+        } else {
+          // Script still loading — open once ready
+          const wait = setInterval(() => {
+            if (window.Search) { clearInterval(wait); window.Search.open(); }
+          }, 50);
+        }
       });
     }
   }
