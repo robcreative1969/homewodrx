@@ -209,19 +209,6 @@
       // Load benchmarks from Supabase (falls back to BENCHMARKS JS array if Supabase unavailable)
       allWorkouts = await db.getAllBenchmarks();
 
-      // Update type filter chips with live counts from Supabase
-      const categoryCounts = {};
-      for (const w of allWorkouts) {
-        if (w.category) categoryCounts[w.category] = (categoryCounts[w.category] || 0) + 1;
-      }
-      document.querySelectorAll('#type-filters .chip[data-type]').forEach(chip => {
-        const type = chip.dataset.type;
-        if (type && type !== 'all' && type !== 'user' && type !== 'daily' && categoryCounts[type]) {
-          chip.dataset.label = chip.textContent.trim(); // save original label
-          chip.textContent = `${chip.textContent.trim()} (${categoryCounts[type]})`;
-        }
-      });
-
       const userWorkouts = await db.getWorkouts({ isPublic: true, limit: 1000 });
       if (userWorkouts && userWorkouts.length > 0) {
         allWorkouts = allWorkouts.concat(userWorkouts.map(w => ({
@@ -239,6 +226,18 @@
       if (dailyWods.length > 0) {
         allWorkouts = allWorkouts.concat(dailyWods);
       }
+
+      // Update type filter chips with live counts — runs after all sources are loaded
+      const categoryCounts = {};
+      for (const w of allWorkouts) {
+        if (w.category) categoryCounts[w.category] = (categoryCounts[w.category] || 0) + 1;
+      }
+      document.querySelectorAll('#type-filters .chip[data-type]').forEach(chip => {
+        const type = chip.dataset.type;
+        if (type && type !== 'all' && categoryCounts[type]) {
+          chip.textContent = `${chip.textContent.trim()} (${categoryCounts[type]})`;
+        }
+      });
 
       applyFilters();
     } catch (error) {
