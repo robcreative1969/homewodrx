@@ -674,10 +674,14 @@ function difficultyBadge(d) {
 }
 
 function categoryBadge(cat) {
-  if (cat === 'girl')      return '<span class="badge badge-orange">The Girls</span>';
-  if (cat === 'hero')      return '<span class="badge badge-danger">Hero WOD</span>';
+  if (cat === 'girl')      return '<span class="badge badge-girl">Girl WOD</span>';
+  if (cat === 'hero')      return '<span class="badge badge-hero">Hero WOD</span>';
+  if (cat === 'open')      return '<span class="badge badge-open">Open WOD</span>';
+  if (cat === 'games')     return '<span class="badge badge-games">Games WOD</span>';
+  if (cat === 'partner')   return '<span class="badge badge-partner">Partner WOD</span>';
+  if (cat === 'benchmark') return '<span class="badge badge-benchmark">Benchmark</span>';
   if (cat === 'user')      return '<span class="badge badge-success">Community</span>';
-  if (cat === 'benchmark') return '<span class="badge">Benchmark</span>';
+  if (cat === 'daily')     return '<span class="badge badge-orange">Daily WOD</span>';
   return '';
 }
 

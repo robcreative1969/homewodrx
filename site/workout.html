@@ -211,13 +211,24 @@
 
   function renderWorkoutHeader() {
     const w = currentWorkout;
-    const isBenchmark = w.category && ['girl', 'hero', 'benchmark'].includes(w.category);
     const createdBy = w.username ? `Created by ${w.username}` : '';
+    const categoryBadgeMap = {
+      girl:      '<span class="badge badge-girl">Girl WOD</span>',
+      hero:      '<span class="badge badge-hero">Hero WOD</span>',
+      open:      '<span class="badge badge-open">Open WOD</span>',
+      games:     '<span class="badge badge-games">Games WOD</span>',
+      partner:   '<span class="badge badge-partner">Partner WOD</span>',
+      benchmark: '<span class="badge badge-benchmark">Benchmark</span>',
+      user:      '<span class="badge badge-success">Community</span>',
+      daily:     '<span class="badge badge-orange">Daily WOD</span>',
+    };
+    const categoryBadge = categoryBadgeMap[w.category] || '';
     document.getElementById('workout-header').innerHTML = `
       <div style="padding: 2rem 0; margin-bottom: 2rem; border-bottom: 1px solid var(--dark-border);">
         <h1>${w.title || w.name}</h1>
-        <p class="text-muted">${isBenchmark ? (w.category==='girl'?'Girl WOD':w.category==='hero'?'Hero WOD':'Benchmark'):'Community WOD'} ${createdBy ? '- '+createdBy:''}</p>
+        ${createdBy ? `<p class="text-muted">${createdBy}</p>` : ''}
         <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem;">
+          ${categoryBadge}
           <span class="badge badge-orange">${w.format}</span>
           <span class="badge badge-orange">${w.duration_estimate}</span>
           <span class="badge badge-orange">${w.difficulty}</span>

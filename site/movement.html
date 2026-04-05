@@ -287,12 +287,12 @@
       `;
     } else {
       const CATEGORY_LABELS = {
-        girl:      ['badge', 'The Girls'],
-        hero:      ['badge', 'Hero WOD'],
-        open:      ['badge', 'Open WOD'],
-        games:     ['badge', 'Games WOD'],
-        partner:   ['badge', 'Partner WOD'],
-        benchmark: ['badge-benchmark', 'Benchmark'],
+        girl:      ['badge badge-girl', 'Girl WOD'],
+        hero:      ['badge badge-hero', 'Hero WOD'],
+        open:      ['badge badge-open', 'Open WOD'],
+        games:     ['badge badge-games', 'Games WOD'],
+        partner:   ['badge badge-partner', 'Partner WOD'],
+        benchmark: ['badge badge-benchmark', 'Benchmark'],
       };
 
       const benchmarkCards = matchingBenchmarks.map(w => {
@@ -333,7 +333,7 @@
             </p>
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
               <span class="badge badge-orange">${w.difficulty || w.level || 'intermediate'}</span>
-              <span class="badge">Community</span>
+              <span class="badge badge-success">Community</span>
             </div>
           </div>
         </a>
@@ -353,7 +353,7 @@
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
               <span class="badge badge-orange">${w.difficulty}</span>
               <span class="badge badge-orange">${w.body_focus}</span>
-              <span class="badge">Daily WOD</span>
+              <span class="badge badge-orange">Daily WOD</span>
             </div>
           </div>
         </a>
