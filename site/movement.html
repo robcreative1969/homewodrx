@@ -164,6 +164,11 @@
         ${info?.muscles
           ? `<p style="margin-top: 0.75rem;"><strong>Primary muscles:</strong> <span class="text-muted">${info.muscles}</span></p>`
           : ''}
+        ${info?.daily_wod_eligible
+          ? `<p style="margin-top: 0.75rem; font-size: 0.88rem; color: var(--text-muted, #888);">
+               ⚡ Part of the <a href="/daily-wod.html" style="color: var(--orange, #f97316); text-decoration: none;">Daily WOD</a> rotation
+             </p>`
+          : ''}
       </div>
       ${tips.length ? `
         <div class="movement-tips">
@@ -204,11 +209,8 @@
       // silent fail
     }
 
-    // Daily WOD eligibility comes from the database now
-    const isInDailyWOD = info?.daily_wod_eligible === true;
-
     // ── 5. Render workout count + cards ──────────────────────────────────────
-    const totalCount = matchingBenchmarks.length + matchingUserWorkouts.length + (isInDailyWOD ? 1 : 0);
+    const totalCount = matchingBenchmarks.length + matchingUserWorkouts.length;
     document.getElementById('workout-count').textContent = totalCount;
 
     if (totalCount === 0) {
@@ -275,22 +277,7 @@
       `;
       }).join('');
 
-      const dailyWodCard = isInDailyWOD ? `
-        <a href="/daily-wod.html" style="text-decoration: none;">
-          <div class="card">
-            <h4>Daily WOD</h4>
-            <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 0.75rem;">
-              Random &bull; Daily
-            </p>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <span class="badge badge-orange">All Levels</span>
-              <span class="badge">Daily WOD</span>
-            </div>
-          </div>
-        </a>
-      ` : '';
-
-      document.getElementById('workouts-grid').innerHTML = benchmarkCards + userCards + dailyWodCard;
+      document.getElementById('workouts-grid').innerHTML = benchmarkCards + userCards;
     }
 
     document.getElementById('movement-content').style.display = '';
