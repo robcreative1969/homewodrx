@@ -574,6 +574,11 @@ const Search = (() => {
 
 })();
 
+// Expose globally so nav.js can call Search.open() from its click handler.
+// (const/let at the top level of a browser script do NOT attach to window —
+//  only var does, so we assign explicitly.)
+window.Search = Search;
+
 // Auto-init after DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => Search.init());
