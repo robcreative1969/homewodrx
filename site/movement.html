@@ -218,8 +218,11 @@
         <a href="/workout.html?slug=${w.slug}" style="text-decoration: none;">
           <div class="card">
             <h4>${w.name}</h4>
-            <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 0.75rem;">
-              ${w.format} &bull; ${w.duration_estimate}
+            <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 0.4rem;">
+              ${formatWodMeta(w)}
+            </p>
+            <p style="font-size: 0.85rem; color: var(--mu, #888); margin-bottom: 0.75rem;">
+              ${summarizeMovements(w)}
             </p>
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
               <span class="badge badge-orange">${w.difficulty}</span>
@@ -231,12 +234,20 @@
         </a>
       `).join('');
 
-      const userCards = matchingUserWorkouts.map(w => `
+      const userCards = matchingUserWorkouts.map(w => {
+        const normalizedW = {
+          ...w,
+          movements: (w.movements || []).map(m => ({ ...m, name: m.name || m.movement || '' }))
+        };
+        return `
         <a href="/workout.html?id=${w.id}" style="text-decoration: none;">
           <div class="card">
             <h4>${w.title || w.name || 'Community WOD'}</h4>
-            <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 0.75rem;">
+            <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 0.4rem;">
               ${w.format || 'Custom'} ${w.username ? '&bull; by ' + w.username : ''}
+            </p>
+            <p style="font-size: 0.85rem; color: var(--mu, #888); margin-bottom: 0.75rem;">
+              ${summarizeMovements(normalizedW)}
             </p>
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
               <span class="badge badge-orange">${w.difficulty || w.level || 'intermediate'}</span>
@@ -244,7 +255,8 @@
             </div>
           </div>
         </a>
-      `).join('');
+      `;
+      }).join('');
 
       const dailyWodCard = isInDailyWOD ? `
         <a href="/daily-wod.html" style="text-decoration: none;">
