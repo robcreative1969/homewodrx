@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Workout - HomeWODrx</title>
   <meta name="description" content="View detailed workout information and log your results.">
+  <meta property="og:title" content="Workout - HomeWODrx">
+  <meta property="og:description" content="View this CrossFit workout, see movements and scaling, and log your result on HomeWODrx.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://homewodrx.com/workouts/" id="og-url">
+  <link rel="canonical" href="https://homewodrx.com/workouts/" id="canonical-url">
   <link rel="stylesheet" href="/css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="/js/config.js"></script>
@@ -219,6 +224,24 @@
 
   let isBenchmark = false;
 
+  // ── SEO helpers ──────────────────────────────────────────────────────────────
+  function injectJsonLd(data) {
+    const existing = document.getElementById('structured-data');
+    if (existing) existing.remove();
+    const script = document.createElement('script');
+    script.id = 'structured-data';
+    script.type = 'application/ld+json';
+    script.textContent = JSON.stringify(data);
+    document.head.appendChild(script);
+  }
+
+  // Read slug from path (/workouts/:slug) or query param (?slug=)
+  function getWorkoutSlug() {
+    const pathMatch = window.location.pathname.match(/\/workouts\/([^\/]+)/);
+    if (pathMatch) return decodeURIComponent(pathMatch[1]);
+    return new URLSearchParams(window.location.search).get('slug');
+  }
+
   // ── YouTube helpers ──────────────────────────────────────────────────────────
   function extractYouTubeId(url) {
     if (!url) return null;
@@ -243,9 +266,8 @@
   }
 
   async function loadWorkout() {
-    const params = new URLSearchParams(window.location.search);
-    const slug = params.get('slug');
-    const id = params.get('id');
+    const slug = getWorkoutSlug();
+    const id = new URLSearchParams(window.location.search).get('id');
     try {
       if (slug) {
         currentWorkout = await db.getBenchmarkBySlug(slug);
@@ -257,8 +279,53 @@
         if (!currentWorkout) { const wh=document.getElementById('workout-header'); wh.classList.remove('loading'); wh.innerHTML = '<p class="text-muted">Workout not found.</p>'; return; }
       }
       renderWorkoutHeader(); renderWorkoutDetails(); renderRelatedWorkouts(); loadLeaderboard();
-      document.title = `${currentWorkout.title || currentWorkout.name} - HomeWODrx`;
-      document.querySelector('meta[name="description"]').setAttribute('content', `${currentWorkout.name}: ${currentWorkout.description ? currentWorkout.description.substring(0,155) : 'View this CrossFit workout on HomeWODrx.'}`);
+
+      const wName = currentWorkout.title || currentWorkout.name;
+      const wDesc = currentWorkout.description
+        ? currentWorkout.description.substring(0, 155)
+        : `View this CrossFit workout on HomeWODrx.`;
+
+      document.title = `${wName} CrossFit Workout | HomeWODrx`;
+      document.querySelector('meta[name="description"]').setAttribute('content', `${wName}: ${wDesc}`);
+      document.querySelector('meta[property="og:title"]').setAttribute('content', `${wName} | HomeWODrx`);
+      document.querySelector('meta[property="og:description"]').setAttribute('content', `${wName}: ${wDesc}`);
+
+      // Canonical + og:url — pretty path for benchmarks, query-param for user workouts
+      const canonicalPath = (isBenchmark && currentWorkout.slug)
+        ? (window.location.pathname.startsWith('/workouts/')
+            ? `https://homewodrx.com/workouts/${currentWorkout.slug}`
+            : `https://homewodrx.com/workout?slug=${currentWorkout.slug}`)
+        : `https://homewodrx.com/workout?id=${id}`;
+      document.getElementById('canonical-url').href = canonicalPath;
+      document.querySelector('meta[property="og:url"]').setAttribute('content', canonicalPath);
+
+      // JSON-LD structured data
+      const movementNames = (currentWorkout.movements || []).map(m => m.name || m.movement || '').filter(Boolean);
+      const ldData = [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'ExercisePlan',
+          'name': `${wName} CrossFit Workout`,
+          'description': currentWorkout.description || `${wName} is a CrossFit ${currentWorkout.format || 'workout'}.`,
+          'url': canonicalPath,
+          'exerciseType': `CrossFit — ${currentWorkout.format || 'Workout'}`,
+          ...(currentWorkout.duration_estimate ? { 'activityDuration': currentWorkout.duration_estimate } : {}),
+          ...(movementNames.length ? {
+            'workExample': movementNames.map(n => ({ '@type': 'ExerciseAction', 'name': n }))
+          } : {}),
+        },
+        {
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          'itemListElement': [
+            { '@type': 'ListItem', 'position': 1, 'name': 'Home',     'item': 'https://homewodrx.com/' },
+            { '@type': 'ListItem', 'position': 2, 'name': 'Workouts', 'item': 'https://homewodrx.com/workouts' },
+            { '@type': 'ListItem', 'position': 3, 'name': wName,      'item': canonicalPath },
+          ],
+        },
+      ];
+      injectJsonLd(ldData);
+
       document.getElementById('workout-details').style.display = '';
     } catch (error) {
       console.error('Error loading workout:', error);

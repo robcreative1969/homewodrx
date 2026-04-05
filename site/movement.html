@@ -7,6 +7,9 @@
   <meta name="description" content="Learn this CrossFit movement and find every workout that includes it.">
   <meta property="og:title" content="Movement Guide - HomeWODrx">
   <meta property="og:description" content="Learn this CrossFit movement and find every workout that includes it.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://homewodrx.com/movements/" id="og-url">
+  <link rel="canonical" href="https://homewodrx.com/movements/" id="canonical-url">
   <link rel="stylesheet" href="/css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="/js/config.js"></script>
@@ -214,10 +217,27 @@
       </div>`;
   }
 
+  // ── Inject JSON-LD structured data into <head> ──────────────────────────────
+  function injectJsonLd(data) {
+    const existing = document.getElementById('structured-data');
+    if (existing) existing.remove();
+    const script = document.createElement('script');
+    script.id = 'structured-data';
+    script.type = 'application/ld+json';
+    script.textContent = JSON.stringify(data);
+    document.head.appendChild(script);
+  }
+
+  // ── Read slug from path (/movements/:slug) or query param (?slug=) ──────────
+  function getSlug() {
+    const pathMatch = window.location.pathname.match(/\/movements\/([^\/]+)/);
+    if (pathMatch) return decodeURIComponent(pathMatch[1]);
+    return new URLSearchParams(window.location.search).get('slug');
+  }
+
   // ── Main page loader ─────────────────────────────────────────────────────────
   async function loadMovementPage() {
-    const params = new URLSearchParams(window.location.search);
-    const slug = params.get('slug');
+    const slug = getSlug();
 
     if (!slug) {
       document.getElementById('movement-header').innerHTML = '<p class="text-muted">No movement specified.</p>';
@@ -244,22 +264,59 @@
 
     // ── 2. Update SEO meta ────────────────────────────────────────────────────
     document.title = `${displayName} - CrossFit Movement Guide | HomeWODrx`;
-    document.querySelector('meta[name="description"]').setAttribute(
-      'content',
-      info?.description
-        ? `Learn the ${displayName} CrossFit movement. ${info.description.substring(0, 120)}`
-        : `Find every CrossFit workout that includes ${displayName} on HomeWODrx.`
-    );
-    document.querySelector('meta[property="og:title"]').setAttribute('content', `${displayName} - HomeWODrx`);
+    const metaDesc = info?.description
+      ? `Learn the ${displayName} CrossFit movement. ${info.description.substring(0, 120)}`
+      : `Find every CrossFit workout that includes ${displayName} on HomeWODrx.`;
+    document.querySelector('meta[name="description"]').setAttribute('content', metaDesc);
+    document.querySelector('meta[property="og:title"]').setAttribute('content', `${displayName} - CrossFit Movement Guide | HomeWODrx`);
+    document.querySelector('meta[property="og:description"]').setAttribute('content', metaDesc);
+
+    // Canonical + og:url — use pretty path if on that URL pattern, else query-param form
+    const canonicalPath = window.location.pathname.startsWith('/movements/')
+      ? `https://homewodrx.com/movements/${slug}`
+      : `https://homewodrx.com/movement?slug=${slug}`;
+    document.getElementById('canonical-url').href = canonicalPath;
+    document.querySelector('meta[property="og:url"]').setAttribute('content', canonicalPath);
+
+    // ── 2b. Inject JSON-LD structured data ───────────────────────────────────
+    const tips = Array.isArray(info?.tips) ? info.tips : [];
+    const ldData = [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'HowTo',
+        'name': `How to Do ${displayName} — CrossFit Technique Guide`,
+        'description': info?.description || `Step-by-step technique guide for ${displayName} in CrossFit.`,
+        'url': canonicalPath,
+        ...(tips.length ? {
+          'step': tips.map((tip, i) => ({
+            '@type': 'HowToStep',
+            'position': i + 1,
+            'text': tip,
+          }))
+        } : {}),
+        ...(info?.muscles ? {
+          'tool': [{ '@type': 'HowToTool', 'name': info.muscles }]
+        } : {}),
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        'itemListElement': [
+          { '@type': 'ListItem', 'position': 1, 'name': 'Home',             'item': 'https://homewodrx.com/' },
+          { '@type': 'ListItem', 'position': 2, 'name': 'Movement Library', 'item': 'https://homewodrx.com/movements' },
+          { '@type': 'ListItem', 'position': 3, 'name': displayName,        'item': canonicalPath },
+        ],
+      },
+    ];
+    injectJsonLd(ldData);
 
     // ── 3. Render hero / coaching section ─────────────────────────────────────
-    const tips = Array.isArray(info?.tips) ? info.tips : [];
     const headerEl = document.getElementById('movement-header');
     headerEl.classList.remove('loading');
     headerEl.innerHTML = `
       <div class="movement-hero">
         <div class="breadcrumb">
-          <a href="/movements.html">Movement Library</a> ›
+          <a href="/movements">Movement Library</a> ›
           ${displayName}
         </div>
         <h1>${displayName}</h1>
