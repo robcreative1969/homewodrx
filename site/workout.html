@@ -41,6 +41,36 @@
       padding-top: 1.5rem;
       border-top: 1px solid var(--dark-border, #333);
     }
+    /* ── YouTube embed ───────────────────────────────────────────────── */
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 */
+      height: 0;
+      overflow: hidden;
+      border-radius: 8px;
+      margin: 1.5rem 0;
+      background: #000;
+    }
+    .video-container iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      border: 0;
+    }
+    .video-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #ef4444;
+      border-radius: 4px;
+      padding: 0.12rem 0.4rem;
+      font-size: 0.73rem;
+      font-weight: 600;
+      margin-left: 0.4rem;
+      vertical-align: middle;
+    }
   </style>
 </head>
 <body data-nav-init="true" data-active-page="workouts">
@@ -189,6 +219,29 @@
 
   let isBenchmark = false;
 
+  // ── YouTube helpers ──────────────────────────────────────────────────────────
+  function extractYouTubeId(url) {
+    if (!url) return null;
+    const m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+    return m ? m[1] : null;
+  }
+
+  function youtubeEmbed(url, title) {
+    const id = extractYouTubeId(url);
+    if (!id) return '';
+    return `
+      <div class="video-container">
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/${id}"
+          title="${title || 'Workout video'}"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          loading="lazy">
+        </iframe>
+      </div>`;
+  }
+
   async function loadWorkout() {
     const params = new URLSearchParams(window.location.search);
     const slug = params.get('slug');
@@ -253,7 +306,8 @@
     document.getElementById('description-section').innerHTML = `
       <p>${w.description}</p>
       ${w.scoring_notes ? `<div style="margin-top:1.5rem;"><h4>Scoring Guide</h4><p>${w.scoring_notes}</p></div>` : ''}
-      ${w.tips&&w.tips.length>0?`<div style="margin-top:1.5rem;"><h4>Tips</h4><ul style="margin-left:1.5rem;">${w.tips.map(t=>`<li>${t}</li>`).join('')}</ul></div>`:''}`;
+      ${w.tips&&w.tips.length>0?`<div style="margin-top:1.5rem;"><h4>Tips</h4><ul style="margin-left:1.5rem;">${w.tips.map(t=>`<li>${t}</li>`).join('')}</ul></div>`:''}
+      ${w.youtube_url ? youtubeEmbed(w.youtube_url, w.title || w.name) : ''}`;
     if (w.movements && w.movements.length > 0) {
       document.getElementById('movements-table').innerHTML = `
         <table><thead><tr><th>Movement</th><th>Reps / Duration</th><th>Rx (Men / Women)</th><th>Tip</th></tr></thead><tbody>
@@ -295,7 +349,7 @@
       .map(b=>({...b,_score:(b.category===w.category?2:0)+wMovements.filter(m=>(b.movements||[]).map(m=>slugify(m.name||m.movement||'')).includes(m)).length}))
       .filter(b=>b._score>0).sort((a,b)=>b._score-a._score).slice(0,3);
     document.getElementById('related-workouts').innerHTML = related.length ?
-      related.map(b=>`<a href="/workout.html?slug=${b.slug}" style="text-decoration:none;"><div class="card"><h4>${b.name}</h4><p class="text-muted" style="font-size:0.9rem;margin-bottom:0.4rem;">${formatWodMeta(b)}</p><p style="font-size:0.85rem;color:var(--mu,#888);margin-bottom:0.75rem;">${summarizeMovements(b)}</p><div><span class="badge badge-orange">${b.difficulty}</span>${b.category==='girl'?'<span class="badge">The Girls</span>':''}${b.category==='hero'?'<span class="badge">Hero WOD</span>':''}</div></div></a>`).join('') :
+      related.map(b=>{const vb=b.youtube_url?`<span class="video-badge">▶ Video</span>`:'';return`<a href="/workout.html?slug=${b.slug}" style="text-decoration:none;"><div class="card"><h4>${b.name}${vb}</h4><p class="text-muted" style="font-size:0.9rem;margin-bottom:0.4rem;">${formatWodMeta(b)}</p><p style="font-size:0.85rem;color:var(--mu,#888);margin-bottom:0.75rem;">${summarizeMovements(b)}</p><div><span class="badge badge-orange">${b.difficulty}</span>${b.category==='girl'?'<span class="badge">The Girls</span>':''}${b.category==='hero'?'<span class="badge">Hero WOD</span>':''}</div></div></a>`}).join('') :
       '<p class="text-muted">No related workouts found.</p>';
   }
 

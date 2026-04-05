@@ -57,6 +57,20 @@
       padding: 3rem 1rem;
       color: var(--text-muted, #888);
     }
+    .video-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #ef4444;
+      border-radius: 4px;
+      padding: 0.12rem 0.4rem;
+      font-size: 0.73rem;
+      font-weight: 600;
+      margin-left: 0.4rem;
+      vertical-align: middle;
+    }
   </style>
 </head>
 <body data-nav-init="true" data-active-page="movements">
@@ -111,8 +125,9 @@ function renderGrid(gridEl, movements) {
   gridEl.innerHTML = movements.map(m => {
     const count = getWorkoutCount(m.slug);
     const countLabel = count > 0 ? `${count} benchmark${count === 1 ? '' : 's'}` : 'Movement guide';
+    const videoBadge = m.youtube_url ? `<span class="video-badge">▶ Video</span>` : '';
     return `<a href="/movement.html?slug=${m.slug}" class="movement-card">
-      <h3>${m.name}</h3>
+      <h3>${m.name}${videoBadge}</h3>
       <p class="muscles">${m.muscles || ''}</p>
       <span class="workout-count">${countLabel} →</span>
     </a>`;
@@ -140,7 +155,7 @@ async function loadMovements() {
     const [{ data: movements, error }, benchmarks] = await Promise.all([
       supabaseClient
         .from('movements')
-        .select('slug, name, muscles, category')
+        .select('slug, name, muscles, category, youtube_url')
         .order('category')
         .order('name'),
       db.getAllBenchmarks().catch(() => [])
