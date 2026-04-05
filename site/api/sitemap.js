@@ -1,25 +1,36 @@
 // ============================================================================
 // HOMEWODRX — Dynamic Sitemap Generator
 // Vercel serverless function served at /sitemap.xml (via vercel.json rewrite)
-// Queries Supabase for all movement + benchmark slugs to build a full sitemap.
+// Uses native fetch() — no npm dependencies required.
 // ============================================================================
 
-const { createClient } = require('@supabase/supabase-js');
-
-const SUPABASE_URL     = 'https://irtppmztpcakanhefljs.supabase.co';
+const SUPABASE_URL      = 'https://irtppmztpcakanhefljs.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlydHBwbXp0cGNha2FuaGVmbGpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1NDcxMTcsImV4cCI6MjA5MDEyMzExN30.MmuqyE12kFNJN62JElt6vYMzDJ0z-_SMgMwZRLB0rwg';
-const BASE             = 'https://homewodrx.com';
+const BASE              = 'https://homewodrx.com';
 
-// Static pages — priority / changefreq reflects update cadence
 const STATIC_PAGES = [
-  { path: '/',             priority: '1.0', changefreq: 'daily'   },
-  { path: '/workouts',     priority: '0.9', changefreq: 'daily'   },
-  { path: '/movements',    priority: '0.9', changefreq: 'weekly'  },
-  { path: '/daily-wod',    priority: '0.8', changefreq: 'daily'   },
-  { path: '/generator',    priority: '0.7', changefreq: 'monthly' },
-  { path: '/leaderboard',  priority: '0.6', changefreq: 'daily'   },
-  { path: '/search',       priority: '0.5', changefreq: 'monthly' },
+  { path: '/',            priority: '1.0', changefreq: 'daily'   },
+  { path: '/workouts',    priority: '0.9', changefreq: 'daily'   },
+  { path: '/movements',   priority: '0.9', changefreq: 'weekly'  },
+  { path: '/daily-wod',   priority: '0.8', changefreq: 'daily'   },
+  { path: '/generator',   priority: '0.7', changefreq: 'monthly' },
+  { path: '/leaderboard', priority: '0.6', changefreq: 'daily'   },
+  { path: '/search',      priority: '0.5', changefreq: 'monthly' },
 ];
+
+async function fetchSlugs(table) {
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/${table}?select=slug,updated_at&order=slug`,
+    {
+      headers: {
+        'apikey':        SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+    }
+  );
+  if (!res.ok) throw new Error(`Supabase fetch failed for ${table}: ${res.status}`);
+  return res.json();
+}
 
 function urlEntry({ loc, priority, changefreq, lastmod }) {
   return [
@@ -34,35 +45,23 @@ function urlEntry({ loc, priority, changefreq, lastmod }) {
 
 module.exports = async (req, res) => {
   try {
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    // Fetch movement and workout slugs in parallel
-    const [{ data: movements, error: movErr }, { data: workouts, error: wrkErr }] = await Promise.all([
-      supabase.from('movements').select('slug, updated_at').order('slug'),
-      supabase.from('benchmark_workouts').select('slug, updated_at').order('slug'),
+    const [movements, workouts] = await Promise.all([
+      fetchSlugs('movements'),
+      fetchSlugs('benchmark_workouts'),
     ]);
 
-    if (movErr) console.error('Sitemap: movements fetch error', movErr.message);
-    if (wrkErr) console.error('Sitemap: workouts fetch error', wrkErr.message);
-
-    // Build URL entries
     const entries = [
-      // Static pages
       ...STATIC_PAGES.map(p => urlEntry({
         loc: `${BASE}${p.path}`,
         priority: p.priority,
         changefreq: p.changefreq,
       })),
-
-      // Movement detail pages: /movements/:slug
       ...(movements || []).map(m => urlEntry({
         loc: `${BASE}/movements/${m.slug}`,
         priority: '0.8',
         changefreq: 'monthly',
         lastmod: m.updated_at ? m.updated_at.split('T')[0] : undefined,
       })),
-
-      // Benchmark workout detail pages: /workouts/:slug
       ...(workouts || []).map(w => urlEntry({
         loc: `${BASE}/workouts/${w.slug}`,
         priority: '0.8',
@@ -77,12 +76,11 @@ ${entries.join('\n')}
 </urlset>`;
 
     res.setHeader('Content-Type', 'application/xml; charset=utf-8');
-    // Cache for 1 hour at the CDN edge, serve stale for up to 24 h while revalidating
     res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
     res.status(200).send(xml);
 
   } catch (err) {
-    console.error('Sitemap generation error:', err);
+    console.error('Sitemap error:', err.message);
     res.status(500).send('Error generating sitemap');
   }
 };
