@@ -280,7 +280,7 @@
       .map(b=>({...b,_score:(b.category===w.category?2:0)+wMovements.filter(m=>(b.movements||[]).map(m=>slugify(m.name||m.movement||'')).includes(m)).length}))
       .filter(b=>b._score>0).sort((a,b)=>b._score-a._score).slice(0,3);
     document.getElementById('related-workouts').innerHTML = related.length ?
-      related.map(b=>`<a href="/workout.html?slug=${b.slug}" style="text-decoration:none;"><div class="card"><h4>${b.name}</h4><p class="text-muted">${b.format}</p><div><span class="badge badge-orange">${b.difficulty}</span><span class="badge badge-orange">${b.duration_estimate}</span></div></div></a>`).join('') :
+      related.map(b=>`<a href="/workout.html?slug=${b.slug}" style="text-decoration:none;"><div class="card"><h4>${b.name}</h4><p class="text-muted" style="font-size:0.9rem;margin-bottom:0.4rem;">${formatWodMeta(b)}</p><p style="font-size:0.85rem;color:var(--mu,#888);margin-bottom:0.75rem;">${summarizeMovements(b)}</p><div><span class="badge badge-orange">${b.difficulty}</span>${b.category==='girl'?'<span class="badge">The Girls</span>':''}${b.category==='hero'?'<span class="badge">Hero WOD</span>':''}</div></div></a>`).join('') :
       '<p class="text-muted">No related workouts found.</p>';
   }
 
