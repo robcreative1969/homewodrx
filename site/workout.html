@@ -250,11 +250,11 @@
       if (slug) {
         currentWorkout = await db.getBenchmarkBySlug(slug);
         isBenchmark = true;
-        if (!currentWorkout) { document.getElementById('workout-header').innerHTML = '<p class="text-muted">Workout not found.</p>'; return; }
+        if (!currentWorkout) { const wh=document.getElementById('workout-header'); wh.classList.remove('loading'); wh.innerHTML = '<p class="text-muted">Workout not found.</p>'; return; }
       } else if (id) {
         currentWorkout = await db.getWorkoutById(id);
         isBenchmark = false;
-        if (!currentWorkout) { document.getElementById('workout-header').innerHTML = '<p class="text-muted">Workout not found.</p>'; return; }
+        if (!currentWorkout) { const wh=document.getElementById('workout-header'); wh.classList.remove('loading'); wh.innerHTML = '<p class="text-muted">Workout not found.</p>'; return; }
       }
       renderWorkoutHeader(); renderWorkoutDetails(); renderRelatedWorkouts(); loadLeaderboard();
       document.title = `${currentWorkout.title || currentWorkout.name} - HomeWODrx`;
@@ -262,7 +262,7 @@
       document.getElementById('workout-details').style.display = '';
     } catch (error) {
       console.error('Error loading workout:', error);
-      document.getElementById('workout-header').innerHTML = '<p class="text-muted">Error loading workout.</p>';
+      const wh=document.getElementById('workout-header'); wh.classList.remove('loading'); wh.innerHTML = '<p class="text-muted">Error loading workout.</p>';
     }
   }
 
@@ -280,7 +280,9 @@
       daily:     '<span class="badge badge-orange">Daily WOD</span>',
     };
     const categoryBadge = categoryBadgeMap[w.category] || '';
-    document.getElementById('workout-header').innerHTML = `
+    const wkHeaderEl = document.getElementById('workout-header');
+    wkHeaderEl.classList.remove('loading');
+    wkHeaderEl.innerHTML = `
       <div style="padding: 2rem 0; margin-bottom: 2rem; border-bottom: 1px solid var(--dark-border);">
         <h1>${w.title || w.name}</h1>
         ${createdBy ? `<p class="text-muted">${createdBy}</p>` : ''}

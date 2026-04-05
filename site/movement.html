@@ -254,7 +254,9 @@
 
     // ── 3. Render hero / coaching section ─────────────────────────────────────
     const tips = Array.isArray(info?.tips) ? info.tips : [];
-    document.getElementById('movement-header').innerHTML = `
+    const headerEl = document.getElementById('movement-header');
+    headerEl.classList.remove('loading');
+    headerEl.innerHTML = `
       <div class="movement-hero">
         <div class="breadcrumb">
           <a href="/movements.html">Movement Library</a> ›
