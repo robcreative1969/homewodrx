@@ -101,6 +101,44 @@
       margin-left: 0.4rem;
       vertical-align: middle;
     }
+    .equipment-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: var(--dark-surface, #1e1e1e);
+      border: 1px solid var(--dark-border, #444);
+      border-radius: 6px;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-decoration: none;
+      color: var(--text, #e5e5e5);
+      transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
+      cursor: pointer;
+    }
+    .equipment-chip::after {
+      content: ' →';
+      font-size: 0.75rem;
+      opacity: 0.5;
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .equipment-chip:hover {
+      background: rgba(249, 115, 22, 0.1);
+      border-color: var(--orange, #f97316);
+      color: var(--orange, #f97316);
+      transform: translateY(-1px);
+    }
+    .equipment-chip:hover::after {
+      opacity: 1;
+      transform: translateX(2px);
+    }
+    .equipment-section {
+      margin-top: 1.5rem;
+      padding: 1.25rem 1.5rem;
+      border: 1px solid var(--dark-border, #333);
+      border-radius: 8px;
+      background: var(--dark-surface, #1a1a1a);
+    }
   </style>
 </head>
 <body data-nav-init="true" data-active-page="movements">
@@ -124,6 +162,98 @@
 <script src="/js/footer.js"></script>
 
 <script>
+  // ── Affiliate gear ───────────────────────────────────────────────────────────
+  const AFFILIATE_TAG = 'homewodrx0f-20';
+
+  const EQUIPMENT_LINKS = {
+    'barbell':           `https://www.amazon.com/s?k=barbell&tag=${AFFILIATE_TAG}`,
+    'bumper plates':     `https://www.amazon.com/s?k=bumper+plates&tag=${AFFILIATE_TAG}`,
+    'plates':            `https://www.amazon.com/s?k=weight+plates&tag=${AFFILIATE_TAG}`,
+    'bench':             `https://www.amazon.com/s?k=weight+bench&tag=${AFFILIATE_TAG}`,
+    'dumbbells':         `https://www.amazon.com/s?k=dumbbells+set&tag=${AFFILIATE_TAG}`,
+    'dumbbell':          `https://www.amazon.com/s?k=dumbbells+set&tag=${AFFILIATE_TAG}`,
+    'kettlebell':        `https://www.amazon.com/s?k=kettlebell&tag=${AFFILIATE_TAG}`,
+    'sandbag':           `https://www.amazon.com/s?k=crossfit+sandbag&tag=${AFFILIATE_TAG}`,
+    'pull-up bar':       `https://www.amazon.com/s?k=pull-up+bar&tag=${AFFILIATE_TAG}`,
+    'pull up bar':       `https://www.amazon.com/s?k=pull-up+bar&tag=${AFFILIATE_TAG}`,
+    'pullupbar':         `https://www.amazon.com/s?k=pull-up+bar&tag=${AFFILIATE_TAG}`,
+    'gymnastics rings':  `https://www.amazon.com/s?k=gymnastics+rings&tag=${AFFILIATE_TAG}`,
+    'gymnastic rings':   `https://www.amazon.com/s?k=gymnastics+rings&tag=${AFFILIATE_TAG}`,
+    'rings':             `https://www.amazon.com/s?k=gymnastics+rings&tag=${AFFILIATE_TAG}`,
+    'parallettes':       `https://www.amazon.com/s?k=parallettes&tag=${AFFILIATE_TAG}`,
+    'parallel bars':     `https://www.amazon.com/s?k=parallel+bars+gymnastics&tag=${AFFILIATE_TAG}`,
+    'climbing rope':     `https://www.amazon.com/s?k=climbing+rope+crossfit&tag=${AFFILIATE_TAG}`,
+    'rope':              `https://www.amazon.com/s?k=climbing+rope+crossfit&tag=${AFFILIATE_TAG}`,
+    'rower':             `https://www.amazon.com/s?k=rowing+machine&tag=${AFFILIATE_TAG}`,
+    'assault bike':      `https://www.amazon.com/s?k=assault+bike&tag=${AFFILIATE_TAG}`,
+    'echo bike':         `https://www.amazon.com/s?k=echo+bike&tag=${AFFILIATE_TAG}`,
+    'bike erg':          `https://www.amazon.com/s?k=bike+erg+assault&tag=${AFFILIATE_TAG}`,
+    'ski erg':           `https://www.amazon.com/s?k=ski+erg&tag=${AFFILIATE_TAG}`,
+    'sled':              `https://www.amazon.com/s?k=weight+sled+crossfit&tag=${AFFILIATE_TAG}`,
+    'battle ropes':      `https://www.amazon.com/s?k=battle+ropes&tag=${AFFILIATE_TAG}`,
+    'box':               `https://www.amazon.com/s?k=plyo+box&tag=${AFFILIATE_TAG}`,
+    'medicine ball':     `https://www.amazon.com/s?k=medicine+ball&tag=${AFFILIATE_TAG}`,
+    'wall ball':         `https://www.amazon.com/s?k=wall+ball&tag=${AFFILIATE_TAG}`,
+    'jump rope':         `https://www.amazon.com/s?k=crossfit+jump+rope&tag=${AFFILIATE_TAG}`,
+    'weight vest':       `https://www.amazon.com/s?k=weight+vest&tag=${AFFILIATE_TAG}`,
+    'ab wheel':          `https://www.amazon.com/s?k=ab+wheel&tag=${AFFILIATE_TAG}`,
+    'ghd machine':       `https://www.amazon.com/s?k=GHD+machine+crossfit&tag=${AFFILIATE_TAG}`,
+    'ghd':               `https://www.amazon.com/s?k=GHD+machine+crossfit&tag=${AFFILIATE_TAG}`,
+  };
+
+  // Category-level links for bodyweight movements.
+  // Broad enough that users self-select what they want — no bad guesses.
+  const POPULAR_GEAR = [
+    { name: 'Training Shoes',          url: `https://www.amazon.com/s?k=cross+training+shoes&tag=${AFFILIATE_TAG}` },
+    { name: 'Fitness Apparel',         url: `https://www.amazon.com/s?k=fitness+workout+clothing&tag=${AFFILIATE_TAG}` },
+    { name: 'Gymnastics & Bars',       url: `https://www.amazon.com/s?k=gymnastics+pull+up+bars+rings&tag=${AFFILIATE_TAG}` },
+    { name: 'Kettlebells & Dumbbells', url: `https://www.amazon.com/s?k=kettlebells+dumbbells&tag=${AFFILIATE_TAG}` },
+    { name: 'Cardio Equipment',        url: `https://www.amazon.com/s?k=home+gym+cardio+equipment&tag=${AFFILIATE_TAG}` },
+    { name: 'Knee & Joint Support',    url: `https://www.amazon.com/s?k=knee+sleeves+joint+support&tag=${AFFILIATE_TAG}` },
+    { name: 'Lifting Accessories',     url: `https://www.amazon.com/s?k=gym+lifting+accessories&tag=${AFFILIATE_TAG}` },
+    { name: 'Recovery Gear',           url: `https://www.amazon.com/s?k=fitness+recovery+foam+roller+massage+gun&tag=${AFFILIATE_TAG}` },
+  ];
+
+  const SKIP_EQUIPMENT = new Set(['bodyweight', 'running', 'none', '']);
+
+  function equipmentDisplayName(e) {
+    return e
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/[-_]/g, ' ')
+      .trim()
+      .replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  function getEquipmentLink(equipment) {
+    const key = equipment.toLowerCase().trim();
+    return EQUIPMENT_LINKS[key]
+      || EQUIPMENT_LINKS[key.replace(/\s+/g, '')]
+      || `https://www.amazon.com/s?k=${encodeURIComponent(equipmentDisplayName(equipment))}&tag=${AFFILIATE_TAG}`;
+  }
+
+  function renderEquipmentSection(equipment) {
+    const gearItems = (equipment || []).filter(e => !SKIP_EQUIPMENT.has(e.toLowerCase().trim()));
+    if (gearItems.length > 0) {
+      return `
+        <div class="equipment-section">
+          <h4 style="margin-bottom:0.3rem;">Equipment for This Movement</h4>
+          <p class="text-muted" style="font-size:0.85rem;margin-bottom:0.85rem;">Shop the gear you need on Amazon (affiliate links help support HomeWODrx at no extra cost to you).</p>
+          <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+            ${gearItems.map(e => `<a href="${getEquipmentLink(e)}" class="equipment-chip" target="_blank" rel="noopener sponsored">${equipmentDisplayName(e)}</a>`).join('')}
+          </div>
+        </div>`;
+    }
+    // Bodyweight movement: show accessories, recovery gear, and books — relevant to any CrossFitter
+    return `
+      <div class="equipment-section">
+        <h4 style="margin-bottom:0.3rem;">Fitness Essentials</h4>
+        <p class="text-muted" style="font-size:0.85rem;margin-bottom:0.85rem;">No gear required for this movement — but great athletes invest in recovery, protection, and the right kit. Shop on Amazon (affiliate links help support HomeWODrx at no extra cost to you).</p>
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+          ${POPULAR_GEAR.map(g => `<a href="${g.url}" class="equipment-chip" target="_blank" rel="noopener sponsored">${g.name}</a>`).join('')}
+        </div>
+      </div>`;
+  }
+
   // ── Helpers ─────────────────────────────────────────────────────────────────
   function slugify(name) {
     return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -251,7 +381,7 @@
     try {
       const { data, error } = await supabaseClient
         .from('movements')
-        .select('name, slug, muscles, description, tips, daily_wod_eligible, category, youtube_url')
+        .select('name, slug, muscles, description, tips, daily_wod_eligible, category, youtube_url, equipment')
         .eq('slug', slug)
         .maybeSingle();
 
@@ -341,6 +471,7 @@
         </div>
       ` : ''}
       ${info?.youtube_url ? youtubeEmbed(info.youtube_url) : ''}
+      ${renderEquipmentSection(info?.equipment)}
     `;
 
     // ── 4. Find matching workouts ─────────────────────────────────────────────
