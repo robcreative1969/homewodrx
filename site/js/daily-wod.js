@@ -7,6 +7,53 @@
 
 const DailyWOD = {
 
+  // Cache for movement pool loaded from Supabase (null = not yet loaded)
+  _movementCache: null,
+
+  // Load eligible movements from Supabase, grouped by equipment_category.
+  // Returns a MOVEMENT_DB-compatible object. Falls back to JS MOVEMENT_DB.
+  async _loadMovements() {
+    if (this._movementCache) return this._movementCache;
+
+    try {
+      if (supabaseClient) {
+        const { data, error } = await supabaseClient
+          .from('movements')
+          .select('name, equipment_category, tags, beginner_reps, intermediate_reps, advanced_reps, wod_tip, timed')
+          .eq('daily_wod_eligible', true);
+
+        if (!error && data && data.length > 0) {
+          // Group into MOVEMENT_DB format
+          const db = {};
+          data.forEach(m => {
+            const cat = m.equipment_category || 'bodyweight';
+            if (!db[cat]) db[cat] = [];
+            db[cat].push({
+              name: m.name,
+              tip: m.wod_tip || '',
+              b: m.beginner_reps,
+              i: m.intermediate_reps,
+              a: m.advanced_reps,
+              tags: m.tags || [],
+              timed: m.timed || false
+            });
+          });
+          this._movementCache = db;
+          return db;
+        }
+      }
+    } catch (e) {
+      console.warn('DailyWOD: Could not load movements from Supabase, using JS fallback.', e);
+    }
+
+    // Fallback to JS movement-db.js
+    if (typeof MOVEMENT_DB !== 'undefined') {
+      this._movementCache = MOVEMENT_DB;
+      return MOVEMENT_DB;
+    }
+    return {};
+  },
+
   // Default admin config (can be overridden in Supabase daily_wod_config table)
   defaultConfig: {
     // Equipment assumed available for daily WODs
@@ -153,8 +200,8 @@ const DailyWOD = {
     const override = await this.getManualOverride(dateStr);
     if (override) return { ...override, isManual: true, date: dateStr };
 
-    // Get admin config
-    const config = await this.getConfig();
+    // Get admin config and movement pool in parallel
+    const [config, movementDB] = await Promise.all([this.getConfig(), this._loadMovements()]);
     const dayOfWeek = new Date(dateStr + 'T12:00:00').getDay();
     const seed = this.getSeedForDate(dateStr);
     const rng = this.seededRng(seed);
@@ -167,8 +214,8 @@ const DailyWOD = {
     const duration   = durRange[0] + Math.floor(rng() * (durRange[1] - durRange[0] + 1));
     const equipment  = config.equipment || ['bodyweight'];
 
-    // Build movement pool (reuse logic from generator)
-    const pool = this._buildPool(equipment, difficulty, bodyFocus, rng);
+    // Build movement pool from Supabase data (with JS fallback)
+    const pool = this._buildPool(equipment, difficulty, bodyFocus, rng, movementDB);
 
     // Generate workout by format
     let workout;
@@ -213,10 +260,16 @@ const DailyWOD = {
   },
 
   // ── Movement pool builder ──────────────────────────────────────
-  _buildPool(equipment, level, bodyFocus, rng) {
-    if (typeof MOVEMENT_DB === 'undefined') return [];
-    let moves = (MOVEMENT_DB.bodyweight || []).map(m => ({ ...m, _eq: 'bodyweight' }));
-    equipment.forEach(eq => { if (eq !== 'bodyweight' && MOVEMENT_DB[eq]) moves.push(...MOVEMENT_DB[eq].map(m => ({ ...m, _eq: eq }))); });
+  // movementDB: pre-loaded movement data (from _loadMovements()). Falls back to global MOVEMENT_DB.
+  // 'dumbbell' in config maps to 'dumbbells' in the DB — normalized here.
+  _buildPool(equipment, level, bodyFocus, rng, movementDB) {
+    const mdb = movementDB || this._movementCache || (typeof MOVEMENT_DB !== 'undefined' ? MOVEMENT_DB : {});
+    if (!mdb || Object.keys(mdb).length === 0) return [];
+    let moves = (mdb.bodyweight || []).map(m => ({ ...m, _eq: 'bodyweight' }));
+    equipment.forEach(eq => {
+      const key = eq === 'dumbbell' ? 'dumbbells' : eq; // normalize singular→plural
+      if (eq !== 'bodyweight' && mdb[key]) moves.push(...mdb[key].map(m => ({ ...m, _eq: eq })));
+    });
     if (level === 'beginner') moves = moves.filter(m => !/(muscle.up|snatch|toes.to.bar|double under|turkish)/i.test(m.name));
     if (level === 'intermediate') moves = moves.filter(m => !/(muscle.up)/i.test(m.name));
 
