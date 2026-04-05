@@ -20,29 +20,45 @@
         <div>
           <div style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Workouts</div>
           <div style="display:flex;flex-direction:column;gap:8px">
-            <a href="/workouts.html" style="color:var(--tx);font-size:13px;text-decoration:none">Named Benchmarks</a>
-            <a href="/generator.html" style="color:var(--tx);font-size:13px;text-decoration:none">WOD Generator</a>
-            <a href="/daily-wod.html" style="color:var(--tx);font-size:13px;text-decoration:none">Daily WOD</a>
+            <a href="/workouts" style="color:var(--tx);font-size:13px;text-decoration:none">Named Benchmarks</a>
+            <a href="/generator" style="color:var(--tx);font-size:13px;text-decoration:none">WOD Generator</a>
+            <a href="/daily-wod" style="color:var(--tx);font-size:13px;text-decoration:none">Daily WOD</a>
+            <a href="/movements" style="color:var(--tx);font-size:13px;text-decoration:none">Movement Library</a>
           </div>
         </div>
         <div>
           <div style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Community</div>
           <div style="display:flex;flex-direction:column;gap:8px">
-            <a href="/leaderboard.html" style="color:var(--tx);font-size:13px;text-decoration:none">Leaderboard</a>
-            <a href="/generator.html" style="color:var(--tx);font-size:13px;text-decoration:none">Log a Result</a>
+            <a href="/leaderboard" style="color:var(--tx);font-size:13px;text-decoration:none">Leaderboard</a>
+            <a href="/generator" style="color:var(--tx);font-size:13px;text-decoration:none">Log a Result</a>
           </div>
         </div>
         <div>
           <div style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Account</div>
           <div style="display:flex;flex-direction:column;gap:8px">
-            <a href="/generator.html" style="color:var(--tx);font-size:13px;text-decoration:none">Sign Up Free</a>
-            <a href="/generator.html" style="color:var(--tx);font-size:13px;text-decoration:none">Log In</a>
-            <a href="/admin.html" style="color:var(--mu);font-size:12px;text-decoration:none">Admin</a>
+            <a href="/signup" style="color:var(--tx);font-size:13px;text-decoration:none">Sign Up Free</a>
+            <a href="/login" style="color:var(--tx);font-size:13px;text-decoration:none">Log In</a>
+            <a href="/admin" style="color:var(--mu);font-size:12px;text-decoration:none">Admin</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Legal</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <a href="/privacy" style="color:var(--tx);font-size:13px;text-decoration:none">Privacy Policy</a>
+            <a href="/terms" style="color:var(--tx);font-size:13px;text-decoration:none">Terms of Service</a>
+            <a href="/disclaimer" style="color:var(--tx);font-size:13px;text-decoration:none">Fitness Disclaimer</a>
+            <a href="/cookies" style="color:var(--tx);font-size:13px;text-decoration:none">Cookie Notice</a>
           </div>
         </div>
       </div>
-      <div style="max-width:1080px;margin:32px auto 0;padding-top:20px;border-top:1px solid var(--bd);text-align:center;font-size:12px;color:var(--mu)">
-        &copy; 2026 HomeWODrx &middot; Built for athletes, by athletes.
+      <div style="max-width:1080px;margin:24px auto 0;padding-top:20px;border-top:1px solid var(--bd);text-align:center">
+        <p style="font-size:11px;color:var(--mu);margin-bottom:8px">
+          As an Amazon Associate, HomeWODrx earns from qualifying purchases.
+          Product links on this site may earn us a small commission at no extra cost to you.
+        </p>
+        <p style="font-size:12px;color:var(--mu);margin:0">
+          &copy; 2026 HomeWODrx &middot; Built for athletes, by athletes.
+        </p>
       </div>
     `;
 
@@ -55,4 +71,3 @@
     injectFooter();
   }
 })();
-
