@@ -187,6 +187,8 @@
     return EQUIPMENT_LINKS[key] || `https://www.amazon.com/s?k=${encodeURIComponent(equipment)}&tag=${AFFILIATE_TAG}`;
   }
 
+  let isBenchmark = false;
+
   async function loadWorkout() {
     const params = new URLSearchParams(window.location.search);
     const slug = params.get('slug');
@@ -194,9 +196,11 @@
     try {
       if (slug) {
         currentWorkout = await db.getBenchmarkBySlug(slug);
+        isBenchmark = true;
         if (!currentWorkout) { document.getElementById('workout-header').innerHTML = '<p class="text-muted">Workout not found.</p>'; return; }
       } else if (id) {
         currentWorkout = await db.getWorkoutById(id);
+        isBenchmark = false;
         if (!currentWorkout) { document.getElementById('workout-header').innerHTML = '<p class="text-muted">Workout not found.</p>'; return; }
       }
       renderWorkoutHeader(); renderWorkoutDetails(); renderRelatedWorkouts(); loadLeaderboard();
