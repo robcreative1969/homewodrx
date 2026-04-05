@@ -67,7 +67,10 @@
         <button class="chip active" data-type="all">All</button>
         <button class="chip" data-type="girl">The Girls</button>
         <button class="chip" data-type="hero">Heroes</button>
-        <button class="chip" data-type="benchmark">Community Benchmarks</button>
+        <button class="chip" data-type="open">Open WODs</button>
+        <button class="chip" data-type="games">Games WODs</button>
+        <button class="chip" data-type="partner">Partner WODs</button>
+        <button class="chip" data-type="benchmark">Benchmarks</button>
         <button class="chip" data-type="user">User-Generated</button>
         <button class="chip" data-type="daily">Daily WODs</button>
       </div>
@@ -283,7 +286,7 @@
   function applyFilters() {
     filteredWorkouts = allWorkouts.filter(w => {
       if (currentFilters.type !== 'all' && w.category !== currentFilters.type) return false;
-      if (currentFilters.format !== 'all' && w.format.toLowerCase() !== currentFilters.format.toLowerCase()) return false;
+      if (currentFilters.format !== 'all' && !w.format.toLowerCase().includes(currentFilters.format.toLowerCase())) return false;
       if (currentFilters.difficulty !== 'all' && w.difficulty !== currentFilters.difficulty) return false;
       if (currentFilters.focus !== 'all' && w.body_focus !== currentFilters.focus) return false;
       if (currentFilters.search && !(w.name || w.title || '').toLowerCase().includes(currentFilters.search.toLowerCase())) return false;
@@ -307,7 +310,7 @@
       const diffOrder = { 'beginner': 1, 'intermediate': 2, 'advanced': 3 };
       filteredWorkouts.sort((a, b) => (diffOrder[b.difficulty] || 0) - (diffOrder[a.difficulty] || 0));
     } else {
-      const catOrder = { 'girl': 0, 'hero': 1, 'benchmark': 2, 'user': 3, 'daily': 4 };
+      const catOrder = { 'girl': 0, 'hero': 1, 'open': 2, 'games': 3, 'partner': 4, 'benchmark': 5, 'user': 6, 'daily': 7 };
       filteredWorkouts.sort((a, b) => {
         const ao = catOrder[a.category] ?? 3;
         const bo = catOrder[b.category] ?? 3;
@@ -337,11 +340,22 @@
     }
 
     container.innerHTML = displayed.map(w => {
-      const isUser  = w.category === 'user';
-      const isDaily = w.category === 'daily';
+      const isUser    = w.category === 'user';
+      const isDaily   = w.category === 'daily';
+      const isOpen    = w.category === 'open';
+      const isGames   = w.category === 'games';
+      const isPartner = w.category === 'partner';
       const href = isDaily
         ? `/daily-wod.html?date=${w._date}`
         : (isUser ? `/workout.html?id=${w.id}` : `/workout.html?slug=${w.slug}`);
+      const categoryBadge = (() => {
+        if (isUser)    return '<span class="badge badge-success">Community</span>';
+        if (isDaily)   return '<span class="badge badge-orange">Daily WOD</span>';
+        if (isOpen)    return '<span class="badge" style="background:rgba(99,102,241,0.15);color:#818cf8;border:1px solid rgba(99,102,241,0.3);">Open WOD</span>';
+        if (isGames)   return '<span class="badge" style="background:rgba(234,179,8,0.15);color:#eab308;border:1px solid rgba(234,179,8,0.3);">Games WOD</span>';
+        if (isPartner) return '<span class="badge" style="background:rgba(20,184,166,0.15);color:#14b8a6;border:1px solid rgba(20,184,166,0.3);">Partner WOD</span>';
+        return '';
+      })();
       return `
         <a href="${href}" style="text-decoration: none;">
           <div class="card">
@@ -353,8 +367,7 @@
               ${summarizeMovements(w)}
             </p>
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
-              ${isUser  ? '<span class="badge badge-success">Community</span>' : ''}
-              ${isDaily ? '<span class="badge badge-orange">Daily WOD</span>' : ''}
+              ${categoryBadge}
               ${isUser && canDeleteWorkout(w) ? `<button onclick="deleteWorkoutCard('${w.id}',event)" style="margin-left:auto;background:rgba(231,76,60,0.12);border:1px solid rgba(231,76,60,0.35);color:#E74C3C;border-radius:6px;padding:3px 10px;font-size:0.75rem;cursor:pointer;font-weight:600;">🗑</button>` : ''}
             </div>
           </div>
