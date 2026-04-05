@@ -92,11 +92,13 @@ function slugify(name) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
+// ─── Cache of Supabase benchmarks for workout count lookups ──────────────────
+let _benchmarkCache = [];
+
 // ─── Count how many benchmarks use this movement slug ────────────────────────
 function getWorkoutCount(slug) {
-  if (typeof BENCHMARKS === 'undefined') return 0;
-  return BENCHMARKS.filter(b =>
-    b.movements && b.movements.some(m => slugify(m.name || m) === slug)
+  return _benchmarkCache.filter(b =>
+    b.movements && b.movements.some(m => slugify(m.name || m.movement || '') === slug)
   ).length;
 }
 
@@ -134,14 +136,18 @@ async function loadMovements() {
   buildScaffold();
 
   try {
-    // Fetch all movements ordered by category then name
-    const { data: movements, error } = await supabaseClient
-      .from('movements')
-      .select('slug, name, muscles, category')
-      .order('category')
-      .order('name');
+    // Fetch movements and benchmarks in parallel
+    const [{ data: movements, error }, benchmarks] = await Promise.all([
+      supabaseClient
+        .from('movements')
+        .select('slug, name, muscles, category')
+        .order('category')
+        .order('name'),
+      db.getAllBenchmarks().catch(() => [])
+    ]);
 
     if (error) throw error;
+    _benchmarkCache = benchmarks || [];
 
     // Group by category
     const byCategory = {};
