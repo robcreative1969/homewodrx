@@ -29,6 +29,11 @@ const Search = (() => {
       .replace(/^-|-$/g, '');
   }
 
+  // Collapse hyphens and spaces so "pushup" / "push-up" / "push up" all match
+  function normalize(str) {
+    return String(str).toLowerCase().replace(/[-\s]+/g, '');
+  }
+
   function esc(str) {
     return String(str || '')
       .replace(/&/g, '&amp;')
@@ -362,13 +367,17 @@ const Search = (() => {
 
   // ── Filtering ──────────────────────────────────────────────────────────────
   function scoreMatch(text, q) {
-    const t = text.toLowerCase();
-    if (t === q)           return 4;
-    if (t.startsWith(q))   return 3;
-    // All query words present anywhere
+    const t  = text.toLowerCase();
+    const tn = normalize(text);
+    const qn = normalize(q);
+
+    if (t === q || tn === qn)               return 4;
+    if (t.startsWith(q) || tn.startsWith(qn)) return 3;
+    // All query words present anywhere (raw)
     const words = q.split(/\s+/);
-    if (words.every(w => t.includes(w))) return 2;
-    if (t.includes(q))     return 1;
+    if (words.every(w => t.includes(w)))    return 2;
+    // Substring match — raw or normalized (catches pushup ↔ push-up)
+    if (t.includes(q) || tn.includes(qn))  return 1;
     return 0;
   }
 
