@@ -1,9 +1,10 @@
 {
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "rewrites": [
-    { "source": "/u/:username",     "destination": "/profile.html" },
-    { "source": "/movements/:slug", "destination": "/movement.html" },
-    { "source": "/workouts/:slug",  "destination": "/workout.html" }
+  "routes": [
+    { "src": "/movements/([^/]+)", "dest": "/movement.html" },
+    { "src": "/workouts/([^/]+)",  "dest": "/workout.html"  },
+    { "src": "/u/([^/]+)",         "dest": "/profile.html"  },
+    { "src": "^/(.*)\\.html$", "headers": { "Location": "/$1" }, "status": 308 },
+    { "handle": "filesystem" },
+    { "src": "/(.*[^/])$", "dest": "/$1.html", "check": true }
   ]
 }
