@@ -193,6 +193,37 @@
       background: var(--dark-bg, #111);
     }
     .faq-item.open .faq-answer { display: block; }
+    /* ── Social share bar ─────────────────────────────────────────────── */
+    .share-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .share-bar-label {
+      font-size: 0.8rem;
+      color: var(--text-muted, #888);
+      margin-right: 0.15rem;
+    }
+    .share-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.35rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1px solid var(--dark-border, #444);
+      background: var(--dark-surface, #1e1e1e);
+      color: var(--text, #e5e5e5);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      font-family: inherit;
+    }
+    .share-btn:hover { background: rgba(255,255,255,0.07); border-color: #666; }
+    .share-btn.copied { color: #22c55e; border-color: rgba(34,197,94,0.4); }
   </style>
 </head>
 <body data-nav-init="true" data-active-page="workouts">
@@ -606,10 +637,24 @@
           <button class="btn btn-primary" onclick="openResultModal()">Log Your Result</button>
           ${isBenchmark ? `<a href="/workouts.html" class="btn btn-secondary">Browse Similar</a>` : ''}
         </div>
+        <div class="share-bar">
+          <span class="share-bar-label">Share:</span>
+          <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent((w.title||w.name)+' WOD on HomeWODrx 💪')}&url=${encodeURIComponent(window.location.href)}" target="_blank" rel="noopener" class="share-btn">𝕏 Post</a>
+          <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}" target="_blank" rel="noopener" class="share-btn">f Share</a>
+          <button class="share-btn" onclick="copyShareLink(this)">🔗 Copy Link</button>
+        </div>
         ${canManageWorkout(w) ? `<div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
           <button onclick="deleteCurrentWorkout()" style="background:rgba(231,76,60,0.12);border:1px solid rgba(231,76,60,0.4);color:#E74C3C;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:0.85rem;font-weight:600;">🗑 Delete Workout</button>
         </div>` : ''}
       </div>`;
+  }
+
+  function copyShareLink(btn) {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      btn.classList.add('copied');
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => { btn.classList.remove('copied'); btn.textContent = '🔗 Copy Link'; }, 2000);
+    }).catch(() => { prompt('Copy this link:', window.location.href); });
   }
 
   function renderWorkoutDetails() {
