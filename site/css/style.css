@@ -259,6 +259,10 @@ nav {
     padding: 9px 12px;
     min-height: 40px;
   }
+
+  .nav-logo-img {
+    height: 48px;
+  }
 }
 
 /* ===== BUTTONS ===== */
