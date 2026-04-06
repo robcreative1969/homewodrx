@@ -109,9 +109,33 @@
     <p class="text-muted">Every CrossFit movement — coaching cues, muscle groups, and the workouts that use them.</p>
   </section>
 
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <div class="filter-section">
+      <label class="filter-label">Category</label>
+      <div class="filter-chips" id="category-chips">
+        <button class="chip active" data-cat="all">All</button>
+        <button class="chip" data-cat="gymnastics">Gymnastics</button>
+        <button class="chip" data-cat="push">Push</button>
+        <button class="chip" data-cat="lower">Lower Body</button>
+        <button class="chip" data-cat="core">Core</button>
+        <button class="chip" data-cat="fullbody">Full Body</button>
+        <button class="chip" data-cat="barbell">Barbell</button>
+        <button class="chip" data-cat="kettlebell">Kettlebell</button>
+        <button class="chip" data-cat="dumbbell">Dumbbell</button>
+        <button class="chip" data-cat="cardio">Cardio</button>
+      </div>
+    </div>
+    <div class="filter-section">
+      <label class="filter-label">Search</label>
+      <input type="text" id="movement-search" placeholder="Search by name or muscle group...">
+    </div>
+  </div>
+
   <div id="movements-root">
     <div class="movements-loading"><div class="spinner"></div></div>
   </div>
+  <p id="movements-no-results" style="display:none; text-align:center; color:var(--text-muted,#888); padding:2rem 0;">No movements match your search.</p>
 </main>
 
 <script src="/js/footer.js"></script>
@@ -167,11 +191,15 @@ function renderGrid(gridEl, movements) {
 function buildScaffold() {
   const root = document.getElementById('movements-root');
   root.innerHTML = CATEGORY_CONFIG.map(c => `
-    <h2 class="category-heading">${c.label}</h2>
-    <div class="grid grid-cols-3" id="${c.gridId}"></div>
+    <div class="category-section" data-key="${c.key}">
+      <h2 class="category-heading">${c.label}</h2>
+      <div class="grid grid-cols-3" id="${c.gridId}"></div>
+    </div>
   `).join('') + `
-    <h2 class="category-heading" id="community-heading" style="display:none;">Community Movements</h2>
-    <div class="grid grid-cols-3" id="community-grid"></div>
+    <div class="category-section" data-key="community" id="community-section" style="display:none;">
+      <h2 class="category-heading">Community Movements</h2>
+      <div class="grid grid-cols-3" id="community-grid"></div>
+    </div>
   `;
 }
 
@@ -205,6 +233,9 @@ async function loadMovements() {
       const gridEl = document.getElementById(cfg.gridId);
       if (gridEl) renderGrid(gridEl, byCategory[cfg.key] || []);
     }
+
+    // Update chip count badges now that we have data
+    updateChipCounts(byCategory);
 
     // Build set of known slugs to detect community-only movements
     const knownSlugs = new Set(movements.map(m => m.slug));
@@ -243,7 +274,8 @@ async function loadCommunityMovements(knownSlugs) {
 
     if (!communityMovements.length) return;
 
-    document.getElementById('community-heading').style.display = '';
+    _communityHasContent = true;
+    document.getElementById('community-section').style.display = '';
     document.getElementById('community-grid').innerHTML = communityMovements.map(([slug, info]) => {
       const label = `${info.count} community WOD${info.count === 1 ? '' : 's'}`;
       return `<a href="/movement.html?slug=${slug}" class="movement-card">
@@ -257,7 +289,102 @@ async function loadCommunityMovements(knownSlugs) {
   }
 }
 
+// ─── Filter state ─────────────────────────────────────────────────────────────
+let _currentCat    = 'all';
+let _currentSearch = '';
+let _communityHasContent = false;
+
+function applyFilters() {
+  const cat  = _currentCat;
+  const term = _currentSearch.toLowerCase().trim();
+  let totalVisible = 0;
+
+  // Process configured category sections
+  document.querySelectorAll('.category-section[data-key]').forEach(section => {
+    const key = section.dataset.key;
+    if (key === 'community') return; // handled below
+
+    const catMatch = cat === 'all' || cat === key;
+    if (!catMatch) {
+      section.style.display = 'none';
+      return;
+    }
+
+    if (term) {
+      let sectionVisible = 0;
+      section.querySelectorAll('.movement-card').forEach(card => {
+        const name    = (card.querySelector('h3')?.textContent  || '').toLowerCase();
+        const muscles = (card.querySelector('.muscles')?.textContent || '').toLowerCase();
+        const show    = name.includes(term) || muscles.includes(term);
+        card.style.display = show ? '' : 'none';
+        if (show) sectionVisible++;
+      });
+      section.style.display = sectionVisible > 0 ? '' : 'none';
+      totalVisible += sectionVisible;
+    } else {
+      section.style.display = '';
+      section.querySelectorAll('.movement-card').forEach(c => c.style.display = '');
+      totalVisible += section.querySelectorAll('.movement-card').length;
+    }
+  });
+
+  // Community section: only visible when showing "all" categories
+  const communitySection = document.getElementById('community-section');
+  if (communitySection && _communityHasContent) {
+    if (cat !== 'all') {
+      communitySection.style.display = 'none';
+    } else if (term) {
+      let comVisible = 0;
+      communitySection.querySelectorAll('.movement-card').forEach(card => {
+        const name    = (card.querySelector('h3')?.textContent  || '').toLowerCase();
+        const muscles = (card.querySelector('.muscles')?.textContent || '').toLowerCase();
+        const show    = name.includes(term) || muscles.includes(term);
+        card.style.display = show ? '' : 'none';
+        if (show) comVisible++;
+      });
+      communitySection.style.display = comVisible > 0 ? '' : 'none';
+      totalVisible += comVisible;
+    } else {
+      communitySection.style.display = '';
+      totalVisible += communitySection.querySelectorAll('.movement-card').length;
+    }
+  }
+
+  document.getElementById('movements-no-results').style.display = totalVisible === 0 ? '' : 'none';
+}
+
+// ─── Update chip count badges after data loads ────────────────────────────────
+function updateChipCounts(byCategory) {
+  document.querySelectorAll('#category-chips .chip[data-cat]').forEach(chip => {
+    const key = chip.dataset.cat;
+    if (key === 'all') return;
+    const count = (byCategory[key] || []).length;
+    if (count) chip.textContent = `${chip.textContent} (${count})`;
+  });
+}
+
+// ─── Wire up filter bar interactions ─────────────────────────────────────────
+function setupFilters() {
+  document.querySelectorAll('#category-chips .chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('#category-chips .chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      _currentCat = chip.dataset.cat;
+      applyFilters();
+    });
+  });
+
+  const searchInput = document.getElementById('movement-search');
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      _currentSearch = searchInput.value;
+      applyFilters();
+    });
+  }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
+  setupFilters();
   await initSupabase();
   loadMovements();
 });
