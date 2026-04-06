@@ -101,4 +101,26 @@ const MOVEMENT_DB = {
     {name:"Ring Dips",tip:"Straight arm position at top — turn out",b:[3,5],i:[7,10],a:[10,15],tags:["push"]},
     {name:"Ring Muscle-Ups",tip:"Pull to waist then punch over rings",b:[1,2],i:[3,5],a:[5,8],tags:["full","pull"]},
   ],
+  slamball:[
+    {name:"Ball Slams",tip:"Extend fully overhead, slam with intent — absorb the catch through your hips",b:[10],i:[15],a:[20],tags:["full","cardio"]},
+    {name:"Rotational Ball Slams",tip:"Rotate from the hips — load the obliques, not just the arms",b:[8],i:[12],a:[15],tags:["core","cardio"]},
+    {name:"Slam Ball Over-the-Shoulder",tip:"Alternate sides each rep — drive from the hip, not the lower back",b:[6],i:[8],a:[10],tags:["full","cardio"]},
+    {name:"Slam Ball Clean",tip:"Scoop from the floor with a hip drive — catch at chest height, elbows high",b:[6],i:[8],a:[10],tags:["full"]},
+    {name:"Slam Ball Squat",tip:"Hold at chest, squat below parallel — use the load to pull you into depth",b:[10],i:[12],a:[15],tags:["lower"]},
+  ],
+  running:[
+    {name:"400m Run",tip:"Consistent pace — don't sprint the first 100m, save something for the end",b:["400m"],i:["400m"],a:["400m"],tags:["cardio","full"]},
+    {name:"800m Run",tip:"Find your 80% effort and hold it — even splits win",b:["400m"],i:["800m"],a:["800m"],tags:["cardio","full"]},
+    {name:"1 Mile Run",tip:"The back half should feel harder — go out controlled, come home strong",b:["800m"],i:["1 mile"],a:["1 mile"],tags:["cardio","full"]},
+    {name:"Treadmill Incline Walk",tip:"Set incline to 10–15% at 3–4 mph — harder than it looks, great for posterior chain",b:["5 min"],i:["8 min"],a:["10 min"],timed:true,tags:["cardio","lower"]},
+  ],
+  rower:[
+    {name:"500m Row",tip:"Legs drive first, then lean back, then arms — reverse on the return",b:["500m"],i:["500m"],a:["500m"],tags:["cardio","full","pull"]},
+    {name:"1000m Row",tip:"Start at 80% effort, build intensity in the final 250m",b:["500m"],i:["1000m"],a:["1000m"],tags:["cardio","full","pull"]},
+    {name:"Row for Calories",tip:"Aim for 25–28 strokes per minute — power per stroke beats high cadence",b:[10],i:[15],a:[20],tags:["cardio","full","pull"]},
+  ],
+  assaultbike:[
+    {name:"Assault Bike Calories",tip:"Push and pull the handles equally — arms are 30% of your power output",b:[10],i:[15],a:[20],tags:["cardio","full"]},
+    {name:"Assault Bike Intervals",tip:"Max effort each interval — lungs and legs both should be screaming",b:["30s"],i:["45s"],a:["60s"],timed:true,tags:["cardio","full"]},
+  ],
 };
