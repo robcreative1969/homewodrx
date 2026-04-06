@@ -218,10 +218,24 @@ const Search = (() => {
       #srch-hint {
         display: flex;
         gap: 0.6rem;
-        justify-content: flex-end;
+        justify-content: space-between;
         align-items: center;
         padding: 0.45rem 1rem;
         border-top: 1px solid rgba(255,255,255,0.06);
+      }
+      #srch-advanced-link {
+        font-size: 0.72rem;
+        color: var(--orange, #E8530A);
+        text-decoration: none;
+        opacity: 0.85;
+        transition: opacity 120ms;
+        white-space: nowrap;
+      }
+      #srch-advanced-link:hover { opacity: 1; text-decoration: underline; }
+      .srch-hint-keys {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
       }
       .srch-kbd {
         font-size: 0.65rem;
@@ -293,11 +307,14 @@ const Search = (() => {
           <button id="srch-esc-btn" aria-label="Close search">Esc</button>
         </div>
         <div id="srch-results" role="listbox" aria-label="Search results"></div>
-        <div id="srch-empty">No results — try a movement name or WOD like "Fran"</div>
+        <div id="srch-empty">No results — try a movement name or WOD like "Fran" · <a id="srch-empty-link" href="/search" style="color:var(--orange,#E8530A);">Advanced Search</a> for filters</div>
         <div id="srch-hint" aria-hidden="true">
-          <span class="srch-kbd">↑↓ navigate</span>
-          <span class="srch-kbd">↵ open</span>
-          <span class="srch-kbd">esc close</span>
+          <a id="srch-advanced-link" href="/search">Advanced Search + Filters →</a>
+          <div class="srch-hint-keys">
+            <span class="srch-kbd">↑↓ navigate</span>
+            <span class="srch-kbd">↵ open</span>
+            <span class="srch-kbd">esc close</span>
+          </div>
         </div>
       </div>
     `;
@@ -483,6 +500,13 @@ const Search = (() => {
     }
 
     resultsEl.innerHTML = html;
+
+    // Keep the Advanced Search link in sync with the current query
+    const advLink = document.getElementById('srch-advanced-link');
+    const emptyLink = document.getElementById('srch-empty-link');
+    const href = _currentQuery ? `/search?q=${encodeURIComponent(_currentQuery)}` : '/search';
+    if (advLink) advLink.href = href;
+    if (emptyLink) emptyLink.href = href;
   }
 
   // ── Keyboard focus management ──────────────────────────────────────────────
