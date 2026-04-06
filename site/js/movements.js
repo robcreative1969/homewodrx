@@ -130,5 +130,32 @@ const MOVEMENT_DB = {
     { name: 'Banded Face Pulls',   tags: ['pull'],                   b: 15, i: 25, a: 35, tip: 'Pull to nose; elbows high and wide.' },
     { name: 'Banded Rows',         tags: ['pull'],                   b: 12, i: 20, a: 30, tip: 'Anchor low; row to chest.' },
     { name: 'Banded Chest Press',  tags: ['push'],                   b: 12, i: 20, a: 30, tip: 'Anchor behind; press forward.' },
+  ],
+
+  running: [
+    { name: 'Running',     tags: ['cardio'],         b: 400, i: 800,  a: 1600, tip: 'Maintain a steady pace; breathe rhythmically.' },
+    { name: '200m Run',    tags: ['cardio'],         b: 1,   i: 2,    a: 4,    tip: 'Hard pace; recover fully between efforts.' },
+    { name: '400m Run',    tags: ['cardio'],         b: 1,   i: 2,    a: 4,    tip: 'Sustained effort; aim for consistent splits.' },
+    { name: '800m Run',    tags: ['cardio'],         b: 1,   i: 2,    a: 3,    tip: 'Strong pace; push on the back half.' },
+    { name: '1 Mile Run',  tags: ['cardio'],         b: 1,   i: 1,    a: 2,    tip: 'Pace yourself; save something for the last 400m.' },
+    { name: 'Shuttle Run', tags: ['cardio'],         b: 5,   i: 8,    a: 10,   tip: '10m down and back counts as one rep; touch the line.' },
+  ],
+
+  rower: [
+    { name: 'Rowing',            tags: ['cardio', 'pull'], b: 500, i: 1000, a: 2000, tip: 'Drive with legs first; arms follow through at the end.' },
+    { name: '500m Row',          tags: ['cardio', 'pull'], b: 1,   i: 2,    a: 3,    tip: 'All-out effort; drive hard each stroke.' },
+    { name: '1000m Row',         tags: ['cardio', 'pull'], b: 1,   i: 1,    a: 2,    tip: 'Steady 22–26 strokes per minute; strong finish.' },
+    { name: 'Row for Calories',  tags: ['cardio', 'pull'], b: 10,  i: 20,   a: 30,   tip: 'Higher stroke rate than distance rows.' },
+  ],
+
+  assaultbike: [
+    { name: 'Assault Bike',           tags: ['cardio'],         b: 10, i: 20, a: 30,  tip: 'Drive arms and legs simultaneously; keep cadence high.' },
+    { name: 'Assault Bike Calories',  tags: ['cardio'],         b: 10, i: 20, a: 30,  tip: 'Burst to target calories; arms pull as hard as legs push.' },
+    { name: 'Air Bike Intervals',     tags: ['cardio'],         b: 5,  i: 8,  a: 10,  tip: '20 sec on / 10 sec off; max effort each round.' },
+  ],
+
+  skierg: [
+    { name: 'Ski Erg',           tags: ['cardio', 'pull'],  b: 250, i: 500, a: 1000, tip: 'Pull the handles down with your whole body; hinge at the hips.' },
+    { name: 'Ski Erg Calories',  tags: ['cardio', 'pull'],  b: 10,  i: 20,  a: 30,   tip: 'Short powerful pulls; keep a steady rhythm.' },
   ]
 };
