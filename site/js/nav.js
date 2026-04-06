@@ -55,6 +55,7 @@ const Nav = {
       { text: 'Workouts', href: '/workouts.html', page: 'workouts' },
       { text: 'Movements', href: '/movements.html', page: 'movements' },
       { text: 'Generator', href: '/generator.html', page: 'generator' },
+      { text: 'Shop', href: '/shop.html', page: 'shop' },
       { text: 'Leaderboard', href: '/leaderboard.html', page: 'leaderboard' }
     ];
 
@@ -93,7 +94,6 @@ const Nav = {
         </div>
         <button id="nav-search-btn" aria-label="Search (/ or Ctrl+K)" title="Search (/ or Ctrl+K)">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <span class="srch-shortcut-hint">/</span>
         </button>
         <div class="nav-auth">
           ${authHtml}

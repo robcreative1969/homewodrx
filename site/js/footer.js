@@ -24,6 +24,7 @@
             <a href="/generator" style="color:var(--tx);font-size:13px;text-decoration:none">WOD Generator</a>
             <a href="/daily-wod" style="color:var(--tx);font-size:13px;text-decoration:none">Daily WOD</a>
             <a href="/movements" style="color:var(--tx);font-size:13px;text-decoration:none">Movement Library</a>
+            <a href="/shop" style="color:var(--tx);font-size:13px;text-decoration:none">Gear Shop</a>
           </div>
         </div>
         <div>
