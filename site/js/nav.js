@@ -55,8 +55,7 @@ const Nav = {
       { text: 'Workouts', href: '/workouts.html', page: 'workouts' },
       { text: 'Movements', href: '/movements.html', page: 'movements' },
       { text: 'Generator', href: '/generator.html', page: 'generator' },
-      { text: 'Shop', href: '/shop.html', page: 'shop' },
-      { text: 'Leaderboard', href: '/leaderboard.html', page: 'leaderboard' }
+      { text: 'Shop', href: '/shop.html', page: 'shop' }
     ];
 
     const additionalLinks = currentUser ? [
