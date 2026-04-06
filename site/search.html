@@ -416,8 +416,10 @@
           <button class="eq-chip" data-eq="jumpRope">Jump Rope</button>
           <button class="eq-chip" data-eq="rings">Rings</button>
           <button class="eq-chip" data-eq="rowingMachine">Rower</button>
+          <button class="eq-chip" data-eq="assaultBike">Assault Bike</button>
           <button class="eq-chip" data-eq="box">Box</button>
           <button class="eq-chip" data-eq="medBall">Med Ball</button>
+          <button class="eq-chip" data-eq="resistanceBands">Resistance Bands</button>
         </div>
       </div>
 
@@ -485,16 +487,18 @@ let filters = {
 //  EQUIPMENT KEY → LABEL MAP
 // ─────────────────────────────────────────────
 const EQ_LABEL = {
-  bodyweight:    'Bodyweight',
-  barbell:       'Barbell',
-  dumbbell:      'Dumbbell',
-  kettlebell:    'Kettlebell',
-  pullUpBar:     'Pull-Up Bar',
-  jumpRope:      'Jump Rope',
-  rings:         'Rings',
-  rowingMachine: 'Rower',
-  box:           'Box',
-  medBall:       'Med Ball'
+  bodyweight:      'Bodyweight',
+  barbell:         'Barbell',
+  dumbbell:        'Dumbbell',
+  kettlebell:      'Kettlebell',
+  pullUpBar:       'Pull-Up Bar',
+  jumpRope:        'Jump Rope',
+  rings:           'Rings',
+  rowingMachine:   'Rower',
+  assaultBike:     'Assault Bike',
+  box:             'Box',
+  medBall:         'Med Ball',
+  resistanceBands: 'Resistance Bands'
 };
 
 // ─────────────────────────────────────────────
@@ -650,12 +654,22 @@ function matchesDuration(w) {
   return true;
 }
 
+// Maps chip keys to all possible stored equivalents (data is inconsistent across benchmarks/generator/user workouts)
+const EQ_ALIASES = {
+  dumbbell:        ['dumbbell', 'dumbbells'],
+  rowingMachine:   ['rowingmachine', 'rower'],
+  medBall:         ['medball', 'wallball', 'wall ball', 'med ball', 'medicineball', 'medicine ball'],
+  resistanceBands: ['resistancebands', 'resistance bands', 'resistance band', 'bands'],
+  assaultBike:     ['assaultbike', 'assault bike', 'echo bike', 'bike erg', 'airbike', 'air bike']
+};
+
 function matchesEquipment(w) {
   if (filters.equipment.size === 0) return true;
   const weq = (w.equipment || []).map(e => e.toLowerCase());
-  // Workout must include ALL selected equipment tags
   for (const eq of filters.equipment) {
-    if (!weq.includes(eq.toLowerCase())) return false;
+    const aliases = EQ_ALIASES[eq] || [eq.toLowerCase()];
+    const found = aliases.some(alias => weq.includes(alias));
+    if (!found) return false;
   }
   return true;
 }
