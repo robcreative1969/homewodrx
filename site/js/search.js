@@ -78,7 +78,7 @@ const Search = (() => {
       /* ── Modal panel ── */
       #srch-modal {
         background: var(--dark-card, #1E1E2C);
-        border: 1px solid rgba(232, 83, 10, 0.35);
+        border: 1px solid rgba(196, 18, 18, 0.35);
         border-radius: 16px;
         width: 100%;
         max-width: 640px;
@@ -113,7 +113,7 @@ const Search = (() => {
         font-size: 1rem;
         color: var(--text-primary, #EAEAF0);
         font-family: inherit;
-        caret-color: var(--orange, #E8530A);
+        caret-color: var(--orange, #C41212);
       }
       #srch-input::placeholder { color: var(--text-muted, #888899); }
       #srch-esc-btn {
@@ -128,7 +128,7 @@ const Search = (() => {
         font-family: inherit;
         transition: border-color 120ms, color 120ms;
       }
-      #srch-esc-btn:hover { border-color: var(--orange, #E8530A); color: var(--text-primary, #EAEAF0); }
+      #srch-esc-btn:hover { border-color: var(--orange, #C41212); color: var(--text-primary, #EAEAF0); }
 
       /* ── Results list ── */
       #srch-results {
@@ -136,10 +136,10 @@ const Search = (() => {
         overflow-y: auto;
         padding: 0.4rem 0;
         scrollbar-width: thin;
-        scrollbar-color: rgba(232,83,10,0.3) transparent;
+        scrollbar-color: rgba(196,18,18,0.3) transparent;
       }
       #srch-results::-webkit-scrollbar { width: 4px; }
-      #srch-results::-webkit-scrollbar-thumb { background: rgba(232,83,10,0.3); border-radius: 2px; }
+      #srch-results::-webkit-scrollbar-thumb { background: rgba(196,18,18,0.3); border-radius: 2px; }
 
       .srch-section {
         font-size: 0.68rem;
@@ -161,7 +161,7 @@ const Search = (() => {
       }
       .srch-item:hover,
       .srch-item.srch-focused {
-        background: rgba(232, 83, 10, 0.1);
+        background: rgba(196, 18, 18, 0.1);
         color: var(--text-primary, #EAEAF0);
       }
       .srch-icon {
@@ -174,7 +174,7 @@ const Search = (() => {
         font-size: 0.85rem;
         flex-shrink: 0;
       }
-      .srch-icon-bm   { background: rgba(232, 83, 10, 0.15); }
+      .srch-icon-bm   { background: rgba(196, 18, 18, 0.15); }
       .srch-icon-mv   { background: rgba(80, 200, 120, 0.12); }
       .srch-icon-wod  { background: rgba(100, 160, 255, 0.12); }
       .srch-text { flex: 1; min-width: 0; }
@@ -198,8 +198,8 @@ const Search = (() => {
         font-size: 0.6rem;
         text-transform: uppercase;
         letter-spacing: 0.06em;
-        background: rgba(232,83,10,0.12);
-        color: var(--orange, #E8530A);
+        background: rgba(196,18,18,0.12);
+        color: var(--orange, #C41212);
         border-radius: 4px;
         padding: 0.15rem 0.4rem;
         flex-shrink: 0;
@@ -225,7 +225,7 @@ const Search = (() => {
       }
       #srch-advanced-link {
         font-size: 0.72rem;
-        color: var(--orange, #E8530A);
+        color: var(--orange, #C41212);
         text-decoration: none;
         opacity: 0.85;
         transition: opacity 120ms;
@@ -263,9 +263,9 @@ const Search = (() => {
         gap: 0.35rem;
       }
       #nav-search-btn:hover {
-        border-color: var(--orange, #E8530A);
-        color: var(--orange, #E8530A);
-        background: rgba(232,83,10,0.08);
+        border-color: var(--orange, #C41212);
+        color: var(--orange, #C41212);
+        background: rgba(196,18,18,0.08);
       }
       #nav-search-btn .srch-shortcut-hint {
         font-size: 0.6rem;
@@ -307,7 +307,7 @@ const Search = (() => {
           <button id="srch-esc-btn" aria-label="Close search">Esc</button>
         </div>
         <div id="srch-results" role="listbox" aria-label="Search results"></div>
-        <div id="srch-empty">No results — try a movement name or WOD like "Fran" · <a id="srch-empty-link" href="/search" style="color:var(--orange,#E8530A);">Advanced Search</a> for filters</div>
+        <div id="srch-empty">No results — try a movement name or WOD like "Fran" · <a id="srch-empty-link" href="/search" style="color:var(--orange,#C41212);">Advanced Search</a> for filters</div>
         <div id="srch-hint" aria-hidden="true">
           <a id="srch-advanced-link" href="/search">Advanced Search + Filters →</a>
           <div class="srch-hint-keys">

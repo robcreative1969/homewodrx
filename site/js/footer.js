@@ -14,7 +14,7 @@
     footer.innerHTML = `
       <div style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:32px">
         <div>
-          <div style="font-size:18px;font-weight:900;margin-bottom:12px">&#9889; HomeWODrx</div>
+          <img src="/HomeWODRx-logo-white-red-black-strip-040626.png" alt="HomeWODrx" style="height:30px;width:auto;display:block;margin-bottom:12px">
           <p style="font-size:13px;color:var(--mu);line-height:1.7">The complete platform for home and garage gym athletes.</p>
         </div>
         <div>

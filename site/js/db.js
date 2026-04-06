@@ -178,7 +178,7 @@ const db = {
           id: user.id,
           username: user.username,
           bio: '',
-          avatar_color: '#E8530A',
+          avatar_color: '#C41212',
           created_at: new Date().toISOString()
         };
       }
@@ -202,7 +202,7 @@ const db = {
           id: user.id,
           username: user.username,
           bio: '',
-          avatar_color: '#E8530A',
+          avatar_color: '#C41212',
           created_at: new Date().toISOString()
         };
       }

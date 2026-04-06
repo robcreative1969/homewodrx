@@ -86,7 +86,7 @@ const Nav = {
     return `
       <div class="nav-container">
         <a href="/" class="nav-logo">
-          <span>⚡</span> HomeWODrx
+          <img src="/HomeWODRx-logo-white-red-black-strip-040626.png" alt="HomeWODrx" class="nav-logo-img">
         </a>
         <div class="nav-links">
           ${linksHtml}
@@ -102,7 +102,7 @@ const Nav = {
   },
 
   getAvatarColor(userId) {
-    const colors = ['#E8530A', '#FF6B35', '#FF8C42', '#FFA500', '#FFB84D'];
+    const colors = ['#C41212', '#E03030', '#CC2222', '#A50F0F', '#D93A3A'];
     const hash = userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     return colors[hash % colors.length];
   },
