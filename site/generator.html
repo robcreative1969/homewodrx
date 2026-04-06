@@ -159,6 +159,9 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
 .modal-btn:hover{background:var(--orl)}
 .modal-link{text-align:center;margin-top:12px;font-size:13px;color:var(--mu)}
 .modal-link a{color:var(--or);cursor:pointer;text-decoration:none}
+.modal-recovery{display:flex;justify-content:center;gap:16px;margin-top:10px;font-size:12px}
+.modal-recovery a{color:var(--mu);text-decoration:none;cursor:pointer}
+.modal-recovery a:hover{color:var(--or);text-decoration:underline}
 .modal-error{background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);color:#E74C3C;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
 .modal-error.vis{display:block}
 .modal-success{background:rgba(39,174,96,.15);border:1px solid rgba(39,174,96,.4);color:#27AE60;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
@@ -403,7 +406,7 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
       <div class="icon">🔐</div>
       <h3>Sign in to save workouts</h3>
       <p>Create a free account to save your workouts and track your results over time.</p>
-      <button class="abtn pri" style="max-width:200px;margin:0 auto" onclick="openAuthModal()">Sign Up Free</button>
+      <button class="abtn pri" style="max-width:200px;margin:0 auto" onclick="openAuthModal('signup')">Sign Up Free</button>
     </div>
   </div>
   <div id="myw-content">
@@ -440,6 +443,10 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
     <div class="field"><label>Password</label><input type="password" id="li-pass" placeholder="Your password" onkeydown="if(event.key==='Enter')submitLogin()"></div>
     <button class="modal-btn" onclick="submitLogin()">Sign In →</button>
     <p class="modal-link">No account? <a onclick="switchAuthTab('signup')">Sign up free</a></p>
+    <div class="modal-recovery">
+      <a href="/login.html">Forgot password?</a>
+      <a href="/login.html">Forgot email?</a>
+    </div>
   </div>
   <div id="signup-form" style="display:none">
     <div class="field"><label>Username</label><input type="text" id="su-user" placeholder="e.g. firebreather_rob" maxlength="20"></div>

@@ -893,6 +893,9 @@
   #workout-auth-modal .wambtn:hover{background:#E03030}
   #workout-auth-modal .wamlink{text-align:center;margin-top:12px;font-size:13px;color:var(--text-muted,#888899)}
   #workout-auth-modal .wamlink a{color:var(--orange,#C41212);cursor:pointer;text-decoration:none}
+  #workout-auth-modal .wam-recovery{display:flex;justify-content:center;gap:16px;margin-top:10px;font-size:12px}
+  #workout-auth-modal .wam-recovery a{color:var(--text-muted,#888899);text-decoration:none}
+  #workout-auth-modal .wam-recovery a:hover{color:var(--orange,#C41212);text-decoration:underline}
   #workout-auth-modal .wamerr{background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);color:#E74C3C;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
   @keyframes slideInToast{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
 </style>
@@ -907,6 +910,10 @@
       <div class="wamfield"><label>Password</label><input type="password" id="workout-li-pass" placeholder="Your password" onkeydown="if(event.key==='Enter')submitWorkoutLogin()"></div>
       <button class="wambtn" onclick="submitWorkoutLogin()">Sign In →</button>
       <p class="wamlink">No account? <a onclick="switchWorkoutAuthTab('signup')">Sign up free</a></p>
+      <div class="wam-recovery">
+        <a href="/login.html">Forgot password?</a>
+        <a href="/login.html">Forgot email?</a>
+      </div>
     </div>
     <div id="workout-signup-form" style="display:none">
       <div class="wamfield"><label>Username</label><input type="text" id="workout-su-user" placeholder="e.g. firebreather_rob" maxlength="20"></div>
