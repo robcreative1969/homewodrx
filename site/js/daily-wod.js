@@ -235,7 +235,11 @@ const DailyWOD = {
       barbell: 'Barbell',
       box: 'Box',
       medicineball: 'Medicine Ball',
-      rings: 'Rings'
+      rings: 'Rings',
+      slamball: 'Slam Ball',
+      running: 'Treadmill',
+      rower: 'Rowing Machine',
+      assaultbike: 'Assault Bike',
     };
     const usedEqKeys = [...new Set((workout.rows || []).map(r => r._eq).filter(Boolean))];
     const isBodyweightOnly = usedEqKeys.every(k => k === 'bodyweight');
