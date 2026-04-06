@@ -40,6 +40,36 @@
     <loc>https://www.homewodrx.com/search</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <lastmod>2026-04-06</lastmod>
+  </url>
+  <url>
+    <loc>https://www.homewodrx.com/shop</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-04-05</lastmod>
+  </url>
+  <url>
+    <loc>https://www.homewodrx.com/privacy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <lastmod>2026-04-05</lastmod>
+  </url>
+  <url>
+    <loc>https://www.homewodrx.com/terms</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <lastmod>2026-04-05</lastmod>
+  </url>
+  <url>
+    <loc>https://www.homewodrx.com/disclaimer</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <lastmod>2026-04-05</lastmod>
+  </url>
+  <url>
+    <loc>https://www.homewodrx.com/cookies</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
     <lastmod>2026-04-05</lastmod>
   </url>
   <url>
