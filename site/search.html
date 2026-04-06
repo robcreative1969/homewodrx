@@ -12,6 +12,7 @@
   <script src="/js/config.js"></script>
   <script src="/js/db.js"></script>
   <script src="/js/benchmarks.js"></script>
+  <script src="/js/daily-wod.js"></script>
   <script src="/js/nav.js"></script>
   <style>
     /* ── Search hero ── */
@@ -497,6 +498,58 @@ const EQ_LABEL = {
 };
 
 // ─────────────────────────────────────────────
+//  DAILY WOD GENERATOR (last N days)
+// ─────────────────────────────────────────────
+async function generateRecentDailyWods(days) {
+  if (typeof DailyWOD === 'undefined') return [];
+  const wods = [];
+  const today = new Date();
+  const [config, movementDB] = await Promise.all([
+    DailyWOD.getConfig().catch(() => DailyWOD.defaultConfig),
+    DailyWOD._loadMovements().catch(() => ({}))
+  ]);
+  for (let i = 0; i < days; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const dateStr = d.toISOString().split('T')[0];
+    try {
+      const dayOfWeek = new Date(dateStr + 'T12:00:00').getDay();
+      const seed       = DailyWOD.getSeedForDate(dateStr);
+      const rng        = DailyWOD.seededRng(seed);
+      const difficulty = config.difficultyByDay[dayOfWeek] || 'intermediate';
+      const bodyFocus  = config.bodyFocusByDay[dayOfWeek]  || 'full-body';
+      const format     = config.formatByDay[dayOfWeek]     || 'amrap';
+      const durRange   = config.durationByDay[dayOfWeek]   || [20, 30];
+      const duration   = durRange[0] + Math.floor(rng() * (durRange[1] - durRange[0] + 1));
+      const equipment  = config.equipment || ['bodyweight'];
+      const pool = DailyWOD._buildPool(equipment, difficulty, bodyFocus, rng, movementDB);
+      let wod;
+      if (format === 'amrap')        wod = DailyWOD._genAMRAP(pool, difficulty, duration, bodyFocus, rng);
+      else if (format === 'emom')    wod = DailyWOD._genEMOM(pool, difficulty, duration, bodyFocus, rng);
+      else if (format === 'fortime') wod = DailyWOD._genForTime(pool, difficulty, rng);
+      else                           wod = DailyWOD._genCircuit(pool, difficulty, duration, bodyFocus, rng);
+      if (wod) {
+        const dateLabel = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        wods.push({
+          id:         dateStr,
+          slug:       dateStr,
+          title:      `Daily WOD — ${dateLabel}`,
+          category:   'daily',
+          format:     wod.format,
+          difficulty: difficulty,
+          body_focus: bodyFocus,
+          duration:   duration,
+          movements:  (wod.rows || []).map(r => ({ movement: r.movement, reps: r.reps || '' })),
+          description: (wod.rows || []).map(r => `${r.reps ? r.reps + ' ' : ''}${r.movement}`).join(', '),
+          _date:      dateStr
+        });
+      }
+    } catch (e) { /* skip this date */ }
+  }
+  return wods;
+}
+
+// ─────────────────────────────────────────────
 //  LOAD DATA
 // ─────────────────────────────────────────────
 async function loadAllWorkouts() {
@@ -534,6 +587,16 @@ async function loadAllWorkouts() {
     }
   } catch (e) {
     console.warn('Could not load user workouts:', e);
+  }
+
+  // Add last 365 days of daily WODs for searchable content
+  try {
+    const dailyWods = await generateRecentDailyWods(365);
+    if (dailyWods.length > 0) {
+      allWorkouts = allWorkouts.concat(dailyWods);
+    }
+  } catch (e) {
+    console.warn('Could not generate daily WODs:', e);
   }
 
   runSearch();
@@ -756,8 +819,11 @@ function renderResults() {
   }
 
   container.innerHTML = displayed.map(w => {
-    const isUser = w.category === 'user';
-    const href   = isUser ? `/workout.html?id=${w.id}` : `/workout.html?slug=${w.slug}`;
+    const isUser  = w.category === 'user';
+    const isDaily = w.category === 'daily';
+    const href = isDaily  ? `/daily-wod.html?date=${w._date}`
+               : isUser   ? `/workout.html?id=${w.id}`
+               :             `/workout.html?slug=${w.slug}`;
     const title  = w.title || w.name || '';
     const mvNames = (w.movements || []).slice(0, 4).map(m => m.movement).filter(Boolean);
     const mvText  = mvNames.length > 0
