@@ -6,7 +6,7 @@
   <title>Browse Workouts - HomeWODrx</title>
   <meta name="description" content="Browse and filter all CrossFit benchmarks and user-generated workouts.">
   <meta property="og:title" content="Browse CrossFit Workouts — HomeWODrx">
-  <meta property="og:description" content="Browse Girl WODs, Hero WODs, Open WODs, Games WODs, and benchmark workouts. Filter by format, difficulty, and body focus.">
+  <meta property="og:description" content="Browse Girl WODs, Hero WODs, Open WODs, Games WODs, and benchmark workouts. Filter by type and format.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://homewodrx.com/workouts">
   <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
@@ -115,37 +115,8 @@
       </div>
     </div>
     <div class="filter-section">
-      <label class="filter-label">Difficulty</label>
-      <div class="filter-chips" id="difficulty-filters">
-        <button class="chip active" data-difficulty="all">All</button>
-        <button class="chip" data-difficulty="beginner">Beginner</button>
-        <button class="chip" data-difficulty="intermediate">Intermediate</button>
-        <button class="chip" data-difficulty="advanced">Advanced</button>
-      </div>
-    </div>
-    <div class="filter-section">
-      <label class="filter-label">Body Focus</label>
-      <div class="filter-chips" id="focus-filters">
-        <button class="chip active" data-focus="all">All</button>
-        <button class="chip" data-focus="full-body">Full Body</button>
-        <button class="chip" data-focus="upper">Upper</button>
-        <button class="chip" data-focus="lower">Lower</button>
-        <button class="chip" data-focus="core">Core</button>
-        <button class="chip" data-focus="conditioning">Conditioning</button>
-      </div>
-    </div>
-    <div class="filter-section">
       <label class="filter-label">Search</label>
       <input type="text" id="search-input" placeholder="Search by workout name...">
-    </div>
-    <div class="filter-section">
-      <label class="filter-label">Sort By</label>
-      <select id="sort-select">
-        <option value="newest">Newest First</option>
-        <option value="alphabetical">Alphabetical</option>
-        <option value="difficulty">Difficulty (Easiest First)</option>
-        <option value="difficulty-hard">Difficulty (Hardest First)</option>
-      </select>
     </div>
   </div>
 
@@ -188,8 +159,6 @@
   let currentFilters = {
     type: 'all',
     format: 'all',
-    difficulty: 'all',
-    focus: 'all',
     search: '',
     movement: null
   };
@@ -328,8 +297,6 @@
     filteredWorkouts = allWorkouts.filter(w => {
       if (currentFilters.type !== 'all' && w.category !== currentFilters.type) return false;
       if (currentFilters.format !== 'all' && !w.format.toLowerCase().includes(currentFilters.format.toLowerCase())) return false;
-      if (currentFilters.difficulty !== 'all' && w.difficulty !== currentFilters.difficulty) return false;
-      if (currentFilters.focus !== 'all' && w.body_focus !== currentFilters.focus) return false;
       if (currentFilters.search && !(w.name || w.title || '').toLowerCase().includes(currentFilters.search.toLowerCase())) return false;
 
       if (currentFilters.movement) {
@@ -341,28 +308,17 @@
       return true;
     });
 
-    const sortBy = document.getElementById('sort-select').value;
-    if (sortBy === 'alphabetical') {
-      filteredWorkouts.sort((a, b) => a.name.localeCompare(b.name));
-    } else if (sortBy === 'difficulty') {
-      const diffOrder = { 'beginner': 1, 'intermediate': 2, 'advanced': 3 };
-      filteredWorkouts.sort((a, b) => (diffOrder[a.difficulty] || 0) - (diffOrder[b.difficulty] || 0));
-    } else if (sortBy === 'difficulty-hard') {
-      const diffOrder = { 'beginner': 1, 'intermediate': 2, 'advanced': 3 };
-      filteredWorkouts.sort((a, b) => (diffOrder[b.difficulty] || 0) - (diffOrder[a.difficulty] || 0));
-    } else {
-      const catOrder = { 'girl': 0, 'hero': 1, 'open': 2, 'games': 3, 'partner': 4, 'benchmark': 5, 'user': 6, 'daily': 7 };
-      filteredWorkouts.sort((a, b) => {
-        const ao = catOrder[a.category] ?? 3;
-        const bo = catOrder[b.category] ?? 3;
-        if (ao !== bo) return ao - bo;
-        // Daily WODs: newest first
-        if (a.category === 'daily' && b.category === 'daily') {
-          return (b._date || '').localeCompare(a._date || '');
-        }
-        return 0;
-      });
-    }
+    // Default order: by category, daily WODs newest first within their group
+    const catOrder = { 'girl': 0, 'hero': 1, 'open': 2, 'games': 3, 'partner': 4, 'benchmark': 5, 'user': 6, 'daily': 7 };
+    filteredWorkouts.sort((a, b) => {
+      const ao = catOrder[a.category] ?? 3;
+      const bo = catOrder[b.category] ?? 3;
+      if (ao !== bo) return ao - bo;
+      if (a.category === 'daily' && b.category === 'daily') {
+        return (b._date || '').localeCompare(a._date || '');
+      }
+      return 0;
+    });
 
     renderWorkouts();
   }
@@ -447,33 +403,11 @@
       });
     });
 
-    document.querySelectorAll('#difficulty-filters .chip').forEach(chip => {
-      chip.addEventListener('click', (e) => {
-        document.querySelectorAll('#difficulty-filters .chip').forEach(c => c.classList.remove('active'));
-        e.target.classList.add('active');
-        currentFilters.difficulty = e.target.dataset.difficulty;
-        displayCount = 12;
-        applyFilters();
-      });
-    });
-
-    document.querySelectorAll('#focus-filters .chip').forEach(chip => {
-      chip.addEventListener('click', (e) => {
-        document.querySelectorAll('#focus-filters .chip').forEach(c => c.classList.remove('active'));
-        e.target.classList.add('active');
-        currentFilters.focus = e.target.dataset.focus;
-        displayCount = 12;
-        applyFilters();
-      });
-    });
-
     document.getElementById('search-input').addEventListener('input', (e) => {
       currentFilters.search = e.target.value;
       displayCount = 12;
       applyFilters();
     });
-
-    document.getElementById('sort-select').addEventListener('change', applyFilters);
 
     document.getElementById('load-more-btn').addEventListener('click', () => {
       displayCount += 12;
