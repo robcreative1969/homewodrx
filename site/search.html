@@ -387,6 +387,22 @@
         </div>
       </div>
 
+      <!-- Modality -->
+      <div class="filter-group" style="grid-column: 1 / -1;">
+        <label>Modality (select multiple)</label>
+        <div class="eq-chips" id="modality-filters">
+          <button class="eq-chip" data-mod="run">🏃 Running</button>
+          <button class="eq-chip" data-mod="row">🚣 Rowing</button>
+          <button class="eq-chip" data-mod="bike">🚴 Biking</button>
+          <button class="eq-chip" data-mod="ski">⛷️ Skiing</button>
+          <button class="eq-chip" data-mod="jumprope">🪢 Jump Rope</button>
+          <button class="eq-chip" data-mod="gymnastics">🤸 Gymnastics</button>
+          <button class="eq-chip" data-mod="olympic">🏋️ Olympic Lifting</button>
+          <button class="eq-chip" data-mod="carries">🧱 Carries</button>
+          <button class="eq-chip" data-mod="burpees">💀 Burpees</button>
+        </div>
+      </div>
+
       <!-- Equipment -->
       <div class="filter-group" style="grid-column: 1 / -1;">
         <label>Equipment (select multiple)</label>
@@ -460,7 +476,8 @@ let filters = {
   focus:      'all',
   scoring:    'all',
   duration:   'all',
-  equipment:  new Set()
+  equipment:  new Set(),
+  modality:   new Set()
 };
 
 // ─────────────────────────────────────────────
@@ -580,6 +597,33 @@ function matchesEquipment(w) {
   return true;
 }
 
+const MODALITY_KEYWORDS = {
+  run:        ['run'],
+  row:        ['row'],
+  bike:       ['bike', 'assault'],
+  ski:        ['ski'],
+  jumprope:   ['double-under', 'double under', 'jump rope', 'single under'],
+  gymnastics: ['pull-up', 'pull up', 'muscle-up', 'muscle up', 'handstand',
+               'ring dip', 'rope climb', 'toes-to-bar', 'toes to bar',
+               'chest-to-bar', 'bar dip'],
+  olympic:    ['clean', 'snatch', 'jerk', 'thruster'],
+  carries:    ['carry', 'farmer', 'sandbag', 'yoke', 'suitcase'],
+  burpees:    ['burpee']
+};
+
+function matchesModality(w) {
+  if (filters.modality.size === 0) return true;
+  // Search both movement names and description for modality keywords
+  const mvText = (w.movements || []).map(m => (m.movement || '').toLowerCase()).join(' ');
+  const searchText = mvText + ' ' + (w.description || '').toLowerCase();
+  for (const mod of filters.modality) {
+    const keywords = MODALITY_KEYWORDS[mod] || [mod];
+    const found = keywords.some(kw => searchText.includes(kw));
+    if (!found) return false;
+  }
+  return true;
+}
+
 function runSearch() {
   const q = filters.query.trim();
 
@@ -603,6 +647,7 @@ function runSearch() {
     if (filters.scoring !== 'all' && (w.scoring_type || '') !== filters.scoring) return false;
     if (!matchesDuration(w)) return false;
     if (!matchesEquipment(w)) return false;
+    if (!matchesModality(w)) return false;
 
     return true;
   });
@@ -752,7 +797,8 @@ function hasActiveFilters() {
     filters.focus !== 'all' ||
     filters.scoring !== 'all' ||
     filters.duration !== 'all' ||
-    filters.equipment.size > 0;
+    filters.equipment.size > 0 ||
+    filters.modality.size > 0;
 }
 
 function renderActiveFilters() {
@@ -772,6 +818,14 @@ function renderActiveFilters() {
   for (const eq of filters.equipment)
     pills.push({ label: `Eq: ${EQ_LABEL[eq] || eq}`, key: 'eq:' + eq });
 
+  const MOD_LABEL = {
+    run: 'Running', row: 'Rowing', bike: 'Biking', ski: 'Skiing',
+    jumprope: 'Jump Rope', gymnastics: 'Gymnastics',
+    olympic: 'Olympic Lifting', carries: 'Carries', burpees: 'Burpees'
+  };
+  for (const mod of filters.modality)
+    pills.push({ label: `Modality: ${MOD_LABEL[mod] || mod}`, key: 'mod:' + mod });
+
   wrap.innerHTML = pills.map(p =>
     `<button class="active-pill" data-clear="${escHtml(p.key)}">${escHtml(p.label)} <span class="pill-x">×</span></button>`
   ).join('');
@@ -784,7 +838,8 @@ function updateFilterBadge() {
     filters.focus !== 'all',
     filters.scoring !== 'all',
     filters.duration !== 'all',
-    ...Array.from(filters.equipment).map(() => true)
+    ...Array.from(filters.equipment).map(() => true),
+    ...Array.from(filters.modality).map(() => true)
   ].filter(Boolean).length;
 
   const badge = document.getElementById('filter-count-badge');
@@ -808,6 +863,12 @@ function clearFilter(key) {
     const chip = document.querySelector(`[data-eq="${eq}"]`);
     if (chip) chip.classList.remove('active');
   }
+  else if (key.startsWith('mod:')) {
+    const mod = key.slice(4);
+    filters.modality.delete(mod);
+    const chip = document.querySelector(`[data-mod="${mod}"]`);
+    if (chip) chip.classList.remove('active');
+  }
   runSearch();
 }
 
@@ -818,6 +879,7 @@ function resetAllFilters() {
   filters.scoring    = 'all';
   filters.duration   = 'all';
   filters.equipment  = new Set();
+  filters.modality   = new Set();
 
   setChipActive('format-filters', 'all', 'format');
   setChipActive('difficulty-filters', 'all', 'difficulty');
@@ -937,6 +999,21 @@ function setupListeners() {
         chip.classList.remove('active');
       } else {
         filters.equipment.add(eq);
+        chip.classList.add('active');
+      }
+      runSearch();
+    });
+  });
+
+  // Modality chips (multi-select toggle)
+  document.querySelectorAll('#modality-filters .eq-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const mod = chip.dataset.mod;
+      if (filters.modality.has(mod)) {
+        filters.modality.delete(mod);
+        chip.classList.remove('active');
+      } else {
+        filters.modality.add(mod);
         chip.classList.add('active');
       }
       runSearch();
