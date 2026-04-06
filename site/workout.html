@@ -99,6 +99,100 @@
       margin-left: 0.4rem;
       vertical-align: middle;
     }
+    /* ── Scaling Notes ──────────────────────────────────────────────────── */
+    .scaling-box {
+      background: rgba(249, 115, 22, 0.07);
+      border: 1px solid rgba(249, 115, 22, 0.3);
+      border-left: 4px solid var(--orange, #f97316);
+      border-radius: 8px;
+      padding: 1.1rem 1.3rem;
+      margin-top: 1.5rem;
+    }
+    .scaling-box h4 {
+      color: var(--orange, #f97316);
+      margin: 0 0 0.5rem;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .scaling-box p {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text, #e5e5e5);
+    }
+    /* ── Coaching Tips ──────────────────────────────────────────────────── */
+    .coaching-tips-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .coaching-tips-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      font-size: 0.95rem;
+      line-height: 1.55;
+      padding: 0.65rem 0.9rem;
+      background: var(--dark-surface, #1a1a1a);
+      border: 1px solid var(--dark-border, #333);
+      border-radius: 7px;
+    }
+    .coaching-tips-list li::before {
+      content: "→";
+      color: var(--orange, #f97316);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 0.05rem;
+    }
+    /* ── FAQ Accordion ──────────────────────────────────────────────────── */
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .faq-item {
+      border: 1px solid var(--dark-border, #333);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .faq-question {
+      width: 100%;
+      background: var(--dark-surface, #1a1a1a);
+      border: none;
+      text-align: left;
+      padding: 0.9rem 1.1rem;
+      font-size: 0.97rem;
+      font-weight: 600;
+      color: var(--text, #e5e5e5);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      transition: background 0.15s;
+    }
+    .faq-question:hover { background: rgba(249,115,22,0.07); }
+    .faq-question .faq-chevron {
+      flex-shrink: 0;
+      font-size: 0.8rem;
+      color: var(--orange, #f97316);
+      transition: transform 0.2s;
+    }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+    .faq-answer {
+      display: none;
+      padding: 0.9rem 1.1rem;
+      font-size: 0.93rem;
+      line-height: 1.6;
+      color: var(--text-muted, #aaa);
+      border-top: 1px solid var(--dark-border, #333);
+      background: var(--dark-bg, #111);
+    }
+    .faq-item.open .faq-answer { display: block; }
   </style>
 </head>
 <body data-nav-init="true" data-active-page="workouts">
@@ -120,6 +214,33 @@
       </div>
       <div id="movements-table"></div>
     </section>
+
+    <div id="scaling-section" style="display:none;">
+      <section class="section">
+        <div class="section-title">
+          <h2>Scaling Options</h2>
+        </div>
+        <div id="scaling-content"></div>
+      </section>
+    </div>
+
+    <div id="coaching-section" style="display:none;">
+      <section class="section">
+        <div class="section-title">
+          <h2>Coaching Tips</h2>
+        </div>
+        <ul class="coaching-tips-list" id="coaching-content"></ul>
+      </section>
+    </div>
+
+    <div id="faq-section" style="display:none;">
+      <section class="section">
+        <div class="section-title">
+          <h2>Frequently Asked Questions</h2>
+        </div>
+        <div class="faq-list" id="faq-content"></div>
+      </section>
+    </div>
 
     <section class="section">
       <div class="section-title">
@@ -429,6 +550,22 @@
           ],
         },
       ];
+      // FAQPage schema — injected when FAQ content exists (high-traffic benchmark pages)
+      if (currentWorkout.faqs && currentWorkout.faqs.length > 0) {
+        ldData.push({
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          'mainEntity': currentWorkout.faqs.map(f => ({
+            '@type': 'Question',
+            'name': f.question,
+            'acceptedAnswer': {
+              '@type': 'Answer',
+              'text': f.answer
+            }
+          }))
+        });
+      }
+
       injectJsonLd(ldData);
 
       document.getElementById('workout-details').style.display = '';
@@ -514,6 +651,41 @@
         </div>`;
     }
     document.getElementById('log-result-section').innerHTML = `<p class="text-muted" style="margin-bottom:1rem;">Record your time, rounds, or reps.</p><button class="btn btn-primary" onclick="openResultModal()">Log Your Result</button>`;
+
+    // ── Scaling Notes ────────────────────────────────────────────────────
+    if (w.scaling_notes) {
+      document.getElementById('scaling-section').style.display = '';
+      document.getElementById('scaling-content').innerHTML = `
+        <div class="scaling-box">
+          <h4>⚡ How to Scale This Workout</h4>
+          <p>${w.scaling_notes}</p>
+        </div>`;
+    }
+
+    // ── Coaching Tips ────────────────────────────────────────────────────
+    if (w.coaching_tips && w.coaching_tips.length > 0) {
+      document.getElementById('coaching-section').style.display = '';
+      document.getElementById('coaching-content').innerHTML =
+        w.coaching_tips.map(tip => `<li>${tip}</li>`).join('');
+    }
+
+    // ── FAQ Accordion ────────────────────────────────────────────────────
+    if (w.faqs && w.faqs.length > 0) {
+      document.getElementById('faq-section').style.display = '';
+      document.getElementById('faq-content').innerHTML = w.faqs.map((f, i) => `
+        <div class="faq-item" id="faq-${i}">
+          <button class="faq-question" onclick="toggleFaq(${i})">
+            <span>${f.question}</span>
+            <span class="faq-chevron">▼</span>
+          </button>
+          <div class="faq-answer">${f.answer}</div>
+        </div>`).join('');
+    }
+  }
+
+  function toggleFaq(index) {
+    const item = document.getElementById(`faq-${index}`);
+    if (item) item.classList.toggle('open');
   }
 
   async function loadLeaderboard(period = 'week') {
