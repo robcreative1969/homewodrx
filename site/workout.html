@@ -9,6 +9,12 @@
   <meta property="og:description" content="View this CrossFit workout, see movements and scaling, and log your result on HomeWODrx.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://homewodrx.com/workouts/" id="og-url">
+  <meta property="og:image" content="https://homewodrx.com/images/og-default.png" id="og-image">
+  <meta property="og:image:width" content="1200" id="og-image-width">
+  <meta property="og:image:height" content="630" id="og-image-height">
+  <meta property="og:image:alt" content="CrossFit Workout — HomeWODrx" id="og-image-alt">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://homewodrx.com/images/og-default.png" id="twitter-image">
   <link rel="canonical" href="https://homewodrx.com/workouts/" id="canonical-url">
   <link rel="stylesheet" href="/css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -363,9 +369,20 @@
         ? currentWorkout.description.substring(0, 155)
         : `View this CrossFit workout on HomeWODrx.`;
 
-      document.title = `${wName} CrossFit Workout | HomeWODrx`;
+      // Build movement summary for enriched titles (e.g. "21-15-9 Thrusters & Pull-Ups")
+      const movementNames = (currentWorkout.movements || []).map(m => m.name || m.movement || '').filter(Boolean);
+      const movSummary = movementNames.length
+        ? movementNames.slice(0, 3).join(' & ') + (movementNames.length > 3 ? ` +${movementNames.length - 3} more` : '')
+        : null;
+
+      // Richer title for named benchmarks: "Fran WOD — Thrusters & Pull-Ups | HomeWODrx"
+      const pageTitle = (isBenchmark && movSummary)
+        ? `${wName} WOD — ${movSummary} | HomeWODrx`
+        : `${wName} CrossFit Workout | HomeWODrx`;
+
+      document.title = pageTitle;
       document.querySelector('meta[name="description"]').setAttribute('content', `${wName}: ${wDesc}`);
-      document.querySelector('meta[property="og:title"]').setAttribute('content', `${wName} | HomeWODrx`);
+      document.querySelector('meta[property="og:title"]').setAttribute('content', pageTitle);
       document.querySelector('meta[property="og:description"]').setAttribute('content', `${wName}: ${wDesc}`);
 
       // Canonical + og:url — pretty path for benchmarks, query-param for user workouts
@@ -377,8 +394,18 @@
       document.getElementById('canonical-url').href = canonicalPath;
       document.querySelector('meta[property="og:url"]').setAttribute('content', canonicalPath);
 
-      // JSON-LD structured data
-      const movementNames = (currentWorkout.movements || []).map(m => m.name || m.movement || '').filter(Boolean);
+      // OG image — use YouTube thumbnail if video is available, else branded default
+      const ytId = extractYouTubeId(currentWorkout.youtube_url);
+      const ogImg = ytId
+        ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg`
+        : 'https://homewodrx.com/images/og-default.png';
+      const ogImgW = ytId ? '1280' : '1200';
+      const ogImgH = ytId ? '720' : '630';
+      document.getElementById('og-image').setAttribute('content', ogImg);
+      document.getElementById('og-image-width').setAttribute('content', ogImgW);
+      document.getElementById('og-image-height').setAttribute('content', ogImgH);
+      document.getElementById('og-image-alt').setAttribute('content', `${wName} — HomeWODrx`);
+      document.getElementById('twitter-image').setAttribute('content', ogImg);
       const ldData = [
         {
           '@context': 'https://schema.org',

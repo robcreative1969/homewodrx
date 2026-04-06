@@ -3,8 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Workout Generator — HomeWODrx</title>
-<meta name="description" content="Generate custom workouts based on your equipment, experience level, body focus, and available time.">
+<title>WOD Generator — Build a Custom CrossFit Workout | HomeWODrx</title>
+<meta name="description" content="Generate a custom CrossFit workout in seconds. Choose your equipment, experience level, body focus, and time — HomeWODrx builds the perfect WOD for you.">
+<meta property="og:title" content="WOD Generator — Build a Custom CrossFit Workout | HomeWODrx">
+<meta property="og:description" content="Build a custom CrossFit workout based on your equipment, time, and fitness level. Free WOD generator for home gym athletes.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://homewodrx.com/generator">
+<meta property="og:image" content="https://homewodrx.com/images/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="WOD Generator — HomeWODrx">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://homewodrx.com/images/og-default.png">
+<link rel="canonical" href="https://homewodrx.com/generator">
 <link rel="stylesheet" href="/css/style.css">
 <!-- Supabase CDN (only loads when configured) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -288,7 +299,7 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
   <div class="section">
     <div class="slabel">Step 5</div>
     <div class="stitle">How long do you have?</div>
-    <div clas="slider-row">
+    <div class="slider-row">
       <div class="sval"><span id="dur-val">20</span><small>min</small></div>
       <div style="flex:1">
         <input type="range" id="dur-slider" min="10" max="60" step="5" value="20" style="width:100%" oninput="document.getElementById('dur-val').textContent=this.value">
@@ -307,28 +318,28 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
   <!-- Result -->
   <div id="workout-result">
     <div class="res-hdr">
-      <h2 id="woj-title"></h2>
+      <h2 id="wod-title"></h2>
       <div class="rsub" id="wod-sub"></div>
-      <div class="res-meta" id="woj-meta"></div>
+      <div class="res-meta" id="wod-meta"></div>
     </div>
     <div class="res-body">
-      <div class="wdesc" id="woj-desc"></div>
+      <div class="wdesc" id="wod-desc"></div>
       <table class="mov-table">
         <thead><tr><th>Movement</th><th>Reps / Time</th><th>Coaching Tip</th></tr></thead>
-        <tbody id="woj-movements"></tbody>
+        <tbody id="wod-movements"></tbody>
       </table>
       <div class="score-box">
         <h4>📊 Scoring</h4>
-        <p id="woj-scoring"></p>
+        <p id="wod-scoring"></p>
       </div>
-      <div class="res-actions" id="woj-actions">
+      <div class="res-actions" id="wod-actions">
         <button class="abtn pri" onclick="openLogResult()">📝 Log Result</button>
         <button class="abtn sec" onclick="openSaveWorkout()">💾 Save Workout</button>
         <button class="abtn sec" onclick="generateWorkout()">🔄 Regenerate</button>
         <button class="abtn gho" id="nominate-btn" onclick="nominateWorkout()">⭐ Nominate as Featured</button>
       </div>
       <div class="warmup-cool">
-        <div class="wi-card"><h4>🔥 Warm-Up (do first)</h4><ul id="warmup-list"></ul></div>
+        <div class="wc-card"><h4>🔥 Warm-Up (do first)</h4><ul id="warmup-list"></ul></div>
         <div class="wc-card"><h4>🧊 Cool-Down</h4><ul id="cooldown-list"></ul></div>
       </div>
     </div>
@@ -362,7 +373,7 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
     <button class="fchip" data-lvl="advanced" onclick="setCommFilter(this,'lvl')">Advanced</button>
   </div>
 
-  <div class="wok-grid" id="comm-grid"></div>
+  <div class="wod-grid" id="comm-grid"></div>
   <div id="comm-empty" class="empty-state" style="display:none">
     <div class="icon">🏋️</div>
     <h3>No workouts found</h3>
@@ -371,7 +382,6 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
   </div>
 </div>
 </div>
-
 
 <!-- ═══ TAB: MY WORKOUTS ══════════════════════════════════════ -->
 <div id="tab-myworkouts" class="view">
@@ -469,7 +479,7 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
   <h2>💾 Save Workout</h2>
   <p class="msub">Give your workout a name and save it.</p>
   <div id="save-error" class="modal-error"></div>
-  <div class="field"><label?Workout Name</label><input type="text" id="save-name" placeholder="e.g. My Monday Grind"></div>
+  <div class="field"><label>Workout Name</label><input type="text" id="save-name" placeholder="e.g. My Monday Grind"></div>
   <div class="field"><label>Description (optional)</label><textarea id="save-desc" placeholder="What's the intent? Tips for athletes?"></textarea></div>
   <div class="field"><label>Make it public?</label>
     <select id="save-public">

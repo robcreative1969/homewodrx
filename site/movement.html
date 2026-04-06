@@ -9,6 +9,12 @@
   <meta property="og:description" content="Learn this CrossFit movement and find every workout that includes it.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://homewodrx.com/movements/" id="og-url">
+  <meta property="og:image" content="https://homewodrx.com/images/og-default.png" id="og-image">
+  <meta property="og:image:width" content="1200" id="og-image-width">
+  <meta property="og:image:height" content="630" id="og-image-height">
+  <meta property="og:image:alt" content="CrossFit Movement Guide — HomeWODrx" id="og-image-alt">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://homewodrx.com/images/og-default.png" id="twitter-image">
   <link rel="canonical" href="https://homewodrx.com/movements/" id="canonical-url">
   <link rel="stylesheet" href="/css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -408,6 +414,19 @@
       : `https://homewodrx.com/movement?slug=${slug}`;
     document.getElementById('canonical-url').href = canonicalPath;
     document.querySelector('meta[property="og:url"]').setAttribute('content', canonicalPath);
+
+    // OG image — use YouTube thumbnail if video available, else branded default
+    const ytId = info?.youtube_url
+      ? (info.youtube_url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/) || [])[1]
+      : null;
+    const ogImg = ytId
+      ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg`
+      : 'https://homewodrx.com/images/og-default.png';
+    document.getElementById('og-image').setAttribute('content', ogImg);
+    document.getElementById('og-image-width').setAttribute('content', ytId ? '1280' : '1200');
+    document.getElementById('og-image-height').setAttribute('content', ytId ? '720' : '630');
+    document.getElementById('og-image-alt').setAttribute('content', `${displayName} CrossFit Movement Guide — HomeWODrx`);
+    document.getElementById('twitter-image').setAttribute('content', ogImg);
 
     // ── 2b. Inject JSON-LD structured data ───────────────────────────────────
     const tips = Array.isArray(info?.tips) ? info.tips : [];
