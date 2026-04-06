@@ -16,14 +16,17 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://homewodrx.com/images/og-default.png">
 <link rel="canonical" href="https://homewodrx.com/generator">
-<link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="stylesheet" href="/css/style.css">
 <!-- Supabase CDN (only loads when configured) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 :root{
   --bg:#111118; --card:#1E1E2C; --dk2:#16161F;
   --bd:#2E2E42; --tx:#EAEAF0; --mu:#888899;
-  --or:#E8530A; --orl:#FF6B2B; --r:12px;
+  --or:#C41212; --orl:#E03030; --r:12px;
 }
 /* ── GENERATOR-SPECIFIC STYLES ───────────────────────────── */
 .gen-page{max-width:1400px;margin:0 auto;padding:36px 20px 80px}
@@ -39,7 +42,7 @@
 .eq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(115px,1fr));gap:9px}
 .eq-card{background:var(--dk2);border:2px solid var(--bd);border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .15s;user-select:none}
 .eq-card:hover{border-color:var(--orl)}
-.eq-card.sel{border-color:var(--or);background:rgba(232,83,10,.15);box-shadow:0 0 0 1px var(--or)}
+.eq-card.sel{border-color:var(--or);background:rgba(196,18,18,.15);box-shadow:0 0 0 1px var(--or)}
 .eq-card .icon{font-size:24px;margin-bottom:5px;display:block}
 .eq-card .name{font-size:11px;font-weight:700}
 
@@ -47,7 +50,7 @@
 .bf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:9px}
 .bf-card{background:var(--dk2);border:2px solid var(--bd);border-radius:10px;padding:12px 10px;text-align:center;cursor:pointer;transition:all .15s;user-select:none}
 .bf-card:hover{border-color:var(--orl)}
-.bf-card.sel{border-color:var(--or);background:rgba(232,83,10,.15)}
+.bf-card.sel{border-color:var(--or);background:rgba(196,18,18,.15)}
 .bf-card .icon{font-size:20px;margin-bottom:4px;display:block}
 .bf-card .name{font-size:12px;font-weight:700;margin-bottom:2px;display:block}
 .bf-card .sub{font-size:10px;color:var(--mu);display:block}
@@ -56,7 +59,7 @@
 .pill-group{display:flex;flex-wrap:wrap;gap:8px}
 .pill{background:var(--dk2);border:2px solid var(--bd);border-radius:50px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;user-select:none}
 .pill:hover{border-color:var(--orl)}
-.pill.sel{border-color:var(--or);background:rgba(232,83,10,.15);color:var(--orl)}
+.pill.sel{border-color:var(--or);background:rgba(196,18,18,.15);color:var(--orl)}
 
 /* slider */
 .slider-row{display:flex;align-items:center;gap:14px;margin-top:8px}
@@ -69,7 +72,7 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
 
 /* generate button */
 .gen-btn{display:block;width:100%;margin-top:24px;padding:16px;background:var(--or);color:#fff;font-size:16px;font-weight:800;border:none;border-radius:var(--r);cursor:pointer;letter-spacing:.3px;transition:all .2s}
-.gen-btn:hover{background:var(--orl);transform:translateY(-1px);box-shadow:0 6px 20px rgba(232,83,10,.35)}
+.gen-btn:hover{background:var(--orl);transform:translateY(-1px);box-shadow:0 6px 20px rgba(196,18,18,.35)}
 .gen-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
 .gen-btn .sp{display:none;width:18px;height:18px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}
 .gen-btn.loading .bt{display:none}
@@ -94,7 +97,7 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
 .mname a{color:var(--tx);text-decoration:none}
 .mname a:hover{color:var(--orl)}
 .mtip{font-size:11px;color:var(--mu);margin-top:2px}
-.rbadge{background:rgba(232,83,10,.18);color:var(--orl);font-weight:800;font-size:13px;padding:3px 11px;border-radius:20px;display:inline-block;border:1px solid var(--or)}
+.rbadge{background:rgba(196,18,18,.18);color:var(--orl);font-weight:800;font-size:13px;padding:3px 11px;border-radius:20px;display:inline-block;border:1px solid var(--or)}
 .score-box{background:var(--dk2);border:1px solid var(--bd);border-radius:9px;padding:16px;margin-bottom:18px}
 .score-box h4{font-size:11px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
 .score-box p{font-size:13px;line-height:1.6}
@@ -118,7 +121,7 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
 .filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;align-items:center}
 .fchip{padding:7px 14px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(--bd);background:var(--dk2);color:var(--mu);transition:all .15s}
 .fchip:hover{border-color:var(--or);color:var(--orl)}
-.fchip.active{background:rgba(232,83,10,.15);border-color:var(--or);color:var(--orl)}
+.fchip.active{background:rgba(196,18,18,.15);border-color:var(--or);color:var(--orl)}
 .search-wrap{flex:1;min-width:200px;position:relative}
 .search-wrap input{width:100%;padding:8px 12px 8px 34px;background:var(--dk2);border:1px solid var(--bd);border-radius:7px;color:var(--tx);font-size:13px;outline:none}
 .search-wrap input:focus{border-color:var(--or)}
@@ -126,7 +129,7 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
 .wod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
 .wod-card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .15s}
 .wod-card:hover{border-color:var(--or);transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,.3)}
-.wod-card-hdr{padding:16px;border-bottom:1px solid var(--bd);background:linear-gradient(135deg,rgba(232,83,10,.1),transparent)}
+.wod-card-hdr{padding:16px;border-bottom:1px solid var(--bd);background:linear-gradient(135deg,rgba(196,18,18,.1),transparent)}
 .wod-card-hdr h3{font-size:16px;font-weight:800;margin-bottom:8px}
 .wod-card-meta{display:flex;gap:6px;flex-wrap:wrap}
 .wod-card-body{padding:14px 16px}
@@ -204,7 +207,7 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
 
 /* badge chips */
 .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.3px}
-.badge-or{background:rgba(232,83,10,.2);color:var(--or);border:1px solid rgba(232,83,10,.4)}
+.badge-or{background:rgba(196,18,18,.2);color:var(--or);border:1px solid rgba(196,18,18,.4)}
 .badge-bl{background:rgba(52,152,219,.2);color:#5dade2;border:1px solid rgba(52,152,219,.3)}
 .badge-gr{background:rgba(39,174,96,.2);color:#58d68d;border:1px solid rgba(39,174,96,.3)}
 .badge-pu{background:rgba(155,89,182,.2);color:#c39bd3;border:1px solid rgba(155,89,182,.3)}

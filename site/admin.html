@@ -5,10 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Panel — HomeWODrx</title>
 <meta name="robots" content="noindex,nofollow">
-<link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="stylesheet" href="/css/style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
-:root{--dk:#111118;--dk2:#1E1E2C;--bd:#2E2E42;--or:#E8530A;--orl:#FF6B35;--tx:#EAEAF0;--mu:#888899;--card:#1E1E2C}
+:root{--dk:#111118;--dk2:#1E1E2C;--bd:#2E2E42;--or:#C41212;--orl:#E03030;--tx:#EAEAF0;--mu:#888899;--card:#1E1E2C}
 .admin-page{max-width:1200px;margin:0 auto;padding:32px 20px 80px}
 .admin-lock{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
 .lock-card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:40px;width:100%;max-width:400px;text-align:center}
@@ -24,7 +27,7 @@
 
 .admin-header{background:var(--card);border-bottom:1px solid var(--bd);padding:16px 24px;display:flex;align-items:center;gap:16px;margin-bottom:32px;border-radius:12px}
 .admin-header h1{font-size:20px;font-weight:900;flex:1}
-.admin-badge{background:rgba(232,83,10,.2);color:var(--or);border:1px solid rgba(232,83,10,.4);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.5px}
+.admin-badge{background:rgba(196,18,18,.2);color:var(--or);border:1px solid rgba(196,18,18,.4);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.5px}
 .logout-btn{padding:8px 14px;background:none;border:1px solid var(--bd);border-radius:7px;color:var(--mu);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
 .logout-btn:hover{border-color:var(--or);color:var(--orl)}
 
@@ -83,7 +86,7 @@
 .table tr:last-child td{border-bottom:none}
 
 .pill{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700}
-.pill-or{background:rgba(232,83,10,.2);color:var(--or);border:1px solid rgba(232,83,10,.4)}
+.pill-or{background:rgba(196,18,18,.2);color:var(--or);border:1px solid rgba(196,18,18,.4)}
 .pill-gr{background:rgba(39,174,96,.2);color:#58d68d;border:1px solid rgba(39,174,96,.3)}
 .pill-bl{background:rgba(52,152,219,.2);color:#5dade2;border:1px solid rgba(52,152,219,.3)}
 .pill-mu{background:var(--dk2);color:var(--mu);border:1px solid var(--bd)}
@@ -122,7 +125,7 @@
 .movement-card .prop label{color:var(--mu);font-size:11px}
 .movement-card .prop span{color:var(--tx);font-weight:600}
 .movement-card .tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
-.movement-card .tag{display:inline-block;background:rgba(232,83,10,.15);color:var(--or);font-size:10px;padding:2px 6px;border-radius:3px}
+.movement-card .tag{display:inline-block;background:rgba(196,18,18,.15);color:var(--or);font-size:10px;padding:2px 6px;border-radius:3px}
 </style>
 </head>
 <body style="background:var(--dk);color:var(--tx);font-family:'Segoe UI',system-ui,sans-serif">

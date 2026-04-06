@@ -4,8 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign Up - HomeWODrx</title>
-  <meta name="description" content="Create your free HomeWODrx account to log workouts, track PRs, and compete on leaderboards.">
+  <meta name="description" content="Create your free HomeWODrx account to track workouts and compete on leaderboards.">
 
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="stylesheet" href="/css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="/js/config.js"></script>
@@ -94,15 +97,9 @@
       color: #555;
     }
 
-    .form-hint {
-      font-size: 0.8rem;
-      color: var(--text-muted, #888);
-      margin-top: 0.35rem;
-    }
-
     .auth-error {
-      background: rgba(232, 83, 10, 0.1);
-      border: 1px solid rgba(232, 83, 10, 0.3);
+      background: rgba(196, 18, 18, 0.1);
+      border: 1px solid rgba(196, 18, 18, 0.3);
       border-radius: 8px;
       padding: 0.75rem 1rem;
       color: var(--orange);
@@ -160,14 +157,6 @@
       border-top: 1px solid var(--dark-border);
       margin: 1.5rem 0;
     }
-
-    .terms-note {
-      font-size: 0.8rem;
-      color: var(--text-muted, #888);
-      text-align: center;
-      margin-top: 1rem;
-      line-height: 1.5;
-    }
   </style>
 </head>
 <body data-nav-init="true" data-active-page="">
@@ -178,7 +167,7 @@
       </div>
 
       <h1 class="auth-title">Create your account</h1>
-      <p class="auth-subtitle">Free forever. Log WODs, track PRs, compete on leaderboards.</p>
+      <p class="auth-subtitle">Free forever. Track WODs, log PRs, and compete on leaderboards.</p>
 
       <div class="auth-error" id="auth-error"></div>
       <div class="auth-success" id="auth-success"></div>
@@ -190,13 +179,12 @@
             type="text"
             id="username"
             class="form-input"
-            placeholder="rxdathlete"
+            placeholder="rxathlete42"
             required
+            autocomplete="username"
             minlength="3"
             maxlength="30"
-            autocomplete="username"
           />
-          <p class="form-hint">3–30 characters. This is how you appear on leaderboards.</p>
         </div>
 
         <div class="form-group">
@@ -219,19 +207,14 @@
             class="form-input"
             placeholder="••••••••"
             required
-            minlength="8"
             autocomplete="new-password"
+            minlength="8"
           />
-          <p class="form-hint">Minimum 8 characters.</p>
         </div>
 
         <button type="submit" class="btn btn-primary btn-submit" id="submit-btn">
           Create Account
         </button>
-
-        <p class="terms-note">
-          By signing up you agree to our terms of service and privacy policy.
-        </p>
       </form>
 
       <hr class="divider">
@@ -257,19 +240,12 @@
       errorEl.className = 'auth-error';
       successEl.className = 'auth-success';
 
-      // Validate username
-      if (!/^[a-zA-Z0-9_-]{3,30}$/.test(username)) {
-        errorEl.textContent = 'Username can only contain letters, numbers, underscores, and hyphens (3–30 characters).';
-        errorEl.className = 'auth-error visible';
-        return;
-      }
-
       // Loading state
       submitBtn.disabled = true;
       submitBtn.textContent = 'Creating account...';
 
       try {
-        const { user, error } = await db.signUp(email, password, username);
+        const { user, error } = await db.signUp(email, password, { username });
 
         if (error) {
           errorEl.textContent = error.message || 'Could not create account. Please try again.';
@@ -280,17 +256,10 @@
         }
 
         if (user) {
-          // Check if email confirmation is required
-          if (!user.confirmed_at && !user.email_confirmed_at) {
-            successEl.textContent = 'Account created! Check your email to confirm your address, then log in.';
-          } else {
-            successEl.textContent = 'Account created! Redirecting...';
-            setTimeout(() => {
-              window.location.href = '/';
-            }, 1000);
-          }
+          successEl.textContent = 'Account created! Check your email to confirm, then log in.';
           successEl.className = 'auth-success visible';
           submitBtn.disabled = true;
+          submitBtn.textContent = 'Account Created!';
         }
       } catch (err) {
         errorEl.textContent = 'Something went wrong. Please try again.';

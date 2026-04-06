@@ -40,6 +40,9 @@
     }
   }
   </script>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="stylesheet" href="/css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="/js/config.js"></script>
@@ -49,14 +52,14 @@
   <script src="/js/nav.js"></script>
   <style>
   /* ── HOME PAGE STYLES ─────────────────────────────────────── */
-  .home-hero{padding:64px 20px 56px;text-align:center;background:linear-gradient(180deg,rgba(232,83,10,.06) 0%,transparent 100%);border-bottom:1px solid var(--bd)}
+  .home-hero{padding:64px 20px 56px;text-align:center;background:linear-gradient(180deg,rgba(196,18,18,.06) 0%,transparent 100%);border-bottom:1px solid var(--bd)}
   .home-hero h1{font-size:clamp(32px,5vw,52px);font-weight:900;line-height:1.1;margin-bottom:16px;letter-spacing:-.5px}
   .home-hero h1 span{color:var(--or)}
   .home-hero p{font-size:clamp(15px,2vw,18px);color:var(--mu);max-width:560px;margin:0 auto 28px;line-height:1.7}
   .hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
   .btn-hero{padding:14px 28px;border-radius:10px;font-size:15px;font-weight:800;text-decoration:none;transition:all .2s;display:inline-block}
   .btn-hero-pri{background:var(--or);color:#fff}
-  .btn-hero-pri:hover{background:var(--orl);color:#fff;transform:translateY(-2px);box-shadow:0 6px 20px rgba(232,83,10,.4)}
+  .btn-hero-pri:hover{background:var(--orl);color:#fff;transform:translateY(-2px);box-shadow:0 6px 20px rgba(196,18,18,.4)}
   .btn-hero-sec{background:transparent;color:var(--tx);border:2px solid var(--bd)}
   .btn-hero-sec:hover{border-color:var(--or);color:var(--orl)}
 
@@ -83,7 +86,7 @@
   .wod-card-top h3{font-size:20px;font-weight:900;margin-bottom:6px}
   .wod-card-meta{display:flex;gap:6px;flex-wrap:wrap}
   .chip{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700}
-  .chip-or{background:rgba(232,83,10,.2);color:var(--or);border:1px solid rgba(232,83,10,.4)}
+  .chip-or{background:rgba(196,18,18,.2);color:var(--or);border:1px solid rgba(196,18,18,.4)}
   .chip-mu{background:var(--dk2);color:var(--mu);border:1px solid var(--bd)}
   .chip-gr{background:rgba(39,174,96,.2);color:#58d68d;border:1px solid rgba(39,174,96,.3)}
   .wod-card-body{padding:16px 22px}
@@ -101,7 +104,7 @@
 
   /* FEATURED WOD CARD */
   .featured-wod-card{background:var(--card);border:1px solid var(--bd);border-radius:16px;overflow:hidden}
-  .feat-hdr{background:linear-gradient(135deg,rgba(232,83,10,.12),transparent);padding:20px 22px 16px;border-bottom:1px solid var(--bd)}
+  .feat-hdr{background:linear-gradient(135deg,rgba(196,18,18,.12),transparent);padding:20px 22px 16px;border-bottom:1px solid var(--bd)}
   .feat-hdr h3{font-size:20px;font-weight:900;margin:10px 0 6px}
 
   /* BENCHMARK GRID */
@@ -439,7 +442,7 @@ async function renderActivity() {
       ? (BENCHMARKS.find(b => b.slug === r.benchmark_slug)?.name || r.benchmark_slug.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase()))
       : 'Community WOD';
     const initial = (r.username||'?')[0].toUpperCase();
-    const colors = ['#E8530A','#FF6B35','#c44400','#e67e22','#d35400'];
+    const colors = ['#C41212','#E03030','#c44400','#e67e22','#d35400'];
     const color = colors[initial.charCodeAt(0) % colors.length];
     return `<div class="activity-item">
       <a href="/u/${encodeURIComponent(r.username||'')}" style="text-decoration:none">
@@ -580,11 +583,11 @@ async function submitHomeDailyResult() {
   #home-auth-modal .hmfield{margin-bottom:14px}
   #home-auth-modal .hmfield label{display:block;font-size:11px;font-weight:700;color:#888899;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
   #home-auth-modal .hmfield input{width:100%;background:#16161F;border:1px solid #2E2E42;border-radius:8px;padding:10px 12px;color:#EAEAF0;font-size:14px;outline:none;font-family:inherit;box-sizing:border-box}
-  #home-auth-modal .hmfield input:focus{border-color:#E8530A}
-  #home-auth-modal .hmbtn{width:100%;padding:13px;background:#E8530A;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;margin-top:4px}
-  #home-auth-modal .hmbtn:hover{background:#FF6B2B}
+  #home-auth-modal .hmfield input:focus{border-color:#C41212}
+  #home-auth-modal .hmbtn{width:100%;padding:13px;background:#C41212;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;margin-top:4px}
+  #home-auth-modal .hmbtn:hover{background:#E03030}
   #home-auth-modal .hmlink{text-align:center;margin-top:12px;font-size:13px;color:#888899}
-  #home-auth-modal .hmlink a{color:#E8530A;cursor:pointer;text-decoration:none}
+  #home-auth-modal .hmlink a{color:#C41212;cursor:pointer;text-decoration:none}
   #home-auth-modal .hmerr{background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);color:#E74C3C;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
 </style>
 <div id="home-auth-modal">
@@ -621,15 +624,15 @@ async function submitHomeDailyResult() {
   #home-result-modal .hrmfield{margin-bottom:14px}
   #home-result-modal .hrmfield label{display:block;font-size:11px;font-weight:700;color:#888899;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
   #home-result-modal .hrmfield input[type=text],#home-result-modal .hrmfield textarea{width:100%;background:#16161F;border:1px solid #2E2E42;border-radius:8px;padding:10px 12px;color:#EAEAF0;font-size:14px;outline:none;font-family:inherit;box-sizing:border-box}
-  #home-result-modal .hrmfield input[type=text]:focus,#home-result-modal .hrmfield textarea:focus{border-color:#E8530A}
+  #home-result-modal .hrmfield input[type=text]:focus,#home-result-modal .hrmfield textarea:focus{border-color:#C41212}
   #home-result-modal .hrmfield textarea{resize:vertical;min-height:70px}
   #home-result-modal .hrmfield.hrm-rx{display:flex;align-items:center;gap:8px}
   #home-result-modal .hrmfield.hrm-rx label{text-transform:none;font-size:13px;font-weight:600;letter-spacing:0;margin-bottom:0;color:#EAEAF0;cursor:pointer}
   #home-result-modal .hrmbtns{display:flex;gap:10px;margin-top:18px}
   #home-result-modal .hrmbtn-cancel{flex:1;padding:12px;background:transparent;color:#888899;border:1px solid #2E2E42;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}
   #home-result-modal .hrmbtn-cancel:hover{border-color:#EAEAF0;color:#EAEAF0}
-  #home-result-modal .hrmbtn-submit{flex:2;padding:12px;background:#E8530A;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer}
-  #home-result-modal .hrmbtn-submit:hover{background:#FF6B2B}
+  #home-result-modal .hrmbtn-submit{flex:2;padding:12px;background:#C41212;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer}
+  #home-result-modal .hrmbtn-submit:hover{background:#E03030}
   #home-result-modal .hrmerr{background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);color:#E74C3C;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
 </style>
 <div id="home-result-modal">

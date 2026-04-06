@@ -16,6 +16,9 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://homewodrx.com/images/og-default.png" id="twitter-image">
   <link rel="canonical" href="https://homewodrx.com/workouts/" id="canonical-url">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="stylesheet" href="/css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="/js/config.js"></script>
@@ -851,7 +854,7 @@
   function showWorkoutToast(message, type = 'success') {
     const toast = document.createElement('div');
     toast.textContent = message;
-    toast.style.cssText = `position:fixed;bottom:24px;right:24px;background:${type==='success'?'#22C55E':'#E8530A'};color:#fff;padding:12px 20px;border-radius:10px;font-weight:700;font-size:14px;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.4);animation:slideInToast .3s ease-out`;
+    toast.style.cssText = `position:fixed;bottom:24px;right:24px;background:${type==='success'?'#22C55E':'#C41212'};color:#fff;padding:12px 20px;border-radius:10px;font-weight:700;font-size:14px;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.4);animation:slideInToast .3s ease-out`;
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 3500);
   }
@@ -885,11 +888,11 @@
   #workout-auth-modal .wamfield{margin-bottom:14px}
   #workout-auth-modal .wamfield label{display:block;font-size:11px;font-weight:700;color:var(--text-muted,#888899);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
   #workout-auth-modal .wamfield input{width:100%;background:#16161F;border:1px solid var(--dark-border,#2E2E42);border-radius:8px;padding:10px 12px;color:var(--text-primary,#EAEAF0);font-size:14px;outline:none;font-family:inherit;box-sizing:border-box}
-  #workout-auth-modal .wamfield input:focus{border-color:var(--orange,#E8530A)}
-  #workout-auth-modal .wambtn{width:100%;padding:13px;background:var(--orange,#E8530A);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;margin-top:4px}
-  #workout-auth-modal .wambtn:hover{background:#FF6B2B}
+  #workout-auth-modal .wamfield input:focus{border-color:var(--orange,#C41212)}
+  #workout-auth-modal .wambtn{width:100%;padding:13px;background:var(--orange,#C41212);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;margin-top:4px}
+  #workout-auth-modal .wambtn:hover{background:#E03030}
   #workout-auth-modal .wamlink{text-align:center;margin-top:12px;font-size:13px;color:var(--text-muted,#888899)}
-  #workout-auth-modal .wamlink a{color:var(--orange,#E8530A);cursor:pointer;text-decoration:none}
+  #workout-auth-modal .wamlink a{color:var(--orange,#C41212);cursor:pointer;text-decoration:none}
   #workout-auth-modal .wamerr{background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);color:#E74C3C;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
   @keyframes slideInToast{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
 </style>

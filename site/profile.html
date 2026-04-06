@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Athlete Profile — HomeWODrx</title>
 <meta name="description" content="View athlete profile, workout history, and results on HomeWODrx.">
-<link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="stylesheet" href="/css/style.css">
 <script src="/js/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="/js/db.js"></script>
@@ -30,7 +33,7 @@
 .prof-card h3{font-size:16px;font-weight:800;margin-bottom:4px}
 .prof-card .date{color:var(--mu);font-size:12px}
 .badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;display:inline-block}
-.badge-or{background:rgba(232,83,10,.15);color:var(--orl);border:1px solid rgba(232,83,10,.3)}
+.badge-or{background:rgba(196,18,18,.15);color:var(--orl);border:1px solid rgba(196,18,18,.3)}
 .badge-mu{background:rgba(136,136,153,.15);color:var(--mu);border:1px solid rgba(136,136,153,.3)}
 .badge-gr{background:rgba(39,174,96,.15);color:#27ae60;border:1px solid rgba(39,174,96,.3)}
 .results-table{width:100%;border-collapse:collapse;font-size:13px}
@@ -180,7 +183,7 @@ function formatDate(d) {
 }
 
 function getAvatarColor(userId) {
-  const colors = ['#E8530A', '#FF6B35', '#FF8C42', '#FFA500', '#FFB84D'];
+  const colors = ['#C41212', '#E03030', '#FF8C42', '#FFA500', '#FFB84D'];
   const hash = (userId || '').split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   return colors[hash % colors.length];
 }
