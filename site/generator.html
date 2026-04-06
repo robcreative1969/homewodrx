@@ -252,6 +252,8 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
       <label class="eq-card" data-val="box"><span class="icon">📦</span><span class="name">Plyo Box</span></label>
       <label class="eq-card" data-val="medicineball"><span class="icon">⚽</span><span class="name">Med Ball</span></label>
       <label class="eq-card" data-val="rings"><span class="icon">⭕</span><span class="name">Rings</span></label>
+      <label class="eq-card" data-val="slamball"><span class="icon">💥</span><span class="name">Slam Ball</span></label>
+      <label class="eq-card" data-val="treadmill"><span class="icon">🏃</span><span class="name">Treadmill</span></label>
     </div>
   </div>
 
@@ -600,6 +602,19 @@ const MOVEMENT_DB = {
     {name:"Ring Push-Ups",tip:"Rings just off floor — turn out at top",b:[6,8],i:[10,12],a:[15,20],tags:["push"]},
     {name:"Ring Dips",tip:"Straight arm position at top — turn out",b:[3,5],i:[7,10],a:[10,15],tags:["push"]},
     {name:"Ring Muscle-Ups",tip:"Pull to waist then punch over rings",b:[1,2],i:[3,5],a:[5,8],tags:["full","pull"]},
+  ],
+  slamball:[
+    {name:"Ball Slams",tip:"Full extension overhead — slam with full force, no bounce",b:[8,10],i:[12,15],a:[15,20],tags:["full","cardio"]},
+    {name:"Overhead Slam",tip:"Arms fully locked out overhead, drive ball into floor",b:[6,8],i:[10,12],a:[12,15],tags:["full","cardio"]},
+    {name:"Rotational Slams",tip:"Rotate from the hips — alternate sides each rep",b:[8,10],i:[10,12],a:[12,15],tags:["core","cardio"]},
+    {name:"Squat to Slam",tip:"Deep squat, then explode and slam at the top",b:[6,8],i:[10,12],a:[12,15],tags:["full","lower"]},
+    {name:"Bear Hug Ball Carry",tip:"20m out+back = 1 rep — squeeze ball tight, core braced",b:[3,4],i:[4,5],a:[5,6],tags:["full","core"]},
+  ],
+  treadmill:[
+    {name:"Treadmill Run",tip:"Comfortable pace — keep a conversational effort",b:["400m"],i:["800m"],a:["1 mile"],tags:["cardio"]},
+    {name:"Sprint Intervals",tip:"Max effort — push the speed, recover between rounds",b:["20s"],i:["30s"],a:["45s"],timed:true,tags:["cardio"]},
+    {name:"Incline Walk",tip:"Set 8–12% incline, no handrail — targets glutes and lungs",b:["3 min"],i:["5 min"],a:["7 min"],timed:true,tags:["cardio","lower"]},
+    {name:"Treadmill Run (Short)",tip:"Fast but controlled — build into your pace",b:["200m"],i:["400m"],a:["800m"],tags:["cardio"]},
   ],
 };
 
