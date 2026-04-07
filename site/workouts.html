@@ -226,8 +226,8 @@
         })));
       }
 
-      // Add the last 30 daily WODs so site content grows automatically each day
-      const dailyWods = await generateRecentDailyWods(30);
+      // Add the last 90 daily WODs so site content grows automatically each day
+      const dailyWods = await generateRecentDailyWods(90);
       if (dailyWods.length > 0) {
         allWorkouts = allWorkouts.concat(dailyWods);
       }
