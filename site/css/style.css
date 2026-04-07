@@ -684,6 +684,11 @@ tbody tr:last-child td {
   background-color: rgba(59, 130, 246, 0.15);
   color: #60a5fa;
 }
+.badge-video {
+  background-color: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
 
 /* ===== LEADERBOARD SPECIFIC ===== */
 
