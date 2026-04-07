@@ -129,12 +129,12 @@
   .cat-benchmark{border-left-color:#60a5fa}.cat-benchmark:hover{border-color:#60a5fa}
   .cat-partner{border-left-color:#2dd4bf}.cat-partner:hover{border-color:#2dd4bf}
 
-  .wod-feat-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .wod-feat-strip{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
   .wod-feat-item{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 16px}
   .wod-feat-icon{font-size:16px;flex-shrink:0;width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:rgba(196,18,18,.1);border-radius:8px}
   .wod-feat-item strong{display:block;font-size:13px;font-weight:800;margin-bottom:2px}
   .wod-feat-item span{font-size:11px;color:var(--mu);line-height:1.4;display:block}
-  @media(max-width:680px){.wod-feat-strip{grid-template-columns:1fr}}
+  @media(max-width:500px){.wod-feat-strip{grid-template-columns:1fr}}
 
   /* ACTIVITY FEED */
   .activity-list{display:flex;flex-direction:column;gap:10px}
@@ -269,6 +269,11 @@
         <span class="wod-stat-num">209</span>
         <span class="wod-stat-lbl">Movements Linked</span>
       </div>
+      <div class="wod-stat-div"></div>
+      <div class="wod-stat">
+        <span class="wod-stat-num">365</span>
+        <span class="wod-stat-lbl">Days of Daily WODs</span>
+      </div>
     </div>
 
     <!-- Category cards -->
@@ -346,6 +351,13 @@
           <span>Search by equipment, format, difficulty, and more</span>
         </div>
       </div>
+      <a class="wod-feat-item" href="/signup.html" style="text-decoration:none;color:var(--tx);border-color:rgba(196,18,18,.35);background:rgba(196,18,18,.05)">
+        <div class="wod-feat-icon" style="background:rgba(196,18,18,.18)">✏️</div>
+        <div>
+          <strong>Create &amp; Share WODs</strong>
+          <span>Members can build and publish their own workouts to the community</span>
+        </div>
+      </a>
     </div>
   </div>
 
