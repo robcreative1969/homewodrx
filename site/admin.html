@@ -126,6 +126,8 @@
 .movement-card .prop span{color:var(--tx);font-weight:600}
 .movement-card .tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
 .movement-card .tag{display:inline-block;background:rgba(196,18,18,.15);color:var(--or);font-size:10px;padding:2px 6px;border-radius:3px}
+
+
 </style>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
@@ -394,8 +396,7 @@
   <div id="tab-workouts" class="tab-pane">
     <div class="section">
       <h2>🏋️ Workouts Management</h2>
-      <p class="desc">Manage community workouts.</p>
-      <button class="save-btn" onclick="showCreateWorkoutForm()" style="margin-bottom:20px">➕ Create New Workout</button>
+      <p class="desc">Review, feature, and manage community workouts. To create a workout, use the <a href="/generator" target="_blank" style="color:var(--or)">generator page</a> while logged in as admin.</p>
       <div class="alert" id="workouts-alert"></div>
       <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
         <input type="text" id="workouts-search" placeholder="Search by title..." style="flex:1;min-width:200px;background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none" onkeyup="searchWorkouts()">
@@ -423,34 +424,6 @@
         <span style="font-size:13px;color:var(--mu)"><strong id="workouts-count">0</strong> workouts</span>
       </div>
       <div id="workouts-table-wrap"><p style="color:var(--mu);font-size:14px">Loading workouts...</p></div>
-    </div>
-    <div id="create-workout-form" class="section" style="display:none;margin-top:20px">
-      <h2>➕ Create Workout</h2>
-      <div class="alert" id="create-workout-alert"></div>
-      <div class="grid-2">
-        <div class="field"><label>Title</label><input type="text" id="cw-title" placeholder="Workout name"></div>
-        <div class="field"><label>Creator</label><input type="text" id="cw-creator" placeholder="Username" readonly style="opacity:.6"></div>
-      </div>
-      <div class="grid-2">
-        <div class="field"><label>Format</label><select id="cw-format"><option>AMRAP</option><option>EMOM</option><option>For Time</option><option>Circuit</option></select></div>
-        <div class="field"><label>Duration (min)</label><input type="number" id="cw-duration" value="20" min="5" max="90"></div>
-      </div>
-      <div class="grid-2">
-        <div class="field"><label>Difficulty</label><select id="cw-level"><option value="beginner">Beginner</option><option value="intermediate" selected>Intermediate</option><option value="advanced">Advanced</option></select></div>
-        <div class="field"><label>Body Focus</label><select id="cw-focus"><option value="full-body" selected>Full Body</option><option value="upper-body">Upper Body</option><option value="lower-body">Lower Body</option><option value="core">Core</option><option value="legs-glutes">Legs & Glutes</option><option value="cardio">Cardio</option></select></div>
-      </div>
-      <div class="field"><label>Equipment (comma-separated)</label><input type="text" id="cw-equipment" placeholder="e.g. dumbbells, kettlebell, barbell"></div>
-      <div class="field"><label>Description</label><textarea id="cw-description" placeholder="Workout description and intent..."></textarea></div>
-      <div class="field"><label>Movements (JSON array of {name, reps, tip})</label><textarea id="cw-movements" rows="6" placeholder='[{"name":"Air Squats","reps":"21","tip":"Heels down"}]'></textarea></div>
-      <div class="field"><label>Scoring</label><input type="text" id="cw-scoring" placeholder="e.g. Total rounds + reps"></div>
-      <div class="grid-2">
-        <div class="field"><label><input type="checkbox" id="cw-public" checked> Public</label></div>
-        <div class="field"><label><input type="checkbox" id="cw-featured"> Featured</label></div>
-      </div>
-      <div style="display:flex;gap:10px;margin-top:8px">
-        <button class="save-btn" onclick="saveNewWorkout()">💾 Create</button>
-        <button class="del-btn" onclick="cancelCreateWorkout()">Cancel</button>
-      </div>
     </div>
   </div>
 
@@ -1386,31 +1359,7 @@ function renderWorkoutsTable(){
   html+=`</tbody></table>`;
   document.getElementById('workouts-table-wrap').innerHTML=html;
 }
-function showCreateWorkoutForm(){document.getElementById('create-workout-form').style.display='block';document.getElementById('cw-title').focus();}
-function cancelCreateWorkout(){document.getElementById('create-workout-form').style.display='none';document.getElementById('create-workout-alert').classList.remove('vis');}
-async function saveNewWorkout(){
-  const title=document.getElementById('cw-title').value.trim();
-  const format=document.getElementById('cw-format').value;
-  const duration=parseInt(document.getElementById('cw-duration').value)||20;
-  const level=document.getElementById('cw-level').value;
-  const focus=document.getElementById('cw-focus').value;
-  const equipment=(document.getElementById('cw-equipment').value||'').split(',').map(e=>e.trim()).filter(e=>e);
-  const description=document.getElementById('cw-description').value.trim();
-  const scoring=document.getElementById('cw-scoring').value.trim();
-  const isPublic=document.getElementById('cw-public').checked;
-  const isFeatured=document.getElementById('cw-featured').checked;
-  if(!title){showAlert('create-workout-alert','Please enter a title.','err');return;}
-  let movements=[];
-  try{movements=JSON.parse(document.getElementById('cw-movements').value||'[]');}catch(e){showAlert('create-workout-alert','Invalid movements JSON.','err');return;}
-  if(!supabaseClient){showAlert('create-workout-alert','Connect Supabase to create workouts.','err');return;}
-  const{data,error}=await supabaseClient.from('workouts').insert({title,format,duration,level,body_focus:focus,equipment,description,movements,scoring,is_public:isPublic,is_featured:isFeatured,username:'admin',user_id:null}).select();
-  if(error){showAlert('create-workout-alert','Error: '+error.message,'err');return;}
-  showAlert('create-workout-alert','Workout created!','ok');
-  cancelCreateWorkout();
-  document.getElementById('create-workout-form').reset();
-  await loadWorkouts();
-}
-async function editWorkout(id){alert('Inline edit coming soon. For now, edit via database or contact dev.');}
+async function editWorkout(id){alert('Inline edit coming soon. For now, use the generator page or edit directly in Supabase.');}
 async function deleteWorkout(id,title){
   if(!confirm(`Delete workout "${title}"?`))return;
   if(!supabaseClient)return;
