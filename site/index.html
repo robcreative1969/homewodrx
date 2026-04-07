@@ -466,7 +466,7 @@ async function initHomepage() {
   // ── LIVE BENCHMARK DATA (includes youtube_url from DB) ────
   const liveBenchmarks = await db.getAllBenchmarks().catch(() => BENCHMARKS);
   const browseLink = document.getElementById('browse-all-link');
-  if (browseLink) browseLink.textContent = `Browse ${liveBenchmarks.length + 365}+ workouts →`;
+  if (browseLink) browseLink.textContent = `Browse ${liveBenchmarks.length + 30}+ workouts →`;
 
   // ── FEATURED WOD ───────────────────────────────────────────
   const featured = await db.getFeatured();
