@@ -107,14 +107,34 @@
   .feat-hdr{background:linear-gradient(135deg,rgba(196,18,18,.12),transparent);padding:20px 22px 16px;border-bottom:1px solid var(--bd)}
   .feat-hdr h3{font-size:20px;font-weight:900;margin:10px 0 6px}
 
-  /* BENCHMARK GRID */
-  .bm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
-  .bm-card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;text-decoration:none;color:var(--tx);transition:all .15s;display:block}
-  .bm-card:hover{border-color:var(--or);transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.3)}
-  .bm-card h4{font-size:17px;font-weight:900;margin-bottom:6px}
-  .bm-card .bm-cat{font-size:11px;color:var(--mu);margin-bottom:10px}
-  .bm-card .bm-meta{font-size:12px;color:var(--mu);margin-bottom:10px}
-  .bm-card .bm-tags{display:flex;gap:5px;flex-wrap:wrap}
+  /* WOD LIBRARY SECTION */
+  .wod-stats-bar{display:flex;align-items:stretch;background:var(--card);border:1px solid var(--bd);border-radius:12px;overflow:hidden;margin-bottom:20px}
+  .wod-stat{flex:1;padding:18px 12px;text-align:center}
+  .wod-stat-num{display:block;font-size:26px;font-weight:900;color:var(--or);line-height:1}
+  .wod-stat-lbl{display:block;font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;margin-top:5px;font-weight:600}
+  .wod-stat-div{width:1px;background:var(--bd);margin:12px 0;flex-shrink:0}
+  @media(max-width:580px){.wod-stats-bar{flex-wrap:wrap}.wod-stat{min-width:50%;border-bottom:1px solid var(--bd)}.wod-stat-div{display:none}}
+
+  .cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:20px}
+  .cat-card{display:flex;align-items:flex-start;gap:14px;background:var(--card);border:1px solid var(--bd);border-left-width:3px;border-radius:12px;padding:18px;text-decoration:none;color:var(--tx);transition:all .15s}
+  .cat-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.3)}
+  .cat-icon{font-size:26px;flex-shrink:0;line-height:1;margin-top:1px}
+  .cat-info h4{font-size:15px;font-weight:800;margin-bottom:5px}
+  .cat-info p{font-size:12px;color:var(--mu);line-height:1.6;margin-bottom:8px}
+  .cat-count{font-size:11px;font-weight:700;color:var(--mu)}
+  .cat-girl{border-left-color:#f472b6}.cat-girl:hover{border-color:#f472b6}
+  .cat-hero{border-left-color:#f87171}.cat-hero:hover{border-color:#f87171}
+  .cat-open{border-left-color:#818cf8}.cat-open:hover{border-color:#818cf8}
+  .cat-games{border-left-color:#facc15}.cat-games:hover{border-color:#facc15}
+  .cat-benchmark{border-left-color:#60a5fa}.cat-benchmark:hover{border-color:#60a5fa}
+  .cat-partner{border-left-color:#2dd4bf}.cat-partner:hover{border-color:#2dd4bf}
+
+  .wod-feat-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .wod-feat-item{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 16px}
+  .wod-feat-icon{font-size:16px;flex-shrink:0;width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:rgba(196,18,18,.1);border-radius:8px}
+  .wod-feat-item strong{display:block;font-size:13px;font-weight:800;margin-bottom:2px}
+  .wod-feat-item span{font-size:11px;color:var(--mu);line-height:1.4;display:block}
+  @media(max-width:680px){.wod-feat-strip{grid-template-columns:1fr}}
 
   /* ACTIVITY FEED */
   .activity-list{display:flex;flex-direction:column;gap:10px}
@@ -221,14 +241,111 @@
     </div>
   </div>
 
-  <!-- NAMED BENCHMARKS -->
+  <!-- WOD LIBRARY -->
   <div class="home-section" style="border-top:1px solid var(--bd)">
     <div class="home-section-hdr">
-      <h2>Named Benchmarks</h2>
-      <a href="/workouts.html" class="view-all">View all 107+ →</a>
+      <h2>Explore the WOD Library</h2>
+      <a href="/workouts.html" class="view-all">Browse all 165 →</a>
     </div>
-    <div class="bm-grid" id="benchmarks-grid">
-      <!-- populated by JS -->
+
+    <!-- Stats bar -->
+    <div class="wod-stats-bar">
+      <div class="wod-stat">
+        <span class="wod-stat-num">165</span>
+        <span class="wod-stat-lbl">Named Workouts</span>
+      </div>
+      <div class="wod-stat-div"></div>
+      <div class="wod-stat">
+        <span class="wod-stat-num">6</span>
+        <span class="wod-stat-lbl">Categories</span>
+      </div>
+      <div class="wod-stat-div"></div>
+      <div class="wod-stat">
+        <span class="wod-stat-num">113</span>
+        <span class="wod-stat-lbl">Video Demos</span>
+      </div>
+      <div class="wod-stat-div"></div>
+      <div class="wod-stat">
+        <span class="wod-stat-num">209</span>
+        <span class="wod-stat-lbl">Movements Linked</span>
+      </div>
+    </div>
+
+    <!-- Category cards -->
+    <div class="cat-grid">
+      <a class="cat-card cat-girl" href="/workouts.html?type=girl">
+        <div class="cat-icon">👧</div>
+        <div class="cat-info">
+          <h4>The Girls</h4>
+          <p>The original CrossFit benchmarks. Fran, Cindy, Annie — these define your fitness level and track progress over time.</p>
+          <div class="cat-count">19 workouts · 100% with video</div>
+        </div>
+      </a>
+      <a class="cat-card cat-hero" href="/workouts.html?type=hero">
+        <div class="cat-icon">🦸</div>
+        <div class="cat-info">
+          <h4>Hero WODs</h4>
+          <p>Named for fallen servicemen and women. Murph, DT, Michael — these workouts honor sacrifice and are meant to be hard.</p>
+          <div class="cat-count">38 workouts · 92% with video</div>
+        </div>
+      </a>
+      <a class="cat-card cat-open" href="/workouts.html?type=open">
+        <div class="cat-icon">🏟️</div>
+        <div class="cat-info">
+          <h4>Open WODs</h4>
+          <p>Official CrossFit Open workouts from 2011–2024. Test yourself on the same programming that competed on a global stage.</p>
+          <div class="cat-count">68 workouts · 37% with video</div>
+        </div>
+      </a>
+      <a class="cat-card cat-games" href="/workouts.html?type=games">
+        <div class="cat-icon">🏆</div>
+        <div class="cat-info">
+          <h4>Games WODs</h4>
+          <p>Elite competition workouts straight from the CrossFit Games. See how you measure up against the world's fittest athletes.</p>
+          <div class="cat-count">8 workouts · 100% with video</div>
+        </div>
+      </a>
+      <a class="cat-card cat-benchmark" href="/workouts.html?type=benchmark">
+        <div class="cat-icon">📊</div>
+        <div class="cat-info">
+          <h4>Benchmarks</h4>
+          <p>Classic tests of strength, endurance, and skill. Repeat these regularly to measure how your fitness is progressing.</p>
+          <div class="cat-count">22 workouts · 95% with video</div>
+        </div>
+      </a>
+      <a class="cat-card cat-partner" href="/workouts.html?type=partner">
+        <div class="cat-icon">🤝</div>
+        <div class="cat-info">
+          <h4>Partner WODs</h4>
+          <p>Two-person team workouts built for accountability and shared suffering. Grab a training partner and get after it.</p>
+          <div class="cat-count">10 workouts · 50% with video</div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Feature strip -->
+    <div class="wod-feat-strip">
+      <div class="wod-feat-item">
+        <div class="wod-feat-icon">▶</div>
+        <div>
+          <strong>Video Demos</strong>
+          <span>Watch 113 workouts before you attempt them</span>
+        </div>
+      </div>
+      <div class="wod-feat-item">
+        <div class="wod-feat-icon">🔗</div>
+        <div>
+          <strong>Movement Guides</strong>
+          <span>Every movement links to a full technique breakdown</span>
+        </div>
+      </div>
+      <div class="wod-feat-item">
+        <div class="wod-feat-icon">⚙️</div>
+        <div>
+          <strong>Filter &amp; Find</strong>
+          <span>Search by equipment, format, difficulty, and more</span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -261,7 +378,7 @@
       </div>
       <div class="feature-card">
         <div class="ficon">📖</div>
-        <h3>107+ Named Benchmarks</h3>
+        <h3>165+ Named Benchmarks</h3>
         <p>Complete database of The Girls, Hero WODs, Open workouts, and benchmark workouts with movement guides, scaling notes, and coaching tips. <a href="/workouts.html">Browse all →</a></p>
       </div>
       <!-- LEADERBOARD FEATURE CARD — restore when Step 7 (score logging) is live
@@ -334,12 +451,14 @@ async function initHomepage() {
   const wod = await DailyWOD.generate(dateStr);
   renderDailyWOD(wod);
 
+  // ── LIVE BENCHMARK DATA (includes youtube_url from DB) ────
+  const liveBenchmarks = await db.getAllBenchmarks().catch(() => BENCHMARKS);
+
   // ── FEATURED WOD ───────────────────────────────────────────
   const featured = await db.getFeatured();
-  renderFeaturedWOD(featured);
+  renderFeaturedWOD(featured, liveBenchmarks);
 
-  // ── BENCHMARK PREVIEW ─────────────────────────────────────
-  renderBenchmarkGrid();
+  // ── BENCHMARK PREVIEW — now static HTML, no JS needed ─────
 
   // ── COMMUNITY ACTIVITY ────────────────────────────────────
   await renderActivity();
@@ -375,7 +494,8 @@ function renderDailyWOD(wod) {
   }
 }
 
-function renderFeaturedWOD(featured) {
+function renderFeaturedWOD(featured, liveBenchmarks) {
+  const bmSource = liveBenchmarks || BENCHMARKS;
   const skelEl = document.getElementById('feat-title-skel');
   const titleEl = document.getElementById('feat-title');
   const metaEl = document.getElementById('feat-meta');
@@ -386,7 +506,7 @@ function renderFeaturedWOD(featured) {
   titleEl.style.display = 'block';
 
   if (featured && featured.benchmark_slug) {
-    const bm = BENCHMARKS.find(b => b.slug === featured.benchmark_slug);
+    const bm = bmSource.find(b => b.slug === featured.benchmark_slug);
     if (bm) {
       titleEl.textContent = bm.name;
       metaEl.innerHTML = `
@@ -412,22 +532,6 @@ function renderFeaturedWOD(featured) {
   linkEl.href = '/workout.html?slug=cindy';
 }
 
-function renderBenchmarkGrid() {
-  const grid = document.getElementById('benchmarks-grid');
-  const picks = [
-    ...BENCHMARKS.filter(b => b.category === 'girl').slice(0,3),
-    ...BENCHMARKS.filter(b => b.category === 'hero').slice(0,3)
-  ].slice(0, 6);
-
-  grid.innerHTML = picks.map(b => `
-    <a class="bm-card" href="/workout.html?slug=${b.slug}">
-      <h4>${escHtml(b.name)}</h4>
-      <div class="bm-cat">${b.category==='girl'?'👧 The Girls':b.category==='hero'?'🦸 Hero WOD':'⚡ Benchmark'}</div>
-      <div class="bm-meta">${escHtml(formatWodMeta(b))}</div>
-      <div class="bm-tags" style="font-size:11px;color:var(--mu,#888)">${escHtml(summarizeMovements(b))}</div>
-      ${b.youtube_url ? '<div style="margin-top:6px"><span style="font-size:10px;font-weight:700;background:rgba(239,68,68,0.12);color:#ef4444;border:1px solid rgba(239,68,68,0.3);border-radius:20px;padding:2px 8px">▶ Video</span></div>' : ''}
-    </a>`).join('');
-}
 
 async function renderActivity() {
   const results = await db.getResults({ limit: 5 });
