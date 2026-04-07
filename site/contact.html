@@ -288,15 +288,14 @@
       const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({
+        body: JSON.stringify(Object.assign({
           access_key: WEB3FORMS_KEY,
           subject: `[HomeWODrx] New ${type} submission`,
           from_name: 'HomeWODrx Feedback',
           type,
           message,
-          email: email || '(not provided)',
           page_url: window.location.href
-        })
+        }, email ? { replyto: email } : {}))
       });
       if (res.ok) formspreeOk = true;
     } catch (err) {
