@@ -245,7 +245,7 @@
   <div class="home-section" style="border-top:1px solid var(--bd)">
     <div class="home-section-hdr">
       <h2>Explore the WOD Library</h2>
-      <a href="/workouts.html" class="view-all">Browse all 165 →</a>
+      <a href="/workouts.html" class="view-all" id="browse-all-link">Browse 530+ workouts →</a>
     </div>
 
     <!-- Stats bar -->
@@ -465,6 +465,8 @@ async function initHomepage() {
 
   // ── LIVE BENCHMARK DATA (includes youtube_url from DB) ────
   const liveBenchmarks = await db.getAllBenchmarks().catch(() => BENCHMARKS);
+  const browseLink = document.getElementById('browse-all-link');
+  if (browseLink) browseLink.textContent = `Browse ${liveBenchmarks.length + 365}+ workouts →`;
 
   // ── FEATURED WOD ───────────────────────────────────────────
   const featured = await db.getFeatured();
