@@ -189,7 +189,7 @@
         </div>
 
         <textarea id="fb-textarea" placeholder="Describe the bug, idea, or question…"></textarea>
-        <input id="fb-email-input" type="email" placeholder="Your email (optional — for follow-up)">
+        <input id="fb-email-input" type="text" placeholder="Your email (optional — for follow-up)" autocomplete="email">
 
         <div id="fb-err"></div>
 
