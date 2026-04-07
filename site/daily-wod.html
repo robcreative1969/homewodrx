@@ -210,13 +210,15 @@
       document.getElementById('wod-details').style.display = '';
     } catch (err) {
       console.error('Error loading daily WOD:', err);
-      document.getElementById('wod-header').innerHTML = '<p class="text-muted">Error loading today\'s workout.</p>';
+      const eh = document.getElementById('wod-header'); eh.classList.remove('loading'); eh.innerHTML = '<p class="text-muted">Error loading today\'s workout.</p>';
     }
   }
 
   function renderHeader(wod, dateStr) {
     const formatted = new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-    document.getElementById('wod-header').innerHTML = `
+    const headerEl = document.getElementById('wod-header');
+    headerEl.classList.remove('loading');
+    headerEl.innerHTML = `
       <div style="padding: 2rem 0; margin-bottom: 2rem; border-bottom: 1px solid var(--dark-border);">
         <div class="dwod-badge">
           <span class="dwod-badge-dot"></span>
