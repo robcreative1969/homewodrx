@@ -569,19 +569,34 @@ async function generateRecentDailyWods(days) {
 //  LOAD DATA
 // ─────────────────────────────────────────────
 async function loadAllWorkouts() {
-  // Start with benchmarks (static JS array)
-  allWorkouts = BENCHMARKS.map(b => ({
-    ...b,
-    id: b.slug,
-    category: b.category || 'benchmark',
-    title: b.name,
-    // Normalise movements to {movement, reps, tip} shape
-    movements: (b.movements || []).map(m => ({
-      movement: m.name || m.movement || '',
-      reps: m.reps || '',
-      tip: m.tip || ''
-    }))
-  }));
+  // Start with benchmarks (live from Supabase so youtube_url etc. are included)
+  try {
+    const liveBenchmarks = await db.getAllBenchmarks();
+    allWorkouts = (liveBenchmarks || []).map(b => ({
+      ...b,
+      id: b.slug,
+      category: b.category || 'benchmark',
+      title: b.name,
+      movements: (b.movements || []).map(m => ({
+        movement: m.name || m.movement || '',
+        reps: m.reps || '',
+        tip: m.tip || ''
+      }))
+    }));
+  } catch (e) {
+    // Fall back to static array if Supabase is unavailable
+    allWorkouts = BENCHMARKS.map(b => ({
+      ...b,
+      id: b.slug,
+      category: b.category || 'benchmark',
+      title: b.name,
+      movements: (b.movements || []).map(m => ({
+        movement: m.name || m.movement || '',
+        reps: m.reps || '',
+        tip: m.tip || ''
+      }))
+    }));
+  }
 
   // Add user-generated public workouts from Supabase
   try {
