@@ -30,7 +30,6 @@
         <div>
           <div style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Community</div>
           <div style="display:flex;flex-direction:column;gap:8px">
-            <a href="/myworkouts" style="color:var(--tx);font-size:13px;text-decoration:none">Log a Result</a>
             <a href="/contact" style="color:var(--tx);font-size:13px;text-decoration:none">Contact &amp; Feedback</a>
           </div>
         </div>
