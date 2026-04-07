@@ -871,6 +871,7 @@ function renderResults() {
           <div class="result-footer">
             ${categoryBadge(w.category)}
             ${difficultyBadge(w.difficulty)}
+            ${w.youtube_url ? '<span class="badge badge-video">▶ Video</span>' : ''}
           </div>
         </div>
       </a>`;
