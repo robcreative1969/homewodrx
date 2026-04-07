@@ -291,18 +291,19 @@
 
       // Also send via Web3Forms for email notification
       try {
+        var w3fPayload = {
+          access_key: WEB3FORMS_KEY,
+          subject: '[HomeWODrx] New ' + currentType + ' submission',
+          from_name: 'HomeWODrx Feedback',
+          type: currentType,
+          message: message,
+          page_url: window.location.href
+        };
+        if (email) w3fPayload.replyto = email;
         var res = await fetch('https://api.web3forms.com/submit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({
-            access_key: WEB3FORMS_KEY,
-            subject: '[HomeWODrx] New ' + currentType + ' submission',
-            from_name: 'HomeWODrx Feedback',
-            type: currentType,
-            message: message,
-            email: email || '(not provided)',
-            page_url: window.location.href
-          })
+          body: JSON.stringify(w3fPayload)
         });
         if (res.ok) ok = true;
       } catch (err) {
