@@ -367,6 +367,7 @@
             </p>
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
               ${categoryBadge}
+              ${w.youtube_url ? '<span class="badge badge-video">▶ Video</span>' : ''}
               ${isUser && canDeleteWorkout(w) ? `<button onclick="deleteWorkoutCard('${w.id}',event)" style="margin-left:auto;background:rgba(231,76,60,0.12);border:1px solid rgba(231,76,60,0.35);color:#E74C3C;border-radius:6px;padding:3px 10px;font-size:0.75rem;cursor:pointer;font-weight:600;">🗑</button>` : ''}
             </div>
           </div>
