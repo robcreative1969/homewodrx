@@ -222,6 +222,20 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
 .toast.success{border-color:rgba(39,174,96,.5);color:#58d68d}
 .toast.error{border-color:rgba(231,76,60,.5);color:#e74c3c}
 .toast.info{border-color:var(--or);color:var(--orl)}
+@media print{
+  body{background:#fff!important;color:#000!important}
+  nav,#tab-nav,.res-actions,.warmup-cool,#toast,footer,.modal-overlay{display:none!important}
+  .wod-card{border:none!important;box-shadow:none!important;padding:0!important;background:#fff!important}
+  .wod-header{background:#fff!important;color:#000!important;padding:0 0 12px!important;border-bottom:2px solid #222!important}
+  #wod-title{color:#000!important;font-size:22px!important}
+  #wod-sub,#wod-meta{color:#444!important}
+  .chip{background:#eee!important;color:#333!important}
+  .mov-table th{background:#222!important;color:#fff!important}
+  .mov-table td{color:#000!important;border-color:#ccc!important}
+  .score-box{border:1px solid #ccc!important;background:#f8f8f8!important;color:#000!important}
+  .score-box h4,.score-box p{color:#000!important}
+  #result-section{display:block!important}
+}
 </style>
 </head>
 <body data-nav-init="true" data-active-page="generator">
@@ -260,6 +274,8 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
       <label class="eq-card" data-val="rings"><span class="icon">⭕</span><span class="name">Rings</span></label>
       <label class="eq-card" data-val="slamball"><span class="icon">💥</span><span class="name">Slam Ball</span></label>
       <label class="eq-card" data-val="treadmill"><span class="icon">🏃</span><span class="name">Treadmill</span></label>
+      <label class="eq-card" data-val="rower"><span class="icon">🚣</span><span class="name">Rower</span></label>
+      <label class="eq-card" data-val="airbike"><span class="icon">🚲</span><span class="name">Air Bike</span></label>
     </div>
   </div>
 
@@ -344,6 +360,7 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
         <button class="abtn pri" onclick="openLogResult()">📝 Log Result</button>
         <button class="abtn sec" onclick="openSaveWorkout()">💾 Save Workout</button>
         <button class="abtn sec" onclick="generateWorkout()">🔄 Regenerate</button>
+        <button class="abtn gho" onclick="printWorkout()">🖨️ Print WOD</button>
         <button class="abtn gho" id="nominate-btn" onclick="nominateWorkout()">⭐ Nominate as Featured</button>
       </div>
       <div class="warmup-cool">
@@ -625,6 +642,19 @@ const MOVEMENT_DB = {
     {name:"Sprint Intervals",tip:"Max effort — push the speed, recover between rounds",b:["20s"],i:["30s"],a:["45s"],timed:true,tags:["cardio"]},
     {name:"Incline Walk",tip:"Set 8–12% incline, no handrail — targets glutes and lungs",b:["3 min"],i:["5 min"],a:["7 min"],timed:true,tags:["cardio","lower"]},
     {name:"Treadmill Run (Short)",tip:"Fast but controlled — build into your pace",b:["200m"],i:["400m"],a:["800m"],tags:["cardio"]},
+  ],
+  rower:[
+    {name:"Row for Calories",tip:"Drive through heels first — then hips, then arms. Link the chain.",b:["10 cal"],i:["15 cal"],a:["20 cal"],tags:["full","cardio"]},
+    {name:"Row for Meters",tip:"Settle into a pace — damper 4–5, target 1:50–2:00/500m",b:["250m"],i:["500m"],a:["1000m"],tags:["full","cardio"]},
+    {name:"Row Sprints",tip:"All out — aim for sub-1:45/500m. Full recovery between efforts.",b:["30s"],i:["45s"],a:["60s"],timed:true,tags:["cardio"]},
+    {name:"Easy Row",tip:"Aerobic pace — you should be able to hold a conversation",b:["500m"],i:["1000m"],a:["2000m"],tags:["cardio"]},
+    {name:"Row Intervals",tip:"Work-to-rest 1:1 — max effort on the work piece",b:["200m"],i:["500m"],a:["1000m"],tags:["full","cardio"]},
+  ],
+  airbike:[
+    {name:"Air Bike for Calories",tip:"Push AND pull the handles — legs and arms together for max output",b:["10 cal"],i:["15 cal"],a:["20 cal"],tags:["full","cardio"]},
+    {name:"Air Bike Sprint",tip:"All out for the full interval — the harder you push, the harder it gets",b:["20s"],i:["30s"],a:["45s"],timed:true,tags:["full","cardio"]},
+    {name:"Air Bike Steady State",tip:"Aim for 60–70% effort — sustainable, not survival mode",b:["3 min"],i:["5 min"],a:["8 min"],timed:true,tags:["cardio"]},
+    {name:"Air Bike Intervals",tip:"Max RPM on work, slow spin recovery — don't stop pedaling",b:["10 cal"],i:["20 cal"],a:["30 cal"],tags:["full","cardio"]},
   ],
 };
 
@@ -1057,13 +1087,29 @@ function showTab(tab) {
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-function openAuthModal(mode = 'login') {
-  switchAuthTab(mode);
+function openAuthModal(mode = 'login', context = '') {
+  switchAuthTab(mode, context);
   openModal('auth-modal');
 }
-function switchAuthTab(tab) {
-  document.getElementById('auth-title').textContent = tab === 'login' ? 'Welcome Back' : 'Create Account';
-  document.getElementById('auth-sub').textContent = tab === 'login' ? 'Sign in to save workouts and track results.' : 'Join the HomeWODrx community — it\'s free.';
+function switchAuthTab(tab, context = '') {
+  let title, sub;
+  if (tab === 'login') {
+    if (context === 'log') {
+      title = 'Sign In to Log Result';
+      sub = 'Sign in to record your score and track your progress.';
+    } else if (context === 'save') {
+      title = 'Sign In to Save Workout';
+      sub = 'Create a free account to save workouts and build your library.';
+    } else {
+      title = 'Sign In';
+      sub = 'Sign in to save workouts and track results.';
+    }
+  } else {
+    title = 'Create Account';
+    sub = 'Join the HomeWODrx community — it\'s free.';
+  }
+  document.getElementById('auth-title').textContent = title;
+  document.getElementById('auth-sub').textContent = sub;
   document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
   document.getElementById('signup-form').style.display = tab === 'signup' ? 'block' : 'none';
   document.getElementById('auth-error').classList.remove('vis');
@@ -1102,7 +1148,7 @@ async function submitSignup() {
 }
 
 function openLogResult() {
-  if (!currentUser) { openAuthModal(); return; }
+  if (!currentUser) { openAuthModal('login', 'log'); return; }
   if (!currentWorkout) return;
   const fmt = currentWorkout.format || '';
   const label = fmt.toLowerCase().includes('time') ? 'Time (mm:ss)' : 'Rounds + Reps';
@@ -1161,7 +1207,7 @@ async function submitResult() {
 }
 
 function openSaveWorkout() {
-  if (!currentUser) { openAuthModal(); return; }
+  if (!currentUser) { openAuthModal('login', 'save'); return; }
   if (!currentWorkout) return;
   document.getElementById('save-name').value = currentWorkout.title;
   document.getElementById('save-desc').value = currentWorkout.description || '';
@@ -1201,11 +1247,16 @@ async function submitSave() {
 }
 
 function openCommResultModal(workoutId, title, format) {
-  if (!currentUser) { openAuthModal(); return; }
+  if (!currentUser) { openAuthModal('login', 'log'); return; }
   const w = communityWorkouts.find(x => x.id === workoutId) || myWorkouts.find(x => x.id === workoutId);
   if (!w) return;
   currentWorkout = w;
   openLogResult();
+}
+
+function printWorkout() {
+  if (!currentWorkout) { showToast('Generate a workout first.','error'); return; }
+  window.print();
 }
 
 async function nominateWorkout() {
