@@ -1071,6 +1071,85 @@ footer {
   font-size: 0.9rem;
 }
 
+/* ===== TABLET (portrait iPad through small laptop) ===== */
+/* Overrides the max-width: 768px mobile rules for medium screens.
+   Must come AFTER the mobile blocks to win the cascade. */
+
+@media (min-width: 601px) and (max-width: 1024px) {
+  /* Nav: stay in a single horizontal row */
+  nav {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .nav-container {
+    flex-wrap: nowrap;
+    gap: var(--spacing-md);
+  }
+
+  .nav-links {
+    order: unset;
+    width: auto;
+    border-top: none;
+    padding: 0;
+    flex-wrap: nowrap;
+    gap: var(--spacing-sm);
+    justify-content: flex-start;
+  }
+
+  .nav-links a {
+    font-size: 0.88rem;
+    padding: var(--spacing-xs) 10px;
+  }
+
+  .nav-auth {
+    order: unset;
+  }
+
+  .nav-logo-img {
+    height: 38px;
+  }
+
+  /* Hero: between mobile and desktop */
+  .hero {
+    padding: var(--spacing-xl) var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .hero h1 {
+    font-size: 2.25rem;
+  }
+
+  .hero p {
+    font-size: 1.1rem;
+  }
+
+  .hero-cta {
+    flex-direction: row;
+  }
+
+  /* Container: a bit more padding than mobile */
+  .container {
+    padding: 0 var(--spacing-md);
+  }
+
+  /* Grids: hold at 2 columns instead of collapsing to 1 */
+  .grid-cols-2,
+  .grid-cols-3,
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Stats bar: 3 columns fits nicely on a tablet */
+  .stats-bar {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Forms: keep side-by-side on tablet */
+  .form-group-inline {
+    flex-direction: row;
+  }
+}
+
 /* ===== LANDSCAPE PHONE ===== */
 /* Targets phones held sideways: wide but short viewport */
 
