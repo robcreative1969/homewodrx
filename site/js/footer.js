@@ -158,6 +158,34 @@
       #fb-success .fb-ok-icon { font-size:32px; margin-bottom:8px; }
       #fb-success p { font-size:14px; color:var(--tx,#f0f0f0); font-weight:700; margin:0 0 4px; }
       #fb-success small { font-size:12px; color:var(--mu,#888); }
+
+      @media (orientation: landscape) and (max-height: 500px) {
+        #fb-overlay {
+          align-items: center;
+          padding-bottom: 0;
+          padding-top: 8px;
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+        #fb-modal {
+          padding: 14px 16px;
+          max-height: 92vh;
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+        }
+        #fb-modal h3 { font-size: 14px; margin-bottom: 2px; }
+        #fb-modal .fb-sub { font-size: 11px; margin-bottom: 8px; }
+        .fb-types { gap: 6px; margin-bottom: 8px; }
+        .fb-type-chip { padding: 5px 4px; font-size: 11px; }
+        .fb-type-chip .fb-chip-icon { font-size: 13px; margin-bottom: 1px; }
+        #fb-textarea { min-height: 52px; padding: 7px 10px; margin-bottom: 6px; font-size: 12px; }
+        #fb-email-input { padding: 6px 10px; margin-bottom: 8px; font-size: 12px; }
+        #fb-send-btn { padding: 8px; font-size: 12px; }
+        #fb-cancel-btn { padding: 8px 12px; font-size: 12px; }
+      }
     `;
     document.head.appendChild(style);
 
