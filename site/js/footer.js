@@ -91,7 +91,7 @@
       #fb-overlay {
         display: none; position: fixed; inset: 0; z-index: 9999;
         background: rgba(0,0,0,0.55); align-items: flex-end; justify-content: center;
-        padding-bottom: 88px;
+        padding-bottom: 88px; padding-left: 16px; padding-right: 16px;
       }
       #fb-overlay.open { display: flex; }
       #fb-modal {
