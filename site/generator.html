@@ -874,6 +874,9 @@ let currentUser = null;
 document.addEventListener('DOMContentLoaded', async () => {
   // nav is auto-inited via data-nav-init="true"
   currentUser = await db.getUser();
+  // Hide "Free Account" badge for logged-in users
+  const badge = document.getElementById('cyo-free-badge');
+  if (badge) badge.style.display = currentUser ? 'none' : '';
   setupEquipmentGrid();
   setupBodyFocusGrid();
   setupPillGroups();
@@ -1582,6 +1585,9 @@ function cyoInit() {
   const isAuthed = !!currentUser;
   document.getElementById('cyo-gate').style.display = isAuthed ? 'none' : '';
   document.getElementById('cyo-builder').style.display = isAuthed ? '' : 'none';
+  // Hide "Free Account" badge for logged-in users
+  const badge = document.getElementById('cyo-free-badge');
+  if (badge) badge.style.display = isAuthed ? 'none' : '';
   // Load movements for logged-in users
   if (isAuthed && !cyoAllMovements.length) cyoLoadMovements();
   // Wire up pill groups (single-select)
