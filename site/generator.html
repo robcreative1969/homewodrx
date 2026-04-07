@@ -1321,9 +1321,13 @@ function printWorkout() {
     ${wc}
     <div class="pfoot">Generated at homewodrx.com · ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div>
   `;
-  window.print();
-  // Clean up after print dialog closes
-  setTimeout(() => { printArea.innerHTML = ''; }, 500);
+  // Give browser one paint cycle to render injected HTML before opening print dialog
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      window.print();
+      setTimeout(() => { printArea.innerHTML = ''; }, 500);
+    });
+  });
 }
 
 async function nominateWorkout() {

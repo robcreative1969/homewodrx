@@ -689,8 +689,13 @@
       ${scoring}${tips}
       <div class="pfoot">homewodrx.com &bull; ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div>
     `;
-    window.print();
-    setTimeout(() => { pa.innerHTML = ''; }, 500);
+    // Give browser one paint cycle to render injected HTML before opening print dialog
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        window.print();
+        setTimeout(() => { pa.innerHTML = ''; }, 500);
+      });
+    });
   }
 
   function copyShareLink(btn) {
