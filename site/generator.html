@@ -1647,7 +1647,7 @@ function cyoShowBrowseMode(dd) {
   cyoDropdownResults = shown;
   dd.innerHTML =
     `<div class="cyo-browse-cats">${cats.map(c =>
-      `<button class="cyo-cat-chip${c === cyoBrowseCategory ? ' active' : ''}" onclick="cyoSetBrowseCategory('${c.replace(/'/g, "\\'")}')">${c}</button>`
+      `<button class="cyo-cat-chip${c === cyoBrowseCategory ? ' active' : ''}" onclick="event.stopPropagation();cyoSetBrowseCategory('${c.replace(/'/g, "\\'")}')">${c}</button>`
     ).join('')}</div>` +
     `<div class="cyo-browse-count">${filtered.length} movement${filtered.length !== 1 ? 's' : ''}${cyoBrowseCategory !== 'All' ? ' in ' + cyoBrowseCategory : ''}</div>` +
     shown.map((m, i) =>
