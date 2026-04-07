@@ -339,7 +339,7 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
     <button class="gen-mode-btn" id="mode-btn-create" onclick="setGenMode('create')">
       <span class="m-icon">✏️</span>
       <span class="m-name">Create Your Own</span>
-      <span class="m-sub">Build it movement by movement<span class="m-badge">Free Account</span></span>
+      <span class="m-sub">Build it movement by movement<span class="m-badge" id="cyo-free-badge">Free Account</span></span>
     </button>
   </div>
 
@@ -1769,6 +1769,9 @@ document.addEventListener('click', function(e) {
 // Preload movements when user logs in; re-init CYO if it's the active mode
 document.addEventListener('authStateChange', () => {
   if (currentUser && !cyoAllMovements.length) cyoLoadMovements();
+  // Hide "Free Account" badge once the user is logged in
+  const badge = document.getElementById('cyo-free-badge');
+  if (badge) badge.style.display = currentUser ? 'none' : '';
   if (document.getElementById('gen-mode-create').style.display !== 'none') cyoInit();
 });
 
