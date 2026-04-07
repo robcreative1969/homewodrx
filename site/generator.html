@@ -1596,9 +1596,29 @@ function cyoInit() {
       p.onclick = () => {
         document.querySelectorAll('#' + groupId + ' .pill').forEach(x => x.classList.remove('sel'));
         p.classList.add('sel');
+        if (groupId === 'cyo-format-group') cyoUpdateScoring();
       };
     });
   });
+  // Also update scoring when duration slider changes
+  const durSlider = document.getElementById('cyo-duration');
+  if (durSlider) durSlider.addEventListener('input', cyoUpdateScoring);
+  // Set initial scoring text
+  cyoUpdateScoring();
+}
+
+function cyoUpdateScoring() {
+  const field = document.getElementById('cyo-scoring');
+  if (!field) return;
+  const format = cyoGetPill('cyo-format-group') || 'AMRAP';
+  const dur = document.getElementById('cyo-duration')?.value || 20;
+  const defaults = {
+    'AMRAP':    `${dur}-minute AMRAP — count total rounds + reps completed`,
+    'EMOM':     `${dur}-minute EMOM — complete each movement every minute on the minute`,
+    'For Time': `For time — fastest time to complete all reps wins`,
+    'Circuit':  `${dur} minutes — count total rounds completed`,
+  };
+  field.value = defaults[format] || '';
 }
 
 async function cyoLoadMovements() {
@@ -1709,7 +1729,6 @@ function cyoReset() {
   cyoRenderMovements();
   document.getElementById('cyo-title').value = '';
   document.getElementById('cyo-desc').value = '';
-  document.getElementById('cyo-scoring').value = '';
   document.getElementById('cyo-duration').value = 20;
   document.getElementById('cyo-dur-val').textContent = 20;
   document.getElementById('cyo-public').checked = false;
@@ -1717,6 +1736,7 @@ function cyoReset() {
   document.querySelectorAll('#cyo-eq-grid .eq-card').forEach((c, i) => c.classList.toggle('sel', i === 0));
   document.querySelectorAll('#cyo-format-group .pill').forEach((p, i) => p.classList.toggle('sel', i === 0));
   document.querySelectorAll('#cyo-level-group .pill').forEach((p, i) => p.classList.toggle('sel', i === 1));
+  cyoUpdateScoring(); // restore default scoring text for reset format/duration
 }
 
 function cyoShowAlert(msg) {
