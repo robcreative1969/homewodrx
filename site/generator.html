@@ -267,12 +267,19 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
 .cyo-mov-search-wrap{padding:12px;position:relative}
 .cyo-mov-search-wrap input{width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:11px 14px;color:var(--tx);font-size:14px;outline:none;box-sizing:border-box;transition:border-color .15s}
 .cyo-mov-search-wrap input:focus{border-color:var(--or)}
-.cyo-mov-dropdown{position:absolute;top:calc(100% - 4px);left:12px;right:12px;background:var(--card);border:1px solid var(--or);border-radius:10px;z-index:400;max-height:240px;overflow-y:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+.cyo-mov-dropdown{position:absolute;top:calc(100% - 4px);left:12px;right:12px;background:var(--card);border:1px solid var(--or);border-radius:10px;z-index:400;max-height:340px;overflow-y:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.6)}
 .cyo-mov-dropdown.open{display:block}
 .cyo-mov-dd-item{padding:11px 16px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;gap:10px}
 .cyo-mov-dd-item:last-child{border-bottom:none}
 .cyo-mov-dd-item:hover{background:rgba(196,18,18,.1);color:var(--orl)}
 .cyo-mov-dd-item .dd-cat{font-size:10px;color:var(--mu);flex-shrink:0}
+/* browse mode */
+.cyo-browse-cats{display:flex;flex-wrap:wrap;gap:5px;padding:10px 12px;border-bottom:1px solid var(--bd);background:var(--dk2);position:sticky;top:0;z-index:1}
+.cyo-cat-chip{background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 11px;font-size:11px;font-weight:700;cursor:pointer;color:var(--mu);transition:all .15s;white-space:nowrap;font-family:inherit}
+.cyo-cat-chip:hover{border-color:var(--or);color:var(--orl)}
+.cyo-cat-chip.active{background:rgba(196,18,18,.15);border-color:var(--or);color:var(--orl)}
+.cyo-browse-count{font-size:10px;color:var(--mu);padding:6px 16px 2px;font-style:italic}
+.cyo-browse-more{padding:10px 16px;font-size:11px;color:var(--mu);text-align:center;border-top:1px solid var(--bd);font-style:italic}
 .cyo-mov-list{padding:4px 12px 12px}
 .cyo-mov-empty{padding:24px;text-align:center;color:var(--mu);font-size:13px;font-style:italic}
 .cyo-mov-count{font-size:11px;color:var(--mu);padding:4px 0 10px}
@@ -462,7 +469,7 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
       <div class="cyo-gate">
         <div class="g-icon">✏️</div>
         <h3>Create Your Own WOD</h3>
-        <p>Build custom workouts from scratch using our movement library, then save them to your profile. Free to use with an account.</p>
+        <p>Build custom workouts from scratch using our full movement library, then save them to your profile. Free with an account.</p>
         <div class="cyo-gate-btns">
           <button class="abtn pri" style="flex:unset;padding:12px 24px" onclick="openAuthModal('signup')">Create Free Account</button>
           <button class="abtn sec" style="flex:unset;padding:12px 24px" onclick="openAuthModal('login')">Log In</button>
@@ -539,7 +546,7 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
             <input type="text" id="cyo-mov-search" placeholder="🔍 Search movement library…" autocomplete="off" oninput="cyoSearchMovements()" onfocus="cyoSearchMovements()">
             <div class="cyo-mov-dropdown" id="cyo-mov-dropdown"></div>
           </div>
-          <div id="cyo-mov-list"><div class="cyo-mov-empty">No movements yet — search above to add them.</div></div>
+          <div id="cyo-mov-list"><div class="cyo-mov-empty">No movements yet — click above to browse or search the library.</div></div>
         </div>
       </div>
 
@@ -1571,10 +1578,11 @@ let cyoAllMovements = [];
 let cyoMovSearchTimer = null;
 
 function cyoInit() {
-  // Show gate or builder depending on auth
+  // Show gate for logged-out users, builder for logged-in
   const isAuthed = !!currentUser;
   document.getElementById('cyo-gate').style.display = isAuthed ? 'none' : '';
   document.getElementById('cyo-builder').style.display = isAuthed ? '' : 'none';
+  // Load movements for logged-in users
   if (isAuthed && !cyoAllMovements.length) cyoLoadMovements();
   // Wire up pill groups (single-select)
   ['cyo-format-group', 'cyo-level-group'].forEach(groupId => {
@@ -1588,18 +1596,25 @@ function cyoInit() {
 }
 
 async function cyoLoadMovements() {
-  if (!supabaseClient || cyoAllMovements.length) return;
+  if (cyoAllMovements.length) return;
+  if (!supabaseClient) { setTimeout(cyoLoadMovements, 400); return; }
   const { data } = await supabaseClient.from('movements').select('name,slug,category').order('name');
   if (data) cyoAllMovements = data;
 }
+
+let cyoBrowseCategory = 'All';
 
 function cyoSearchMovements() {
   clearTimeout(cyoMovSearchTimer);
   cyoMovSearchTimer = setTimeout(() => {
     const q = document.getElementById('cyo-mov-search').value.trim().toLowerCase();
     const dd = document.getElementById('cyo-mov-dropdown');
-    if (!q) { dd.classList.remove('open'); dd.innerHTML = ''; return; }
-    const matches = cyoAllMovements.filter(m => m.name.toLowerCase().includes(q)).slice(0, 12);
+    if (!q) {
+      cyoShowBrowseMode(dd);
+      return;
+    }
+    // Search mode
+    const matches = cyoAllMovements.filter(m => m.name.toLowerCase().includes(q)).slice(0, 15);
     cyoDropdownResults = matches;
     if (!matches.length) {
       dd.innerHTML = '<div class="cyo-mov-dd-item" style="color:var(--mu);cursor:default">No movements found</div>';
@@ -1609,7 +1624,43 @@ function cyoSearchMovements() {
       `<div class="cyo-mov-dd-item" onclick="cyoAddMovement(${i})"><span>${m.name}</span><span class="dd-cat">${m.category || ''}</span></div>`
     ).join('');
     dd.classList.add('open');
-  }, 180);
+  }, 120);
+}
+
+function cyoShowBrowseMode(dd) {
+  if (!cyoAllMovements.length) {
+    dd.innerHTML = '<div class="cyo-mov-dd-item" style="color:var(--mu);cursor:default">Loading movement library…</div>';
+    dd.classList.add('open');
+    // Retry once loaded
+    setTimeout(() => {
+      if (cyoAllMovements.length && dd.classList.contains('open')) cyoShowBrowseMode(dd);
+    }, 500);
+    return;
+  }
+  // Build sorted unique category list
+  const cats = ['All', ...new Set(cyoAllMovements.map(m => m.category).filter(Boolean).sort())];
+  // Filter by selected category
+  const filtered = cyoBrowseCategory === 'All'
+    ? cyoAllMovements
+    : cyoAllMovements.filter(m => m.category === cyoBrowseCategory);
+  const shown = filtered.slice(0, 18);
+  cyoDropdownResults = shown;
+  dd.innerHTML =
+    `<div class="cyo-browse-cats">${cats.map(c =>
+      `<button class="cyo-cat-chip${c === cyoBrowseCategory ? ' active' : ''}" onclick="cyoSetBrowseCategory('${c.replace(/'/g, "\\'")}')">${c}</button>`
+    ).join('')}</div>` +
+    `<div class="cyo-browse-count">${filtered.length} movement${filtered.length !== 1 ? 's' : ''}${cyoBrowseCategory !== 'All' ? ' in ' + cyoBrowseCategory : ''}</div>` +
+    shown.map((m, i) =>
+      `<div class="cyo-mov-dd-item" onclick="cyoAddMovement(${i})"><span>${m.name}</span><span class="dd-cat">${m.category || ''}</span></div>`
+    ).join('') +
+    (filtered.length > 18 ? `<div class="cyo-browse-more">+${filtered.length - 18} more — type to search</div>` : '');
+  dd.classList.add('open');
+}
+
+function cyoSetBrowseCategory(cat) {
+  cyoBrowseCategory = cat;
+  const dd = document.getElementById('cyo-mov-dropdown');
+  cyoShowBrowseMode(dd);
 }
 
 function cyoAddMovement(idx) {
@@ -1626,7 +1677,7 @@ function cyoRemoveMovement(idx) { cyoMovements.splice(idx, 1); cyoRenderMovement
 function cyoRenderMovements() {
   const list = document.getElementById('cyo-mov-list');
   if (!cyoMovements.length) {
-    list.innerHTML = '<div class="cyo-mov-empty">No movements yet — search above to add them.</div>'; return;
+    list.innerHTML = '<div class="cyo-mov-empty">No movements yet — click above to browse or search the library.</div>'; return;
   }
   list.innerHTML = '<div class="cyo-mov-count">' + cyoMovements.length + ' movement' + (cyoMovements.length !== 1 ? 's' : '') + ' — fill in reps/time for each</div>' +
     cyoMovements.map((m, i) => `<div class="cyo-mov-row">
@@ -1715,8 +1766,9 @@ document.addEventListener('click', function(e) {
   }
 });
 
-// Re-check auth when mode switches (user may have just logged in)
+// Preload movements when user logs in; re-init CYO if it's the active mode
 document.addEventListener('authStateChange', () => {
+  if (currentUser && !cyoAllMovements.length) cyoLoadMovements();
   if (document.getElementById('gen-mode-create').style.display !== 'none') cyoInit();
 });
 
