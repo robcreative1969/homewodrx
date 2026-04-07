@@ -1071,6 +1071,97 @@ footer {
   font-size: 0.9rem;
 }
 
+/* ===== LANDSCAPE PHONE ===== */
+/* Targets phones held sideways: wide but short viewport */
+
+@media (orientation: landscape) and (max-height: 500px) {
+  /* Nav: stay single row, shrink padding & logo */
+  nav {
+    padding: 6px var(--spacing-sm);
+  }
+
+  .nav-logo-img {
+    height: 28px;
+  }
+
+  .nav-container {
+    flex-wrap: nowrap;
+    gap: var(--spacing-sm);
+  }
+
+  .nav-links {
+    order: unset;
+    width: auto;
+    border-top: none;
+    padding: 0;
+    flex-wrap: nowrap;
+    gap: 2px;
+  }
+
+  .nav-links a {
+    font-size: 0.78rem;
+    padding: 4px 6px;
+  }
+
+  .nav-auth {
+    order: unset;
+  }
+
+  /* Hero: cut vertical padding way down */
+  .hero {
+    padding: var(--spacing-md) var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .hero h1 {
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .hero p {
+    font-size: 0.95rem;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .hero-cta {
+    flex-direction: row;
+    gap: var(--spacing-sm);
+  }
+
+  /* Tighten overall spacing */
+  main {
+    padding-bottom: var(--spacing-xl);
+  }
+
+  .section {
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .stats-bar {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .stat-item {
+    padding: var(--spacing-sm);
+  }
+
+  .stat-value {
+    font-size: 1.4rem;
+  }
+
+  /* Modals: center vertically rather than anchoring to bottom edge */
+  .modal-overlay {
+    padding: var(--spacing-sm);
+  }
+
+  .modal {
+    max-height: 85vh;
+    padding: var(--spacing-lg);
+  }
+}
+
 /* ===== PRINT STYLES ===== */
 
 @media print {
