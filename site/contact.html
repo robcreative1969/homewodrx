@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact &amp; Feedback | HomeWODrx</title>
+  <meta name="description" content="Get in touch with the HomeWODrx team. Report bugs, request features, or send us a message.">
+  <link rel="canonical" href="https://homewodrx.com/contact">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/config.js"></script>
+  <script src="/js/db.js"></script>
+  <script src="/js/nav.js"></script>
+  <style>
+    .contact-page {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
+    .contact-page h1 {
+      font-size: 32px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+    .contact-page .subtitle {
+      font-size: 15px;
+      color: var(--mu);
+      margin-bottom: 40px;
+      line-height: 1.6;
+    }
+
+    /* Type selector */
+    .type-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .type-btn {
+      border: 2px solid var(--bd);
+      background: var(--card);
+      border-radius: 12px;
+      padding: 16px 10px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+    .type-btn:hover {
+      border-color: var(--or);
+    }
+    .type-btn.active {
+      border-color: var(--or);
+      background: rgba(196,18,18,0.07);
+    }
+    .type-btn .type-icon {
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+    .type-btn .type-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--tx);
+    }
+    .type-btn .type-desc {
+      font-size: 11px;
+      color: var(--mu);
+      margin-top: 3px;
+      line-height: 1.4;
+    }
+
+    /* Form */
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-group label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--tx);
+    }
+    .form-group .hint {
+      font-size: 12px;
+      color: var(--mu);
+      margin-top: 2px;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      background: var(--card);
+      border: 1.5px solid var(--bd);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 14px;
+      color: var(--tx);
+      font-family: inherit;
+      transition: border-color 0.15s;
+      outline: none;
+      resize: vertical;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: var(--or);
+    }
+    .form-group textarea {
+      min-height: 140px;
+    }
+
+    .submit-btn {
+      background: var(--or);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 14px 28px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      align-self: flex-start;
+    }
+    .submit-btn:hover { opacity: 0.88; }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Success state */
+    .success-box {
+      display: none;
+      background: var(--card);
+      border: 2px solid #22c55e;
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+    }
+    .success-box .success-icon { font-size: 40px; margin-bottom: 12px; }
+    .success-box h2 { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+    .success-box p { font-size: 14px; color: var(--mu); line-height: 1.7; }
+    .success-box .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: var(--or);
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    /* Error */
+    .error-msg {
+      display: none;
+      background: rgba(196,18,18,0.1);
+      border: 1.5px solid var(--or);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--or);
+    }
+
+    @media (max-width: 520px) {
+      .type-selector { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body data-nav-init="true" data-active-page="contact">
+
+<div class="contact-page">
+  <h1>Contact &amp; Feedback</h1>
+  <p class="subtitle">Have a question, spotted a bug, or got an idea to make HomeWODrx better? We'd love to hear from you.</p>
+
+  <!-- Success state (shown after submit) -->
+  <div class="success-box" id="success-box">
+    <div class="success-icon">🎉</div>
+    <h2>Thanks — message received!</h2>
+    <p>We read every submission and will follow up if you left an email. Your input helps make HomeWODrx better for everyone.</p>
+    <a href="/" class="back-link">← Back to home</a>
+  </div>
+
+  <!-- Form -->
+  <div id="contact-form-wrap">
+    <!-- Type selector -->
+    <div class="type-selector" id="type-selector">
+      <button class="type-btn active" data-type="general" onclick="selectType(this)">
+        <div class="type-icon">💬</div>
+        <div class="type-label">General</div>
+        <div class="type-desc">Questions, comments, or anything else</div>
+      </button>
+      <button class="type-btn" data-type="bug" onclick="selectType(this)">
+        <div class="type-icon">🐛</div>
+        <div class="type-label">Bug Report</div>
+        <div class="type-desc">Something's broken or not working right</div>
+      </button>
+      <button class="type-btn" data-type="feature" onclick="selectType(this)">
+        <div class="type-icon">💡</div>
+        <div class="type-label">Feature Request</div>
+        <div class="type-desc">An idea to make the app better</div>
+      </button>
+    </div>
+
+    <form class="contact-form" id="contact-form" novalidate>
+      <input type="hidden" id="fb-type" value="general">
+
+      <div class="form-group">
+        <label for="fb-message">Message <span style="color:var(--or)">*</span></label>
+        <textarea id="fb-message" placeholder="Describe your bug, idea, or question…" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="fb-email">Your email <span style="color:var(--mu);font-weight:400">(optional)</span></label>
+        <input type="email" id="fb-email" placeholder="you@example.com">
+        <span class="hint">Only used to follow up on your submission — never shared or used for marketing.</span>
+      </div>
+
+      <div class="error-msg" id="error-msg"></div>
+
+      <button type="submit" class="submit-btn" id="submit-btn">Send Message</button>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/js/footer.js"></script>
+<script>
+  // ---- Type selector ----
+  function selectType(btn) {
+    document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('fb-type').value = btn.dataset.type;
+  }
+
+  // ---- Supabase client ----
+  let _sb = null;
+  function getSB() {
+    if (!_sb) {
+      _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+    return _sb;
+  }
+
+  // ---- Form submit ----
+  document.getElementById('contact-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const message = document.getElementById('fb-message').value.trim();
+    const email   = document.getElementById('fb-email').value.trim();
+    const type    = document.getElementById('fb-type').value;
+    const errEl   = document.getElementById('error-msg');
+    const btn     = document.getElementById('submit-btn');
+
+    errEl.style.display = 'none';
+
+    if (!message) {
+      errEl.textContent = 'Please enter a message before sending.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    const payload = {
+      type,
+      message,
+      email: email || null,
+      page_url: window.location.href
+    };
+
+    let supabaseOk = false;
+    let formspreeOk = false;
+
+    // 1. Save to Supabase
+    try {
+      const sb = getSB();
+      const { error } = await sb.from('feedback').insert(payload);
+      if (!error) supabaseOk = true;
+    } catch (err) {
+      console.warn('Supabase insert failed:', err);
+    }
+
+    // 2. Also POST to Formspree for email notification
+    // TODO: replace FORMSPREE_ID with your form ID from formspree.io
+    // Web3Forms — sends email notification to robcreative@gmail.com
+    const WEB3FORMS_KEY = '0c5922a1-0b41-4297-b766-ebdba008bf15';
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          subject: `[HomeWODrx] New ${type} submission`,
+          from_name: 'HomeWODrx Feedback',
+          type,
+          message,
+          email: email || '(not provided)',
+          page_url: window.location.href
+        })
+      });
+      if (res.ok) formspreeOk = true;
+    } catch (err) {
+      console.warn('Web3Forms failed:', err);
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Send Message';
+
+    if (supabaseOk || formspreeOk) {
+      document.getElementById('contact-form-wrap').style.display = 'none';
+      document.getElementById('success-box').style.display = 'block';
+    } else {
+      errEl.textContent = 'Something went wrong — please try again or email us directly.';
+      errEl.style.display = 'block';
+    }
+  });
+</script>
+</body>
+</html>
