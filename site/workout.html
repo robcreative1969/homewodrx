@@ -18,6 +18,25 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://homewodrx.com/images/og-default.png" id="twitter-image">
   <link rel="canonical" href="https://homewodrx.com/workouts/" id="canonical-url">
+  <!-- SEO: set canonical/title/description from URL slug before JS loads so Google sees correct tags on first HTML pass -->
+  <script>
+    (function() {
+      var parts = window.location.pathname.split('/').filter(Boolean);
+      var slug = parts[parts.length - 1] || '';
+      if (slug && slug !== 'workouts') {
+        var name = slug.replace(/-/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+        document.title = name + ' Workout - HomeWODrx';
+        document.querySelector('meta[name="description"]').setAttribute('content',
+          'The ' + name + ' CrossFit workout: movements, time cap, scaling options, and tips. View the full WOD and log your result on HomeWODrx.');
+        document.querySelector('meta[property="og:title"]').setAttribute('content', name + ' Workout - HomeWODrx');
+        document.querySelector('meta[property="og:description"]').setAttribute('content',
+          'The ' + name + ' CrossFit workout: movements, time cap, scaling options, and tips. View the full WOD and log your result on HomeWODrx.');
+        var url = 'https://homewodrx.com/workouts/' + slug;
+        document.getElementById('canonical-url').setAttribute('href', url);
+        document.getElementById('og-url').setAttribute('content', url);
+      }
+    })();
+  </script>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
