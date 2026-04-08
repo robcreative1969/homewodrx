@@ -59,7 +59,6 @@ const Nav = {
     ];
 
     const additionalLinks = currentUser ? [
-      { text: 'My WODs', href: '/myworkouts.html', page: 'myworkouts' },
       { text: 'Profile', href: `/profile.html?user=${currentUser.email?.split('@')[0] || 'me'}`, page: 'profile' }
     ] : [];
 
