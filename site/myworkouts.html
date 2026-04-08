@@ -327,10 +327,12 @@ async function confirmDelete() {
   }
 }
 
-// ── Init ──
+// ── Init — redirect to profile ──
 document.addEventListener('DOMContentLoaded', async () => {
-  await Nav.init('myworkouts');
-  loadMyWorkouts();
+  const sb = typeof supabaseClient !== 'undefined' ? supabaseClient : null;
+  const user = sb ? (await sb.auth.getUser())?.data?.user : null;
+  const username = user?.email?.split('@')[0] || 'me';
+  window.location.replace(`/profile.html?user=${encodeURIComponent(username)}`);
 });
 </script>
 

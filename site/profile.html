@@ -67,6 +67,26 @@
 .wod-section{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:20px;margin-bottom:16px}
 .wod-section h3{font-size:13px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
 .wod-section pre{white-space:pre-wrap;font-family:inherit;font-size:14px;line-height:1.7;color:var(--tx)}
+.prof-card-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.pca-btn{padding:7px 13px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .15s}
+.pca-btn.pri{background:var(--or);color:#fff}.pca-btn.pri:hover{background:var(--orl)}
+.pca-btn.sec{background:var(--dk3);color:var(--mu);border:1px solid var(--bd)}.pca-btn.sec:hover{color:var(--tx);border-color:var(--mu)}
+.pca-btn.del{background:transparent;color:var(--danger);border:1px solid var(--danger);opacity:.7}.pca-btn.del:hover{opacity:1}
+.modal-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:28px;max-width:420px;width:100%;position:relative}
+.modal-close{position:absolute;top:12px;right:16px;background:none;border:none;color:var(--mu);font-size:20px;cursor:pointer}
+.modal h2{font-size:20px;font-weight:900;margin-bottom:6px}
+.modal .msub{color:var(--mu);font-size:13px;margin-bottom:20px}
+.modal label{display:block;font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.modal input,.modal select,.modal textarea{width:100%;background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:10px;color:var(--tx);font-size:14px;outline:none;font-family:inherit;margin-bottom:14px}
+.modal input:focus,.modal select:focus,.modal textarea:focus{border-color:var(--or)}
+.msg{padding:10px 14px;border-radius:7px;font-size:13px;font-weight:600;margin-bottom:14px;display:none}
+.msg.vis{display:block}
+.msg.err{background:rgba(239,68,68,.12);color:var(--danger);border:1px solid rgba(239,68,68,.3)}
+.msg.ok{background:rgba(34,197,94,.12);color:var(--success);border:1px solid rgba(34,197,94,.3)}
+.gen-cta{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:var(--or);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;transition:background .15s;margin-bottom:20px}
+.gen-cta:hover{background:var(--orl)}
 @media(max-width:600px){.prof-header{flex-direction:column;text-align:center}.prof-grid{grid-template-columns:1fr}.stats-bar{grid-template-columns:repeat(2,1fr)}}
 </style>
   <!-- Google tag (gtag.js) -->
@@ -133,6 +153,7 @@
 
     <!-- Tab: Workouts -->
     <div class="tab-content active" id="tab-workouts">
+      <a href="/generator.html" id="prof-gen-cta" class="gen-cta" style="display:none">+ Generate New WOD</a>
       <div class="prof-grid" id="prof-workouts-grid"></div>
       <div id="prof-workouts-empty" class="empty-state" style="display:none">
         <div class="icon">💪</div>
@@ -246,7 +267,11 @@ async function openWodDetail(workoutId) {
     </div>
     ${w.description ? `<div class="wod-section"><h3>Description</h3><pre>${escHtml(w.description)}</pre></div>` : ''}
     ${movementsHtml ? `<div class="wod-section"><h3>Movements</h3><pre>${escHtml(movementsHtml)}</pre></div>` : ''}
-    ${w.scoring ? `<div class="wod-section"><h3>Scoring</h3><pre>${escHtml(w.scoring)}</pre></div>` : ''}`;
+    ${w.scoring ? `<div class="wod-section"><h3>Scoring</h3><pre>${escHtml(w.scoring)}</pre></div>` : ''}
+    ${isOwnProfile ? `<div style="display:flex;gap:10px;margin-top:20px">
+      <button class="pca-btn pri" onclick="closeWodDetail();openResultModal('${escHtml(w.id)}','${escHtml(w.title)}')">Log Result</button>
+      <button class="pca-btn del" onclick="closeWodDetail();openDeleteModal('${escHtml(w.id)}')">Delete Workout</button>
+    </div>` : ''}`;
 
   document.getElementById('wod-detail-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -255,6 +280,64 @@ async function openWodDetail(workoutId) {
 function closeWodDetail() {
   document.getElementById('wod-detail-overlay').classList.remove('open');
   document.body.style.overflow = '';
+}
+
+// ── Modals (owner only) ──
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function openResultModal(workoutId, title) {
+  document.getElementById('result-workout-id').value = workoutId;
+  document.getElementById('result-modal-wod').textContent = title;
+  document.getElementById('result-score').value = '';
+  document.getElementById('result-notes').value = '';
+  document.getElementById('result-error').classList.remove('vis');
+  document.getElementById('result-success').classList.remove('vis');
+  openModal('result-modal');
+}
+
+async function submitResult() {
+  const workoutId = document.getElementById('result-workout-id').value;
+  const score     = document.getElementById('result-score').value.trim();
+  const isRx      = document.getElementById('result-rx').value === 'true';
+  const notes     = document.getElementById('result-notes').value.trim();
+  const errEl     = document.getElementById('result-error');
+  const okEl      = document.getElementById('result-success');
+  errEl.classList.remove('vis'); okEl.classList.remove('vis');
+  if (!score) { errEl.textContent = 'Please enter a score or time.'; errEl.classList.add('vis'); return; }
+  try {
+    await db.saveResult({
+      workout_id: workoutId,
+      user_id: currentUser.id,
+      username: currentUser.email?.split('@')[0] || 'athlete',
+      score_display: score,
+      is_rx: isRx,
+      notes,
+      date: new Date().toISOString().split('T')[0]
+    });
+    okEl.textContent = 'Result saved!';
+    okEl.classList.add('vis');
+    setTimeout(() => { closeModal('result-modal'); loadProfile(); }, 1200);
+  } catch (e) {
+    errEl.textContent = e.message || 'Failed to save result.';
+    errEl.classList.add('vis');
+  }
+}
+
+function openDeleteModal(workoutId) {
+  document.getElementById('delete-workout-id').value = workoutId;
+  openModal('delete-modal');
+}
+
+async function confirmDelete() {
+  const workoutId = document.getElementById('delete-workout-id').value;
+  try {
+    await db.deleteWorkout(workoutId);
+    closeModal('delete-modal');
+    loadProfile();
+  } catch (e) {
+    alert('Failed to delete: ' + (e.message || 'Unknown error'));
+  }
 }
 
 // ── Tab Switching ──
@@ -387,6 +470,10 @@ async function loadProfile() {
     // Store workouts for detail view
     profileWorkouts = workouts;
 
+    // Show Generate New CTA for owner
+    const genCta = document.getElementById('prof-gen-cta');
+    if (genCta) genCta.style.display = isOwnProfile ? 'inline-flex' : 'none';
+
     grid.innerHTML = workouts.map(w => `
       <div class="prof-card" onclick="openWodDetail('${escHtml(w.id)}')" style="cursor:pointer">
         <div class="prof-card-meta">
@@ -396,6 +483,10 @@ async function loadProfile() {
         </div>
         <h3>${escHtml(w.title)}</h3>
         <div class="date">${formatDate(w.created_at || w.createdAt)}</div>
+        ${isOwnProfile ? `<div class="prof-card-actions">
+          <button class="pca-btn pri" onclick="event.stopPropagation();openResultModal('${escHtml(w.id)}','${escHtml(w.title)}')">Log Result</button>
+          <button class="pca-btn del" onclick="event.stopPropagation();openDeleteModal('${escHtml(w.id)}')">Delete</button>
+        </div>` : ''}
       </div>`).join('');
   }
 
@@ -494,6 +585,39 @@ document.addEventListener('DOMContentLoaded', async () => {
   loadProfile();
 });
 </script>
+
+<!-- Log Result Modal -->
+<div class="modal-overlay" id="result-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('result-modal')">✕</button>
+    <h2>Log Result</h2>
+    <p class="msub" id="result-modal-wod">—</p>
+    <div class="msg err" id="result-error"></div>
+    <div class="msg ok" id="result-success"></div>
+    <input type="hidden" id="result-workout-id">
+    <label>Score / Time</label>
+    <input type="text" id="result-score" placeholder="e.g. 12:34 or 225 reps">
+    <label>Rx?</label>
+    <select id="result-rx"><option value="true">Yes — Rx</option><option value="false">Scaled</option></select>
+    <label>Notes (optional)</label>
+    <textarea id="result-notes" rows="2" placeholder="How did it feel?"></textarea>
+    <button class="pca-btn pri" style="width:100%;padding:12px;font-size:14px;border-radius:8px;margin-top:4px" onclick="submitResult()">Save Result</button>
+  </div>
+</div>
+
+<!-- Delete Workout Modal -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('delete-modal')">✕</button>
+    <h2>Delete Workout?</h2>
+    <p class="msub">This cannot be undone. The workout and all its logged results will be permanently removed.</p>
+    <input type="hidden" id="delete-workout-id">
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="pca-btn del" style="flex:1;padding:12px;font-size:14px;border-radius:8px;opacity:1" onclick="confirmDelete()">Delete</button>
+      <button class="pca-btn sec" style="flex:1;padding:12px;font-size:14px;border-radius:8px" onclick="closeModal('delete-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
 
 <!-- FOOTER -->
 <script src="/js/footer.js"></script>
