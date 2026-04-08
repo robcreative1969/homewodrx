@@ -24,7 +24,9 @@
 .prof-info p{color:var(--mu);font-size:14px}
 .prof-info .joined{font-size:12px;color:var(--mu);margin-top:4px}
 .stats-bar{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:28px}
-.stat-card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px;text-align:center}
+.stat-card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px;text-align:center;cursor:pointer;transition:border-color .15s,transform .1s}
+.stat-card:hover{border-color:var(--or)}
+.stat-card.active{border-color:var(--or);background:rgba(196,18,18,.06)}
 .stat-card .val{font-size:24px;font-weight:900;color:var(--or)}
 .stat-card .lbl{font-size:10px;color:var(--mu);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-top:4px}
 .section-title{font-size:13px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--bd)}
@@ -122,17 +124,11 @@
       </div>
     </div>
 
-    <!-- Stats -->
+    <!-- Stats (clickable — act as tab selectors) -->
     <div class="stats-bar" id="prof-stats">
-      <div class="stat-card"><div class="val" id="stat-workouts">0</div><div class="lbl">Workouts</div></div>
-      <div class="stat-card"><div class="val" id="stat-results">0</div><div class="lbl">Results Logged</div></div>
-      <div class="stat-card"><div class="val" id="stat-public">0</div><div class="lbl">Public WODs</div></div>
-    </div>
-
-    <!-- Tabs -->
-    <div class="tab-bar">
-      <button class="tab-btn active" onclick="switchTab('workouts')">Workouts</button>
-      <button class="tab-btn" onclick="switchTab('results')">Results</button>
+      <div class="stat-card active" id="stat-card-workouts" onclick="switchTab('workouts')"><div class="val" id="stat-workouts">0</div><div class="lbl">Workouts</div></div>
+      <div class="stat-card" id="stat-card-results" onclick="switchTab('results')"><div class="val" id="stat-results">0</div><div class="lbl">Results Logged</div></div>
+      <div class="stat-card" id="stat-card-public" onclick="switchTab('workouts')"><div class="val" id="stat-public">0</div><div class="lbl">Public WODs</div></div>
     </div>
 
     <!-- Tab: Workouts -->
@@ -263,11 +259,13 @@ function closeWodDetail() {
 
 // ── Tab Switching ──
 function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach((b, i) => {
-    b.classList.toggle('active', (tab === 'workouts' && i === 0) || (tab === 'results' && i === 1));
-  });
+  // Update tab content
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.getElementById(`tab-${tab}`).classList.add('active');
+  // Sync stat card highlight — workouts tab activates both Workouts and Public WODs cards
+  document.getElementById('stat-card-workouts').classList.toggle('active', tab === 'workouts');
+  document.getElementById('stat-card-results').classList.toggle('active', tab === 'results');
+  document.getElementById('stat-card-public').classList.toggle('active', tab === 'workouts');
 }
 
 // ── Bio Edit ──
