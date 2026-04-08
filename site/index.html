@@ -559,8 +559,10 @@ function renderFeaturedWOD(featured, liveBenchmarks) {
 
 
 async function renderActivity() {
-  const results = await db.getResults({ limit: 5 });
   const list = document.getElementById('activity-list');
+  if (!list) return; // section commented out until Step 7 (score logging) is live
+
+  const results = await db.getResults({ limit: 5 });
 
   if (!results?.length) {
     list.innerHTML = `<div style="text-align:center;padding:32px;color:var(--mu);font-size:14px">No results logged yet. Be the first to log a workout!</div>`;
