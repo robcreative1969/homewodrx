@@ -234,9 +234,15 @@ const db = {
       return { data: newWorkout, error: null };
     }
 
+    // Public submissions go into a pending review queue; admin must approve before they appear
+    const workoutToSave = { ...workout };
+    if (workoutToSave.is_public) {
+      workoutToSave.is_approved = false;
+    }
+
     const { data, error } = await supabaseClient
       .from('workouts')
-      .insert([workout])
+      .insert([workoutToSave])
       .select();
 
     return { data: data?.[0], error };
@@ -271,7 +277,7 @@ const db = {
     let query = supabaseClient.from('workouts').select('*');
 
     if (isPublic && !userId) {
-      query = query.eq('is_public', true);
+      query = query.eq('is_public', true).eq('is_approved', true);
     }
     if (userId) {
       query = query.eq('user_id', userId);
