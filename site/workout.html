@@ -970,7 +970,7 @@
 
     // Show current PR as hint
     try {
-      const prev = await db.getResults({ benchmarkSlug: w.slug||null, workoutId: w.id||null, userId: user.id });
+      const prev = await db.getResults({ benchmarkSlug: w.slug||null, workoutId: w.slug ? null : (w.id||null), userId: user.id });
       if (prev && prev.length > 0) {
         const best = getBestResult(prev, scoringType);
         if (best) {
@@ -1063,7 +1063,7 @@
     try {
       // PR detection — check before saving
       let isPR = false;
-      const prev = await db.getResults({ benchmarkSlug: w.slug||null, workoutId: w.id||null, userId: user.id });
+      const prev = await db.getResults({ benchmarkSlug: w.slug||null, workoutId: w.slug ? null : (w.id||null), userId: user.id });
       isPR = (!prev || prev.length === 0)
         ? true
         : checkIsPR({ scoreSeconds, scoreRounds, scoreReps, scoreWeight }, prev, scoringType);
@@ -1072,7 +1072,7 @@
         user_id: user.id,
         username: user.email?.split('@')[0] || 'unknown',
         benchmark_slug: w.slug || null,
-        workout_id: w.id || null,
+        workout_id: w.slug ? null : (w.id || null), // FK points to workouts table — never pass benchmark UUID
         score_display: scoreDisplay,
         score_seconds: scoreSeconds,
         score_rounds: scoreRounds,
@@ -1118,9 +1118,10 @@
     if (!user || !currentWorkout) { historySection.style.display = 'none'; return; }
 
     try {
+      const w = currentWorkout;
       const results = await db.getResults({
-        benchmarkSlug: currentWorkout.slug || null,
-        workoutId: currentWorkout.id || null,
+        benchmarkSlug: w.slug || null,
+        workoutId: w.slug ? null : (w.id || null),
         userId: user.id,
         limit: 10
       });
