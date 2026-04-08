@@ -1448,8 +1448,7 @@ async function submitSave() {
   if (error) { errEl.textContent = error.message; errEl.classList.add('vis'); return; }
   currentWorkout = { ...currentWorkout, id: data?.id };
   closeModal('save-modal');
-  showToast(isPublic ? 'Workout saved and shared with the community! 🌍' : 'Workout saved! 💾','success');
-  if (isPublic) await loadCommunityWorkouts();
+  showToast(isPublic ? 'Submitted for community review! We\'ll approve it shortly. 🔍' : 'Workout saved! 💾','success');
   await loadMyWorkouts();
 }
 
@@ -1778,8 +1777,7 @@ async function cyoSave() {
   btn.disabled = false; btn.textContent = '💾 Save Workout';
   if (error) { cyoShowAlert('Error saving: ' + error.message); return; }
 
-  showToast(isPublic ? 'Workout saved and shared with the community! 🌍' : 'Workout saved to My Workouts! 💾', 'success');
-  if (isPublic) await loadCommunityWorkouts();
+  showToast(isPublic ? 'Submitted for community review! We\'ll approve it shortly. 🔍' : 'Workout saved to My Workouts! 💾', 'success');
   await loadMyWorkouts();
   cyoReset();
   // Optionally switch to My Workouts tab

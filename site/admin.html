@@ -210,6 +210,7 @@
     <div class="stat-card"><div class="num" id="stat-results">—</div><div class="lbl">Total Results</div></div>
     <div class="stat-card"><div class="num" id="stat-users">—</div><div class="lbl">Athletes</div></div>
     <div class="stat-card"><div class="num" id="stat-nominations">—</div><div class="lbl">Nominations Pending</div></div>
+    <div class="stat-card" style="cursor:pointer" onclick="showAdminTab('workouts');document.getElementById('workouts-status').value='pending';loadWorkouts()"><div class="num" id="stat-pending-review" style="color:var(--or)">—</div><div class="lbl">Awaiting Review</div></div>
     <div class="stat-card"><div class="num" id="stat-movements">—</div><div class="lbl">Movements in DB</div></div>
   </div>
 
@@ -417,6 +418,7 @@
         </select>
         <select id="workouts-status" onchange="loadWorkouts()" style="background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none">
           <option value="">All Status</option>
+          <option value="pending">⏳ Pending Review</option>
           <option value="public">Public Only</option>
           <option value="private">Private Only</option>
           <option value="featured">Featured</option>
@@ -903,21 +905,23 @@ function setTodayDate(){
 
 async function loadStats(){
   if(!supabaseClient){
-    ['stat-workouts','stat-results','stat-users','stat-nominations'].forEach(id=>document.getElementById(id).textContent='—');
+    ['stat-workouts','stat-results','stat-users','stat-nominations','stat-pending-review','stat-movements'].forEach(id=>document.getElementById(id).textContent='—');
     return;
   }
   try{
-    const[w,r,p,n,mv]=await Promise.all([
+    const[w,r,p,n,pr,mv]=await Promise.all([
       supabaseClient.from('workouts').select('*',{count:'exact',head:true}),
       supabaseClient.from('results').select('*',{count:'exact',head:true}),
       supabaseClient.from('profiles').select('*',{count:'exact',head:true}),
       supabaseClient.from('workouts').select('*',{count:'exact',head:true}).eq('nomination_pending',true),
+      supabaseClient.from('workouts').select('*',{count:'exact',head:true}).eq('is_public',true).eq('is_approved',false),
       supabaseClient.from('movements').select('*',{count:'exact',head:true})
     ]);
     document.getElementById('stat-workouts').textContent=w.count||0;
     document.getElementById('stat-results').textContent=r.count||0;
     document.getElementById('stat-users').textContent=p.count||0;
     document.getElementById('stat-nominations').textContent=n.count||0;
+    document.getElementById('stat-pending-review').textContent=pr.count||0;
     document.getElementById('stat-movements').textContent=mv.count||0;
   }catch(e){console.log('Stats error',e);}
 }
@@ -1338,7 +1342,8 @@ async function loadWorkouts(){
     let query=supabaseClient.from('workouts').select('*',{count:'exact'});
     if(format)query=query.eq('format',format);
     if(level)query=query.eq('level',level);
-    if(status==='public')query=query.eq('is_public',true);
+    if(status==='pending')query=query.eq('is_public',true).eq('is_approved',false);
+    else if(status==='public')query=query.eq('is_public',true).eq('is_approved',true);
     else if(status==='private')query=query.eq('is_public',false);
     else if(status==='featured')query=query.eq('is_featured',true);
     const{data,count}=await query.order('created_at',{ascending:false});
@@ -1354,12 +1359,35 @@ function searchWorkouts(){
 function renderWorkoutsTable(){
   const filtered=workoutsData.filter(w=>w.title?.toLowerCase().includes(workoutsSearch));
   if(!filtered.length){document.getElementById('workouts-table-wrap').innerHTML='<p style="color:var(--mu)">No workouts found.</p>';return;}
-  let html=`<table class="table"><thead><tr><th>Title</th><th>Creator</th><th>Format</th><th>Duration</th><th>Level</th><th>Focus</th><th>Public</th><th>Featured</th><th>Results</th><th>Actions</th></tr></thead><tbody>`;
+  let html=`<table class="table"><thead><tr><th>Title</th><th>Creator</th><th>Format</th><th>Duration</th><th>Level</th><th>Focus</th><th>Status</th><th>Featured</th><th>Results</th><th>Actions</th></tr></thead><tbody>`;
   filtered.forEach(w=>{
-    html+=`<tr><td style="font-weight:700;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(w.title)}">${escHtml(w.title)}</td><td style="color:var(--mu);font-size:12px">${escHtml(w.username||'')}</td><td><span class="pill pill-or">${escHtml(w.format||'')}</span></td><td>${w.duration}m</td><td>${cap(w.level||'')}</td><td style="font-size:11px">${cap((w.body_focus||'').replace('-',' '))}</td><td>${w.is_public?'<span class="pill pill-gr">Yes</span>':'<span class="pill pill-mu">No</span>'}</td><td>${w.is_featured?'<span class="pill pill-or">⭐</span>':'—'}</td><td>${w.result_count||0}</td><td style="display:flex;gap:4px;flex-wrap:wrap"><button class="action-btn" onclick="editWorkout('${w.id}')">Edit</button><button class="action-btn" onclick="deleteWorkout('${w.id}','${escHtml(w.title)}')">Delete</button></td></tr>`;
+    const isPending=w.is_public&&w.is_approved===false;
+    const statusBadge=isPending
+      ?'<span class="pill" style="background:rgba(255,165,0,.15);border:1px solid rgba(255,165,0,.4);color:#ffb347;font-size:11px">⏳ Pending</span>'
+      :w.is_public
+        ?'<span class="pill pill-gr" style="font-size:11px">✅ Live</span>'
+        :'<span class="pill pill-mu" style="font-size:11px">Private</span>';
+    const approveRejectBtns=isPending
+      ?`<button class="approve-btn" onclick="approveWorkout('${w.id}','${escHtml(w.title)}')">✅ Approve</button><button class="action-btn" style="border-color:rgba(196,18,18,.4);color:#e74c3c" onclick="rejectWorkout('${w.id}','${escHtml(w.title)}')">✗ Reject</button>`
+      :'';
+    const movementPreview=w.movements&&w.movements.length?`<div style="margin-top:4px;font-size:11px;color:var(--mu)">${w.movements.slice(0,3).map(m=>escHtml(m.name||m.movement||'')).join(', ')}${w.movements.length>3?'…':''}</div>`:'';
+    html+=`<tr style="${isPending?'background:rgba(255,165,0,.04)':''}"><td style="font-weight:700;max-width:160px" title="${escHtml(w.title)}">${escHtml(w.title)}${movementPreview}</td><td style="color:var(--mu);font-size:12px">${escHtml(w.username||'')}</td><td><span class="pill pill-or">${escHtml(w.format||'')}</span></td><td>${w.duration}m</td><td>${cap(w.level||'')}</td><td style="font-size:11px">${cap((w.body_focus||'').replace('-',' '))}</td><td>${statusBadge}</td><td>${w.is_featured?'<span class="pill pill-or">⭐</span>':'—'}</td><td>${w.result_count||0}</td><td style="display:flex;gap:4px;flex-wrap:wrap">${approveRejectBtns}<button class="action-btn" onclick="editWorkout('${w.id}')">Edit</button><button class="action-btn" onclick="deleteWorkout('${w.id}','${escHtml(w.title)}')">Delete</button></td></tr>`;
   });
   html+=`</tbody></table>`;
   document.getElementById('workouts-table-wrap').innerHTML=html;
+}
+async function approveWorkout(id,title){
+  if(!supabaseClient)return;
+  const{error}=await supabaseClient.from('workouts').update({is_approved:true}).eq('id',id);
+  if(error)showAlert('workouts-alert','Error: '+error.message,'err');
+  else{showAlert('workouts-alert',`"${title}" approved and now live in the community feed!`,'ok');await loadWorkouts();await loadStats();}
+}
+async function rejectWorkout(id,title){
+  if(!confirm(`Reject and delete "${title}"? This cannot be undone.`))return;
+  if(!supabaseClient)return;
+  const{error}=await supabaseClient.from('workouts').delete().eq('id',id);
+  if(error)showAlert('workouts-alert','Error: '+error.message,'err');
+  else{showAlert('workouts-alert',`"${title}" rejected and removed.`,'ok');await loadWorkouts();await loadStats();}
 }
 async function editWorkout(id){alert('Inline edit coming soon. For now, use the generator page or edit directly in Supabase.');}
 async function deleteWorkout(id,title){
