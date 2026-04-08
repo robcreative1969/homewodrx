@@ -342,23 +342,22 @@
 <div class="modal-overlay" id="result-modal">
   <div class="modal">
     <div class="modal-header">
-      <h2 class="modal-title">Log Your Result</h2>
+      <h2 class="modal-title" id="result-modal-title">Log Your Result</h2>
       <button class="modal-close">&times;</button>
     </div>
     <div class="modal-body">
       <div id="result-error" style="display:none;background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);color:#E74C3C;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px"></div>
-      <div class="form-group">
-        <label>Your Score</label>
-        <input type="text" id="result-score" placeholder="e.g., 4:32 or 15 rounds">
-      </div>
+      <div id="result-pr-hint" style="display:none;background:rgba(39,174,96,.08);border:1px solid rgba(39,174,96,.25);color:#27ae60;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;font-weight:600"></div>
+      <!-- Score fields — injected dynamically based on WOD scoring type -->
+      <div id="result-score-fields"></div>
       <div class="form-group">
         <label>Notes (Optional)</label>
         <textarea id="result-notes" placeholder="Scaled weight? Modifications? How did it feel?"></textarea>
       </div>
       <div class="form-group">
-        <label>
-          <input type="checkbox" id="result-rx">
-          Completed RX (Prescribed weight)
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="result-rx" style="width:16px;height:16px;cursor:pointer">
+          <span>Completed RX (Prescribed weight)</span>
         </label>
       </div>
     </div>
@@ -374,6 +373,8 @@
   let currentResults = [];
   let leaderboardPeriod = 'week';
   let currentUser = null;
+  let weightUnit = 'lbs';
+  function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
   const ADMIN_EMAILS = ['rob@carlbloom.com'];
 
@@ -774,7 +775,8 @@
           </div>
         </div>`;
     }
-    document.getElementById('log-result-section').innerHTML = `<p class="text-muted" style="margin-bottom:1rem;">Record your time, rounds, or reps.</p><button class="btn btn-primary" onclick="openResultModal()">Log Your Result</button>`;
+    document.getElementById('log-result-section').innerHTML = `<p class="text-muted" style="margin-bottom:1rem;">${getScorePrompt(w.scoring_type)}</p><button class="btn btn-primary" onclick="openResultModal()">Log Your Result</button><div id="my-history-section" style="display:none;margin-top:28px"></div>`;
+    loadMyHistory();
 
     // ── Scaling Notes ────────────────────────────────────────────────────
     if (w.scaling_notes) {
@@ -845,9 +847,140 @@
       '<p class="text-muted">No related workouts found.</p>';
   }
 
+  function getScorePrompt(scoringType) {
+    if (scoringType === 'time') return 'Record your finish time. Every second counts.';
+    if (scoringType === 'rounds_reps') return 'Record your total rounds and any extra reps completed.';
+    if (scoringType === 'weight') return 'Record the load you completed the workout at.';
+    return 'Record your total reps completed.';
+  }
+
+  function buildScoreFields(scoringType) {
+    const numStyle = 'width:80px;text-align:center;font-size:24px;font-weight:800;padding:8px;background:var(--dk3,#1a1a2e);border:1px solid var(--bd);border-radius:8px;color:var(--tx);outline:none;font-family:inherit';
+    if (scoringType === 'time') {
+      return `<div class="form-group">
+        <label style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px">Finish Time</label>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+          <div style="text-align:center">
+            <input type="number" id="result-min" min="0" max="999" placeholder="0" style="${numStyle}" oninput="if(this.value.length>3)this.value=this.value.slice(0,3)">
+            <div style="font-size:10px;color:var(--mu);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:4px">min</div>
+          </div>
+          <span style="font-size:28px;font-weight:900;color:var(--mu);padding-bottom:18px">:</span>
+          <div style="text-align:center">
+            <input type="number" id="result-sec" min="0" max="59" placeholder="00" style="${numStyle}" oninput="if(this.value>59)this.value=59">
+            <div style="font-size:10px;color:var(--mu);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:4px">sec</div>
+          </div>
+        </div>
+      </div>`;
+    }
+    if (scoringType === 'rounds_reps') {
+      return `<div class="form-group">
+        <label style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px">Rounds + Reps</label>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px">
+          <div style="text-align:center">
+            <input type="number" id="result-rounds" min="0" placeholder="0" style="${numStyle}">
+            <div style="font-size:10px;color:var(--mu);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:4px">rounds</div>
+          </div>
+          <span style="font-size:22px;font-weight:900;color:var(--mu);padding-bottom:18px">+</span>
+          <div style="text-align:center">
+            <input type="number" id="result-reps" min="0" placeholder="0" style="${numStyle}">
+            <div style="font-size:10px;color:var(--mu);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:4px">reps</div>
+          </div>
+        </div>
+      </div>`;
+    }
+    if (scoringType === 'weight') {
+      return `<div class="form-group">
+        <label style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px">Load</label>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+          <div style="text-align:center">
+            <input type="number" id="result-weight" min="0" placeholder="0" style="${numStyle};width:100px">
+            <div style="font-size:10px;color:var(--mu);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:4px">amount</div>
+          </div>
+          <button type="button" id="weight-unit-toggle" onclick="toggleWeightUnit()" style="padding:10px 16px;background:var(--dk3,#1a1a2e);border:1px solid var(--bd);border-radius:8px;color:var(--tx);font-size:14px;font-weight:800;cursor:pointer;transition:all .15s;margin-bottom:18px">lbs</button>
+        </div>
+      </div>`;
+    }
+    // reps / total_reps
+    return `<div class="form-group">
+      <label style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px">Total Reps</label>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+        <div style="text-align:center">
+          <input type="number" id="result-reps-total" min="0" placeholder="0" style="${numStyle};width:110px">
+          <div style="font-size:10px;color:var(--mu);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:4px">reps</div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function toggleWeightUnit() {
+    weightUnit = weightUnit === 'lbs' ? 'kg' : 'lbs';
+    const btn = document.getElementById('weight-unit-toggle');
+    if (btn) btn.textContent = weightUnit;
+  }
+
+  function getBestResult(results, scoringType) {
+    if (!results || results.length === 0) return null;
+    if (scoringType === 'time') {
+      return results.filter(r => r.score_seconds).sort((a,b) => a.score_seconds - b.score_seconds)[0] || null;
+    } else if (scoringType === 'rounds_reps') {
+      return results.filter(r => r.score_rounds != null).sort((a,b) =>
+        ((b.score_rounds||0) * 10000 + (b.score_reps||0)) - ((a.score_rounds||0) * 10000 + (a.score_reps||0))
+      )[0] || null;
+    } else if (scoringType === 'weight') {
+      return results.filter(r => r.score_weight).sort((a,b) => b.score_weight - a.score_weight)[0] || null;
+    } else {
+      return results.filter(r => r.score_reps).sort((a,b) => (b.score_reps||0) - (a.score_reps||0))[0] || null;
+    }
+  }
+
+  function checkIsPR(newScore, prevResults, scoringType) {
+    const best = getBestResult(prevResults, scoringType);
+    if (!best) return true;
+    if (scoringType === 'time') {
+      return newScore.scoreSeconds > 0 && newScore.scoreSeconds < best.score_seconds;
+    } else if (scoringType === 'rounds_reps') {
+      const nv = (newScore.scoreRounds||0) * 10000 + (newScore.scoreReps||0);
+      const bv = (best.score_rounds||0) * 10000 + (best.score_reps||0);
+      return nv > bv;
+    } else if (scoringType === 'weight') {
+      return (newScore.scoreWeight||0) > (best.score_weight||0);
+    } else {
+      return (newScore.scoreReps||0) > (best.score_reps||0);
+    }
+  }
+
   async function openResultModal() {
     const user = await db.getUser();
     if (!user) { openWorkoutAuthModal(); return; }
+
+    const w = currentWorkout;
+    const wodName = w.name || w.title || 'Workout';
+    const scoringType = w.scoring_type || 'time';
+
+    // Set title and reset state
+    document.getElementById('result-modal-title').textContent = `Log Your ${wodName} Result`;
+    document.getElementById('result-notes').value = '';
+    document.getElementById('result-rx').checked = false;
+    document.getElementById('result-error').style.display = 'none';
+    document.getElementById('result-pr-hint').style.display = 'none';
+    weightUnit = 'lbs';
+
+    // Inject smart score fields
+    document.getElementById('result-score-fields').innerHTML = buildScoreFields(scoringType);
+
+    // Show current PR as hint
+    try {
+      const prev = await db.getResults({ benchmarkSlug: w.slug||null, workoutId: w.id||null, userId: user.id });
+      if (prev && prev.length > 0) {
+        const best = getBestResult(prev, scoringType);
+        if (best) {
+          const hint = document.getElementById('result-pr-hint');
+          hint.textContent = `🏅 Your current PR: ${best.score_display}`;
+          hint.style.display = 'block';
+        }
+      }
+    } catch(e) { /* silent */ }
+
     document.getElementById('result-modal').classList.add('active');
   }
 
@@ -895,35 +1028,134 @@
   async function submitResult() {
     const user = await db.getUser();
     if (!user) { openWorkoutAuthModal(); return; }
-    const score = document.getElementById('result-score').value;
+
+    const w = currentWorkout;
+    const scoringType = w.scoring_type || 'time';
     const notes = document.getElementById('result-notes').value;
     const isRx = document.getElementById('result-rx').checked;
-    if (!score) {
-      const errEl = document.getElementById('result-error');
-      errEl.textContent = 'Please enter your score.';
-      errEl.style.display = 'block';
-      return;
+    const errEl = document.getElementById('result-error');
+    errEl.style.display = 'none';
+
+    let scoreDisplay = '', scoreSeconds = null, scoreRounds = null, scoreReps = null, scoreWeight = null;
+
+    if (scoringType === 'time') {
+      const min = parseInt(document.getElementById('result-min').value) || 0;
+      const sec = parseInt(document.getElementById('result-sec').value) || 0;
+      if (min === 0 && sec === 0) { errEl.textContent = 'Please enter your finish time.'; errEl.style.display='block'; return; }
+      if (sec > 59) { errEl.textContent = 'Seconds must be 0–59.'; errEl.style.display='block'; return; }
+      scoreSeconds = min * 60 + sec;
+      scoreDisplay = `${min}:${String(sec).padStart(2,'0')}`;
+    } else if (scoringType === 'rounds_reps') {
+      scoreRounds = parseInt(document.getElementById('result-rounds').value) || 0;
+      scoreReps   = parseInt(document.getElementById('result-reps').value)   || 0;
+      if (scoreRounds === 0 && scoreReps === 0) { errEl.textContent = 'Please enter your rounds and reps.'; errEl.style.display='block'; return; }
+      scoreDisplay = `${scoreRounds} + ${scoreReps}`;
+    } else if (scoringType === 'weight') {
+      scoreWeight = parseFloat(document.getElementById('result-weight').value);
+      if (!scoreWeight || scoreWeight <= 0) { errEl.textContent = 'Please enter a weight.'; errEl.style.display='block'; return; }
+      scoreDisplay = `${scoreWeight} ${weightUnit}`;
+    } else {
+      scoreReps = parseInt(document.getElementById('result-reps-total').value) || 0;
+      if (scoreReps === 0) { errEl.textContent = 'Please enter your total reps.'; errEl.style.display='block'; return; }
+      scoreDisplay = `${scoreReps} reps`;
     }
+
     try {
-      const result = { user_id:user.id, username:user.email?.split('@')[0]||'unknown', benchmark_slug:currentWorkout.slug||null, workout_id:currentWorkout.id||null, score_display:score, score_seconds:currentWorkout.scoring_type==='time'?parseTimeToSeconds(score):null, score_rounds:currentWorkout.scoring_type==='rounds_reps'?parseRoundsReps(score):null, score_reps:currentWorkout.scoring_type==='total_reps'?parseInt(score):null, is_rx:isRx, notes:notes, date:new Date().toISOString().split('T')[0] };
-      const {error} = await db.saveResult(result);
+      // PR detection — check before saving
+      let isPR = false;
+      const prev = await db.getResults({ benchmarkSlug: w.slug||null, workoutId: w.id||null, userId: user.id });
+      isPR = (!prev || prev.length === 0)
+        ? true
+        : checkIsPR({ scoreSeconds, scoreRounds, scoreReps, scoreWeight }, prev, scoringType);
+
+      const result = {
+        user_id: user.id,
+        username: user.email?.split('@')[0] || 'unknown',
+        benchmark_slug: w.slug || null,
+        workout_id: w.id || null,
+        score_display: scoreDisplay,
+        score_seconds: scoreSeconds,
+        score_rounds: scoreRounds,
+        score_reps: scoreReps,
+        score_weight: scoreWeight,
+        is_rx: isRx,
+        notes: notes,
+        date: new Date().toISOString().split('T')[0]
+      };
+
+      const { error } = await db.saveResult(result);
       if (error) throw error;
+
       closeResultModal();
-      document.getElementById('result-score').value='';
-      document.getElementById('result-notes').value='';
-      document.getElementById('result-rx').checked=false;
-      document.getElementById('result-error').style.display='none';
-      showWorkoutToast('Result logged! 🎉', 'success');
+
+      if (isPR) {
+        showPRCelebration(scoreDisplay, w.name || w.title || 'this WOD');
+      } else {
+        showWorkoutToast('Result logged! 🎉', 'success');
+      }
+
+      loadMyHistory();
       loadLeaderboard(leaderboardPeriod);
-    } catch (e) {
-      const errEl = document.getElementById('result-error');
+    } catch(e) {
       errEl.textContent = 'Error logging result. Please try again.';
       errEl.style.display = 'block';
     }
   }
 
-  function parseTimeToSeconds(t) { const parts=t.split(':'); return parts.length===2?parseInt(parts[0])*60+parseInt(parts[1]):parseInt(t); }
-  function parseRoundsReps(s) { const m=s.match(/(\d+)/); return m?parseInt(m[1]):0; }
+  function showPRCelebration(score, wodName) {
+    const el = document.createElement('div');
+    el.innerHTML = `<div style="font-size:32px;margin-bottom:6px">🏆</div><div style="font-size:17px;font-weight:900;margin-bottom:4px">New Personal Record!</div><div style="font-size:13px;opacity:.9">${escHtml(score)} on ${escHtml(wodName)}</div>`;
+    el.style.cssText = `position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,#C41212,#E03030);color:#fff;padding:22px 26px;border-radius:14px;z-index:9999;box-shadow:0 8px 28px rgba(196,18,18,.55);animation:slideInToast .3s ease-out;text-align:center;min-width:210px;cursor:pointer`;
+    el.onclick = () => el.remove();
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 6000);
+  }
+
+  async function loadMyHistory() {
+    const historySection = document.getElementById('my-history-section');
+    if (!historySection) return;
+    const user = currentUser || await db.getUser().catch(() => null);
+    if (!user || !currentWorkout) { historySection.style.display = 'none'; return; }
+
+    try {
+      const results = await db.getResults({
+        benchmarkSlug: currentWorkout.slug || null,
+        workoutId: currentWorkout.id || null,
+        userId: user.id,
+        limit: 10
+      });
+      if (!results || results.length === 0) { historySection.style.display = 'none'; return; }
+
+      const scoringType = currentWorkout.scoring_type || 'time';
+      const best = getBestResult(results, scoringType);
+      const sorted = [...results].sort((a,b) => new Date(b.date) - new Date(a.date));
+
+      const rows = sorted.map(r => {
+        const isBest = best && r.id === best.id;
+        return `<tr>
+          <td style="padding:9px 12px;border-bottom:1px solid var(--bd);color:var(--mu);font-size:12px">${new Date(r.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</td>
+          <td style="padding:9px 12px;border-bottom:1px solid var(--bd);font-weight:800;color:var(--orl)">${escHtml(r.score_display)}${isBest ? ' <span style="font-size:10px;background:rgba(196,18,18,.15);color:var(--orl);border:1px solid rgba(196,18,18,.3);padding:2px 6px;border-radius:4px;font-weight:700;vertical-align:middle;margin-left:4px">PR</span>' : ''}</td>
+          <td style="padding:9px 12px;border-bottom:1px solid var(--bd)">${r.is_rx ? '<span style="font-size:10px;background:rgba(39,174,96,.15);color:#27ae60;border:1px solid rgba(39,174,96,.3);padding:2px 6px;border-radius:4px;font-weight:700">Rx</span>' : '<span style="color:var(--mu);font-size:12px">Scaled</span>'}</td>
+          <td style="padding:9px 12px;border-bottom:1px solid var(--bd);color:var(--mu);font-size:12px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.notes ? escHtml(r.notes) : '—'}</td>
+        </tr>`;
+      }).join('');
+
+      historySection.style.display = 'block';
+      historySection.innerHTML = `
+        <div style="font-size:13px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--bd)">Your History</div>
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:13px">
+            <thead><tr>
+              <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid var(--bd)">Date</th>
+              <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid var(--bd)">Score</th>
+              <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid var(--bd)">Rx</th>
+              <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid var(--bd)">Notes</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
+    } catch(e) { historySection.style.display = 'none'; }
+  }
 
   function showWorkoutToast(message, type = 'success') {
     const toast = document.createElement('div');
