@@ -155,6 +155,7 @@
               <th>Score</th>
               <th>Rx</th>
               <th>Date</th>
+              <th></th>
             </tr>
           </thead>
           <tbody id="prof-results-body"></tbody>
@@ -170,6 +171,35 @@
   </div>
 </div>
 </main>
+
+<!-- Edit Result Modal -->
+<div id="prof-edit-modal" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.7);align-items:center;justify-content:center;padding:20px">
+  <div style="background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:28px;max-width:420px;width:100%;position:relative">
+    <button onclick="closeEditResult()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:var(--mu);font-size:20px;cursor:pointer">✕</button>
+    <h2 style="font-size:18px;font-weight:900;margin-bottom:4px">Edit Result</h2>
+    <div id="prof-edit-error" style="display:none;background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);color:#E74C3C;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;margin-top:12px"></div>
+    <input type="hidden" id="prof-edit-id">
+    <div style="margin-top:16px">
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Score</label>
+      <input type="text" id="prof-edit-score" style="width:100%;background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:10px;color:var(--tx);font-size:14px;outline:none;font-family:inherit;margin-bottom:14px" placeholder="e.g. 8:32 or 12 + 7">
+    </div>
+    <div style="margin-bottom:14px">
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Notes (Optional)</label>
+      <textarea id="prof-edit-notes" rows="2" style="width:100%;background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:10px;color:var(--tx);font-size:14px;outline:none;font-family:inherit;resize:vertical" placeholder="How did it go?"></textarea>
+    </div>
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:20px">
+      <input type="checkbox" id="prof-edit-rx" style="width:16px;height:16px">
+      <span style="font-size:14px">Completed RX</span>
+    </label>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <button onclick="deleteEditResult()" style="padding:10px 16px;background:transparent;color:#E74C3C;border:1px solid #E74C3C;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;opacity:.8" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.8">Delete</button>
+      <div style="display:flex;gap:8px">
+        <button onclick="closeEditResult()" style="padding:10px 16px;background:var(--dk3);border:1px solid var(--bd);border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;color:var(--mu)">Cancel</button>
+        <button onclick="saveEditResult()" style="padding:10px 16px;background:var(--or);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- WOD Detail Overlay -->
 <div class="wod-overlay" id="wod-detail-overlay">
@@ -382,18 +412,82 @@ async function loadProfile() {
   } else {
     resultsEmpty.style.display = 'none';
     resultsTable.style.display = 'table';
-    resultsBody.innerHTML = results.map(r => `
-      <tr>
-        <td style="font-weight:700">${escHtml(r.benchmark_slug || r.workout_id || '—')}</td>
-        <td class="score-val">${escHtml(r.score_display || '—')}</td>
-        <td>${r.is_rx ? '<span class="rx-badge">Rx</span>' : 'Scaled'}</td>
+    // Group by WOD to find PRs
+    const prMap = {};
+    results.forEach(r => {
+      const key = r.benchmark_slug || r.workout_id;
+      if (!key) return;
+      if (!prMap[key] || new Date(r.date) > new Date(prMap[key].date)) prMap[key] = r;
+    });
+
+    resultsBody.innerHTML = results.map(r => {
+      const key = r.benchmark_slug || r.workout_id;
+      const isPR = key && prMap[key] && prMap[key].id === r.id;
+      const slug = r.benchmark_slug;
+      const wodName = slug ? slug.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase()) : (r.workout_id ? 'Custom WOD' : '—');
+      const wodLink = slug ? `<a href="/workouts/${slug}" style="font-weight:700;color:var(--tx);text-decoration:none" onmouseover="this.style.color='var(--or)'" onmouseout="this.style.color='var(--tx)'">${escHtml(wodName)}</a>` : `<span style="font-weight:700">${escHtml(wodName)}</span>`;
+      return `<tr>
+        <td>${wodLink}</td>
+        <td class="score-val">${escHtml(r.score_display || '—')}${isPR ? ' <span style="font-size:10px;background:rgba(196,18,18,.15);color:var(--orl);border:1px solid rgba(196,18,18,.3);padding:2px 6px;border-radius:4px;font-weight:700;vertical-align:middle;margin-left:4px">PR</span>' : ''}</td>
+        <td>${r.is_rx ? '<span class="rx-badge">Rx</span>' : '<span style="color:var(--mu);font-size:12px">Scaled</span>'}</td>
         <td style="color:var(--mu)">${formatDate(r.date || r.created_at)}</td>
-      </tr>`).join('');
+        <td>${isOwnProfile ? `<button onclick="openEditResult('${r.id}','${escHtml(r.score_display||'')}',${!!r.is_rx},'${escHtml(r.notes||'')}')" style="padding:4px 10px;background:var(--dk3);border:1px solid var(--bd);border-radius:6px;color:var(--mu);font-size:11px;font-weight:700;cursor:pointer" onmouseover="this.style.borderColor='var(--or)';this.style.color='var(--or)'" onmouseout="this.style.borderColor='var(--bd)';this.style.color='var(--mu)'">Edit</button>` : ''}</td>
+      </tr>`;
+    }).join('');
   }
 
   // Show content
   document.getElementById('prof-loading').style.display = 'none';
   document.getElementById('prof-content').style.display = 'block';
+}
+
+// ── Edit Result ──
+function openEditResult(id, score, isRx, notes) {
+  document.getElementById('prof-edit-id').value = id;
+  document.getElementById('prof-edit-score').value = score;
+  document.getElementById('prof-edit-rx').checked = isRx;
+  document.getElementById('prof-edit-notes').value = notes;
+  document.getElementById('prof-edit-error').style.display = 'none';
+  const modal = document.getElementById('prof-edit-modal');
+  modal.style.display = 'flex';
+}
+
+function closeEditResult() {
+  document.getElementById('prof-edit-modal').style.display = 'none';
+}
+
+async function saveEditResult() {
+  const id = document.getElementById('prof-edit-id').value;
+  const score = document.getElementById('prof-edit-score').value.trim();
+  const isRx  = document.getElementById('prof-edit-rx').checked;
+  const notes = document.getElementById('prof-edit-notes').value.trim();
+  const errEl = document.getElementById('prof-edit-error');
+  errEl.style.display = 'none';
+  if (!score) { errEl.textContent = 'Please enter a score.'; errEl.style.display='block'; return; }
+  try {
+    const { error } = await supabaseClient.from('results').update({ score_display: score, is_rx: isRx, notes }).eq('id', id);
+    if (error) throw error;
+    closeEditResult();
+    loadProfile();
+  } catch(e) {
+    errEl.textContent = 'Failed to save. Please try again.';
+    errEl.style.display = 'block';
+  }
+}
+
+async function deleteEditResult() {
+  const id = document.getElementById('prof-edit-id').value;
+  if (!confirm('Delete this result? This cannot be undone.')) return;
+  try {
+    const { error } = await supabaseClient.from('results').delete().eq('id', id);
+    if (error) throw error;
+    closeEditResult();
+    loadProfile();
+  } catch(e) {
+    const errEl = document.getElementById('prof-edit-error');
+    errEl.textContent = 'Failed to delete. Please try again.';
+    errEl.style.display = 'block';
+  }
 }
 
 // ── Init ──

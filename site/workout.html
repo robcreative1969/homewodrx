@@ -1103,12 +1103,147 @@
   }
 
   function showPRCelebration(score, wodName) {
-    const el = document.createElement('div');
-    el.innerHTML = `<div style="font-size:32px;margin-bottom:6px">🏆</div><div style="font-size:17px;font-weight:900;margin-bottom:4px">New Personal Record!</div><div style="font-size:13px;opacity:.9">${escHtml(score)} on ${escHtml(wodName)}</div>`;
-    el.style.cssText = `position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,#C41212,#E03030);color:#fff;padding:22px 26px;border-radius:14px;z-index:9999;box-shadow:0 8px 28px rgba(196,18,18,.55);animation:slideInToast .3s ease-out;text-align:center;min-width:210px;cursor:pointer`;
-    el.onclick = () => el.remove();
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 6000);
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;animation:fadeInOverlay .25s ease-out`;
+    const card = document.createElement('div');
+    card.innerHTML = `
+      <div style="font-size:52px;margin-bottom:12px;animation:popIn .35s cubic-bezier(.34,1.56,.64,1) both">🏆</div>
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px;opacity:.85;margin-bottom:6px">New Personal Record</div>
+      <div style="font-size:36px;font-weight:900;margin-bottom:6px">${escHtml(score)}</div>
+      <div style="font-size:14px;opacity:.8;margin-bottom:24px">${escHtml(wodName)}</div>
+      <button onclick="this.closest('[data-pr-overlay]').remove()" style="padding:12px 28px;background:#fff;color:#C41212;border:none;border-radius:8px;font-size:14px;font-weight:900;cursor:pointer;letter-spacing:.5px">Hell yeah! 💪</button>`;
+    card.style.cssText = `background:linear-gradient(145deg,#C41212,#8B0000);color:#fff;padding:40px 48px;border-radius:20px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.6);animation:popIn .35s cubic-bezier(.34,1.56,.64,1) both;max-width:360px;width:90%`;
+    overlay.setAttribute('data-pr-overlay','');
+    overlay.appendChild(card);
+    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+    document.body.appendChild(overlay);
+    setTimeout(() => overlay.remove(), 8000);
+  }
+
+  let editingResult = null;
+
+  async function openEditResultModal(resultId) {
+    const user = await db.getUser();
+    if (!user) return;
+    const w = currentWorkout;
+    const scoringType = w.scoring_type || 'time';
+
+    // Fetch all user results for this WOD to find the one being edited
+    const results = await db.getResults({ benchmarkSlug: w.slug||null, workoutId: w.slug ? null : (w.id||null), userId: user.id });
+    const r = results.find(x => x.id === resultId);
+    if (!r) return;
+    editingResult = r;
+
+    // Rebuild score fields
+    document.getElementById('edit-result-score-fields').innerHTML = buildScoreFields(scoringType);
+    document.getElementById('edit-result-id').value = resultId;
+    document.getElementById('edit-result-notes').value = r.notes || '';
+    document.getElementById('edit-result-rx').checked = !!r.is_rx;
+    document.getElementById('edit-result-error').style.display = 'none';
+
+    // Pre-fill score fields
+    if (scoringType === 'time' && r.score_seconds) {
+      const m = Math.floor(r.score_seconds / 60);
+      const s = r.score_seconds % 60;
+      const minEl = document.getElementById('result-min');
+      const secEl = document.getElementById('result-sec');
+      if (minEl) minEl.value = m;
+      if (secEl) secEl.value = s;
+    } else if (scoringType === 'rounds_reps') {
+      const rEl = document.getElementById('result-rounds');
+      const rpEl = document.getElementById('result-reps');
+      if (rEl) rEl.value = r.score_rounds || 0;
+      if (rpEl) rpEl.value = r.score_reps || 0;
+    } else if (scoringType === 'weight') {
+      const wEl = document.getElementById('result-weight');
+      if (wEl) wEl.value = r.score_weight || '';
+      // Detect unit from score_display
+      if (r.score_display && r.score_display.includes('kg')) {
+        weightUnit = 'kg';
+        const btn = document.getElementById('weight-unit-toggle');
+        if (btn) btn.textContent = 'kg';
+      }
+    } else {
+      const rpEl = document.getElementById('result-reps-total');
+      if (rpEl) rpEl.value = r.score_reps || 0;
+    }
+
+    document.getElementById('edit-result-modal').classList.add('active');
+  }
+
+  function closeEditResultModal() {
+    document.getElementById('edit-result-modal').classList.remove('active');
+    editingResult = null;
+  }
+
+  async function saveEditResult() {
+    const user = await db.getUser();
+    if (!user || !editingResult) return;
+    const w = currentWorkout;
+    const scoringType = w.scoring_type || 'time';
+    const errEl = document.getElementById('edit-result-error');
+    errEl.style.display = 'none';
+
+    let scoreDisplay = '', scoreSeconds = null, scoreRounds = null, scoreReps = null, scoreWeight = null;
+
+    if (scoringType === 'time') {
+      const min = parseInt(document.getElementById('result-min').value) || 0;
+      const sec = parseInt(document.getElementById('result-sec').value) || 0;
+      if (min === 0 && sec === 0) { errEl.textContent = 'Please enter a finish time.'; errEl.style.display='block'; return; }
+      scoreSeconds = min * 60 + sec;
+      scoreDisplay = `${min}:${String(sec).padStart(2,'0')}`;
+    } else if (scoringType === 'rounds_reps') {
+      scoreRounds = parseInt(document.getElementById('result-rounds').value) || 0;
+      scoreReps   = parseInt(document.getElementById('result-reps').value)   || 0;
+      scoreDisplay = `${scoreRounds} + ${scoreReps}`;
+    } else if (scoringType === 'weight') {
+      scoreWeight = parseFloat(document.getElementById('result-weight').value);
+      if (!scoreWeight) { errEl.textContent = 'Please enter a weight.'; errEl.style.display='block'; return; }
+      scoreDisplay = `${scoreWeight} ${weightUnit}`;
+    } else {
+      scoreReps = parseInt(document.getElementById('result-reps-total').value) || 0;
+      scoreDisplay = `${scoreReps} reps`;
+    }
+
+    const notes = document.getElementById('edit-result-notes').value;
+    const isRx  = document.getElementById('edit-result-rx').checked;
+
+    try {
+      const { error } = await supabaseClient.from('results').update({
+        score_display: scoreDisplay,
+        score_seconds: scoreSeconds,
+        score_rounds:  scoreRounds,
+        score_reps:    scoreReps,
+        score_weight:  scoreWeight,
+        notes:         notes,
+        is_rx:         isRx
+      }).eq('id', editingResult.id);
+      if (error) throw error;
+      closeEditResultModal();
+      showWorkoutToast('Result updated!', 'success');
+      loadMyHistory();
+      loadLeaderboard(leaderboardPeriod);
+    } catch(e) {
+      errEl.textContent = 'Failed to save. Please try again.';
+      errEl.style.display = 'block';
+    }
+  }
+
+  async function deleteResult() {
+    if (!editingResult) return;
+    if (!confirm('Delete this result? This cannot be undone.')) return;
+    try {
+      const { error } = await supabaseClient.from('results').delete().eq('id', editingResult.id);
+      if (error) throw error;
+      closeEditResultModal();
+      showWorkoutToast('Result deleted.', 'success');
+      loadMyHistory();
+      loadLeaderboard(leaderboardPeriod);
+    } catch(e) {
+      const errEl = document.getElementById('edit-result-error');
+      errEl.textContent = 'Failed to delete. Please try again.';
+      errEl.style.display = 'block';
+    }
   }
 
   async function loadMyHistory() {
@@ -1137,7 +1272,8 @@
           <td style="padding:9px 12px;border-bottom:1px solid var(--bd);color:var(--mu);font-size:12px">${new Date(r.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</td>
           <td style="padding:9px 12px;border-bottom:1px solid var(--bd);font-weight:800;color:var(--orl)">${escHtml(r.score_display)}${isBest ? ' <span style="font-size:10px;background:rgba(196,18,18,.15);color:var(--orl);border:1px solid rgba(196,18,18,.3);padding:2px 6px;border-radius:4px;font-weight:700;vertical-align:middle;margin-left:4px">PR</span>' : ''}</td>
           <td style="padding:9px 12px;border-bottom:1px solid var(--bd)">${r.is_rx ? '<span style="font-size:10px;background:rgba(39,174,96,.15);color:#27ae60;border:1px solid rgba(39,174,96,.3);padding:2px 6px;border-radius:4px;font-weight:700">Rx</span>' : '<span style="color:var(--mu);font-size:12px">Scaled</span>'}</td>
-          <td style="padding:9px 12px;border-bottom:1px solid var(--bd);color:var(--mu);font-size:12px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.notes ? escHtml(r.notes) : '—'}</td>
+          <td style="padding:9px 12px;border-bottom:1px solid var(--bd);color:var(--mu);font-size:12px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.notes ? escHtml(r.notes) : '—'}</td>
+          <td style="padding:9px 12px;border-bottom:1px solid var(--bd)"><button onclick="openEditResultModal('${r.id}')" style="padding:4px 10px;background:var(--dk3);border:1px solid var(--bd);border-radius:6px;color:var(--mu);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='var(--or)';this.style.color='var(--or)'" onmouseout="this.style.borderColor='var(--bd)';this.style.color='var(--mu)'">Edit</button></td>
         </tr>`;
       }).join('');
 
@@ -1151,6 +1287,7 @@
               <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid var(--bd)">Score</th>
               <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid var(--bd)">Rx</th>
               <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid var(--bd)">Notes</th>
+              <th style="padding:8px 12px;border-bottom:2px solid var(--bd)"></th>
             </tr></thead>
             <tbody>${rows}</tbody>
           </table>
@@ -1183,6 +1320,38 @@
   });
 </script>
 
+<!-- EDIT RESULT MODAL -->
+<div class="modal-overlay" id="edit-result-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">Edit Result</h2>
+      <button class="modal-close" onclick="closeEditResultModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="edit-result-error" style="display:none;background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);color:#E74C3C;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px"></div>
+      <input type="hidden" id="edit-result-id">
+      <div id="edit-result-score-fields"></div>
+      <div class="form-group">
+        <label>Notes (Optional)</label>
+        <textarea id="edit-result-notes" placeholder="Scaled weight? Modifications? How did it feel?"></textarea>
+      </div>
+      <div class="form-group">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="edit-result-rx" style="width:16px;height:16px;cursor:pointer">
+          <span>Completed RX (Prescribed weight)</span>
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer" style="display:flex;justify-content:space-between;align-items:center">
+      <button onclick="deleteResult()" style="padding:10px 16px;background:transparent;color:var(--danger,#E74C3C);border:1px solid var(--danger,#E74C3C);border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;opacity:.8" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.8">Delete</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-secondary" onclick="closeEditResultModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveEditResult()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- AUTH MODAL -->
 <style>
   #workout-auth-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:900;align-items:center;justify-content:center;padding:20px}
@@ -1205,6 +1374,8 @@
   #workout-auth-modal .wam-recovery a:hover{color:var(--orange,#C41212);text-decoration:underline}
   #workout-auth-modal .wamerr{background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);color:#E74C3C;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
   @keyframes slideInToast{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+  @keyframes fadeInOverlay{from{opacity:0}to{opacity:1}}
+  @keyframes popIn{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
 /* print-area: hidden on screen, only visible when printing */
 #print-area{display:none}
 @media print{
