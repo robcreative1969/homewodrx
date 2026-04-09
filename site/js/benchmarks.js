@@ -1073,7 +1073,6 @@ const BENCHMARKS = [
   }
 ];
 
-
 // ============================================================================
 // CARD DISPLAY HELPERS
 // ============================================================================
@@ -1083,7 +1082,10 @@ const BENCHMARKS = [
  * Examples: "20 min AMRAP", "21-15-9 · For Time", "3 Rounds · For Time", "30 min EMOM"
  */
 function formatWodMeta(w) {
-  const fmt = (w.format || '').trim();
+  // Normalize lowercase Daily 20 format keys to display values
+  const FORMAT_NORMALIZE = { amrap: 'AMRAP', emom: 'EMOM', fortime: 'For Time', circuit: 'Circuit' };
+  const fmtRaw = (w.format || '').trim();
+  const fmt = FORMAT_NORMALIZE[fmtRaw.toLowerCase()] || fmtRaw;
   const dur = (w.duration_estimate || '').trim();
 
   if (fmt === 'AMRAP') return dur ? dur + ' AMRAP' : 'AMRAP';
@@ -1092,20 +1094,20 @@ function formatWodMeta(w) {
   if (fmt === 'For Time') {
     if (w.movements && w.movements.length) {
       const firstReps = (w.movements[0].reps || '').trim();
-      const em = String.fromCharCode(0x2013);
-      const schemeRx = new RegExp('^[0-9]+\\s*[' + em + '-]');
-      const replaceRx = new RegExp('\\s*[' + em + '-]\\s*', 'g');
-      if (schemeRx.test(firstReps)) {
-        return firstReps.replace(replaceRx, '-') + ' \u00b7 For Time';
+      // Descending rep scheme: "21 – 15 – 9" or "50 – 40 – 30 – 20 – 10"
+      if (/^\d+\s*[–\-]/.test(firstReps)) {
+        const scheme = firstReps.replace(/\s*[–\-]\s*/g, '-');
+        return scheme + ' · For Time';
       }
-      const m = firstReps.match(/^(\d+)\s*rounds?/i);
-      if (m) return m[1] + ' Rounds \u00b7 For Time';
+      // Rounds-based: "5 rounds", "3 rounds"
+      const roundsMatch = firstReps.match(/^(\d+)\s*rounds?/i);
+      if (roundsMatch) return roundsMatch[1] + ' Rounds · For Time';
     }
     return 'For Time';
   }
 
   if (fmt === 'Circuit') {
-    if (w.scoring_type === 'total_reps') return dur ? dur + ' Circuit \u00b7 Max Reps' : 'Circuit \u00b7 Max Reps';
+    if (w.scoring_type === 'total_reps') return dur ? dur + ' Circuit · Max Reps' : 'Circuit · Max Reps';
     return dur ? dur + ' Circuit' : 'Circuit';
   }
 
@@ -1130,5 +1132,5 @@ function summarizeMovements(w) {
       s += ' (' + m.rx_men + ')';
     }
     return s;
-  }).join(' \u00b7 ');
+  }).join(' · ');
 }
