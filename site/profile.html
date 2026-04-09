@@ -141,10 +141,13 @@
 
     <!-- Header -->
     <div class="prof-header">
-      <div class="prof-avatar-wrap" id="prof-avatar-wrap" onclick="avatarClick()">
-        <div class="prof-avatar" id="prof-avatar">?</div>
-        <div class="avatar-edit-badge">📷</div>
-        <input type="file" id="avatar-file-input" accept="image/*" style="display:none" onchange="handleAvatarUpload(this.files[0]);this.value=''">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+        <div class="prof-avatar-wrap" id="prof-avatar-wrap" onclick="avatarClick()">
+          <div class="prof-avatar" id="prof-avatar">?</div>
+          <div class="avatar-edit-badge">📷</div>
+          <input type="file" id="avatar-file-input" accept="image/*" style="display:none" onchange="handleAvatarUpload(this.files[0]);this.value=''">
+        </div>
+        <span id="avatar-hint" style="display:none;font-size:10px;font-weight:600;color:var(--mu);text-transform:uppercase;letter-spacing:.6px;cursor:pointer" onclick="avatarClick()">Tap to change</span>
       </div>
       <div class="prof-info">
         <h1 id="prof-username">—</h1>
@@ -152,6 +155,7 @@
         <p id="prof-bio"></p>
         <div id="prof-athlete-stats" class="athlete-stats"></div>
         <div class="joined" id="prof-joined"></div>
+        <div id="birthday-msg" style="display:none;font-size:13px;font-weight:700;color:var(--or);margin-top:6px">🎂 Happy Birthday!</div>
         <button class="edit-bio" id="edit-bio-btn" style="display:none" onclick="toggleProfileEdit()">Edit Profile</button>
       </div>
     </div>
@@ -185,8 +189,8 @@
             </select>
           </div>
           <div class="pef-field">
-            <label>Age</label>
-            <input type="number" id="pef-age" min="10" max="100" placeholder="e.g. 32">
+            <label>Birthday</label>
+            <input type="date" id="pef-birthday">
           </div>
         </div>
         <div class="pef-row">
@@ -223,20 +227,22 @@
             </select>
           </div>
         </div>
-        <div class="pef-row">
+        <div class="pef-field">
+          <label>Country</label>
+          <select id="pef-country" onchange="onCountryChange()"><option value="">— Select Country —</option></select>
+        </div>
+        <div class="pef-row" id="pef-location-fields" style="display:none">
           <div class="pef-field">
             <label>City</label>
-            <input type="text" id="pef-city" placeholder="e.g. Denver" maxlength="60">
+            <input type="text" id="pef-city" maxlength="60">
           </div>
-          <div class="pef-field">
-            <label>State / Province</label>
+          <div class="pef-field" id="pef-state-wrap">
+            <label>State</label>
             <select id="pef-state"><option value="">— Select —</option></select>
           </div>
-        </div>
-        <div class="pef-row">
-          <div class="pef-field">
-            <label>Country</label>
-            <input type="text" id="pef-country" placeholder="e.g. USA, Canada, Australia" maxlength="60">
+          <div class="pef-field" id="pef-province-wrap" style="display:none">
+            <label>Province / Region</label>
+            <input type="text" id="pef-province" placeholder="Optional" maxlength="80">
           </div>
         </div>
         <div style="display:flex;gap:8px;margin-top:4px">
@@ -453,7 +459,7 @@ function switchTab(tab) {
   document.getElementById('stat-card-public').classList.toggle('active', tab === 'workouts');
 }
 
-// ── States dropdown ──
+// ── Location dropdowns ──
 (function() {
   const states = [
     ['AL','Alabama'],['AK','Alaska'],['AZ','Arizona'],['AR','Arkansas'],
@@ -470,9 +476,19 @@ function switchTab(tab) {
     ['VT','Vermont'],['VA','Virginia'],['WA','Washington'],['WV','West Virginia'],
     ['WI','Wisconsin'],['WY','Wyoming'],['DC','Washington D.C.']
   ];
+  const countries = [
+    'United States','Argentina','Australia','Austria','Belgium','Brazil',
+    'Canada','Chile','Colombia','Croatia','Czech Republic','Denmark',
+    'Finland','France','Germany','Greece','Hungary','Iceland','India',
+    'Ireland','Israel','Italy','Japan','Mexico','Netherlands','New Zealand',
+    'Norway','Poland','Portugal','Romania','South Africa','South Korea',
+    'Spain','Sweden','Switzerland','Turkey','Ukraine','United Kingdom','Other'
+  ];
   document.addEventListener('DOMContentLoaded', () => {
-    const sel = document.getElementById('pef-state');
-    if (sel) states.forEach(([v,l]) => { const o = document.createElement('option'); o.value = v; o.textContent = l; sel.appendChild(o); });
+    const stateSel = document.getElementById('pef-state');
+    if (stateSel) states.forEach(([v,l]) => { const o = document.createElement('option'); o.value = v; o.textContent = l; stateSel.appendChild(o); });
+    const countrySel = document.getElementById('pef-country');
+    if (countrySel) countries.forEach(name => { const o = document.createElement('option'); o.value = name; o.textContent = name; countrySel.appendChild(o); });
   });
 })();
 
@@ -594,6 +610,22 @@ function formatWeightDisplay(weight_kg) {
   return `${weight_kg} kg`;
 }
 
+function calculateAge(birthday) {
+  if (!birthday) return null;
+  const today = new Date();
+  const dob = new Date(birthday);
+  let age = today.getFullYear() - dob.getFullYear();
+  if (today.getMonth() < dob.getMonth() || (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())) age--;
+  return age > 0 ? age : null;
+}
+
+function isBirthday(birthday) {
+  if (!birthday) return false;
+  const today = new Date();
+  const dob = new Date(birthday);
+  return today.getMonth() === dob.getMonth() && today.getDate() === dob.getDate();
+}
+
 function renderAthleteStats() {
   if (!profileData) return;
   const el = document.getElementById('prof-athlete-stats');
@@ -602,7 +634,8 @@ function renderAthleteStats() {
     const gMap = { male: 'Male', female: 'Female', 'non-binary': 'Non-binary' };
     chips.push(gMap[profileData.gender] || profileData.gender);
   }
-  if (profileData.age) chips.push(`${profileData.age} yrs`);
+  const age = calculateAge(profileData.birthday);
+  if (age) chips.push(`${age} yrs`);
   const h = formatHeightDisplay(profileData.height_cm);
   if (h) chips.push(h);
   const w = formatWeightDisplay(profileData.weight_kg);
@@ -618,15 +651,36 @@ function renderAthleteStats() {
 }
 
 // ── Profile Edit ──
+function onCountryChange() {
+  const country = document.getElementById('pef-country').value;
+  const locFields = document.getElementById('pef-location-fields');
+  const stateWrap = document.getElementById('pef-state-wrap');
+  const provWrap = document.getElementById('pef-province-wrap');
+  const cityInput = document.getElementById('pef-city');
+  if (!country) { locFields.style.display = 'none'; return; }
+  locFields.style.display = '';
+  const isUS = country === 'United States';
+  stateWrap.style.display = isUS ? '' : 'none';
+  provWrap.style.display = isUS ? 'none' : '';
+  cityInput.placeholder = isUS ? 'e.g. Denver' : 'e.g. London';
+}
+
 function populateEditFields() {
   const p = profileData;
   document.getElementById('bio-input').value = p.bio || '';
   document.getElementById('pef-gender').value = p.gender || '';
-  document.getElementById('pef-age').value = p.age || '';
+  document.getElementById('pef-birthday').value = p.birthday || '';
+  // Cap date picker at today so future dates can't be entered
+  document.getElementById('pef-birthday').max = new Date().toISOString().split('T')[0];
   document.getElementById('pef-level').value = p.experience_level || '';
-  document.getElementById('pef-city').value = p.city || '';
-  document.getElementById('pef-state').value = p.state || '';
   document.getElementById('pef-country').value = p.country || '';
+  onCountryChange();
+  document.getElementById('pef-city').value = p.city || '';
+  if (p.country === 'United States') {
+    document.getElementById('pef-state').value = p.state || '';
+  } else if (p.state) {
+    document.getElementById('pef-province').value = p.state;
+  }
   // Height
   if (useImperial && p.height_cm) {
     const { ft, inches } = cmToFtIn(p.height_cm);
@@ -667,7 +721,7 @@ function toggleProfileEdit() {
 async function saveProfile() {
   const bio = document.getElementById('bio-input').value.trim();
   const gender = document.getElementById('pef-gender').value || null;
-  const age = parseInt(document.getElementById('pef-age').value) || null;
+  const birthday = document.getElementById('pef-birthday').value || null;
   const experience_level = document.getElementById('pef-level').value || null;
   // Height → always store in cm
   let height_cm = null;
@@ -684,20 +738,28 @@ async function saveProfile() {
   const wVal = parseFloat(document.getElementById('pef-weight').value);
   if (wVal) weight_kg = useImperial ? lbsToKg(wVal) : wVal;
 
+  const country = document.getElementById('pef-country').value || null;
   const city = document.getElementById('pef-city').value.trim() || null;
-  const state = document.getElementById('pef-state').value || null;
-  const country = document.getElementById('pef-country').value.trim() || null;
+  const state = country === 'United States'
+    ? (document.getElementById('pef-state').value || null)
+    : (document.getElementById('pef-province').value.trim() || null);
 
   try {
     if (typeof supabaseClient !== 'undefined' && supabaseClient) {
       const { error } = await supabaseClient
         .from('profiles')
-        .update({ bio, gender, age, height_cm, weight_kg, experience_level, city, state, country })
+        .update({ bio, gender, birthday, height_cm, weight_kg, experience_level, city, state, country })
         .eq('id', currentUser.id);
       if (error) throw error;
     }
     // Update local state
-    Object.assign(profileData, { bio, gender, age, height_cm, weight_kg, experience_level, city, state, country });
+    Object.assign(profileData, { bio, gender, birthday, height_cm, weight_kg, experience_level, city, state, country });
+    // Refresh birthday greeting after save
+    const bdayMsg = document.getElementById('birthday-msg');
+    if (isBirthday(birthday)) {
+      bdayMsg.textContent = '🎂 Happy Birthday! Hope you crush your WOD today!';
+      bdayMsg.style.display = 'block';
+    } else { bdayMsg.style.display = 'none'; }
     document.getElementById('prof-bio').textContent = bio;
     const loc = [city, state, country].filter(Boolean).join(', ');
     const locEl = document.getElementById('prof-location');
@@ -775,9 +837,19 @@ async function loadProfile() {
   document.getElementById('prof-joined').textContent = profile.created_at ? `Joined ${formatDate(profile.created_at)}` : '';
   renderAthleteStats();
 
+  // Birthday greeting
+  const bdayMsg = document.getElementById('birthday-msg');
+  if (isBirthday(profile.birthday)) {
+    bdayMsg.textContent = isOwnProfile ? '🎂 Happy Birthday! Hope you crush your WOD today!' : `🎂 It\'s ${escHtml(profile.username || 'their')} birthday today!`;
+    bdayMsg.style.display = 'block';
+  } else {
+    bdayMsg.style.display = 'none';
+  }
+
   if (isOwnProfile) {
     document.getElementById('edit-bio-btn').style.display = 'inline-block';
     document.getElementById('prof-avatar-wrap').classList.add('uploadable');
+    document.getElementById('avatar-hint').style.display = 'block';
   }
 
   // Load workouts for this user
