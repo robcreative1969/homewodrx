@@ -147,7 +147,11 @@
           <div class="avatar-edit-badge">📷</div>
           <input type="file" id="avatar-file-input" accept="image/*" style="display:none" onchange="handleAvatarUpload(this.files[0]);this.value=''">
         </div>
-        <span id="avatar-hint" style="display:none;font-size:10px;font-weight:600;color:var(--mu);text-transform:uppercase;letter-spacing:.6px;cursor:pointer" onclick="avatarClick()">Tap to change</span>
+        <span id="avatar-hint" style="display:none;text-align:center;cursor:pointer" onclick="avatarClick()">
+          <span style="display:block;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.6px">Tap to change</span>
+          <span style="display:block;font-size:10px;color:var(--mu);margin-top:2px">JPG · PNG · WebP · Max 5 MB</span>
+          <span style="display:block;font-size:10px;color:var(--mu)">Displayed at 300 × 300 px</span>
+        </span>
       </div>
       <div class="prof-info">
         <h1 id="prof-username">—</h1>
