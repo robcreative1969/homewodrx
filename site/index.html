@@ -159,6 +159,13 @@
   .feature-card a{color:var(--or);text-decoration:none;font-weight:700;font-size:13px}
   .feature-card a:hover{color:var(--orl)}
 
+  /* WOD META STRIP (label + value, non-interactive) */
+  .wod-meta-strip{display:flex;flex-wrap:wrap;gap:.25rem 1.25rem;margin-top:6px}
+  .wod-meta-item{display:flex;flex-direction:column;gap:.1rem}
+  .wod-meta-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mu)}
+  .wod-meta-val{font-size:12px;font-weight:700;color:var(--tx)}
+  .wod-meta-val.accent{color:var(--or)}
+
   /* LOADING SKELETON */
   .skel{background:linear-gradient(90deg,var(--bd) 25%,rgba(255,255,255,.05) 50%,var(--bd) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px}
   @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
@@ -233,7 +240,7 @@
         </div>
         <div class="ws-arrow">→</div>
       </a>
-      <a class="workout-style-card" href="/generator.html" onclick="sessionStorage.setItem('gen_mode','create')">
+      <div class="workout-style-card" style="cursor:pointer" onclick="sessionStorage.setItem('gen_mode','create');window.location='/generator.html'">
         <div class="ws-icon">✏️</div>
         <div class="ws-body">
           <h3>Create Your Own</h3>
@@ -245,7 +252,7 @@
           <p style="font-size:11px;color:var(--mu);margin-top:8px">Requires a HomeWODRx account — <a href="/signup.html" style="color:var(--or);font-weight:700" onclick="event.stopPropagation()">sign up here</a></p>
         </div>
         <div class="ws-arrow">→</div>
-      </a>
+      </div>
     </div>
   </div>
 
@@ -559,11 +566,12 @@ function renderDailyWOD(wod) {
   document.getElementById('dwod-title').textContent = wod.title;
 
   const meta = document.getElementById('dwod-meta');
-  meta.innerHTML = `
-    <span class="chip chip-or">${escHtml(wod.format||'AMRAP')}</span>
-    <span class="chip chip-mu">${cap(wod.difficulty||'intermediate')}</span>
-    <span class="chip chip-mu">${wod.duration||20} min</span>
-    ${wod.isManual ? '<span class="chip chip-gr">Curated</span>' : '<span class="chip chip-mu">Auto</span>'}`;
+  meta.innerHTML = `<div class="wod-meta-strip">
+    <span class="wod-meta-item"><span class="wod-meta-lbl">Format</span><span class="wod-meta-val accent">${escHtml(wod.format||'AMRAP')}</span></span>
+    <span class="wod-meta-item"><span class="wod-meta-lbl">Level</span><span class="wod-meta-val">${cap(wod.difficulty||'intermediate')}</span></span>
+    <span class="wod-meta-item"><span class="wod-meta-lbl">Duration</span><span class="wod-meta-val">${wod.duration||20} min</span></span>
+    <span class="wod-meta-item"><span class="wod-meta-lbl">Type</span><span class="wod-meta-val">${wod.isManual ? 'Curated' : 'Auto'}</span></span>
+  </div>`;
 
   const rows = wod.rows || [];
   document.getElementById('dwod-movements').innerHTML = rows.slice(0,5).map(r => `
@@ -597,12 +605,14 @@ function renderFeaturedWOD(featured, liveBenchmarks) {
     const bm = bmSource.find(b => b.slug === featured.benchmark_slug);
     if (bm) {
       titleEl.textContent = bm.name;
-      metaEl.innerHTML = `
-        <span class="chip chip-or">${escHtml(bm.format||'')}</span>
-        <span class="chip chip-mu">${cap(bm.difficulty||'intermediate')}</span>
-        <span class="chip chip-mu">${escHtml(bm.duration_estimate||'')}</span>
-        <span class="chip chip-mu">${escHtml(bm.category==='girl'?'The Girls':bm.category==='hero'?'Hero WOD':'Benchmark')}</span>
-        ${bm.youtube_url ? '<span class="chip" style="background:rgba(239,68,68,0.12);color:#ef4444;border:1px solid rgba(239,68,68,0.3)">▶ Video</span>' : ''}`;
+      const catLabel = bm.category==='girl'?'The Girls':bm.category==='hero'?'Hero WOD':'Benchmark';
+      metaEl.innerHTML = `<div class="wod-meta-strip">
+        ${bm.format ? `<span class="wod-meta-item"><span class="wod-meta-lbl">Format</span><span class="wod-meta-val accent">${escHtml(bm.format)}</span></span>` : ''}
+        ${bm.difficulty ? `<span class="wod-meta-item"><span class="wod-meta-lbl">Level</span><span class="wod-meta-val">${cap(bm.difficulty)}</span></span>` : ''}
+        ${bm.duration_estimate ? `<span class="wod-meta-item"><span class="wod-meta-lbl">Duration</span><span class="wod-meta-val">${escHtml(bm.duration_estimate)}</span></span>` : ''}
+        <span class="wod-meta-item"><span class="wod-meta-lbl">Category</span><span class="wod-meta-val">${catLabel}</span></span>
+        ${bm.youtube_url ? `<span class="wod-meta-item"><span class="wod-meta-lbl">Video</span><span class="wod-meta-val accent">▶ Available</span></span>` : ''}
+      </div>`;
       bodyEl.innerHTML = `<p style="font-size:13px;color:var(--mu);line-height:1.7">${escHtml(bm.description||'').slice(0,160)}…</p>
         <div style="margin-top:12px;font-size:12px;color:var(--mu)">
           ${(bm.movements||[]).slice(0,3).map(m => `<div style="padding:4px 0">• <strong style="color:var(--tx)">${escHtml(m.name)}</strong> <span style="color:var(--or)">${escHtml(String(m.reps||''))}</span></div>`).join('')}
@@ -615,7 +625,7 @@ function renderFeaturedWOD(featured, liveBenchmarks) {
 
   // Fallback
   titleEl.textContent = 'Cindy';
-  metaEl.innerHTML = `<span class="chip chip-or">AMRAP</span><span class="chip chip-mu">20 min</span><span class="chip chip-mu">The Girls</span>`;
+  metaEl.innerHTML = `<div class="wod-meta-strip"><span class="wod-meta-item"><span class="wod-meta-lbl">Format</span><span class="wod-meta-val accent">AMRAP</span></span><span class="wod-meta-item"><span class="wod-meta-lbl">Duration</span><span class="wod-meta-val">20 min</span></span><span class="wod-meta-item"><span class="wod-meta-lbl">Category</span><span class="wod-meta-val">The Girls</span></span></div>`;
   bodyEl.innerHTML = `<p style="font-size:13px;color:var(--mu)">As many rounds as possible in 20 minutes of: 5 Pull-Ups, 10 Push-Ups, 15 Air Squats. A classic benchmark for endurance and bodyweight efficiency.</p>`;
   linkEl.href = '/workout.html?slug=cindy';
 }
