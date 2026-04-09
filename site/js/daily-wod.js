@@ -89,15 +89,15 @@ const DailyWOD = {
       5: 'fortime',
       6: 'circuit'
     },
-    // Duration range in minutes [min, max]
+    // Duration range in minutes [min, max] — locked to 20 for The Daily 20
     durationByDay: {
-      0: [15, 20],   // Sunday: shorter
-      1: [20, 25],
-      2: [20, 30],
-      3: [20, 25],
-      4: [20, 30],
-      5: [25, 35],   // Friday: longer
-      6: [20, 30]
+      0: [20, 20],
+      1: [20, 20],
+      2: [20, 20],
+      3: [20, 20],
+      4: [20, 20],
+      5: [20, 20],
+      6: [20, 20]
     }
   },
 
@@ -382,9 +382,10 @@ const DailyWOD = {
     return {
       title: `For Time — ${scheme.join('-')}`,
       format: 'fortime',
-      description: `Complete all rounds for time using the ${scheme.join('-')} rep scheme. Push the pace.`,
+      timeCap: 20,
+      description: `Complete all rounds for time using the ${scheme.join('-')} rep scheme. 20-minute time cap — if you hit the cap, record your reps completed.`,
       rows: sel.map(m => ({ movement: m.name, reps: scheme.join(' – ') + ' reps', tip: m.tip, _eq: m._eq })),
-      scoring: 'Record your finish time.'
+      scoring: 'Record your finish time. If you hit the 20-min cap, record rounds + reps completed.'
     };
   },
 
