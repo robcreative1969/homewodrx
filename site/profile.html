@@ -1153,14 +1153,16 @@ function openLiftModal() {
 
 function setLiftModalUnit(unit) {
   if (unit === liftModalUnit) return;
+  const ph = unit === 'imperial' ? 'lbs' : 'kg';
   LIFT_NAMES.forEach(name => {
     const input = document.getElementById(liftInputId(name));
-    if (!input || !input.value) return;
+    if (!input) return;
+    input.placeholder = ph;                          // always update placeholder
     const val = parseFloat(input.value);
-    if (!val) return;
-    if (unit === 'imperial') input.value = Math.round(val * 2.205);
-    else input.value = +(val / 2.205).toFixed(1);
-    input.placeholder = unit === 'imperial' ? 'lbs' : 'kg';
+    if (!val || isNaN(val)) return;                  // skip conversion if empty
+    input.value = unit === 'imperial'
+      ? Math.round(val * 2.205)
+      : +(val / 2.205).toFixed(1);
   });
   liftModalUnit = unit;
   document.getElementById('lift-unit-imperial').classList.toggle('active', unit === 'imperial');
