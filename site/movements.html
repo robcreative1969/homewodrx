@@ -6,9 +6,9 @@
   <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CrossFit Movement Library - HomeWODrx</title>
-  <meta name="description" content="Browse every CrossFit movement with coaching cues, muscle groups, and scaling options. Find every workout that includes each movement.">
+  <meta name="description" content="Browse 200+ CrossFit and fitness movements with coaching cues, muscle groups, and scaling options. Find every workout that includes each movement.">
   <meta property="og:title" content="CrossFit Movement Library - HomeWODrx">
-  <meta property="og:description" content="Learn CrossFit movements with coaching tips and find every workout that includes them.">
+  <meta property="og:description" content="Learn CrossFit and fitness movements with coaching tips and find every workout that includes them.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://homewodrx.com/movements">
   <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
@@ -23,7 +23,7 @@
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     "name": "CrossFit Movement Library — HomeWODrx",
-    "description": "Browse every CrossFit movement with coaching cues, muscle groups, and the workouts that use them. Gymnastics, barbell, kettlebell, and bodyweight movements.",
+    "description": "Browse 200+ CrossFit and fitness movements with coaching cues, muscle groups, and the workouts that use them. Gymnastics, barbell, kettlebell, and bodyweight movements.",
     "url": "https://homewodrx.com/movements",
     "isPartOf": { "@type": "WebSite", "name": "HomeWODrx", "url": "https://homewodrx.com" },
     "breadcrumb": {
@@ -117,7 +117,7 @@
 <main class="container">
   <section style="margin-bottom: 2rem; padding: 2rem 0;">
     <h1>Movement Library</h1>
-    <p class="text-muted">Every CrossFit movement — coaching cues, muscle groups, and the workouts that use them.</p>
+    <p class="text-muted">200+ fitness movements — coaching cues, muscle groups, and the workouts that use them.</p>
   </section>
 
   <!-- FILTER BAR -->
@@ -366,12 +366,16 @@ function applyFilters() {
 
 // ─── Update chip count badges after data loads ────────────────────────────────
 function updateChipCounts(byCategory) {
+  let total = 0;
   document.querySelectorAll('#category-chips .chip[data-cat]').forEach(chip => {
     const key = chip.dataset.cat;
     if (key === 'all') return;
     const count = (byCategory[key] || []).length;
+    total += count;
     if (count) chip.textContent = `${chip.textContent} (${count})`;
   });
+  const allChip = document.querySelector('#category-chips .chip[data-cat="all"]');
+  if (allChip && total) allChip.textContent = `All (${total})`;
 }
 
 // ─── Wire up filter bar interactions ─────────────────────────────────────────
