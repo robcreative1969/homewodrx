@@ -55,7 +55,7 @@
 .tab-btn.active{background:var(--or);color:#fff}
 .tab-content{display:none}
 .tab-content.active{display:block}
-.edit-bio{background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:8px 14px;color:var(--mu);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;margin-top:8px}
+.edit-bio{background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:9px 16px;color:var(--mu);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;margin-top:8px;min-height:36px}
 .edit-bio:hover{border-color:var(--or);color:var(--or)}
 .wod-overlay{position:fixed;top:60px;left:0;right:0;bottom:0;z-index:900;background:var(--bg);overflow-y:auto;display:none}
 .wod-overlay.open{display:block}
@@ -105,7 +105,33 @@
 .avatar-edit-badge{position:absolute;bottom:-2px;right:-2px;width:22px;height:22px;border-radius:50%;background:var(--or);border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:11px;opacity:0;transition:opacity .2s;pointer-events:none}
 .avatar-uploading{opacity:.45;pointer-events:none}
 .prof-location{font-size:13px;color:var(--mu);margin-top:2px}
-@media(max-width:600px){.prof-header{flex-direction:column;text-align:center}.prof-grid{grid-template-columns:1fr}.stats-bar{grid-template-columns:repeat(2,1fr)}.pef-row{grid-template-columns:1fr}}
+/* Lift PR board */
+.lifts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:28px}
+.lift-pr-card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 10px;text-align:center;transition:border-color .15s}
+.lift-pr-card:hover{border-color:var(--or)}
+.lift-nm{font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.lift-val{font-size:22px;font-weight:900;color:var(--or);line-height:1}
+.lift-val.empty{color:var(--bd);font-size:18px}
+.lift-unit{font-size:11px;color:var(--mu);margin-top:3px}
+.lifts-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--bd)}
+.lifts-hdr-title{font-size:13px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:1px}
+.edit-prs-btn{background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;color:var(--mu);transition:all .15s;min-height:36px}
+.edit-prs-btn:hover{border-color:var(--or);color:var(--or)}
+/* Tablet + landscape phone — collapse form rows, 3-col lifts */
+@media(max-width:768px){
+  .pef-row{grid-template-columns:1fr}
+  .lifts-grid{grid-template-columns:repeat(3,1fr)}
+  .edit-prs-btn{padding:9px 16px}
+  .edit-bio{padding:9px 16px;min-height:36px}
+}
+/* Mobile portrait — stack header, 1-col grids, 2-col lifts */
+@media(max-width:600px){
+  .prof-header{flex-direction:column;text-align:center}
+  .prof-grid{grid-template-columns:1fr}
+  .stats-bar{grid-template-columns:repeat(2,1fr)}
+  .lifts-grid{grid-template-columns:repeat(2,1fr)}
+  .lift-pr-card:last-child:nth-child(odd){grid-column:1 / -1}
+}
 </style>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
@@ -231,6 +257,39 @@
             </select>
           </div>
         </div>
+        <div class="pef-row">
+          <div class="pef-field">
+            <label>Training Frequency</label>
+            <select id="pef-frequency">
+              <option value="">— Select —</option>
+              <option value="1-2">1–2 days/week</option>
+              <option value="3-4">3–4 days/week</option>
+              <option value="5-6">5–6 days/week</option>
+              <option value="daily">Every day</option>
+            </select>
+          </div>
+          <div class="pef-field">
+            <label>Fitness Journey</label>
+            <select id="pef-journey">
+              <option value="">— Select —</option>
+              <option value="lt1">Less than 1 year</option>
+              <option value="1-2">1–2 years</option>
+              <option value="3-5">3–5 years</option>
+              <option value="6-10">6–10 years</option>
+              <option value="10+">10+ years</option>
+            </select>
+          </div>
+        </div>
+        <div class="pef-row">
+          <div class="pef-field">
+            <label>Goat Movement 🐐</label>
+            <input type="text" id="pef-goat" maxlength="60" placeholder="e.g. Double-unders">
+          </div>
+          <div class="pef-field">
+            <label>Favorite WOD ❤️</label>
+            <input type="text" id="pef-favwod" maxlength="60" placeholder="e.g. Murph">
+          </div>
+        </div>
         <div class="pef-field">
           <label>Country</label>
           <select id="pef-country" onchange="onCountryChange()"><option value="">— Select Country —</option></select>
@@ -261,6 +320,15 @@
       <div class="stat-card active" id="stat-card-workouts" onclick="switchTab('workouts')"><div class="val" id="stat-workouts">0</div><div class="lbl">Workouts</div></div>
       <div class="stat-card" id="stat-card-results" onclick="switchTab('results')"><div class="val" id="stat-results">0</div><div class="lbl">Results Logged</div></div>
       <div class="stat-card" id="stat-card-public" onclick="switchTab('workouts')"><div class="val" id="stat-public">0</div><div class="lbl">Public WODs</div></div>
+    </div>
+
+    <!-- Key Lift PRs -->
+    <div id="prof-lifts-section" style="display:none;margin-bottom:0">
+      <div class="lifts-hdr">
+        <span class="lifts-hdr-title">Key Lift PRs</span>
+        <button id="edit-lifts-btn" class="edit-prs-btn" onclick="openLiftModal()" style="display:none">Edit PRs</button>
+      </div>
+      <div class="lifts-grid" id="lifts-grid"></div>
     </div>
 
     <!-- Tab: Workouts -->
@@ -583,6 +651,8 @@ function setUnit(u) {
   if (profileData) populateEditFields();
   // Re-render chips (also refreshes the toggle in the stats row)
   renderAthleteStats();
+  // Re-render lift PRs with new unit
+  renderLiftPRs();
 }
 function toggleUnits() { setUnit(useImperial ? 'metric' : 'imperial'); }
 
@@ -648,6 +718,16 @@ function renderAthleteStats() {
     const lvlMap = { beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced', elite: 'Elite' };
     chips.push(lvlMap[profileData.experience_level] || profileData.experience_level);
   }
+  if (profileData.training_frequency) {
+    const freqMap = { '1-2': '1–2x/week', '3-4': '3–4x/week', '5-6': '5–6x/week', 'daily': 'Daily' };
+    chips.push(freqMap[profileData.training_frequency] || profileData.training_frequency);
+  }
+  if (profileData.fitness_journey) {
+    const jMap = { 'lt1': '< 1 yr', '1-2': '1–2 yrs', '3-5': '3–5 yrs', '6-10': '6–10 yrs', '10+': '10+ yrs' };
+    chips.push('⏱ ' + (jMap[profileData.fitness_journey] || profileData.fitness_journey));
+  }
+  if (profileData.goat) chips.push('🐐 ' + profileData.goat);
+  if (profileData.favorite_wod) chips.push('❤️ ' + profileData.favorite_wod);
   if (chips.length === 0) { el.innerHTML = ''; return; }
   const hasUnits = !!(profileData.height_cm || profileData.weight_kg);
   const unitSeg = hasUnits ? `<div class="unit-seg"><button class="unit-seg-btn${useImperial?' active':''}" onclick="setUnit('imperial')">Imperial</button><button class="unit-seg-btn${useImperial?'':' active'}" onclick="setUnit('metric')">Metric</button></div>` : '';
@@ -677,6 +757,10 @@ function populateEditFields() {
   // Cap date picker at today so future dates can't be entered
   document.getElementById('pef-birthday').max = new Date().toISOString().split('T')[0];
   document.getElementById('pef-level').value = p.experience_level || '';
+  document.getElementById('pef-frequency').value = p.training_frequency || '';
+  document.getElementById('pef-journey').value = p.fitness_journey || '';
+  document.getElementById('pef-goat').value = p.goat || '';
+  document.getElementById('pef-favwod').value = p.favorite_wod || '';
   document.getElementById('pef-country').value = p.country || '';
   onCountryChange();
   document.getElementById('pef-city').value = p.city || '';
@@ -727,6 +811,10 @@ async function saveProfile() {
   const gender = document.getElementById('pef-gender').value || null;
   const birthday = document.getElementById('pef-birthday').value || null;
   const experience_level = document.getElementById('pef-level').value || null;
+  const training_frequency = document.getElementById('pef-frequency').value || null;
+  const fitness_journey = document.getElementById('pef-journey').value || null;
+  const goat = document.getElementById('pef-goat').value.trim() || null;
+  const favorite_wod = document.getElementById('pef-favwod').value.trim() || null;
   // Height → always store in cm
   let height_cm = null;
   if (useImperial) {
@@ -752,12 +840,12 @@ async function saveProfile() {
     if (typeof supabaseClient !== 'undefined' && supabaseClient) {
       const { error } = await supabaseClient
         .from('profiles')
-        .update({ bio, gender, birthday, height_cm, weight_kg, experience_level, city, state, country })
+        .update({ bio, gender, birthday, height_cm, weight_kg, experience_level, training_frequency, fitness_journey, goat, favorite_wod, city, state, country })
         .eq('id', currentUser.id);
       if (error) throw error;
     }
     // Update local state
-    Object.assign(profileData, { bio, gender, birthday, height_cm, weight_kg, experience_level, city, state, country });
+    Object.assign(profileData, { bio, gender, birthday, height_cm, weight_kg, experience_level, training_frequency, fitness_journey, goat, favorite_wod, city, state, country });
     // Refresh birthday greeting after save
     const bdayMsg = document.getElementById('birthday-msg');
     if (isBirthday(birthday)) {
@@ -854,7 +942,11 @@ async function loadProfile() {
     document.getElementById('edit-bio-btn').style.display = 'inline-block';
     document.getElementById('prof-avatar-wrap').classList.add('uploadable');
     document.getElementById('avatar-hint').style.display = 'block';
+    document.getElementById('edit-lifts-btn').style.display = 'inline-block';
   }
+
+  // Load lift PRs
+  await loadLiftPRs(profileUserId);
 
   // Load workouts for this user
   // For own profile: show all workouts (public + private)
@@ -993,12 +1085,149 @@ async function deleteEditResult() {
   }
 }
 
+// ── Lift PRs ──
+const LIFT_NAMES = ['Back Squat', 'Deadlift', 'Clean & Jerk', 'Snatch', 'Overhead Press'];
+let liftPRData = {}; // lift_name → weight_kg
+let liftModalUnit = 'imperial'; // tracks the modal's active unit
+
+function liftInputId(name) {
+  return 'lift-input-' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-$/, '');
+}
+
+async function loadLiftPRs(userId) {
+  liftPRData = {};
+  const { data, error } = await supabaseClient
+    .from('lift_prs')
+    .select('lift_name, weight_kg')
+    .eq('user_id', userId);
+  if (!error && data) {
+    data.forEach(r => { liftPRData[r.lift_name] = parseFloat(r.weight_kg); });
+  }
+  renderLiftPRs();
+}
+
+function renderLiftPRs() {
+  const section = document.getElementById('prof-lifts-section');
+  const grid = document.getElementById('lifts-grid');
+  if (!section || !grid) return;
+  const hasAny = LIFT_NAMES.some(n => liftPRData[n] != null);
+  // Show section if owner or if there are PRs to display
+  if (!hasAny && !isOwnProfile) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  grid.innerHTML = LIFT_NAMES.map(name => {
+    const kg = liftPRData[name];
+    let valHtml, unitHtml = '';
+    if (kg != null) {
+      const display = useImperial ? Math.round(kg * 2.205) : +kg.toFixed(1);
+      const unit = useImperial ? 'lbs' : 'kg';
+      valHtml = `<div class="lift-val">${display}</div><div class="lift-unit">${unit}</div>`;
+    } else {
+      valHtml = `<div class="lift-val empty">—</div>`;
+    }
+    return `<div class="lift-pr-card"><div class="lift-nm">${escHtml(name)}</div>${valHtml}</div>`;
+  }).join('');
+}
+
+function openLiftModal() {
+  liftModalUnit = useImperial ? 'imperial' : 'metric';
+  // Build input fields dynamically
+  const fieldsEl = document.getElementById('lift-modal-fields');
+  fieldsEl.innerHTML = LIFT_NAMES.map(name => {
+    const kg = liftPRData[name];
+    const displayVal = kg != null
+      ? (liftModalUnit === 'imperial' ? Math.round(kg * 2.205) : +kg.toFixed(1))
+      : '';
+    const placeholder = liftModalUnit === 'imperial' ? 'lbs' : 'kg';
+    const inputId = liftInputId(name);
+    return `<div class="pef-field" style="margin-bottom:12px">
+      <label>${escHtml(name)}</label>
+      <input type="number" id="${inputId}" min="1" max="2000" step="0.5" placeholder="${placeholder}" value="${displayVal}">
+    </div>`;
+  }).join('');
+  // Sync unit buttons
+  document.getElementById('lift-unit-imperial').classList.toggle('active', liftModalUnit === 'imperial');
+  document.getElementById('lift-unit-metric').classList.toggle('active', liftModalUnit === 'metric');
+  document.getElementById('lift-modal-error').classList.remove('vis');
+  openModal('lift-modal');
+}
+
+function setLiftModalUnit(unit) {
+  if (unit === liftModalUnit) return;
+  LIFT_NAMES.forEach(name => {
+    const input = document.getElementById(liftInputId(name));
+    if (!input || !input.value) return;
+    const val = parseFloat(input.value);
+    if (!val) return;
+    if (unit === 'imperial') input.value = Math.round(val * 2.205);
+    else input.value = +(val / 2.205).toFixed(1);
+    input.placeholder = unit === 'imperial' ? 'lbs' : 'kg';
+  });
+  liftModalUnit = unit;
+  document.getElementById('lift-unit-imperial').classList.toggle('active', unit === 'imperial');
+  document.getElementById('lift-unit-metric').classList.toggle('active', unit === 'metric');
+}
+
+async function saveLiftPRs() {
+  const errEl = document.getElementById('lift-modal-error');
+  errEl.classList.remove('vis');
+  const upserts = [];
+  const toDelete = [];
+  for (const name of LIFT_NAMES) {
+    const input = document.getElementById(liftInputId(name));
+    const raw = input ? parseFloat(input.value) : NaN;
+    if (!isNaN(raw) && raw > 0) {
+      const kg = liftModalUnit === 'imperial' ? +(raw / 2.205).toFixed(2) : raw;
+      upserts.push({ user_id: currentUser.id, lift_name: name, weight_kg: kg, updated_at: new Date().toISOString() });
+    } else if (input && input.value === '') {
+      toDelete.push(name);
+    }
+  }
+  try {
+    if (upserts.length > 0) {
+      const { error } = await supabaseClient.from('lift_prs')
+        .upsert(upserts, { onConflict: 'user_id,lift_name' });
+      if (error) throw error;
+    }
+    for (const liftName of toDelete) {
+      await supabaseClient.from('lift_prs')
+        .delete().eq('user_id', currentUser.id).eq('lift_name', liftName);
+    }
+    // Sync local cache
+    upserts.forEach(r => { liftPRData[r.lift_name] = r.weight_kg; });
+    toDelete.forEach(n => { delete liftPRData[n]; });
+    renderLiftPRs();
+    closeModal('lift-modal');
+  } catch (e) {
+    errEl.textContent = 'Failed to save: ' + (e.message || 'Unknown error');
+    errEl.classList.add('vis');
+  }
+}
+
 // ── Init ──
 document.addEventListener('DOMContentLoaded', async () => {
   await Nav.init('profile');
   loadProfile();
 });
 </script>
+
+<!-- Lift PR Modal -->
+<div class="modal-overlay" id="lift-modal">
+  <div class="modal" style="max-width:480px;max-height:90vh;overflow-y:auto">
+    <button class="modal-close" onclick="closeModal('lift-modal')">✕</button>
+    <h2>Key Lift PRs</h2>
+    <p class="msub">Enter your best lifts. Leave blank to clear a PR.</p>
+    <div style="margin-bottom:16px;display:flex;align-items:center;gap:10px">
+      <span style="font-size:11px;color:var(--mu)">Units:</span>
+      <div class="unit-seg">
+        <button class="unit-seg-btn" id="lift-unit-imperial" onclick="setLiftModalUnit('imperial')">Imperial (lbs)</button>
+        <button class="unit-seg-btn" id="lift-unit-metric" onclick="setLiftModalUnit('metric')">Metric (kg)</button>
+      </div>
+    </div>
+    <div id="lift-modal-fields"></div>
+    <div id="lift-modal-error" class="msg err"></div>
+    <button class="pca-btn pri" style="width:100%;padding:12px;font-size:14px;border-radius:8px;margin-top:4px" onclick="saveLiftPRs()">Save PRs</button>
+  </div>
+</div>
 
 <!-- Log Result Modal -->
 <div class="modal-overlay" id="result-modal">
