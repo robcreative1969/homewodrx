@@ -108,7 +108,9 @@
 /* Lift PR board */
 .lifts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:28px}
 .lift-pr-card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 10px;text-align:center;transition:border-color .15s}
-.lift-pr-card:hover{border-color:var(--or)}
+.lift-pr-card.editable{cursor:pointer}
+.lift-pr-card.editable:hover{border-color:var(--or)}
+.lift-inline-input{width:72%;background:transparent;border:none;border-bottom:2px solid var(--or);color:var(--or);font-size:20px;font-weight:900;text-align:center;outline:none;padding:2px 0;margin:4px 0;display:block;margin-left:auto;margin-right:auto}
 .lift-nm{font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
 .lift-val{font-size:22px;font-weight:900;color:var(--or);line-height:1}
 .lift-val.empty{color:var(--bd);font-size:18px}
@@ -1116,7 +1118,7 @@ function renderLiftPRs() {
   section.style.display = 'block';
   grid.innerHTML = LIFT_NAMES.map(name => {
     const kg = liftPRData[name];
-    let valHtml, unitHtml = '';
+    let valHtml;
     if (kg != null) {
       const display = useImperial ? Math.round(kg * 2.205) : +kg.toFixed(1);
       const unit = useImperial ? 'lbs' : 'kg';
@@ -1124,8 +1126,67 @@ function renderLiftPRs() {
     } else {
       valHtml = `<div class="lift-val empty">—</div>`;
     }
-    return `<div class="lift-pr-card"><div class="lift-nm">${escHtml(name)}</div>${valHtml}</div>`;
+    const editClass = isOwnProfile ? ' editable' : '';
+    const editAttr  = isOwnProfile ? `onclick="editLiftInline('${escHtml(name)}',this)"` : '';
+    return `<div class="lift-pr-card${editClass}" ${editAttr}><div class="lift-nm">${escHtml(name)}</div>${valHtml}</div>`;
   }).join('');
+}
+
+function editLiftInline(name, cardEl) {
+  if (!isOwnProfile) return;
+  cardEl.onclick = null; // prevent re-triggering while the input is active
+  const kg = liftPRData[name];
+  const unit = useImperial ? 'lbs' : 'kg';
+  const currentVal = kg != null ? (useImperial ? Math.round(kg * 2.205) : +kg.toFixed(1)) : '';
+
+  cardEl.innerHTML = `
+    <div class="lift-nm">${escHtml(name)}</div>
+    <input type="number" class="lift-inline-input"
+      value="${currentVal}" placeholder="${unit}"
+      min="1" max="2000" step="1"
+      onclick="event.stopPropagation()">
+    <div class="lift-unit">${unit}</div>`;
+
+  const input = cardEl.querySelector('.lift-inline-input');
+  input.focus();
+  if (currentVal) input.select();
+
+  let done = false;
+
+  async function commit() {
+    if (done) return;
+    done = true;
+    const raw = parseFloat(input.value);
+    const newKg = (!isNaN(raw) && raw > 0)
+      ? (useImperial ? +(raw / 2.205).toFixed(2) : raw)
+      : null;
+    try {
+      if (newKg !== null) {
+        const { error } = await supabaseClient.from('lift_prs')
+          .upsert({ user_id: currentUser.id, lift_name: name, weight_kg: newKg, updated_at: new Date().toISOString() },
+                  { onConflict: 'user_id,lift_name' });
+        if (!error) liftPRData[name] = newKg;
+      } else if (kg != null) {
+        // Field cleared — delete the existing PR
+        const { error } = await supabaseClient.from('lift_prs').delete()
+          .eq('user_id', currentUser.id).eq('lift_name', name);
+        if (!error) delete liftPRData[name];
+      }
+    } catch(e) { /* silent — card will re-render with previous value */ }
+    renderLiftPRs();
+  }
+
+  function cancel() {
+    if (done) return;
+    done = true;
+    renderLiftPRs(); // restores the card to its pre-edit state
+  }
+
+  input.addEventListener('blur', commit);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter')  { e.preventDefault(); input.blur(); }
+    if (e.key === 'Escape') { input.removeEventListener('blur', commit); cancel(); }
+  });
 }
 
 function openLiftModal() {
