@@ -162,6 +162,20 @@
   /* LOADING SKELETON */
   .skel{background:linear-gradient(90deg,var(--bd) 25%,rgba(255,255,255,.05) 50%,var(--bd) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px}
   @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+  /* WORKOUT STYLE PICKER */
+  .workout-style-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:768px){.workout-style-grid{grid-template-columns:1fr}}
+  .workout-style-card{display:flex;align-items:flex-start;gap:16px;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:22px 20px;text-decoration:none;color:var(--tx);transition:border-color .2s,transform .15s}
+  .workout-style-card:hover{border-color:var(--or);transform:translateY(-2px)}
+  .ws-icon{font-size:28px;flex-shrink:0;margin-top:2px}
+  .ws-body{flex:1}
+  .ws-body h3{font-size:15px;font-weight:900;margin-bottom:6px;color:var(--tx)}
+  .ws-body p{font-size:13px;color:var(--mu);line-height:1.6;margin-bottom:10px}
+  .ws-chips{display:flex;flex-wrap:wrap;gap:6px}
+  .ws-chip{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;background:var(--dk2);color:var(--mu);border:1px solid var(--bd)}
+  .ws-arrow{font-size:18px;color:var(--or);flex-shrink:0;align-self:center;opacity:.7;transition:opacity .2s,transform .2s}
+  .workout-style-card:hover .ws-arrow{opacity:1;transform:translateX(3px)}
   </style>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
@@ -188,17 +202,66 @@
 <main>
 <div class="home-container">
 
-  <!-- DAILY WOD + FEATURED WOD -->
-  <div class="home-section">
+  <!-- CHOOSE YOUR WORKOUT STYLE -->
+  <div class="home-section" style="padding-top:32px;padding-bottom:32px">
+    <div class="home-section-hdr" style="margin-bottom:18px">
+      <h2>Choose your workout style</h2>
+      <span style="font-size:13px;color:var(--mu)">Three ways to train — all free, all built for home athletes.</span>
+    </div>
+    <div class="workout-style-grid">
+      <a class="workout-style-card" href="/daily-wod.html">
+        <div class="ws-icon">⚡</div>
+        <div class="ws-body">
+          <h3>The Daily 20</h3>
+          <p>Zero decisions. A fresh 20-minute workout auto-generated every morning. Same for every visitor — just show up and work.</p>
+          <div class="ws-chips">
+            <span class="ws-chip">20 min</span>
+            <span class="ws-chip">Auto-generated</span>
+            <span class="ws-chip">Always free</span>
+          </div>
+        </div>
+        <div class="ws-arrow">→</div>
+      </a>
+      <a class="workout-style-card" href="/generator.html">
+        <div class="ws-icon">🎯</div>
+        <div class="ws-body">
+          <h3>Smart WOD Builder</h3>
+          <p>Tell us your equipment, goals, and time available. Get a custom workout built for you in seconds, on demand.</p>
+          <div class="ws-chips">
+            <span class="ws-chip">On demand</span>
+            <span class="ws-chip">Your gear</span>
+            <span class="ws-chip">Always free</span>
+          </div>
+        </div>
+        <div class="ws-arrow">→</div>
+      </a>
+      <a class="workout-style-card" href="/generator.html" onclick="sessionStorage.setItem('gen_mode','create')">
+        <div class="ws-icon">✏️</div>
+        <div class="ws-body">
+          <h3>Create Your Own</h3>
+          <p>Full control. Build a workout movement by movement, set your own scoring, and save it to your library to repeat anytime.</p>
+          <div class="ws-chips">
+            <span class="ws-chip">Full control</span>
+            <span class="ws-chip">Save &amp; share</span>
+            <span class="ws-chip">Free account</span>
+          </div>
+        </div>
+        <div class="ws-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- TODAY'S WORKOUTS -->
+  <div class="home-section" style="border-top:1px solid var(--bd)">
     <div class="home-section-hdr">
       <h2>Today's Workouts</h2>
       <span style="font-size:13px;color:var(--mu)" id="today-date-display"></span>
     </div>
     <div class="wod-zone">
 
-      <!-- Daily WOD (auto-generated) -->
+      <!-- The Daily 20 (auto-generated) -->
       <div>
-        <div style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Daily WOD — Auto-Generated</div>
+        <div style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">The Daily 20 — Auto-Generated</div>
         <div class="daily-wod-card" id="daily-wod-card">
           <div class="wod-card-top">
             <div class="wod-label">
@@ -285,7 +348,7 @@
       <div class="wod-stat-div"></div>
       <div class="wod-stat">
         <span class="wod-stat-num">90</span>
-        <span class="wod-stat-lbl">Days of Daily WODs</span>
+        <span class="wod-stat-lbl">Days of The Daily 20</span>
       </div>
     </div>
 
@@ -393,12 +456,12 @@
     <div class="features-grid">
       <div class="feature-card">
         <div class="ficon">📅</div>
-        <h3>Daily WOD</h3>
-        <p>A fresh, auto-generated workout every day — same for every visitor. Deterministic algorithm means no two days are the same. <a href="/generator.html">Try it today →</a></p>
+        <h3>The Daily 20</h3>
+        <p>A fresh 20-minute workout every day — same for every visitor, auto-generated with zero effort on your part. Show up, work out, done. <a href="/daily-wod.html">Today's workout →</a></p>
       </div>
       <div class="feature-card">
         <div class="ficon">⚡</div>
-        <h3>Smart WOD Generator</h3>
+        <h3>Smart WOD Builder</h3>
         <p>Enter your equipment, experience level, and available time. Get a custom workout built just for you in seconds. <a href="/generator.html">Generate a WOD →</a></p>
       </div>
       <div class="feature-card">
