@@ -87,7 +87,24 @@
 .msg.ok{background:rgba(34,197,94,.12);color:var(--success);border:1px solid rgba(34,197,94,.3)}
 .gen-cta{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:var(--or);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;transition:background .15s;margin-bottom:20px}
 .gen-cta:hover{background:var(--orl);color:#fff}
-@media(max-width:600px){.prof-header{flex-direction:column;text-align:center}.prof-grid{grid-template-columns:1fr}.stats-bar{grid-template-columns:repeat(2,1fr)}}
+.athlete-stats{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}
+.athlete-chip{font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px;background:var(--dk3);border:1px solid var(--bd);color:var(--mu);display:inline-flex;align-items:center;gap:4px}
+.unit-toggle{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:transparent;border:1px solid var(--bd);color:var(--mu);cursor:pointer;transition:all .15s;letter-spacing:.5px}
+.unit-toggle:hover{border-color:var(--or);color:var(--or)}
+.prof-edit-form{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:20px}
+.pef-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pef-field{margin-bottom:14px}
+.pef-field label{display:block;font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.pef-field input,.pef-field select,.pef-field textarea{width:100%;background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:10px;color:var(--tx);font-size:14px;outline:none;font-family:inherit}
+.pef-field input:focus,.pef-field select:focus,.pef-field textarea:focus{border-color:var(--or)}
+.pef-field select option{background:var(--dk2)}
+.prof-avatar-wrap{position:relative;flex-shrink:0}
+.prof-avatar-wrap.uploadable{cursor:pointer}
+.prof-avatar-wrap.uploadable:hover .avatar-edit-badge{opacity:1}
+.avatar-edit-badge{position:absolute;bottom:-2px;right:-2px;width:22px;height:22px;border-radius:50%;background:var(--or);border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:11px;opacity:0;transition:opacity .2s;pointer-events:none}
+.avatar-uploading{opacity:.45;pointer-events:none}
+.prof-location{font-size:13px;color:var(--mu);margin-top:2px}
+@media(max-width:600px){.prof-header{flex-direction:column;text-align:center}.prof-grid{grid-template-columns:1fr}.stats-bar{grid-template-columns:repeat(2,1fr)}.pef-row{grid-template-columns:1fr}}
 </style>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
@@ -123,23 +140,98 @@
 
     <!-- Header -->
     <div class="prof-header">
-      <div class="prof-avatar" id="prof-avatar">?</div>
+      <div class="prof-avatar-wrap" id="prof-avatar-wrap" onclick="avatarClick()">
+        <div class="prof-avatar" id="prof-avatar">?</div>
+        <div class="avatar-edit-badge">📷</div>
+        <input type="file" id="avatar-file-input" accept="image/*" style="display:none" onchange="handleAvatarUpload(this.files[0]);this.value=''">
+      </div>
       <div class="prof-info">
         <h1 id="prof-username">—</h1>
+        <p id="prof-location" class="prof-location" style="display:none"></p>
         <p id="prof-bio"></p>
+        <div id="prof-athlete-stats" class="athlete-stats"></div>
         <div class="joined" id="prof-joined"></div>
-        <button class="edit-bio" id="edit-bio-btn" style="display:none" onclick="toggleBioEdit()">Edit Profile</button>
+        <button class="edit-bio" id="edit-bio-btn" style="display:none" onclick="toggleProfileEdit()">Edit Profile</button>
       </div>
     </div>
 
-    <!-- Bio Edit (own profile only) -->
-    <div id="bio-edit-section" style="display:none;margin-bottom:24px">
-      <div style="background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:20px">
-        <label style="display:block;font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Bio</label>
-        <textarea id="bio-input" rows="3" style="width:100%;background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:10px;color:var(--tx);font-size:14px;outline:none;font-family:inherit;resize:vertical" placeholder="Tell us about yourself..."></textarea>
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <button onclick="saveBio()" style="padding:8px 16px;background:var(--or);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer">Save</button>
-          <button onclick="toggleBioEdit()" style="padding:8px 16px;background:var(--dk3);color:var(--mu);border:1px solid var(--bd);border-radius:7px;font-size:13px;font-weight:700;cursor:pointer">Cancel</button>
+    <!-- Profile Edit (own profile only) -->
+    <div id="profile-edit-section" style="display:none;margin-bottom:24px">
+      <div class="prof-edit-form">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <span style="font-size:13px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:1px">Edit Profile</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:11px;color:var(--mu)">Units:</span>
+            <button class="unit-toggle" id="unit-toggle-btn" onclick="toggleUnits()">Imperial</button>
+          </div>
+        </div>
+        <div class="pef-field">
+          <label>Bio</label>
+          <textarea id="bio-input" rows="3" placeholder="Tell us about yourself..."></textarea>
+        </div>
+        <div class="pef-row">
+          <div class="pef-field">
+            <label>Gender</label>
+            <select id="pef-gender">
+              <option value="">— Select —</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="non-binary">Non-binary</option>
+              <option value="prefer_not_to_say">Prefer not to say</option>
+            </select>
+          </div>
+          <div class="pef-field">
+            <label>Age</label>
+            <input type="number" id="pef-age" min="10" max="100" placeholder="e.g. 32">
+          </div>
+        </div>
+        <div class="pef-row">
+          <div class="pef-field" id="pef-height-field">
+            <label id="pef-height-label">Height</label>
+            <div id="pef-height-imperial" style="display:flex;gap:8px">
+              <select id="pef-height-ft" style="flex:1;background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:10px;color:var(--tx);font-size:14px;outline:none">
+                <option value="">ft</option>
+                <option value="4">4 ft</option><option value="5">5 ft</option><option value="6">6 ft</option><option value="7">7 ft</option>
+              </select>
+              <select id="pef-height-in" style="flex:1;background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:10px;color:var(--tx);font-size:14px;outline:none">
+                <option value="">in</option>
+                <option value="0">0"</option><option value="1">1"</option><option value="2">2"</option><option value="3">3"</option>
+                <option value="4">4"</option><option value="5">5"</option><option value="6">6"</option><option value="7">7"</option>
+                <option value="8">8"</option><option value="9">9"</option><option value="10">10"</option><option value="11">11"</option>
+              </select>
+            </div>
+            <input type="number" id="pef-height-cm" min="100" max="250" placeholder="cm" style="display:none;width:100%;background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:10px;color:var(--tx);font-size:14px;outline:none">
+          </div>
+          <div class="pef-field">
+            <label id="pef-weight-label">Weight</label>
+            <input type="number" id="pef-weight" min="50" max="700" placeholder="lbs">
+          </div>
+        </div>
+        <div class="pef-row">
+          <div class="pef-field">
+            <label>Experience Level</label>
+            <select id="pef-level">
+              <option value="">— Select —</option>
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+              <option value="elite">Elite</option>
+            </select>
+          </div>
+        </div>
+        <div class="pef-row">
+          <div class="pef-field">
+            <label>City</label>
+            <input type="text" id="pef-city" placeholder="e.g. Denver" maxlength="60">
+          </div>
+          <div class="pef-field">
+            <label>State</label>
+            <select id="pef-state"><option value="">— Select —</option></select>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <button onclick="saveProfile()" style="padding:8px 16px;background:var(--or);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer">Save</button>
+          <button onclick="toggleProfileEdit()" style="padding:8px 16px;background:var(--dk3);color:var(--mu);border:1px solid var(--bd);border-radius:7px;font-size:13px;font-weight:700;cursor:pointer">Cancel</button>
         </div>
       </div>
     </div>
@@ -351,30 +443,248 @@ function switchTab(tab) {
   document.getElementById('stat-card-public').classList.toggle('active', tab === 'workouts');
 }
 
-// ── Bio Edit ──
-function toggleBioEdit() {
-  const section = document.getElementById('bio-edit-section');
-  const visible = section.style.display !== 'none';
-  section.style.display = visible ? 'none' : 'block';
-  if (!visible) {
-    document.getElementById('bio-input').value = profileData?.bio || '';
+// ── States dropdown ──
+(function() {
+  const states = [
+    ['AL','Alabama'],['AK','Alaska'],['AZ','Arizona'],['AR','Arkansas'],
+    ['CA','California'],['CO','Colorado'],['CT','Connecticut'],['DE','Delaware'],
+    ['FL','Florida'],['GA','Georgia'],['HI','Hawaii'],['ID','Idaho'],
+    ['IL','Illinois'],['IN','Indiana'],['IA','Iowa'],['KS','Kansas'],
+    ['KY','Kentucky'],['LA','Louisiana'],['ME','Maine'],['MD','Maryland'],
+    ['MA','Massachusetts'],['MI','Michigan'],['MN','Minnesota'],['MS','Mississippi'],
+    ['MO','Missouri'],['MT','Montana'],['NE','Nebraska'],['NV','Nevada'],
+    ['NH','New Hampshire'],['NJ','New Jersey'],['NM','New Mexico'],['NY','New York'],
+    ['NC','North Carolina'],['ND','North Dakota'],['OH','Ohio'],['OK','Oklahoma'],
+    ['OR','Oregon'],['PA','Pennsylvania'],['RI','Rhode Island'],['SC','South Carolina'],
+    ['SD','South Dakota'],['TN','Tennessee'],['TX','Texas'],['UT','Utah'],
+    ['VT','Vermont'],['VA','Virginia'],['WA','Washington'],['WV','West Virginia'],
+    ['WI','Wisconsin'],['WY','Wyoming'],['DC','Washington D.C.']
+  ];
+  document.addEventListener('DOMContentLoaded', () => {
+    const sel = document.getElementById('pef-state');
+    if (sel) states.forEach(([v,l]) => { const o = document.createElement('option'); o.value = v; o.textContent = l; sel.appendChild(o); });
+  });
+})();
+
+// ── Avatar ──
+function avatarClick() {
+  if (isOwnProfile) document.getElementById('avatar-file-input').click();
+}
+
+function renderAvatar(url) {
+  const el = document.getElementById('prof-avatar');
+  if (url) {
+    const src = url.includes('?t=') ? url : url + '?t=' + Date.now();
+    el.style.backgroundImage = `url('${src}')`;
+    el.style.backgroundSize = 'cover';
+    el.style.backgroundPosition = 'center';
+    el.style.fontSize = '0';
+    el.textContent = '';
+  } else {
+    el.style.backgroundImage = '';
+    el.style.fontSize = '28px';
+    el.textContent = (profileData?.username || 'A').charAt(0).toUpperCase();
   }
 }
 
-async function saveBio() {
+function resizeImage(file, maxPx) {
+  return new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        if (w > h) { h = Math.round(h * maxPx / w); w = maxPx; }
+        else { w = Math.round(w * maxPx / h); h = maxPx; }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        canvas.toBlob(resolve, 'image/jpeg', 0.85);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handleAvatarUpload(file) {
+  if (!file || !currentUser) return;
+  if (!file.type.startsWith('image/')) { alert('Please select an image file.'); return; }
+  if (file.size > 5 * 1024 * 1024) { alert('Image must be under 5 MB.'); return; }
+  const wrap = document.getElementById('prof-avatar-wrap');
+  wrap.classList.add('avatar-uploading');
+  try {
+    const blob = await resizeImage(file, 300);
+    const path = currentUser.id + '/avatar.jpg';
+    const { error: upErr } = await supabaseClient.storage
+      .from('avatars').upload(path, blob, { contentType: 'image/jpeg', upsert: true });
+    if (upErr) throw upErr;
+    const { data: { publicUrl } } = supabaseClient.storage.from('avatars').getPublicUrl(path);
+    const { error: dbErr } = await supabaseClient.from('profiles')
+      .update({ avatar_url: publicUrl }).eq('id', currentUser.id);
+    if (dbErr) throw dbErr;
+    profileData.avatar_url = publicUrl;
+    renderAvatar(publicUrl);
+  } catch(e) {
+    alert('Upload failed: ' + (e.message || 'Unknown error'));
+  } finally {
+    wrap.classList.remove('avatar-uploading');
+  }
+}
+
+// ── Units ──
+let useImperial = localStorage.getItem('hwrx_units') !== 'metric';
+
+function toggleUnits() {
+  useImperial = !useImperial;
+  localStorage.setItem('hwrx_units', useImperial ? 'imperial' : 'metric');
+  document.getElementById('unit-toggle-btn').textContent = useImperial ? 'Imperial' : 'Metric';
+  // Swap height inputs
+  document.getElementById('pef-height-imperial').style.display = useImperial ? 'flex' : 'none';
+  document.getElementById('pef-height-cm').style.display = useImperial ? 'none' : 'block';
+  document.getElementById('pef-weight-label').textContent = useImperial ? 'Weight (lbs)' : 'Weight (kg)';
+  document.getElementById('pef-height-label').textContent = useImperial ? 'Height' : 'Height (cm)';
+  document.getElementById('pef-weight').placeholder = useImperial ? 'lbs' : 'kg';
+  // Re-populate height/weight with converted values if we have data
+  if (profileData) populateEditFields();
+  // Re-render chips
+  renderAthleteStats();
+}
+
+function cmToFtIn(cm) {
+  if (!cm) return null;
+  const totalIn = Math.round(cm / 2.54);
+  return { ft: Math.floor(totalIn / 12), inches: totalIn % 12 };
+}
+
+function ftInToCm(ft, inches) {
+  return Math.round((parseInt(ft || 0) * 12 + parseInt(inches || 0)) * 2.54);
+}
+
+function kgToLbs(kg) { return kg ? Math.round(kg * 2.205) : null; }
+function lbsToKg(lbs) { return lbs ? Math.round(lbs / 2.205 * 10) / 10 : null; }
+
+function formatHeightDisplay(height_cm) {
+  if (!height_cm) return null;
+  if (useImperial) {
+    const { ft, inches } = cmToFtIn(height_cm);
+    return `${ft}'${inches}"`;
+  }
+  return `${height_cm} cm`;
+}
+
+function formatWeightDisplay(weight_kg) {
+  if (!weight_kg) return null;
+  if (useImperial) return `${kgToLbs(weight_kg)} lbs`;
+  return `${weight_kg} kg`;
+}
+
+function renderAthleteStats() {
+  if (!profileData) return;
+  const el = document.getElementById('prof-athlete-stats');
+  const chips = [];
+  if (profileData.gender && profileData.gender !== 'prefer_not_to_say') {
+    const gMap = { male: 'Male', female: 'Female', 'non-binary': 'Non-binary' };
+    chips.push(gMap[profileData.gender] || profileData.gender);
+  }
+  if (profileData.age) chips.push(`${profileData.age} yrs`);
+  const h = formatHeightDisplay(profileData.height_cm);
+  if (h) chips.push(h);
+  const w = formatWeightDisplay(profileData.weight_kg);
+  if (w) chips.push(w);
+  if (profileData.experience_level) {
+    const lvlMap = { beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced', elite: 'Elite' };
+    chips.push(lvlMap[profileData.experience_level] || profileData.experience_level);
+  }
+  if (chips.length === 0) { el.innerHTML = ''; return; }
+  const unitBtn = isOwnProfile ? `<button class="unit-toggle" onclick="toggleUnits()" title="Toggle units">${useImperial ? 'Imperial' : 'Metric'}</button>` : '';
+  el.innerHTML = chips.map(c => `<span class="athlete-chip">${escHtml(c)}</span>`).join('') + unitBtn;
+}
+
+// ── Profile Edit ──
+function populateEditFields() {
+  const p = profileData;
+  document.getElementById('bio-input').value = p.bio || '';
+  document.getElementById('pef-gender').value = p.gender || '';
+  document.getElementById('pef-age').value = p.age || '';
+  document.getElementById('pef-level').value = p.experience_level || '';
+  document.getElementById('pef-city').value = p.city || '';
+  document.getElementById('pef-state').value = p.state || '';
+  // Height
+  if (useImperial && p.height_cm) {
+    const { ft, inches } = cmToFtIn(p.height_cm);
+    document.getElementById('pef-height-ft').value = ft;
+    document.getElementById('pef-height-in').value = inches;
+  } else if (!useImperial && p.height_cm) {
+    document.getElementById('pef-height-cm').value = p.height_cm;
+  }
+  // Weight
+  if (useImperial && p.weight_kg) {
+    document.getElementById('pef-weight').value = kgToLbs(p.weight_kg);
+  } else if (!useImperial && p.weight_kg) {
+    document.getElementById('pef-weight').value = p.weight_kg;
+  } else {
+    document.getElementById('pef-weight').value = '';
+  }
+}
+
+function toggleProfileEdit() {
+  const section = document.getElementById('profile-edit-section');
+  const visible = section.style.display !== 'none';
+  section.style.display = visible ? 'none' : 'block';
+  if (!visible) {
+    // Sync unit toggle button
+    document.getElementById('unit-toggle-btn').textContent = useImperial ? 'Imperial' : 'Metric';
+    document.getElementById('pef-height-imperial').style.display = useImperial ? 'flex' : 'none';
+    document.getElementById('pef-height-cm').style.display = useImperial ? 'none' : 'block';
+    document.getElementById('pef-weight-label').textContent = useImperial ? 'Weight (lbs)' : 'Weight (kg)';
+    document.getElementById('pef-height-label').textContent = useImperial ? 'Height' : 'Height (cm)';
+    document.getElementById('pef-weight').placeholder = useImperial ? 'lbs' : 'kg';
+    populateEditFields();
+  }
+}
+
+async function saveProfile() {
   const bio = document.getElementById('bio-input').value.trim();
+  const gender = document.getElementById('pef-gender').value || null;
+  const age = parseInt(document.getElementById('pef-age').value) || null;
+  const experience_level = document.getElementById('pef-level').value || null;
+  // Height → always store in cm
+  let height_cm = null;
+  if (useImperial) {
+    const ft = document.getElementById('pef-height-ft').value;
+    const inches = document.getElementById('pef-height-in').value;
+    if (ft !== '' || inches !== '') height_cm = ftInToCm(ft, inches) || null;
+  } else {
+    const val = parseInt(document.getElementById('pef-height-cm').value);
+    if (val) height_cm = val;
+  }
+  // Weight → always store in kg
+  let weight_kg = null;
+  const wVal = parseFloat(document.getElementById('pef-weight').value);
+  if (wVal) weight_kg = useImperial ? lbsToKg(wVal) : wVal;
+
+  const city = document.getElementById('pef-city').value.trim() || null;
+  const state = document.getElementById('pef-state').value || null;
+
   try {
     if (typeof supabaseClient !== 'undefined' && supabaseClient) {
-      await supabaseClient
+      const { error } = await supabaseClient
         .from('profiles')
-        .update({ bio })
+        .update({ bio, gender, age, height_cm, weight_kg, experience_level, city, state })
         .eq('id', currentUser.id);
+      if (error) throw error;
     }
-    profileData.bio = bio;
+    // Update local state
+    Object.assign(profileData, { bio, gender, age, height_cm, weight_kg, experience_level, city, state });
     document.getElementById('prof-bio').textContent = bio;
-    document.getElementById('bio-edit-section').style.display = 'none';
+    const loc = [city, state].filter(Boolean).join(', ');
+    const locEl = document.getElementById('prof-location');
+    locEl.textContent = loc; locEl.style.display = loc ? 'block' : 'none';
+    renderAthleteStats();
+    document.getElementById('profile-edit-section').style.display = 'none';
   } catch (e) {
-    alert('Failed to save bio: ' + (e.message || 'Unknown error'));
+    alert('Failed to save profile: ' + (e.message || 'Unknown error'));
   }
 }
 
@@ -432,14 +742,21 @@ async function loadProfile() {
   // Render header
   const avatarColor = profile.avatar_color || getAvatarColor(profileUserId);
   const initial = (profile.username || 'A').charAt(0).toUpperCase();
-  document.getElementById('prof-avatar').style.backgroundColor = avatarColor;
-  document.getElementById('prof-avatar').textContent = initial;
+  const avatarEl = document.getElementById('prof-avatar');
+  avatarEl.style.backgroundColor = avatarColor;
+  avatarEl.textContent = initial;
+  renderAvatar(profile.avatar_url);
   document.getElementById('prof-username').textContent = profile.username || 'Athlete';
+  const loc = [profile.city, profile.state].filter(Boolean).join(', ');
+  const locEl = document.getElementById('prof-location');
+  locEl.textContent = loc; locEl.style.display = loc ? 'block' : 'none';
   document.getElementById('prof-bio').textContent = profile.bio || '';
   document.getElementById('prof-joined').textContent = profile.created_at ? `Joined ${formatDate(profile.created_at)}` : '';
+  renderAthleteStats();
 
   if (isOwnProfile) {
     document.getElementById('edit-bio-btn').style.display = 'inline-block';
+    document.getElementById('prof-avatar-wrap').classList.add('uploadable');
   }
 
   // Load workouts for this user
