@@ -248,6 +248,86 @@
     }
     .share-btn:hover { background: rgba(255,255,255,0.07); border-color: #666; }
     .share-btn.copied { color: #22c55e; border-color: rgba(34,197,94,0.4); }
+    /* ── WOD Metadata Strip ─────────────────────────────────────────────── */
+    .wod-meta-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .wod-meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+    .wod-meta-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted, #888);
+    }
+    .wod-meta-value {
+      font-size: 0.92rem;
+      color: var(--text, #e5e5e5);
+      font-weight: 500;
+    }
+    /* ── Responsive Movement Table ──────────────────────────────────────── */
+    .movements-tbl { width: 100%; border-collapse: collapse; }
+    .movements-tbl th {
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted, #888);
+      border-bottom: 1px solid var(--dark-border, #333);
+    }
+    .movements-tbl td {
+      padding: 0.65rem 0.75rem;
+      font-size: 0.95rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      vertical-align: top;
+    }
+    .movements-tbl tr:last-child td { border-bottom: none; }
+    .tip-text {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--text-muted, #888);
+      margin-top: 0.3rem;
+      font-style: italic;
+    }
+    @media (max-width: 600px) {
+      .movements-tbl thead { display: none; }
+      .movements-tbl, .movements-tbl tbody { display: block; }
+      .movements-tbl tr {
+        display: block;
+        border: 1px solid var(--dark-border, #333);
+        border-radius: 8px;
+        margin-bottom: 0.6rem;
+        padding: 0.7rem 0.9rem;
+        background: var(--dark-surface, #1a1a1a);
+      }
+      .movements-tbl td {
+        display: grid;
+        grid-template-columns: 5.5rem 1fr;
+        gap: 0.2rem;
+        padding: 0.22rem 0;
+        border: none;
+        font-size: 0.9rem;
+      }
+      .movements-tbl td::before {
+        content: attr(data-label);
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-muted, #888);
+        padding-top: 0.15rem;
+      }
+      .tip-text { margin-top: 0.15rem; }
+    }
   </style>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
@@ -662,12 +742,12 @@
       <div style="padding: 2rem 0; margin-bottom: 2rem; border-bottom: 1px solid var(--dark-border);">
         <h1>${w.title || w.name}</h1>
         ${createdBy ? `<p class="text-muted">${createdBy}</p>` : ''}
-        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem;">
-          ${categoryBadge}
-          <span class="badge badge-orange">${w.format}</span>
-          <span class="badge badge-orange">${w.duration_estimate}</span>
-          <span class="badge badge-orange">${w.difficulty}</span>
-          <span class="badge badge-orange">${w.body_focus}</span>
+        ${categoryBadge ? `<div style="margin-bottom:0.85rem;">${categoryBadge}</div>` : ''}
+        <div class="wod-meta-strip">
+          ${w.format ? `<span class="wod-meta-item"><span class="wod-meta-label">Format</span><span class="wod-meta-value">${w.format}</span></span>` : ''}
+          ${w.duration_estimate ? `<span class="wod-meta-item"><span class="wod-meta-label">Duration</span><span class="wod-meta-value">${w.duration_estimate}</span></span>` : ''}
+          ${w.difficulty ? `<span class="wod-meta-item"><span class="wod-meta-label">Level</span><span class="wod-meta-value">${w.difficulty}</span></span>` : ''}
+          ${w.body_focus ? `<span class="wod-meta-item"><span class="wod-meta-label">Focus</span><span class="wod-meta-value">${w.body_focus}</span></span>` : ''}
         </div>
         <div style="display:flex;gap:1rem;">
           <button class="btn btn-primary" onclick="openResultModal()">Log Your Result</button>
@@ -745,10 +825,29 @@
       ${w.tips&&w.tips.length>0?`<div style="margin-top:1.5rem;"><h4>Tips</h4><ul style="margin-left:1.5rem;">${w.tips.map(t=>`<li>${t}</li>`).join('')}</ul></div>`:''}
       ${w.youtube_url ? youtubeEmbed(w.youtube_url, w.title || w.name) : ''}`;
     if (w.movements && w.movements.length > 0) {
+      const hasRx = w.movements.some(m => m.rx_men || m.rx_women);
       document.getElementById('movements-table').innerHTML = `
-        <table><thead><tr><th>Movement</th><th>Reps / Duration</th><th>Rx (Men / Women)</th><th>Tip</th></tr></thead><tbody>
-          ${w.movements.map(m => { const mn = m.name || m.movement || ''; return `<tr><td><a href="/movement.html?slug=${slugify(mn)}" class="movement-link">${mn}</a></td><td>${m.reps||'-'}</td><td><span class="text-muted">${m.rx_men||''} / ${m.rx_women||''}</span></td><td><span class="text-muted" style="font-size:0.9rem;">${m.tip||''}</span></td></tr>`; }).join('')}
-        </tbody></table>`;
+        <table class="movements-tbl">
+          <thead><tr>
+            <th>Movement</th>
+            <th>Reps / Duration</th>
+            ${hasRx ? '<th>Rx (Men / Women)</th>' : ''}
+          </tr></thead>
+          <tbody>
+            ${w.movements.map(m => {
+              const mn = m.name || m.movement || '';
+              const tipHtml = m.tip ? `<span class="tip-text">↳ ${m.tip}</span>` : '';
+              const rxCell = hasRx
+                ? `<td data-label="Rx"><span class="text-muted">${(m.rx_men || m.rx_women) ? `${m.rx_men || '—'} / ${m.rx_women || '—'}` : '—'}</span></td>`
+                : '';
+              return `<tr>
+                <td data-label="Movement"><a href="/movement.html?slug=${slugify(mn)}" class="movement-link">${mn}</a>${tipHtml}</td>
+                <td data-label="Reps">${m.reps || '—'}</td>
+                ${rxCell}
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>`;
     }
     // Determine displayable equipment (filter out bodyweight/running/none)
     const gearItems = (w.equipment || []).filter(e => !SKIP_EQUIPMENT.has(e.toLowerCase().trim()));
