@@ -22,7 +22,7 @@
 .prof-avatar{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#fff;flex-shrink:0}
 .prof-info h1{font-size:clamp(22px,4vw,30px);font-weight:900;margin-bottom:4px}
 .prof-info p{color:var(--mu);font-size:14px}
-.prof-info .joined{font-size:12px;color:var(--mu);margin-top:4px}
+.prof-info .joined{font-size:12px;color:var(--mu);margin-top:6px;display:flex;align-items:center;gap:5px}.prof-info .joined::before{content:'🏠';font-size:11px}
 .stats-bar{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:28px}
 .stat-card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px;text-align:center;cursor:pointer;transition:border-color .15s,transform .1s}
 .stat-card:hover{border-color:var(--or)}
@@ -317,15 +317,8 @@
       </div>
     </div>
 
-    <!-- Stats (clickable — act as tab selectors) -->
-    <div class="stats-bar" id="prof-stats">
-      <div class="stat-card active" id="stat-card-workouts" onclick="switchTab('workouts')"><div class="val" id="stat-workouts">0</div><div class="lbl">Workouts</div></div>
-      <div class="stat-card" id="stat-card-results" onclick="switchTab('results')"><div class="val" id="stat-results">0</div><div class="lbl">Results Logged</div></div>
-      <div class="stat-card" id="stat-card-public" onclick="switchTab('workouts')"><div class="val" id="stat-public">0</div><div class="lbl">Public WODs</div></div>
-    </div>
-
-    <!-- Key Lift PRs -->
-    <div id="prof-lifts-section" style="display:none;margin-bottom:0">
+    <!-- Key Lift PRs (personal info — grouped with profile) -->
+    <div id="prof-lifts-section" style="display:none;margin-bottom:28px">
       <div class="lifts-hdr">
         <span class="lifts-hdr-title">Key Lift PRs</span>
         <button id="edit-lifts-btn" class="edit-prs-btn" onclick="openLiftModal()" style="display:none">Edit PRs</button>
@@ -333,9 +326,21 @@
       <div class="lifts-grid" id="lifts-grid"></div>
     </div>
 
+    <!-- Workout Activity Section -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+      <span class="section-title" style="margin-bottom:0;padding-bottom:0;border-bottom:none">Workout Activity</span>
+      <a href="/generator.html" id="prof-gen-cta" class="gen-cta" style="display:none;margin-bottom:0">+ Generate New WOD</a>
+    </div>
+
+    <!-- Stats (clickable — act as tab selectors) -->
+    <div class="stats-bar" id="prof-stats">
+      <div class="stat-card active" id="stat-card-workouts" onclick="switchTab('workouts')"><div class="val" id="stat-workouts">0</div><div class="lbl">Workouts</div></div>
+      <div class="stat-card" id="stat-card-results" onclick="switchTab('results')"><div class="val" id="stat-results">0</div><div class="lbl">Results Logged</div></div>
+      <div class="stat-card" id="stat-card-public" onclick="switchTab('workouts')"><div class="val" id="stat-public">0</div><div class="lbl">Public WODs</div></div>
+    </div>
+
     <!-- Tab: Workouts -->
     <div class="tab-content active" id="tab-workouts">
-      <a href="/generator.html" id="prof-gen-cta" class="gen-cta" style="display:none">+ Generate New WOD</a>
       <div class="prof-grid" id="prof-workouts-grid"></div>
       <div id="prof-workouts-empty" class="empty-state" style="display:none">
         <div class="icon">💪</div>
@@ -928,7 +933,7 @@ async function loadProfile() {
   const locEl = document.getElementById('prof-location');
   locEl.textContent = loc; locEl.style.display = loc ? 'block' : 'none';
   document.getElementById('prof-bio').textContent = profile.bio || '';
-  document.getElementById('prof-joined').textContent = profile.created_at ? `Joined ${formatDate(profile.created_at)}` : '';
+  document.getElementById('prof-joined').textContent = profile.created_at ? `HomeWODrx member since ${formatDate(profile.created_at)}` : '';
   renderAthleteStats();
 
   // Birthday greeting
@@ -945,6 +950,8 @@ async function loadProfile() {
     document.getElementById('prof-avatar-wrap').classList.add('uploadable');
     document.getElementById('avatar-hint').style.display = 'block';
     document.getElementById('edit-lifts-btn').style.display = 'inline-block';
+    const genCta = document.getElementById('prof-gen-cta');
+    if (genCta) genCta.style.display = 'inline-flex';
   }
 
   // Load lift PRs
@@ -977,10 +984,6 @@ async function loadProfile() {
     workoutsEmpty.style.display = 'none';
     // Store workouts for detail view
     profileWorkouts = workouts;
-
-    // Show Generate New CTA for owner
-    const genCta = document.getElementById('prof-gen-cta');
-    if (genCta) genCta.style.display = isOwnProfile ? 'inline-flex' : 'none';
 
     grid.innerHTML = workouts.map(w => `
       <div class="prof-card" onclick="openWodDetail('${escHtml(w.id)}')" style="cursor:pointer">
