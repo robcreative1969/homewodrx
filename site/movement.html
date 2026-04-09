@@ -685,8 +685,6 @@
       `;
       }).join('');
 
-      const DIFFICULTY_LABELS = { beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced' };
-      const BODY_FOCUS_LABELS = { 'full-body': 'Full Body', 'upper-body': 'Upper Body', 'lower-body': 'Lower Body', 'core': 'Core' };
       const dailyWodCards = matchingDailyWods.map(w => `
         <a href="/daily-wod.html?date=${w._date}" style="text-decoration: none;">
           <div class="card">
@@ -698,8 +696,6 @@
               ${summarizeMovements(w)}
             </p>
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
-              <span class="badge badge-orange">${DIFFICULTY_LABELS[w.difficulty] || w.difficulty}</span>
-              <span class="badge badge-orange">${BODY_FOCUS_LABELS[w.body_focus] || w.body_focus}</span>
               <span class="badge badge-orange">Daily 20</span>
             </div>
           </div>
