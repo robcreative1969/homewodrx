@@ -22,7 +22,7 @@
           <div style="display:flex;flex-direction:column;gap:8px">
             <a href="/workouts" style="color:var(--tx);font-size:13px;text-decoration:none">Named Benchmarks</a>
             <a href="/generator" style="color:var(--tx);font-size:13px;text-decoration:none">Smart WOD Builder</a>
-            <a href="/daily-wod" style="color:var(--tx);font-size:13px;text-decoration:none">The Daily 20</a>
+            <a href="/daily-wod" style="color:var(--tx);font-size:13px;text-decoration:none">Daily 20</a>
             <a href="/movements" style="color:var(--tx);font-size:13px;text-decoration:none">Movement Library</a>
             <a href="/shop" style="color:var(--tx);font-size:13px;text-decoration:none">Gear Shop</a>
           </div>
