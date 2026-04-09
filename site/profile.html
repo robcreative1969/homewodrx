@@ -89,8 +89,9 @@
 .gen-cta:hover{background:var(--orl);color:#fff}
 .athlete-stats{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}
 .athlete-chip{font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px;background:var(--dk3);border:1px solid var(--bd);color:var(--mu);display:inline-flex;align-items:center;gap:4px}
-.unit-toggle{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:transparent;border:1px solid var(--bd);color:var(--mu);cursor:pointer;transition:all .15s;letter-spacing:.5px}
-.unit-toggle:hover{border-color:var(--or);color:var(--or)}
+.unit-seg{display:inline-flex;background:var(--dk3);border:1px solid var(--bd);border-radius:6px;overflow:hidden;flex-shrink:0}
+.unit-seg-btn{padding:4px 10px;font-size:10px;font-weight:700;background:transparent;border:none;color:var(--mu);cursor:pointer;transition:all .15s;letter-spacing:.5px;white-space:nowrap}
+.unit-seg-btn.active{background:var(--or);color:#fff}
 .prof-edit-form{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:20px}
 .pef-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .pef-field{margin-bottom:14px}
@@ -162,7 +163,10 @@
           <span style="font-size:13px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:1px">Edit Profile</span>
           <div style="display:flex;align-items:center;gap:8px">
             <span style="font-size:11px;color:var(--mu)">Units:</span>
-            <button class="unit-toggle" id="unit-toggle-btn" onclick="toggleUnits()">Imperial</button>
+            <div class="unit-seg">
+              <button class="unit-seg-btn" id="unit-seg-imperial" onclick="setUnit('imperial')">Imperial</button>
+              <button class="unit-seg-btn" id="unit-seg-metric" onclick="setUnit('metric')">Metric</button>
+            </div>
           </div>
         </div>
         <div class="pef-field">
@@ -225,8 +229,14 @@
             <input type="text" id="pef-city" placeholder="e.g. Denver" maxlength="60">
           </div>
           <div class="pef-field">
-            <label>State</label>
+            <label>State / Province</label>
             <select id="pef-state"><option value="">— Select —</option></select>
+          </div>
+        </div>
+        <div class="pef-row">
+          <div class="pef-field">
+            <label>Country</label>
+            <input type="text" id="pef-country" placeholder="e.g. USA, Canada, Australia" maxlength="60">
           </div>
         </div>
         <div style="display:flex;gap:8px;margin-top:4px">
@@ -535,21 +545,26 @@ async function handleAvatarUpload(file) {
 // ── Units ──
 let useImperial = localStorage.getItem('hwrx_units') !== 'metric';
 
-function toggleUnits() {
-  useImperial = !useImperial;
+function setUnit(u) {
+  useImperial = u === 'imperial';
   localStorage.setItem('hwrx_units', useImperial ? 'imperial' : 'metric');
-  document.getElementById('unit-toggle-btn').textContent = useImperial ? 'Imperial' : 'Metric';
-  // Swap height inputs
+  // Sync segmented control in edit form
+  const btnImp = document.getElementById('unit-seg-imperial');
+  const btnMet = document.getElementById('unit-seg-metric');
+  if (btnImp) btnImp.classList.toggle('active', useImperial);
+  if (btnMet) btnMet.classList.toggle('active', !useImperial);
+  // Swap height/weight inputs
   document.getElementById('pef-height-imperial').style.display = useImperial ? 'flex' : 'none';
   document.getElementById('pef-height-cm').style.display = useImperial ? 'none' : 'block';
   document.getElementById('pef-weight-label').textContent = useImperial ? 'Weight (lbs)' : 'Weight (kg)';
   document.getElementById('pef-height-label').textContent = useImperial ? 'Height' : 'Height (cm)';
   document.getElementById('pef-weight').placeholder = useImperial ? 'lbs' : 'kg';
-  // Re-populate height/weight with converted values if we have data
+  // Re-populate height/weight with converted values
   if (profileData) populateEditFields();
-  // Re-render chips
+  // Re-render chips (also refreshes the toggle in the stats row)
   renderAthleteStats();
 }
+function toggleUnits() { setUnit(useImperial ? 'metric' : 'imperial'); }
 
 function cmToFtIn(cm) {
   if (!cm) return null;
@@ -597,8 +612,9 @@ function renderAthleteStats() {
     chips.push(lvlMap[profileData.experience_level] || profileData.experience_level);
   }
   if (chips.length === 0) { el.innerHTML = ''; return; }
-  const unitBtn = isOwnProfile ? `<button class="unit-toggle" onclick="toggleUnits()" title="Toggle units">${useImperial ? 'Imperial' : 'Metric'}</button>` : '';
-  el.innerHTML = chips.map(c => `<span class="athlete-chip">${escHtml(c)}</span>`).join('') + unitBtn;
+  const hasUnits = !!(profileData.height_cm || profileData.weight_kg);
+  const unitSeg = hasUnits ? `<div class="unit-seg"><button class="unit-seg-btn${useImperial?' active':''}" onclick="setUnit('imperial')">Imperial</button><button class="unit-seg-btn${useImperial?'':' active'}" onclick="setUnit('metric')">Metric</button></div>` : '';
+  el.innerHTML = chips.map(c => `<span class="athlete-chip">${escHtml(c)}</span>`).join('') + unitSeg;
 }
 
 // ── Profile Edit ──
@@ -610,6 +626,7 @@ function populateEditFields() {
   document.getElementById('pef-level').value = p.experience_level || '';
   document.getElementById('pef-city').value = p.city || '';
   document.getElementById('pef-state').value = p.state || '';
+  document.getElementById('pef-country').value = p.country || '';
   // Height
   if (useImperial && p.height_cm) {
     const { ft, inches } = cmToFtIn(p.height_cm);
@@ -633,8 +650,11 @@ function toggleProfileEdit() {
   const visible = section.style.display !== 'none';
   section.style.display = visible ? 'none' : 'block';
   if (!visible) {
-    // Sync unit toggle button
-    document.getElementById('unit-toggle-btn').textContent = useImperial ? 'Imperial' : 'Metric';
+    // Sync unit segmented control
+    const btnImp = document.getElementById('unit-seg-imperial');
+    const btnMet = document.getElementById('unit-seg-metric');
+    if (btnImp) btnImp.classList.toggle('active', useImperial);
+    if (btnMet) btnMet.classList.toggle('active', !useImperial);
     document.getElementById('pef-height-imperial').style.display = useImperial ? 'flex' : 'none';
     document.getElementById('pef-height-cm').style.display = useImperial ? 'none' : 'block';
     document.getElementById('pef-weight-label').textContent = useImperial ? 'Weight (lbs)' : 'Weight (kg)';
@@ -666,19 +686,20 @@ async function saveProfile() {
 
   const city = document.getElementById('pef-city').value.trim() || null;
   const state = document.getElementById('pef-state').value || null;
+  const country = document.getElementById('pef-country').value.trim() || null;
 
   try {
     if (typeof supabaseClient !== 'undefined' && supabaseClient) {
       const { error } = await supabaseClient
         .from('profiles')
-        .update({ bio, gender, age, height_cm, weight_kg, experience_level, city, state })
+        .update({ bio, gender, age, height_cm, weight_kg, experience_level, city, state, country })
         .eq('id', currentUser.id);
       if (error) throw error;
     }
     // Update local state
-    Object.assign(profileData, { bio, gender, age, height_cm, weight_kg, experience_level, city, state });
+    Object.assign(profileData, { bio, gender, age, height_cm, weight_kg, experience_level, city, state, country });
     document.getElementById('prof-bio').textContent = bio;
-    const loc = [city, state].filter(Boolean).join(', ');
+    const loc = [city, state, country].filter(Boolean).join(', ');
     const locEl = document.getElementById('prof-location');
     locEl.textContent = loc; locEl.style.display = loc ? 'block' : 'none';
     renderAthleteStats();
@@ -747,7 +768,7 @@ async function loadProfile() {
   avatarEl.textContent = initial;
   renderAvatar(profile.avatar_url);
   document.getElementById('prof-username').textContent = profile.username || 'Athlete';
-  const loc = [profile.city, profile.state].filter(Boolean).join(', ');
+  const loc = [profile.city, profile.state, profile.country].filter(Boolean).join(', ');
   const locEl = document.getElementById('prof-location');
   locEl.textContent = loc; locEl.style.display = loc ? 'block' : 'none';
   document.getElementById('prof-bio').textContent = profile.bio || '';
