@@ -111,7 +111,7 @@
         <button class="chip" data-type="partner">Partner WODs</button>
         <button class="chip" data-type="benchmark">Benchmarks</button>
         <button class="chip" data-type="user">User-Generated</button>
-        <button class="chip" data-type="daily">The Daily 20</button>
+        <button class="chip" data-type="daily">Daily 20</button>
       </div>
     </div>
     <div class="filter-section">
@@ -295,9 +295,9 @@
         if (wod) {
           const dateLabel = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
           wods.push({
-            name: `The Daily 20 \u2014 ${dateLabel}`,
+            name: `Daily 20 \u2014 ${dateLabel}`,
             category: 'daily',
-            format: wod.format,
+            format: ({'amrap':'AMRAP','emom':'EMOM','fortime':'For Time','circuit':'Circuit'})[wod.format] || wod.format,
             difficulty: difficulty,
             body_focus: bodyFocus,
             movements: (wod.rows || []).map(r => ({ name: r.movement })),

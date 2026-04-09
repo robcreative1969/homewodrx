@@ -551,7 +551,7 @@ async function generateRecentDailyWods(days) {
         wods.push({
           id:         dateStr,
           slug:       dateStr,
-          title:      `Daily WOD — ${dateLabel}`,
+          title:      `Daily 20 — ${dateLabel}`,
           category:   'daily',
           format:     wod.format,
           difficulty: difficulty,
@@ -832,7 +832,7 @@ function categoryBadge(cat) {
   if (cat === 'partner')   return '<span class="badge badge-partner">Partner WOD</span>';
   if (cat === 'benchmark') return '<span class="badge badge-benchmark">Benchmark</span>';
   if (cat === 'user')      return '<span class="badge badge-success">Community</span>';
-  if (cat === 'daily')     return '<span class="badge badge-orange">Daily WOD</span>';
+  if (cat === 'daily')     return '<span class="badge badge-orange">Daily 20</span>';
   return '';
 }
 
