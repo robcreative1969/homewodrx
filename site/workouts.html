@@ -111,7 +111,7 @@
         <button class="chip" data-type="partner">Partner WODs</button>
         <button class="chip" data-type="benchmark">Benchmarks</button>
         <button class="chip" data-type="user">User-Generated</button>
-        <button class="chip" data-type="daily">Daily WODs</button>
+        <button class="chip" data-type="daily">The Daily 20</button>
       </div>
     </div>
     <div class="filter-section">
@@ -295,7 +295,7 @@
         if (wod) {
           const dateLabel = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
           wods.push({
-            name: `Daily WOD \u2014 ${dateLabel}`,
+            name: `The Daily 20 \u2014 ${dateLabel}`,
             category: 'daily',
             format: wod.format,
             difficulty: difficulty,
@@ -368,7 +368,7 @@
           case 'partner':   return '<span class="badge badge-partner">Partner WOD</span>';
           case 'benchmark': return '<span class="badge badge-benchmark">Benchmark</span>';
           case 'user':      return '<span class="badge badge-success">Community</span>';
-          case 'daily':     return '<span class="badge badge-orange">Daily WOD</span>';
+          case 'daily':     return '<span class="badge badge-orange">Daily 20</span>';
           default:          return '';
         }
       })();
