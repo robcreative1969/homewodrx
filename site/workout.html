@@ -291,11 +291,10 @@
       vertical-align: top;
     }
     .movements-tbl tr:last-child td { border-bottom: none; }
+    .mv-cell { display: flex; flex-direction: column; gap: 0.2rem; }
     .tip-text {
-      display: block;
       font-size: 0.82rem;
       color: var(--text-muted, #888);
-      margin-top: 0.3rem;
       font-style: italic;
     }
     @media (max-width: 600px) {
@@ -841,8 +840,8 @@
                 ? `<td data-label="Rx"><span class="text-muted">${(m.rx_men || m.rx_women) ? `${m.rx_men || '—'} / ${m.rx_women || '—'}` : '—'}</span></td>`
                 : '';
               return `<tr>
-                <td data-label="Movement"><a href="/movement.html?slug=${slugify(mn)}" class="movement-link">${mn}</a>${tipHtml}</td>
-                <td data-label="Reps">${m.reps || '—'}</td>
+                <td data-label="Movement"><div class="mv-cell"><a href="/movement.html?slug=${slugify(mn)}" class="movement-link">${mn}</a>${tipHtml}</div></td>
+                <td data-label="Reps"><span>${m.reps || '—'}</span></td>
                 ${rxCell}
               </tr>`;
             }).join('')}
