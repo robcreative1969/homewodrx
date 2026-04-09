@@ -366,16 +366,12 @@ function applyFilters() {
 
 // ─── Update chip count badges after data loads ────────────────────────────────
 function updateChipCounts(byCategory) {
-  let total = 0;
   document.querySelectorAll('#category-chips .chip[data-cat]').forEach(chip => {
     const key = chip.dataset.cat;
     if (key === 'all') return;
     const count = (byCategory[key] || []).length;
-    total += count;
     if (count) chip.textContent = `${chip.textContent} (${count})`;
   });
-  const allChip = document.querySelector('#category-chips .chip[data-cat="all"]');
-  if (allChip && total) allChip.textContent = `All (${total})`;
 }
 
 // ─── Wire up filter bar interactions ─────────────────────────────────────────
