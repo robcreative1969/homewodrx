@@ -64,7 +64,7 @@ const Nav = {
     const navLinks = [
       { text: 'Workouts', href: '/workouts.html', page: 'workouts' },
       { text: 'Movements', href: '/movements.html', page: 'movements' },
-      { text: 'Generator', href: '/generator.html', page: 'generator' },
+      { text: 'Smart WOD Builder', href: '/generator.html', page: 'generator' },
       { text: 'Shop', href: '/shop.html', page: 'shop' }
     ];
 

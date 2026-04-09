@@ -198,7 +198,7 @@ const DailyWOD = {
 
     // Check for manual override first
     const override = await this.getManualOverride(dateStr);
-    if (override) return { ...override, isManual: true, date: dateStr };
+    if (override) return { ...override, duration: 20, isManual: true, date: dateStr };
 
     // Get admin config and movement pool in parallel
     const [config, movementDB] = await Promise.all([this.getConfig(), this._loadMovements()]);
@@ -210,8 +210,7 @@ const DailyWOD = {
     const difficulty = config.difficultyByDay[dayOfWeek] || 'intermediate';
     const bodyFocus  = config.bodyFocusByDay[dayOfWeek]  || 'full-body';
     const format     = config.formatByDay[dayOfWeek]     || 'amrap';
-    const durRange   = config.durationByDay[dayOfWeek]   || [20, 30];
-    const duration   = durRange[0] + Math.floor(rng() * (durRange[1] - durRange[0] + 1));
+    const duration   = 20; // The Daily 20 is always 20 minutes
     const equipment  = config.equipment || ['bodyweight'];
 
     // Build movement pool from Supabase data (with JS fallback)
@@ -353,7 +352,7 @@ const DailyWOD = {
     const count = duration <= 15 ? 3 : duration <= 25 ? 4 : 5;
     const sel = this._balancedPick(pool, count, rng);
     return {
-      title: `${duration}-Minute AMRAP`,
+      title: `Daily 20: AMRAP`,
       format: 'amrap',
       description: `Complete as many rounds as possible in ${duration} minutes. Pace yourself — the goal is consistent rounds from start to finish.`,
       rows: sel.map(m => ({ movement: m.name, reps: String(this._getReps(m, level)), tip: m.tip, _eq: m._eq })),
@@ -365,7 +364,7 @@ const DailyWOD = {
     const movCount = Math.min(4, Math.max(2, Math.floor(duration / 4)));
     const sel = this._balancedPick(pool, movCount, rng);
     return {
-      title: `${duration}-Minute EMOM`,
+      title: `Daily 20: EMOM`,
       format: 'emom',
       description: `Every Minute On the Minute for ${duration} minutes. Complete the designated work at the top of each minute; rest whatever remains.`,
       rows: sel.map((m, i) => ({ movement: m.name, reps: `Min ${i+1} (repeat): ${this._getReps(m, level)} reps`, tip: m.tip, _eq: m._eq })),
@@ -380,7 +379,7 @@ const DailyWOD = {
     const scheme = schemes[level];
     const sel = this._balancedPick(pool, 3, rng);
     return {
-      title: `For Time — ${scheme.join('-')}`,
+      title: `Daily 20: For Time`,
       format: 'fortime',
       timeCap: 20,
       description: `Complete all rounds for time using the ${scheme.join('-')} rep scheme. 20-minute time cap — if you hit the cap, record your reps completed.`,
@@ -394,7 +393,7 @@ const DailyWOD = {
     const rounds = duration <= 15 ? 3 : duration <= 30 ? 4 : 5;
     const sel = this._balancedPick(pool, movCount, rng);
     return {
-      title: `${rounds}-Round Circuit`,
+      title: `Daily 20: Circuit`,
       format: 'circuit',
       description: `Complete all ${movCount} movements back-to-back with minimal rest. Rest 60 seconds between rounds. ${rounds} rounds total.`,
       rows: sel.map(m => ({ movement: m.name, reps: String(this._getReps(m, level)), tip: m.tip, _eq: m._eq })),
