@@ -89,7 +89,7 @@
   .wod-date{font-size:11px;color:var(--mu);margin-left:auto}
   .wod-card-top h3{font-size:20px;font-weight:900;margin-bottom:6px}
   .wod-card-meta{display:flex;gap:6px;flex-wrap:wrap}
-  .chip{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700}
+  .chip{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;cursor:default;pointer-events:none}
   .chip-or{background:rgba(196,18,18,.2);color:var(--or);border:1px solid rgba(196,18,18,.4)}
   .chip-mu{background:var(--dk2);color:var(--mu);border:1px solid var(--bd)}
   .chip-gr{background:rgba(39,174,96,.2);color:#58d68d;border:1px solid rgba(39,174,96,.3)}
@@ -173,7 +173,7 @@
   .ws-body h3{font-size:15px;font-weight:900;margin-bottom:6px;color:var(--tx)}
   .ws-body p{font-size:13px;color:var(--mu);line-height:1.6;margin-bottom:10px}
   .ws-chips{display:flex;flex-wrap:wrap;gap:6px}
-  .ws-chip{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;background:var(--dk2);color:var(--mu);border:1px solid var(--bd)}
+  .ws-chip{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;background:var(--dk2);color:var(--mu);border:1px solid var(--bd);cursor:default;pointer-events:none}
   .ws-arrow{font-size:18px;color:var(--or);flex-shrink:0;align-self:center;opacity:.7;transition:opacity .2s,transform .2s}
   .workout-style-card:hover .ws-arrow{opacity:1;transform:translateX(3px)}
   </style>
@@ -205,8 +205,8 @@
   <!-- CHOOSE YOUR WORKOUT STYLE -->
   <div class="home-section" style="padding-top:32px;padding-bottom:32px">
     <div class="home-section-hdr" style="margin-bottom:18px">
-      <h2>Choose your workout style</h2>
-      <span style="font-size:13px;color:var(--mu)">Three ways to train — all free, all built for home athletes.</span>
+      <h2>Choose Your Workout Style</h2>
+      <span style="font-size:13px;color:var(--mu)">Three ways to train — built for home athletes.</span>
     </div>
     <div class="workout-style-grid">
       <a class="workout-style-card" href="/daily-wod.html">
@@ -217,7 +217,6 @@
           <div class="ws-chips">
             <span class="ws-chip">20 min</span>
             <span class="ws-chip">Auto-generated</span>
-            <span class="ws-chip">Always free</span>
           </div>
         </div>
         <div class="ws-arrow">→</div>
@@ -230,7 +229,6 @@
           <div class="ws-chips">
             <span class="ws-chip">On demand</span>
             <span class="ws-chip">Your gear</span>
-            <span class="ws-chip">Always free</span>
           </div>
         </div>
         <div class="ws-arrow">→</div>
@@ -243,8 +241,8 @@
           <div class="ws-chips">
             <span class="ws-chip">Full control</span>
             <span class="ws-chip">Save &amp; share</span>
-            <span class="ws-chip">Free account</span>
           </div>
+          <p style="font-size:11px;color:var(--mu);margin-top:8px">Requires a HomeWODRx account — <a href="/signup.html" style="color:var(--or);font-weight:700" onclick="event.stopPropagation()">sign up here</a></p>
         </div>
         <div class="ws-arrow">→</div>
       </a>
@@ -311,7 +309,7 @@
             <a href="/workouts.html" class="wod-footer-btn wfb-sec">Browse Benchmarks →</a>
           </div>
         </div>
-        <p style="font-size:11px;color:var(--mu);margin-top:8px;text-align:center">🔄 Rotates every Monday · master this one before next week</p>
+        <p style="font-size:11px;color:var(--mu);margin-top:8px;text-align:center">🔄 Rotates every Monday · test yourself with this benchmark WOD</p>
       </div>
 
     </div>
