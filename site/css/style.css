@@ -729,9 +729,10 @@ tbody tr:last-child td {
   display: inline-flex;
   align-items: center;
   padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: 20px;
+  border-radius: 4px;
   font-size: 0.85rem;
   font-weight: 600;
+  cursor: default;
 }
 
 .badge-orange {
