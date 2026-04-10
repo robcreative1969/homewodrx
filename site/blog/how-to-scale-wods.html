@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Sentry Error Monitoring -->
+  <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How to Scale Any WOD for Your Fitness Level | HomeWODrx Blog</title>
+  <meta name="description" content="Scaling a WOD isn't cheating — it's smart training. Learn the principles behind scaling weight, volume, and movements so every workout challenges you at exactly the right level.">
+  <meta property="og:title" content="How to Scale Any WOD for Your Fitness Level | HomeWODrx">
+  <meta property="og:description" content="Scaling isn't quitting. Learn how to modify weight, reps, and movements to get the intended stimulus from any WOD.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://homewodrx.com/blog/how-to-scale-wods">
+  <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://homewodrx.com/images/og-default.png">
+  <link rel="canonical" href="https://homewodrx.com/blog/how-to-scale-wods">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "How to Scale Any WOD for Your Fitness Level (Without Feeling Like You Cheated)",
+    "description": "Learn the principles behind scaling weight, volume, and movements so every workout challenges you at exactly the right level.",
+    "datePublished": "2026-04-10",
+    "dateModified": "2026-04-10",
+    "author": { "@type": "Organization", "name": "HomeWODrx" },
+    "publisher": { "@type": "Organization", "name": "HomeWODrx", "url": "https://homewodrx.com" },
+    "url": "https://homewodrx.com/blog/how-to-scale-wods",
+    "mainEntityOfPage": "https://homewodrx.com/blog/how-to-scale-wods",
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://homewodrx.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://homewodrx.com/blog" },
+        { "@type": "ListItem", "position": 3, "name": "How to Scale WODs", "item": "https://homewodrx.com/blog/how-to-scale-wods" }
+      ]
+    }
+  }
+  </script>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/db.js"></script>
+  <script src="/js/nav.js"></script>
+  <style>
+    .post-container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+    .post-breadcrumb {
+      padding: 20px 0 0;
+      font-size: 13px;
+      color: var(--mu);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .post-breadcrumb a { color: var(--mu); text-decoration: none; }
+    .post-breadcrumb a:hover { color: var(--or); }
+    .post-breadcrumb .sep { color: var(--bd); }
+
+    .post-header {
+      padding: 28px 0 32px;
+      border-bottom: 1px solid var(--bd);
+      margin-bottom: 36px;
+    }
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .post-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      background: rgba(5,150,105,.15);
+      color: #34d399;
+    }
+    .post-date, .post-readtime { font-size: 13px; color: var(--mu); }
+    .post-header h1 {
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      letter-spacing: -.3px;
+    }
+    .post-header .post-intro {
+      font-size: 17px;
+      color: var(--mu);
+      line-height: 1.75;
+      margin: 0;
+    }
+
+    .post-body { font-size: 16px; line-height: 1.8; color: var(--tx); }
+    .post-body h2 {
+      font-size: 22px;
+      font-weight: 800;
+      margin: 40px 0 14px;
+      border-left: 3px solid var(--or);
+      padding-left: 14px;
+    }
+    .post-body h3 { font-size: 18px; font-weight: 700; margin: 28px 0 10px; }
+    .post-body p { margin-bottom: 20px; }
+    .post-body ul, .post-body ol { margin: 0 0 20px 20px; }
+    .post-body li { margin-bottom: 8px; line-height: 1.7; }
+    .post-body strong { font-weight: 700; }
+    .post-body a { color: var(--or); text-decoration: none; font-weight: 600; }
+    .post-body a:hover { color: var(--orl); }
+
+    .callout {
+      background: rgba(196,18,18,.07);
+      border: 1px solid rgba(196,18,18,.25);
+      border-left: 3px solid var(--or);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 28px 0;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+    .callout strong { color: var(--or); }
+
+    /* Scaling example table */
+    .scale-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+      font-size: 14px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .scale-table th {
+      background: var(--card);
+      padding: 12px 14px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      color: var(--mu);
+      border-bottom: 2px solid var(--bd);
+    }
+    .scale-table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--bd);
+      color: var(--tx);
+      line-height: 1.5;
+    }
+    .scale-table tr:last-child td { border-bottom: none; }
+    .scale-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+    .scale-table .level {
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+    }
+    .level.rx { color: var(--or); }
+    .level.scaled { color: #60a5fa; }
+    .level.beginner { color: #34d399; }
+
+    .post-related {
+      border-top: 1px solid var(--bd);
+      padding-top: 36px;
+      margin-top: 52px;
+    }
+    .post-related h3 {
+      font-size: 16px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--mu);
+      margin-bottom: 20px;
+    }
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .related-card {
+      background: var(--card);
+      border: 1px solid var(--bd);
+      border-radius: 10px;
+      padding: 16px 18px;
+      text-decoration: none;
+      transition: border-color .15s;
+    }
+    .related-card:hover { border-color: var(--or); }
+    .related-card .r-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--mu);
+      margin-bottom: 6px;
+    }
+    .related-card h4 { font-size: 15px; font-weight: 700; color: var(--tx); line-height: 1.35; }
+  </style>
+</head>
+<body data-nav-init="true" data-active-page="blog">
+<main>
+  <div class="post-container">
+
+    <nav class="post-breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span class="sep">›</span>
+      <a href="/blog">Blog</a>
+      <span class="sep">›</span>
+      <span>How to Scale WODs</span>
+    </nav>
+
+    <header class="post-header">
+      <div class="post-meta">
+        <span class="post-tag">Technique</span>
+        <span class="post-date">April 10, 2026</span>
+        <span class="post-readtime">· 6 min read</span>
+      </div>
+      <h1>How to Scale Any WOD for Your Fitness Level (Without Feeling Like You Cheated)</h1>
+      <p class="post-intro">Scaling isn't quitting — it's smart training. Understanding how and when to modify a workout is one of the most important skills you'll develop as a functional fitness athlete.</p>
+    </header>
+
+    <article class="post-body">
+
+      <p>One of the most common things we hear from newer athletes — and even experienced ones — is a reluctance to scale workouts. "I want to do it Rx." "Scaling feels like cheating." "I'll just go slower."</p>
+
+      <p>Here's the thing: going slower at a weight or movement pattern that's beyond your current capacity doesn't give you the intended training stimulus. It often means grinding through poor mechanics under fatigue, which increases injury risk and actually slows your progress. Scaling correctly does the opposite — it keeps the workout hard in the right way.</p>
+
+      <p>This guide covers how to think about scaling, when to do it, and the specific modifications that preserve the intent of the workouts you'll find in the HomeWODrx library.</p>
+
+      <h2>What "Rx" Actually Means</h2>
+
+      <p>Rx (short for "as prescribed") means completing the workout at the listed standards — full weight, full range of motion, every rep. It's a reference point, not a requirement. The standards were usually set for competitive athletes, not everyday trainees who are still building capacity.</p>
+
+      <p>The intended stimulus of a workout — the physiological effect the workout is designed to produce — is what matters. A 7-minute Fran is supposed to feel like a sprint that leaves you collapsed on the floor. If you go Rx but your Fran takes 22 minutes because the weight is too heavy, you're not doing a sprint. You're doing something else, and it's not better just because the weight is heavier.</p>
+
+      <div class="callout">
+        <strong>The goal of scaling:</strong> Match the intended stimulus, not the written standard. A well-scaled workout will challenge you at the same relative intensity as Rx challenges an experienced athlete.
+      </div>
+
+      <h2>The Three Types of Scaling</h2>
+
+      <h3>1. Weight Scaling</h3>
+
+      <p>The most common type of scaling. You reduce the load to a weight you can move well and quickly — not just survive. A good rule of thumb: if you can't complete at least the first round of the workout with good mechanics and some pace, the weight is too heavy.</p>
+
+      <p>Weight scaling doesn't mean "go light." It means choosing a load that's challenging for you specifically. For some athletes, 75lb thrusters is a sprint workout. For others, 45lb is the right stimulus. Both can walk away having done the same workout.</p>
+
+      <h3>2. Volume Scaling</h3>
+
+      <p>Reducing the number of reps while keeping everything else the same. This is appropriate when the movement is correct and the weight is fine, but the volume is simply more than your current work capacity can handle in a reasonable timeframe. Common for Hero WODs — instead of Murph straight through, you might do 50 pull-ups, 100 push-ups, and 150 air squats.</p>
+
+      <h3>3. Movement Substitution</h3>
+
+      <p>Replacing a movement you can't yet perform (or don't have equipment for) with one that trains the same pattern or energy system. This is where home gym athletes have to get creative — and where knowing your movement fundamentals really pays off.</p>
+
+      <h2>Common Movement Substitutions</h2>
+
+      <table class="scale-table">
+        <thead>
+          <tr>
+            <th>Rx Movement</th>
+            <th>Scaled Option</th>
+            <th>Beginner Option</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Pull-ups</td>
+            <td>Jumping pull-ups / Banded pull-ups</td>
+            <td>Ring rows</td>
+          </tr>
+          <tr>
+            <td>Handstand push-ups</td>
+            <td>Pike push-ups</td>
+            <td>DB strict press (moderate weight)</td>
+          </tr>
+          <tr>
+            <td>Muscle-ups</td>
+            <td>Chest-to-bar pull-ups</td>
+            <td>Pull-up + dip (separate)</td>
+          </tr>
+          <tr>
+            <td>Double-unders</td>
+            <td>Single-unders (2:1 ratio)</td>
+            <td>Line hops or step-throughs</td>
+          </tr>
+          <tr>
+            <td>Toes-to-bar</td>
+            <td>Hanging knee raises</td>
+            <td>Sit-ups or V-ups</td>
+          </tr>
+          <tr>
+            <td>Bar muscle-up</td>
+            <td>Chest-to-bar pull-up</td>
+            <td>Pull-up</td>
+          </tr>
+          <tr>
+            <td>Rope climb (15ft)</td>
+            <td>3 rope pull-ups</td>
+            <td>5 ring rows</td>
+          </tr>
+          <tr>
+            <td>1-mile run</td>
+            <td>2,000m row</td>
+            <td>3,000m bike erg</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>How to Scale Benchmark WODs Specifically</h2>
+
+      <h3>Fran (21-15-9 thrusters and pull-ups)</h3>
+
+      <p>Fran is designed to be a <em>fast</em> sprint — ideally sub-10 minutes, under 7 for competitive athletes. If 95/65lb thrusters are going to make this a 20-minute slog for you, drop the weight. 75lb or even 55lb thrusters that allow you to move quickly will give you more of the intended stimulus than grinding through heavy reps.</p>
+
+      <p>For pull-ups: banded pull-ups preserve the vertical pulling pattern better than ring rows in this context. If you have a band, use it.</p>
+
+      <h3>Cindy (20-minute AMRAP: 5 pull-ups, 10 push-ups, 15 squats)</h3>
+
+      <p>Cindy is a great workout to do close to Rx because the movements are scalable without changing the written standards much. If pull-ups are the limiting factor, try a band. If push-ups are failing, drop to your knees to stay moving — the intent is continuous movement, not max difficulty per rep.</p>
+
+      <h3>Murph</h3>
+
+      <p>Murph is one of the most-scaled Hero WODs. For athletes who aren't yet ready for the full volume:</p>
+      <ul>
+        <li>Half Murph: 1/2-mile run, 50 pull-ups, 100 push-ups, 150 squats, 1/2-mile run</li>
+        <li>Remove the vest (it adds significant metabolic cost and should be earned, not assumed)</li>
+        <li>Partition the middle section into sets of 5 pull-ups / 10 push-ups / 15 squats</li>
+        <li>Sub ring rows for pull-ups if needed</li>
+      </ul>
+
+      <h2>When You Should Push Through Without Scaling</h2>
+
+      <p>Scaling isn't always the answer. If a workout is hard but technically within your capacity — you know you can do the movements, the weight is manageable, it's just going to be uncomfortable — sometimes the right call is to stay at the standard and accept that it'll take you longer than you'd like.</p>
+
+      <p>Progressive adaptation requires exposure to difficulty. If you scale every time something feels hard, you never build the capacity to do things at the harder level. The question to ask is: <strong>am I scaling because I can't do this safely, or because I don't want to be uncomfortable?</strong> Those are different answers.</p>
+
+      <div class="callout">
+        <strong>A simple rule:</strong> Scale to protect mechanics and preserve the intended time domain. Don't scale to avoid effort.
+      </div>
+
+      <h2>Using HomeWODrx to Find the Right Version for You</h2>
+
+      <p>The <a href="/generator">Smart WOD Builder</a> lets you filter workouts by equipment, modality, and time target — so you can find workouts that match your current capacity rather than constantly modifying benchmarks. For athletes building toward Rx standards, this is a better long-term strategy than forcing scaled versions of workouts that aren't appropriate yet.</p>
+
+      <p>You can also browse the full <a href="/workouts">benchmark library</a> and sort by workout type to find formats that work for your current training phase.</p>
+
+      <h2>Final Thoughts</h2>
+
+      <p>Scaling is a skill. It requires self-awareness, honesty about your current capacity, and a clear understanding of what a workout is supposed to feel like. The athletes who improve fastest aren't the ones who go Rx the earliest — they're the ones who train at the right intensity consistently over time.</p>
+
+      <p>Scale smart, move well, and show up tomorrow. That's the whole game.</p>
+
+    </article>
+
+    <section class="post-related">
+      <h3>More from the blog</h3>
+      <div class="related-grid">
+        <a href="/blog/hero-wod-guide" class="related-card">
+          <div class="r-tag">Training</div>
+          <h4>The Complete Guide to CrossFit Hero WODs</h4>
+        </a>
+        <a href="/blog/best-home-gym-equipment" class="related-card">
+          <div class="r-tag">Equipment</div>
+          <h4>Best Home Gym Equipment for CrossFit-Style Training (2026)</h4>
+        </a>
+      </div>
+    </section>
+
+  </div>
+</main>
+</body>
+</html>

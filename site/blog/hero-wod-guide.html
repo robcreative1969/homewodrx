@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Sentry Error Monitoring -->
+  <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Complete Guide to CrossFit Hero WODs | HomeWODrx Blog</title>
+  <meta name="description" content="Everything you need to know about CrossFit Hero WODs — their history, what makes them different, and how to approach them strategically whether you're a beginner or advanced athlete.">
+  <meta property="og:title" content="The Complete Guide to CrossFit Hero WODs | HomeWODrx">
+  <meta property="og:description" content="Hero WODs are brutal, meaningful, and unlike any other benchmark. Here's the full guide to what they are and how to attack them.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://homewodrx.com/blog/hero-wod-guide">
+  <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://homewodrx.com/images/og-default.png">
+  <link rel="canonical" href="https://homewodrx.com/blog/hero-wod-guide">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The Complete Guide to CrossFit Hero WODs: History, Purpose, and How to Attack Them",
+    "description": "Everything you need to know about CrossFit Hero WODs — their history, what makes them different, and how to approach them strategically.",
+    "datePublished": "2026-04-10",
+    "dateModified": "2026-04-10",
+    "author": { "@type": "Organization", "name": "HomeWODrx" },
+    "publisher": { "@type": "Organization", "name": "HomeWODrx", "url": "https://homewodrx.com" },
+    "url": "https://homewodrx.com/blog/hero-wod-guide",
+    "mainEntityOfPage": "https://homewodrx.com/blog/hero-wod-guide",
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://homewodrx.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://homewodrx.com/blog" },
+        { "@type": "ListItem", "position": 3, "name": "Hero WOD Guide", "item": "https://homewodrx.com/blog/hero-wod-guide" }
+      ]
+    }
+  }
+  </script>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/db.js"></script>
+  <script src="/js/nav.js"></script>
+  <style>
+    .post-container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+    .post-breadcrumb {
+      padding: 20px 0 0;
+      font-size: 13px;
+      color: var(--mu);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .post-breadcrumb a { color: var(--mu); text-decoration: none; }
+    .post-breadcrumb a:hover { color: var(--or); }
+    .post-breadcrumb .sep { color: var(--bd); }
+
+    .post-header {
+      padding: 28px 0 32px;
+      border-bottom: 1px solid var(--bd);
+      margin-bottom: 36px;
+    }
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .post-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      background: rgba(196,18,18,.15);
+      color: #e85555;
+    }
+    .post-date, .post-readtime {
+      font-size: 13px;
+      color: var(--mu);
+    }
+    .post-header h1 {
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      letter-spacing: -.3px;
+    }
+    .post-header .post-intro {
+      font-size: 17px;
+      color: var(--mu);
+      line-height: 1.75;
+      margin: 0;
+    }
+
+    /* Article body */
+    .post-body { font-size: 16px; line-height: 1.8; color: var(--tx); }
+    .post-body h2 {
+      font-size: 22px;
+      font-weight: 800;
+      margin: 40px 0 14px;
+      color: var(--tx);
+      border-left: 3px solid var(--or);
+      padding-left: 14px;
+    }
+    .post-body h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 28px 0 10px;
+      color: var(--tx);
+    }
+    .post-body p { margin-bottom: 20px; }
+    .post-body ul, .post-body ol {
+      margin: 0 0 20px 20px;
+    }
+    .post-body li { margin-bottom: 8px; line-height: 1.7; }
+    .post-body strong { color: var(--tx); font-weight: 700; }
+
+    /* Callout box */
+    .callout {
+      background: rgba(196,18,18,.07);
+      border: 1px solid rgba(196,18,18,.25);
+      border-left: 3px solid var(--or);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 28px 0;
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--tx);
+    }
+    .callout strong { color: var(--or); }
+
+    /* WOD preview card */
+    .wod-card {
+      background: var(--card);
+      border: 1px solid var(--bd);
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin: 24px 0;
+      font-size: 15px;
+    }
+    .wod-card-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--or);
+      margin-bottom: 8px;
+    }
+    .wod-card h4 {
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--tx);
+    }
+    .wod-card p { color: var(--mu); margin-bottom: 10px; font-size: 14px; line-height: 1.65; }
+    .wod-card a.wod-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--or);
+      text-decoration: none;
+    }
+    .wod-card a.wod-link:hover { color: var(--orl); }
+
+    /* Related posts */
+    .post-related {
+      border-top: 1px solid var(--bd);
+      padding-top: 36px;
+      margin-top: 52px;
+    }
+    .post-related h3 {
+      font-size: 16px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--mu);
+      margin-bottom: 20px;
+    }
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .related-card {
+      background: var(--card);
+      border: 1px solid var(--bd);
+      border-radius: 10px;
+      padding: 16px 18px;
+      text-decoration: none;
+      transition: border-color .15s;
+    }
+    .related-card:hover { border-color: var(--or); }
+    .related-card .r-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--mu);
+      margin-bottom: 6px;
+    }
+    .related-card h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--tx);
+      line-height: 1.35;
+    }
+  </style>
+</head>
+<body data-nav-init="true" data-active-page="blog">
+<main>
+  <div class="post-container">
+
+    <nav class="post-breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span class="sep">›</span>
+      <a href="/blog">Blog</a>
+      <span class="sep">›</span>
+      <span>Hero WOD Guide</span>
+    </nav>
+
+    <header class="post-header">
+      <div class="post-meta">
+        <span class="post-tag">Training</span>
+        <span class="post-date">April 10, 2026</span>
+        <span class="post-readtime">· 8 min read</span>
+      </div>
+      <h1>The Complete Guide to CrossFit Hero WODs: History, Purpose, and How to Attack Them</h1>
+      <p class="post-intro">Hero WODs are unlike anything else in functional fitness. They're longer, harder, and carry a weight that goes beyond the whiteboard. Here's everything you need to know before you tackle one.</p>
+    </header>
+
+    <article class="post-body">
+
+      <p>If you've been doing CrossFit for any amount of time, you've heard the name "Murph" — and if you've actually done it, you remember it. That's the point. Hero WODs are designed to be memorable, because the people they're named after deserve to be remembered.</p>
+
+      <p>But Hero WODs are often misunderstood. Athletes either approach them with reckless bravado (going out too hot and burning out by round three) or skip them entirely because they feel inaccessible. Neither approach does justice to the workout or its namesake. This guide covers both the story and the strategy.</p>
+
+      <h2>What Are Hero WODs?</h2>
+
+      <p>Hero WODs are benchmark workouts named after military service members, law enforcement officers, or first responders who died in the line of duty. CrossFit began creating these workouts as a way to honor fallen heroes and create a lasting tribute that the fitness community would return to year after year.</p>
+
+      <p>The workouts are intentionally hard. They're designed to be a challenge that matches the sacrifice being honored — not just a tough Tuesday session, but something that lingers in your memory. When you struggle through the back half of Murph or feel your grip give out on the last set of Holleyman, there's a purpose behind that suffering.</p>
+
+      <div class="callout">
+        <strong>Why Hero WODs matter beyond fitness:</strong> Each time you complete a Hero WOD, you're participating in a community act of remembrance. For many families of fallen service members, knowing that thousands of athletes perform a workout in their loved one's name every year is deeply meaningful.
+      </div>
+
+      <h2>Hero WODs vs. Girl WODs: What's the Difference?</h2>
+
+      <p>The "Girl WODs" — Fran, Grace, Diane, Isabel, and their counterparts — are benchmark workouts designed to test specific athletic capacities in a short, intense format. Fran is a sprint. Grace is a power test. They're repeatable in a training cycle and used to measure progress over time.</p>
+
+      <p>Hero WODs occupy a different category entirely. They tend to be longer, more complex, and deliberately grueling. Where a Girl WOD might take 2–10 minutes at full intensity, a Hero WOD could take 30–60+ minutes. Some are structured for time; others are AMRAP formats that allow for a more self-regulated pace. Most involve heavy compound movements combined with high-rep gymnastics or monostructural cardio.</p>
+
+      <p>Think of it this way: Girl WODs tell you how fit you are. Hero WODs ask how much you're willing to give.</p>
+
+      <h2>Famous Hero WODs You Should Know</h2>
+
+      <h3>Murph</h3>
+
+      <div class="wod-card">
+        <div class="wod-card-title">Hero WOD</div>
+        <h4>Murph</h4>
+        <p>1-mile run, 100 pull-ups, 200 push-ups, 300 air squats, 1-mile run — for time. Wear a 20lb vest if possible.</p>
+        <p>Named after Navy Lieutenant Michael Murphy, killed in action in Afghanistan in 2005. Murphy was posthumously awarded the Medal of Honor.</p>
+        <a href="/workouts/murph" class="wod-link">View full workout + scaling options →</a>
+      </div>
+
+      <h3>DT</h3>
+
+      <div class="wod-card">
+        <div class="wod-card-title">Hero WOD</div>
+        <h4>DT</h4>
+        <p>5 rounds for time: 12 deadlifts, 9 hang power cleans, 6 push jerks — all at 155/105 lb.</p>
+        <p>Named after USAF Staff Sergeant Timothy P. Davis, killed in action in Afghanistan in 2009.</p>
+        <a href="/workouts/dt" class="wod-link">View full workout + scaling options →</a>
+      </div>
+
+      <h3>Holleyman</h3>
+
+      <div class="wod-card">
+        <div class="wod-card-title">Hero WOD</div>
+        <h4>Holleyman</h4>
+        <p>30 rounds for time: 5 wall ball shots (20/14lb), 3 handstand push-ups, 1 power clean (225/155lb).</p>
+        <p>Named after Army Staff Sergeant Aaron N. Holleyman, killed in action in Iraq in 2004.</p>
+        <a href="/workouts/holleyman" class="wod-link">View full workout + scaling options →</a>
+      </div>
+
+      <h2>How to Approach a Hero WOD Strategically</h2>
+
+      <p>The biggest mistake athletes make with Hero WODs is treating them like a regular benchmark — going out at 90% and hoping to hold on. That strategy works for a 5-minute AMRAP. It will break you in a 40-minute grinder.</p>
+
+      <h3>1. Start conservatively</h3>
+
+      <p>Whatever pace feels sustainable in the first round, dial it back 20%. Hero WODs have a way of compounding — movements that feel manageable in round one become genuinely hard by round eight. If you feel good early, you have room to push later. If you blow up early, you have nowhere to go.</p>
+
+      <h3>2. Break movements before you fail them</h3>
+
+      <p>Planned rest beats forced rest every time. If you're doing Murph and you plan to break pull-ups into sets of 5, do that from round one — don't go to failure and then rest. Short, consistent breaks keep your heart rate from spiking and allow you to keep moving through the whole workout.</p>
+
+      <h3>3. Scale appropriately and without guilt</h3>
+
+      <p>Scaling a Hero WOD is not disrespecting the person it's named after. Going too heavy or too complex and then quitting halfway through actually does more disrespect than completing a well-scaled version with full effort. Ring rows instead of pull-ups, a lighter barbell, or removing the weight vest are all valid choices — especially for athletes newer to these formats.</p>
+
+      <h3>4. Respect the volume</h3>
+
+      <p>Many Hero WODs involve movement combinations that, at competition standards, could cause injury if you're not prepared. Holleyman's 30 power cleans at 225lb, for example, demands that your hinge pattern and catch position are solid before you load it heavy. Take the time to warm up thoroughly and understand the intended stimulus before you begin.</p>
+
+      <h2>Scaling Hero WODs for Home Gym Athletes</h2>
+
+      <p>One of the most common challenges for home gym athletes is that Hero WODs often include equipment you might not have — a pull-up bar, a heavy barbell, or open space for a mile run. Here are practical substitutions that preserve the intent of the workout:</p>
+
+      <ul>
+        <li><strong>Pull-ups → ring rows or banded pull-ups</strong> if you're still building upper body pulling strength</li>
+        <li><strong>Handstand push-ups → pike push-ups or dumbbell strict press</strong> as a volume substitute</li>
+        <li><strong>Mile run → 2,000m row or 3,000m bike erg</strong> for similar cardiovascular demand</li>
+        <li><strong>Heavy barbell → moderate dumbbell or kettlebell complex</strong> when you don't have the loading available</li>
+      </ul>
+
+      <p>The goal is to finish at a similar level of exhaustion as the intended workout — not to find the easiest possible version.</p>
+
+      <h2>When Should You Program Hero WODs?</h2>
+
+      <p>Hero WODs are not everyday training. Most experienced coaches recommend treating them like a test day — something you do once every few weeks or on a specific occasion (Murph on Memorial Day, for example). They take significant recovery time and can affect your training for several days afterward.</p>
+
+      <p>If you're following a structured program, consider placing Hero WODs on a day after adequate rest, with easy active recovery planned for the 48 hours following. Don't program a heavy squat session the day after Murph and expect it to go well.</p>
+
+      <div class="callout">
+        <strong>Ready to try one?</strong> Browse all Hero WODs in the HomeWODrx database — each one includes the full workout description, scaling options, and background on the service member it honors. <a href="/workouts?category=hero" style="color:var(--or);font-weight:700;">View all Hero WODs →</a>
+      </div>
+
+      <h2>Final Thoughts</h2>
+
+      <p>Hero WODs are some of the most meaningful training you'll do as a functional fitness athlete. They connect you to something larger than a PR or a leaderboard position. They're hard by design, and that difficulty is the tribute.</p>
+
+      <p>Approach them with the right mix of respect and strategy — go in prepared, scale honestly, and give full effort regardless of how that looks on the whiteboard. The name on the workout deserves your best, whatever that is on that day.</p>
+
+    </article>
+
+    <section class="post-related">
+      <h3>More from the blog</h3>
+      <div class="related-grid">
+        <a href="/blog/best-home-gym-equipment" class="related-card">
+          <div class="r-tag">Equipment</div>
+          <h4>Best Home Gym Equipment for CrossFit-Style Training (2026)</h4>
+        </a>
+        <a href="/blog/how-to-scale-wods" class="related-card">
+          <div class="r-tag">Technique</div>
+          <h4>How to Scale Any WOD Without Feeling Like You Cheated</h4>
+        </a>
+      </div>
+    </section>
+
+  </div>
+</main>
+</body>
+</html>

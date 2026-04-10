@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════════════╗
+  ║  HOMEWODRX BLOG POST TEMPLATE                               ║
+  ║  To create a new post:                                      ║
+  ║  1. Duplicate this file into /blog/your-post-slug.html      ║
+  ║  2. Fill in all <!-- EDIT: --> sections below               ║
+  ║  3. Add a card to /blog.html (copy an existing card block)  ║
+  ║  4. Upload both files to GitHub                             ║
+  ╚══════════════════════════════════════════════════════════════╝
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Sentry Error Monitoring -->
+  <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- EDIT: SEO title (keep under 60 chars) -->
+  <title>EDIT POST TITLE | HomeWODrx Blog</title>
+
+  <!-- EDIT: Meta description (keep under 155 chars) -->
+  <meta name="description" content="EDIT META DESCRIPTION">
+
+  <!-- EDIT: OG tags (for social sharing) -->
+  <meta property="og:title" content="EDIT OG TITLE | HomeWODrx">
+  <meta property="og:description" content="EDIT OG DESCRIPTION">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://homewodrx.com/blog/YOUR-POST-SLUG">
+  <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://homewodrx.com/images/og-default.png">
+  <link rel="canonical" href="https://homewodrx.com/blog/YOUR-POST-SLUG">
+
+  <!-- EDIT: Article schema (dates + headline) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "EDIT HEADLINE",
+    "description": "EDIT DESCRIPTION",
+    "datePublished": "YYYY-MM-DD",
+    "dateModified": "YYYY-MM-DD",
+    "author": { "@type": "Organization", "name": "HomeWODrx" },
+    "publisher": { "@type": "Organization", "name": "HomeWODrx", "url": "https://homewodrx.com" },
+    "url": "https://homewodrx.com/blog/YOUR-POST-SLUG",
+    "mainEntityOfPage": "https://homewodrx.com/blog/YOUR-POST-SLUG",
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://homewodrx.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://homewodrx.com/blog" },
+        { "@type": "ListItem", "position": 3, "name": "EDIT POST NAME", "item": "https://homewodrx.com/blog/YOUR-POST-SLUG" }
+      ]
+    }
+  }
+  </script>
+
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/db.js"></script>
+  <script src="/js/nav.js"></script>
+  <style>
+    .post-container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+    .post-breadcrumb {
+      padding: 20px 0 0;
+      font-size: 13px;
+      color: var(--mu);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .post-breadcrumb a { color: var(--mu); text-decoration: none; }
+    .post-breadcrumb a:hover { color: var(--or); }
+    .post-breadcrumb .sep { color: var(--bd); }
+
+    .post-header {
+      padding: 28px 0 32px;
+      border-bottom: 1px solid var(--bd);
+      margin-bottom: 36px;
+    }
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    /* EDIT: Change tag color class — options: training / equipment / technique / nutrition */
+    .post-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      background: rgba(196,18,18,.15);
+      color: #e85555;
+    }
+    /* Tag color options (replace background/color above):
+       Training:  rgba(196,18,18,.15) / #e85555
+       Equipment: rgba(37,99,235,.15) / #60a5fa
+       Technique: rgba(5,150,105,.15) / #34d399
+       Nutrition: rgba(217,119,6,.15) / #fbbf24
+    */
+    .post-date, .post-readtime { font-size: 13px; color: var(--mu); }
+    .post-header h1 {
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      letter-spacing: -.3px;
+    }
+    .post-header .post-intro {
+      font-size: 17px;
+      color: var(--mu);
+      line-height: 1.75;
+      margin: 0;
+    }
+
+    .post-body { font-size: 16px; line-height: 1.8; color: var(--tx); }
+    .post-body h2 {
+      font-size: 22px;
+      font-weight: 800;
+      margin: 40px 0 14px;
+      border-left: 3px solid var(--or);
+      padding-left: 14px;
+    }
+    .post-body h3 { font-size: 18px; font-weight: 700; margin: 28px 0 10px; }
+    .post-body p { margin-bottom: 20px; }
+    .post-body ul, .post-body ol { margin: 0 0 20px 20px; }
+    .post-body li { margin-bottom: 8px; line-height: 1.7; }
+    .post-body strong { font-weight: 700; }
+    .post-body a { color: var(--or); text-decoration: none; font-weight: 600; }
+    .post-body a:hover { color: var(--orl); }
+
+    /* Optional callout box */
+    .callout {
+      background: rgba(196,18,18,.07);
+      border: 1px solid rgba(196,18,18,.25);
+      border-left: 3px solid var(--or);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 28px 0;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+    .callout strong { color: var(--or); }
+
+    .post-related {
+      border-top: 1px solid var(--bd);
+      padding-top: 36px;
+      margin-top: 52px;
+    }
+    .post-related h3 {
+      font-size: 16px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--mu);
+      margin-bottom: 20px;
+    }
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .related-card {
+      background: var(--card);
+      border: 1px solid var(--bd);
+      border-radius: 10px;
+      padding: 16px 18px;
+      text-decoration: none;
+      transition: border-color .15s;
+    }
+    .related-card:hover { border-color: var(--or); }
+    .related-card .r-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--mu);
+      margin-bottom: 6px;
+    }
+    .related-card h4 { font-size: 15px; font-weight: 700; color: var(--tx); line-height: 1.35; }
+  </style>
+</head>
+<body data-nav-init="true" data-active-page="blog">
+<main>
+  <div class="post-container">
+
+    <!-- Breadcrumb — EDIT the last <span> label -->
+    <nav class="post-breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span class="sep">›</span>
+      <a href="/blog">Blog</a>
+      <span class="sep">›</span>
+      <span>EDIT BREADCRUMB LABEL</span>
+    </nav>
+
+    <header class="post-header">
+      <div class="post-meta">
+        <!-- EDIT: Category label -->
+        <span class="post-tag">EDIT CATEGORY</span>
+        <!-- EDIT: Date (Month DD, YYYY) -->
+        <span class="post-date">Month DD, YYYY</span>
+        <!-- EDIT: Estimated read time -->
+        <span class="post-readtime">· X min read</span>
+      </div>
+      <!-- EDIT: Full post title -->
+      <h1>EDIT FULL POST TITLE</h1>
+      <!-- EDIT: One-sentence intro shown under the title -->
+      <p class="post-intro">EDIT INTRO SENTENCE — shown prominently below the title. Keep to 1–2 sentences.</p>
+    </header>
+
+    <article class="post-body">
+
+      <!-- EDIT: Write your post content below using <p>, <h2>, <h3>, <ul>, <ol> tags -->
+      <!-- Use <div class="callout"> for highlighted tips or CTAs -->
+
+      <p>Opening paragraph here.</p>
+
+      <h2>First Section Heading</h2>
+
+      <p>Section content here.</p>
+
+      <h3>Subheading (optional)</h3>
+
+      <p>More content.</p>
+
+      <div class="callout">
+        <strong>Tip or CTA:</strong> Highlighted callout text here. Can include an <a href="/link">internal link</a>.
+      </div>
+
+      <h2>Second Section Heading</h2>
+
+      <p>More content.</p>
+
+      <ul>
+        <li>List item one</li>
+        <li>List item two</li>
+        <li>List item three</li>
+      </ul>
+
+      <h2>Final Thoughts</h2>
+
+      <p>Closing paragraph here.</p>
+
+    </article>
+
+    <!-- EDIT: Update related post links (2 posts) -->
+    <section class="post-related">
+      <h3>More from the blog</h3>
+      <div class="related-grid">
+        <a href="/blog/RELATED-POST-1-SLUG" class="related-card">
+          <div class="r-tag">CATEGORY</div>
+          <h4>Related Post 1 Title</h4>
+        </a>
+        <a href="/blog/RELATED-POST-2-SLUG" class="related-card">
+          <div class="r-tag">CATEGORY</div>
+          <h4>Related Post 2 Title</h4>
+        </a>
+      </div>
+    </section>
+
+  </div>
+</main>
+</body>
+</html>
