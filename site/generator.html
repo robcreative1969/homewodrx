@@ -118,32 +118,6 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
 .wc-card li{font-size:12px;padding:2px 0;list-style:none;display:flex;align-items:center;gap:7px;color:var(--tx)}
 .wc-card li::before{content:'›';color:var(--or);font-weight:700}
 
-/* community */
-.comm-page{max-width:1400px;margin:0 auto;padding:36px 20px 80px}
-.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;align-items:center}
-.fchip{padding:7px 14px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(--bd);background:var(--dk2);color:var(--mu);transition:all .15s}
-.fchip:hover{border-color:var(--or);color:var(--orl)}
-.fchip.active{background:rgba(196,18,18,.15);border-color:var(--or);color:var(--orl)}
-.search-wrap{flex:1;min-width:200px;position:relative}
-.search-wrap input{width:100%;padding:8px 12px 8px 34px;background:var(--dk2);border:1px solid var(--bd);border-radius:7px;color:var(--tx);font-size:13px;outline:none}
-.search-wrap input:focus{border-color:var(--or)}
-.search-wrap::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px}
-.wod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
-.wod-card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .15s}
-.wod-card:hover{border-color:var(--or);transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,.3)}
-.wod-card-hdr{padding:16px;border-bottom:1px solid var(--bd);background:linear-gradient(135deg,rgba(196,18,18,.1),transparent)}
-.wod-card-hdr h3{font-size:16px;font-weight:800;margin-bottom:8px}
-.wod-card-meta{display:flex;gap:6px;flex-wrap:wrap}
-.wod-card-body{padding:14px 16px}
-.wod-movements{font-size:12px;color:var(--mu);line-height:1.8;margin-bottom:10px}
-.wod-stats{display:flex;gap:14px}
-.wod-stat{font-size:12px;color:var(--mu);display:flex;align-items:center;gap:4px}
-.wod-stat strong{color:var(--tx);font-weight:700}
-.empty-state{text-align:center;padding:60px 20px}
-.empty-state .icon{font-size:48px;margin-bottom:16px}
-.empty-state h3{font-size:20px;font-weight:800;margin-bottom:8px}
-.empty-state p{color:var(--mu);font-size:14px;max-width:300px;margin:0 auto 20px}
-
 /* modals */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.open{display:flex}
@@ -169,34 +143,7 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
 .modal-success{background:rgba(39,174,96,.15);border:1px solid rgba(39,174,96,.4);color:#27AE60;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
 .modal-success.vis{display:block}
 
-/* my workouts */
-.myw-page{max-width:1400px;margin:0 auto;padding:36px 20px 80px}
-.myw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
-.myw-card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:20px;transition:all .15s}
-.myw-card:hover{border-color:var(--or)}
-.myw-card h3{font-size:16px;font-weight:800;margin-bottom:8px}
-.myw-card-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.myw-actions{display:flex;gap:8px}
-.myw-btn{flex:1;padding:8px 10px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .15s;text-align:center}
-.myw-btn.pri{background:var(--or);color:#fff}
-.myw-btn.pri:hover{background:var(--orl)}
-.myw-btn.sec{background:var(--dk2);color:var(--tx);border:1px solid var(--bd)}
-.myw-btn.sec:hover{border-color:var(--or);color:var(--orl)}
 
-/* tabs */
-.gen-tabs{display:flex;gap:0;border-bottom:1px solid var(--bd);margin-bottom:28px}
-.gen-tab{padding:12px 20px;font-size:13px;font-weight:700;color:var(--mu);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;white-space:nowrap}
-.gen-tab:hover{color:var(--tx)}
-.gen-tab.active{color:var(--or);border-bottom-color:var(--or)}
-.view{display:none}
-.view.active{display:block}
-
-/* workout detail overlay */
-#wod-detail-overlay{display:none;position:fixed;inset:0;background:var(--dk);z-index:400;overflow-y:auto}
-#wod-detail-overlay.open{display:block}
-.det-inner{max-width:720px;margin:0 auto;padding:28px 20px 80px}
-.back-btn{background:none;border:none;color:var(--mu);font-size:13px;font-weight:700;cursor:pointer;padding:0;display:flex;align-items:center;gap:6px;margin-bottom:20px}
-.back-btn:hover{color:var(--tx)}
 .lb-table{width:100%;border-collapse:collapse;font-size:13px}
 .lb-table th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--bd);background:var(--dk2)}
 .lb-table td{padding:12px 14px;border-bottom:1px solid var(--bd)}
@@ -318,18 +265,17 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
 
 <!-- Main layout injected after nav -->
 <main>
-<div style="max-width:1400px;margin:0 auto;padding:0 20px">
-  <!-- Tabs -->
-  <div style="margin-top:28px" class="gen-tabs">
-    <button class="gen-tab active" onclick="showTab('generator')">⚡ Smart WOD Builder</button>
-    <button class="gen-tab" onclick="showTab('community')">🌍 Community</button>
-    <button class="gen-tab" onclick="showTab('myworkouts')">💪 My Workouts</button>
-  </div>
-</div>
-
-<!-- ═══ TAB: GENERATOR ═══════════════════════════════════════ -->
-<div id="tab-generator" class="view active">
+<!-- ═══ GENERATOR ══════════════════════════════════════════════ -->
 <div class="gen-page">
+
+  <!-- Page header -->
+  <div style="display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:24px">
+    <div>
+      <h1 style="font-size:26px;font-weight:900;margin:0 0 4px">Smart WOD Builder</h1>
+      <p style="color:var(--mu);font-size:14px;margin:0">Generate a custom workout or build your own from scratch</p>
+    </div>
+    <a href="/profile.html" style="font-size:13px;font-weight:700;color:var(--mu);text-decoration:none;white-space:nowrap" onmouseover="this.style.color='var(--orl)'" onmouseout="this.style.color='var(--mu)'">💪 My Workouts →</a>
+  </div>
 
   <!-- Mode Toggle -->
   <div class="gen-mode-toggle">
@@ -573,83 +519,9 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
     </div><!-- /cyo-builder -->
   </div><!-- /gen-mode-create -->
 
-</div>
-</div>
+</div><!-- /gen-page -->
 
-<!-- ═══ TAB: COMMUNITY ════════════════════════════════════════ -->
-<div id="tab-community" class="view">
-<div class="comm-page">
-  <div class="page-hero" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
-    <div>
-      <h1 style="font-size:28px;font-weight:900;margin-bottom:4px">Community Workouts</h1>
-      <p style="color:var(--mu);font-size:14px">Workouts shared by the HomeWODrx community</p>
-    </div>
-    <a href="/workouts.html" class="abtn sec" style="flex:unset;padding:10px 18px;text-decoration:none;font-size:13px">View Named Benchmarks →</a>
-  </div>
-
-  <div class="filter-bar">
-    <div class="search-wrap"><input type="text" id="comm-search" placeholder="Search workouts…" oninput="filterCommunity()"></div>
-    <button class="fchip active" data-fmt="all" onclick="setCommFilter(this,'fmt')">All Formats</button>
-    <button class="fchip" data-fmt="amrap" onclick="setCommFilter(this,'fmt')">AMRAP</button>
-    <button class="fchip" data-fmt="emom" onclick="setCommFilter(this,'fmt')">EMOM</button>
-    <button class="fchip" data-fmt="fortime" onclick="setCommFilter(this,'fmt')">For Time</button>
-    <button class="fchip" data-fmt="circuit" onclick="setCommFilter(this,'fmt')">Circuit</button>
-  </div>
-  <div class="filter-bar" style="margin-top:-10px">
-    <button class="fchip active" data-lvl="all" onclick="setCommFilter(this,'lvl')">All Levels</button>
-    <button class="fchip" data-lvl="beginner" onclick="setCommFilter(this,'lvl')">Beginner</button>
-    <button class="fchip" data-lvl="intermediate" onclick="setCommFilter(this,'lvl')">Intermediate</button>
-    <button class="fchip" data-lvl="advanced" onclick="setCommFilter(this,'lvl')">Advanced</button>
-  </div>
-
-  <div class="wod-grid" id="comm-grid"></div>
-  <div id="comm-empty" class="empty-state" style="display:none">
-    <div class="icon">🏋️</div>
-    <h3>No workouts found</h3>
-    <p>Generate a workout and save it to share it with the community!</p>
-    <button class="abtn pri" style="max-width:200px;margin:0 auto" onclick="showTab('generator')">Generate a Workout</button>
-  </div>
-</div>
-</div>
-
-<!-- ═══ TAB: MY WORKOUTS ══════════════════════════════════════ -->
-<div id="tab-myworkouts" class="view">
-<div class="myw-page">
-  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:24px">
-    <div>
-      <h1 style="font-size:28px;font-weight:900;margin-bottom:4px">My Workouts</h1>
-      <p style="color:var(--mu);font-size:14px" id="myw-subtitle">Your saved and generated workouts</p>
-    </div>
-    <button class="abtn pri" style="flex:unset;padding:10px 18px" onclick="showTab('generator')">+ Generate New</button>
-  </div>
-  <div id="myw-auth-wall" style="display:none">
-    <div class="empty-state">
-      <div class="icon">🔐</div>
-      <h3>Sign in to save workouts</h3>
-      <p>Create a free account to save your workouts and track your results over time.</p>
-      <button class="abtn pri" style="max-width:200px;margin:0 auto" onclick="openAuthModal('signup')">Sign Up Free</button>
-    </div>
-  </div>
-  <div id="myw-content">
-    <div class="myw-grid" id="myw-grid"></div>
-    <div id="myw-empty" class="empty-state" style="display:none">
-      <div class="icon">💪</div>
-      <h3>No saved workouts yet</h3>
-      <p>Generate a workout and save it here to track your progress.</p>
-      <button class="abtn pri" style="max-width:200px;margin:0 auto" onclick="showTab('generator')">Generate a Workout</button>
-    </div>
-  </div>
-</div>
-</div>
 </main>
-
-<!-- ═══ WOD DETAIL OVERLAY ════════════════════════════════════ -->
-<div id="wod-detail-overlay">
-<div class="det-inner">
-  <button class="back-btn" onclick="closeWodDetail()">← Back to Community</button>
-  <div id="wod-detail-content"></div>
-</div>
-</div>
 
 <!-- ═══ MODAL: AUTH ═══════════════════════════════════════════ -->
 <div class="modal-overlay" id="auth-modal">
@@ -882,8 +754,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupEquipmentGrid();
   setupBodyFocusGrid();
   setupPillGroups();
-  await loadCommunityWorkouts();
-  await loadMyWorkouts();
 });
 
 // ── SELECTION HELPERS ─────────────────────────────────────────
@@ -1110,185 +980,6 @@ function renderWorkout(w) {
   document.getElementById('workout-result').style.display = 'block';
 }
 
-// ── COMMUNITY ─────────────────────────────────────────────────
-async function loadCommunityWorkouts() {
-  communityWorkouts = await db.getWorkouts({ isPublic: true, limit: 50 });
-  // Seed demo data if empty
-  if (!communityWorkouts.length) {
-    communityWorkouts = getDemoWorkouts();
-  }
-  renderCommunityGrid(communityWorkouts);
-}
-
-function renderCommunityGrid(workouts) {
-  const grid = document.getElementById('comm-grid');
-  const empty = document.getElementById('comm-empty');
-  if (!workouts.length) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
-  empty.style.display = 'none';
-  grid.innerHTML = workouts.map(w => `
-    <div class="wod-card" onclick="openWodDetail('${escHtml(w.id)}')">
-      <div class="wod-card-hdr">
-        <h3>${escHtml(w.title)}</h3>
-        <div class="wod-card-meta">
-          <span class="badge badge-or">${escHtml(w.format || 'AMRAP')}</span>
-          <span class="badge badge-mu">${cap(w.level||'intermediate')}</span>
-          ${w.duration ? `<span class="badge badge-mu">${w.duration}min</span>` : ''}
-          <span class="badge badge-mu">${(w.body_focus||w.bodyFocus||'full-body').toString().split(',').map(bf=>cap(bf.trim().replace('-',' '))).join(' + ')}</span>
-        </div>
-      </div>
-      <div class="wod-card-body">
-        <div class="wod-movements">${getMovePreview(w)}</div>
-        <div class="wod-stats">
-          <span class="wod-stat">👤 <strong>${escHtml(w.username||'anonymous')}</strong></span>
-          <span class="wod-stat">📅 <strong>${formatDate(w.created_at||w.createdAt)}</strong></span>
-          ${w.result_count ? `<span class="wod-stat">📊 <strong>${w.result_count}</strong> results</span>` : ''}
-        </div>
-      </div>
-    </div>`).join('');
-}
-
-function filterCommunity() {
-  commFilters.q = document.getElementById('comm-search').value.toLowerCase();
-  applyCommFilters();
-}
-function setCommFilter(el, type) {
-  const key = type === 'fmt' ? 'data-fmt' : 'data-lvl';
-  el.closest('.filter-bar').querySelectorAll('.fchip').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  commFilters[type] = el.getAttribute(key);
-  applyCommFilters();
-}
-function applyCommFilters() {
-  let filtered = [...communityWorkouts];
-  if (commFilters.fmt !== 'all') filtered = filtered.filter(w => (w.format||'').toLowerCase() === commFilters.fmt);
-  if (commFilters.lvl !== 'all') filtered = filtered.filter(w => (w.level||'') === commFilters.lvl);
-  if (commFilters.q) filtered = filtered.filter(w =>
-    (w.title||'').toLowerCase().includes(commFilters.q) ||
-    (w.description||w.desc||'').toLowerCase().includes(commFilters.q));
-  renderCommunityGrid(filtered);
-}
-
-function getMovePreview(w) {
-  const rows = w.movements || w.rows || [];
-  if (!rows.length) return '<em>No movements listed</em>';
-  return rows.slice(0,4).map(r => `• ${escHtml(r.name||r.movement||'')} ${r.reps ? '<span style="color:var(--or)">×'+escHtml(String(r.reps))+'</span>' : ''}`).join('<br>') + (rows.length > 4 ? `<br><span style="color:var(--mu)">+${rows.length-4} more</span>` : '');
-}
-
-// ── WOD DETAIL OVERLAY ────────────────────────────────────────
-async function openWodDetail(workoutId) {
-  const w = communityWorkouts.find(x => x.id === workoutId);
-  if (!w) return;
-
-  const results = await db.getResults({ workoutId });
-
-  const rows = w.movements || w.rows || [];
-  const eqList = (w.equipment||[]).map(e=>cap(e)).join(', ') || 'Bodyweight';
-
-  document.getElementById('wod-detail-content').innerHTML = `
-    <div class="res-hdr">
-      <h2>${escHtml(w.title)}</h2>
-      <div class="rsub">by ${escHtml(w.username||'anonymous')} · ${formatDate(w.created_at||w.createdAt)}</div>
-      <div class="res-meta">
-        <span class="chip">${escHtml(w.format||'AMRAP')}</span>
-        <span class="chip">${cap(w.level||'intermediate')}</span>
-        ${w.duration ? `<span class="chip">${w.duration} min</span>` : ''}
-        <span class="chip">${(w.body_focus||w.bodyFocus||'full-body').toString().split(',').map(bf=>cap(bf.trim().replace('-',' '))).join(' + ')}</span>
-        <span class="chip">${eqList}</span>
-      </div>
-    </div>
-    <div class="res-body">
-      ${w.description||w.desc ? `<div class="wdesc">${escHtml(w.description||w.desc)}</div>` : ''}
-      <table class="mov-table">
-        <thead><tr><th>Movement</th><th>Reps / Time</th><th>Coaching Tip</th></tr></thead>
-        <tbody>${rows.map(r => `
-          <tr>
-            <td><div class="mname">${escHtml(r.name||r.movement||'')}</div></td>
-            <td><span class="rbadge">${escHtml(String(r.reps||''))}</span></td>
-            <td style="color:var(--mu);font-size:12px">${escHtml(r.tip||'')}</td>
-          </tr>`).join('')}
-        </tbody>
-      </table>
-      <div class="score-box">
-        <h4>📊 Scoring</h4>
-        <p>${escHtml(w.scoring || 'Record your score.')}</p>
-      </div>
-      <div class="res-actions">
-        <button class="abtn pri" onclick="openCommResultModal('${escHtml(w.id)}','${escHtml(w.title)}','${escHtml(w.format||'AMRAP')}')">📝 Log Result</button>
-        <button class="abtn gho" onclick="nominateFromDetail('${escHtml(w.id)}')">⭐ Nominate as Featured</button>
-      </div>
-      ${results.length ? `
-      <div style="margin-top:28px">
-        <h3 style="font-size:18px;font-weight:800;margin-bottom:16px">📊 Leaderboard (${results.length} results)</h3>
-        <table class="lb-table">
-          <thead><tr><th>#</th><th>Athlete</th><th>Score</th><th>Date</th></tr></thead>
-          <tbody>${results.slice(0,15).map((r,i) => `
-            <tr>
-              <td><span class="rank-badge ${i<3?'rank-'+(i+1):'rank-other'}">${i+1}</span></td>
-              <td><div class="lb-user">
-                <div class="lb-avatar" style="background:var(--or)">${(r.username||'?')[0].toUpperCase()}</div>
-                <a href="/u/${encodeURIComponent(r.username||'')}" style="color:var(--tx);text-decoration:none;font-weight:700">${escHtml(r.username||'anonymous')}</a>
-              </div></td>
-              <td class="lb-score">${escHtml(r.score_display||r.score||'')}</td>
-              <td style="color:var(--mu);font-size:12px">${formatDate(r.date||r.created_at)}</td>
-            </tr>`).join('')}
-          </tbody>
-        </table>
-      </div>` : '<p style="color:var(--mu);margin-top:20px;font-size:14px">No results logged yet. Be the first!</p>'}
-    </div>`;
-
-  document.getElementById('wod-detail-overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeWodDetail() {
-  document.getElementById('wod-detail-overlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-// ── MY WORKOUTS ───────────────────────────────────────────────
-async function loadMyWorkouts() {
-  currentUser = await db.getUser();
-  if (!currentUser) {
-    document.getElementById('myw-auth-wall').style.display = 'block';
-    document.getElementById('myw-content').style.display = 'none';
-    return;
-  }
-  document.getElementById('myw-auth-wall').style.display = 'none';
-  document.getElementById('myw-content').style.display = 'block';
-  document.getElementById('myw-subtitle').textContent = `Saved workouts for ${currentUser.email?.split('@')[0] || 'you'}`;
-
-  myWorkouts = await db.getWorkouts({ userId: currentUser.id });
-  const grid = document.getElementById('myw-grid');
-  const empty = document.getElementById('myw-empty');
-  if (!myWorkouts.length) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
-  empty.style.display = 'none';
-  grid.innerHTML = myWorkouts.map(w => `
-    <div class="myw-card">
-      <div class="myw-card-meta">
-        <span class="badge badge-or">${escHtml(w.format||'AMRAP')}</span>
-        <span class="badge badge-mu">${cap(w.level||'intermediate')}</span>
-        <span class="badge ${w.is_public||w.isPublic ? 'badge-gr' : 'badge-mu'}">${w.is_public||w.isPublic ? '🌍 Public' : '🔒 Private'}</span>
-      </div>
-      <h3>${escHtml(w.title)}</h3>
-      <p style="color:var(--mu);font-size:12px;margin-bottom:12px">${formatDate(w.created_at||w.createdAt)}</p>
-      <div class="myw-actions">
-        <button class="myw-btn pri" onclick="openCommResultModal('${escHtml(w.id)}','${escHtml(w.title)}','${escHtml(w.format||'AMRAP')}')">Log Result</button>
-        <button class="myw-btn sec" onclick="openWodDetail('${escHtml(w.id)}')">View</button>
-      </div>
-    </div>`).join('');
-  // Make sure these workouts are in communityWorkouts for detail view
-  myWorkouts.forEach(w => { if (!communityWorkouts.find(c => c.id === w.id)) communityWorkouts.push(w); });
-}
-
-// ── TABS ──────────────────────────────────────────────────────
-function showTab(tab) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.gen-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(`tab-${tab}`).classList.add('active');
-  const tabs = { generator: 0, community: 1, myworkouts: 2 };
-  document.querySelectorAll('.gen-tab')[tabs[tab]].classList.add('active');
-  if (tab === 'myworkouts') loadMyWorkouts();
-}
 
 // ── MODALS ────────────────────────────────────────────────────
 function openModal(id) { document.getElementById(id).classList.add('open'); }
@@ -1333,7 +1024,6 @@ async function submitLogin() {
   currentUser = user;
   closeModal('auth-modal');
   showToast('Welcome back! 👋','success');
-  await loadMyWorkouts();
   // Refresh nav
   location.reload();
 }
@@ -1350,7 +1040,6 @@ async function submitSignup() {
   currentUser = user;
   closeModal('auth-modal');
   showToast('Account created! Welcome to HomeWODrx 🔥','success');
-  await loadMyWorkouts();
   location.reload();
 }
 
@@ -1449,7 +1138,6 @@ async function submitSave() {
   currentWorkout = { ...currentWorkout, id: data?.id };
   closeModal('save-modal');
   showToast(isPublic ? 'Submitted for community review! We\'ll approve it shortly. 🔍' : 'Workout saved! 💾','success');
-  await loadMyWorkouts();
 }
 
 function openCommResultModal(workoutId, title, format) {
@@ -1778,10 +1466,7 @@ async function cyoSave() {
   if (error) { cyoShowAlert('Error saving: ' + error.message); return; }
 
   showToast(isPublic ? 'Submitted for community review! We\'ll approve it shortly. 🔍' : 'Workout saved to My Workouts! 💾', 'success');
-  await loadMyWorkouts();
   cyoReset();
-  // Optionally switch to My Workouts tab
-  setTimeout(() => showTab('myworkouts'), 800);
 }
 
 // Close CYO dropdown on outside click
