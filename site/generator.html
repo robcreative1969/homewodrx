@@ -311,6 +311,7 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
       <label class="eq-card" data-val="rings"><span class="icon">⭕</span><span class="name">Rings</span></label>
       <label class="eq-card" data-val="slamball"><span class="icon">💥</span><span class="name">Slam Ball</span></label>
       <label class="eq-card" data-val="treadmill"><span class="icon">🏃</span><span class="name">Treadmill</span></label>
+      <label class="eq-card" data-val="running"><span class="icon">👟</span><span class="name">Running</span></label>
       <label class="eq-card" data-val="rower"><span class="icon">🚣</span><span class="name">Rower</span></label>
       <label class="eq-card" data-val="airbike"><span class="icon">🚲</span><span class="name">Air Bike</span></label>
     </div>
@@ -450,6 +451,8 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
           <label class="eq-card" data-val="medicineball" onclick="this.classList.toggle('sel')"><span class="icon">⚽</span><span class="name">Med Ball</span></label>
           <label class="eq-card" data-val="rings" onclick="this.classList.toggle('sel')"><span class="icon">⭕</span><span class="name">Rings</span></label>
           <label class="eq-card" data-val="slamball" onclick="this.classList.toggle('sel')"><span class="icon">💥</span><span class="name">Slam Ball</span></label>
+          <label class="eq-card" data-val="treadmill" onclick="this.classList.toggle('sel')"><span class="icon">🏃</span><span class="name">Treadmill</span></label>
+          <label class="eq-card" data-val="running" onclick="this.classList.toggle('sel')"><span class="icon">👟</span><span class="name">Running</span></label>
           <label class="eq-card" data-val="rower" onclick="this.classList.toggle('sel')"><span class="icon">🚣</span><span class="name">Rower</span></label>
           <label class="eq-card" data-val="airbike" onclick="this.classList.toggle('sel')"><span class="icon">🚲</span><span class="name">Air Bike</span></label>
         </div>
@@ -731,6 +734,13 @@ const MOVEMENT_DB = {
     {name:"Air Bike Sprint",tip:"All out for the full interval — the harder you push, the harder it gets",b:["20s"],i:["30s"],a:["45s"],timed:true,tags:["full","cardio"]},
     {name:"Air Bike Steady State",tip:"Aim for 60–70% effort — sustainable, not survival mode",b:["3 min"],i:["5 min"],a:["8 min"],timed:true,tags:["cardio"]},
     {name:"Air Bike Intervals",tip:"Max RPM on work, slow spin recovery — don't stop pedaling",b:["10 cal"],i:["20 cal"],a:["30 cal"],tags:["full","cardio"]},
+  ],
+  running:[
+    {name:"400m Run",tip:"Settle into pace — push hard the last 100m",b:["400m"],i:["400m"],a:["400m"],tags:["full","cardio"]},
+    {name:"800m Run",tip:"Aerobic pace for the first 600m, kick the last 200",b:["400m"],i:["800m"],a:["800m"],tags:["full","cardio"]},
+    {name:"1 Mile Run",tip:"Don't go out too hot — negative split if you can",b:["800m"],i:["1 mile"],a:["1 mile"],tags:["full","cardio"]},
+    {name:"200m Run",tip:"Sprint effort — drive the knees, stay relaxed",b:["200m"],i:["200m"],a:["200m"],tags:["full","cardio"]},
+    {name:"Run Sprints",tip:"Max effort — pump the arms, high knees",b:["20s"],i:["30s"],a:["45s"],timed:true,tags:["full","cardio"]},
   ],
 };
 
