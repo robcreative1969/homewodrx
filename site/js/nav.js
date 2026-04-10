@@ -65,7 +65,8 @@ const Nav = {
       { text: 'Workouts', href: '/workouts.html', page: 'workouts' },
       { text: 'Movements', href: '/movements.html', page: 'movements' },
       { text: 'Smart WOD Builder', href: '/generator.html', page: 'generator' },
-      { text: 'Shop', href: '/shop.html', page: 'shop' }
+      { text: 'Shop', href: '/shop.html', page: 'shop' },
+      { text: 'Blog', href: '/blog.html', page: 'blog' }
     ];
 
     // Profile lives in the dropdown — not a flat nav link
