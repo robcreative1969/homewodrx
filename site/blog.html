@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Sentry Error Monitoring -->
+  <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog — Training Tips, WOD Guides & Home Gym Advice | HomeWODrx</title>
+  <meta name="description" content="Training tips, WOD breakdowns, scaling strategies, and home gym equipment guides for functional fitness athletes. Updated regularly by the HomeWODrx team.">
+  <meta property="og:title" content="Blog — Training Tips & Home Gym Guides | HomeWODrx">
+  <meta property="og:description" content="Training tips, WOD breakdowns, scaling strategies, and home gym equipment guides for functional fitness athletes.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://homewodrx.com/blog">
+  <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://homewodrx.com/images/og-default.png">
+  <link rel="canonical" href="https://homewodrx.com/blog">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "HomeWODrx Blog",
+    "description": "Training tips, WOD guides, and home gym advice for functional fitness athletes.",
+    "url": "https://homewodrx.com/blog",
+    "publisher": {
+      "@type": "Organization",
+      "name": "HomeWODrx",
+      "url": "https://homewodrx.com"
+    }
+  }
+  </script>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/db.js"></script>
+  <script src="/js/nav.js"></script>
+  <style>
+    .blog-hero {
+      padding: 48px 0 40px;
+      border-bottom: 1px solid var(--bd);
+      margin-bottom: 40px;
+    }
+    .blog-hero h1 {
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 900;
+      margin-bottom: 10px;
+      line-height: 1.15;
+    }
+    .blog-hero h1 span { color: var(--or); }
+    .blog-hero p {
+      color: var(--mu);
+      font-size: 1rem;
+      max-width: 540px;
+      line-height: 1.7;
+    }
+
+    .blog-container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 20px 64px;
+    }
+
+    /* Category filter chips */
+    .blog-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .filter-chip {
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--bd);
+      background: var(--card);
+      color: var(--mu);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s;
+      text-decoration: none;
+    }
+    .filter-chip:hover,
+    .filter-chip.active {
+      border-color: var(--or);
+      color: var(--or);
+      background: rgba(196,18,18,.06);
+    }
+
+    /* Post grid */
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .blog-card {
+      background: var(--card);
+      border: 1px solid var(--bd);
+      border-radius: var(--r);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      transition: border-color .15s, transform .15s, box-shadow .15s;
+    }
+    .blog-card:hover {
+      border-color: var(--or);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,.4);
+    }
+
+    .blog-card-banner {
+      height: 6px;
+      background: var(--or);
+    }
+    .blog-card-banner.training   { background: #C41212; }
+    .blog-card-banner.equipment  { background: #2563eb; }
+    .blog-card-banner.technique  { background: #059669; }
+    .blog-card-banner.nutrition  { background: #d97706; }
+
+    .blog-card-body {
+      padding: 20px 22px 22px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .blog-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .blog-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .blog-tag.training  { background: rgba(196,18,18,.15); color: #e85555; }
+    .blog-tag.equipment { background: rgba(37,99,235,.15); color: #60a5fa; }
+    .blog-tag.technique { background: rgba(5,150,105,.15); color: #34d399; }
+    .blog-tag.nutrition { background: rgba(217,119,6,.15); color: #fbbf24; }
+
+    .blog-card-date {
+      font-size: 12px;
+      color: var(--mu);
+    }
+
+    .blog-card h2 {
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.35;
+      margin-bottom: 10px;
+      color: var(--tx);
+    }
+    .blog-card p {
+      font-size: 14px;
+      color: var(--mu);
+      line-height: 1.65;
+      flex: 1;
+      margin-bottom: 16px;
+    }
+    .blog-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--bd);
+      padding-top: 14px;
+      margin-top: auto;
+    }
+    .read-time {
+      font-size: 12px;
+      color: var(--mu);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .read-more {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--or);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Featured post (first card spans full width on wide screens) */
+    @media (min-width: 700px) {
+      .blog-card.featured {
+        grid-column: 1 / -1;
+        flex-direction: row;
+      }
+      .blog-card.featured .blog-card-banner {
+        width: 6px;
+        height: auto;
+      }
+      .blog-card.featured .blog-card-body {
+        padding: 28px 32px;
+      }
+      .blog-card.featured h2 {
+        font-size: 22px;
+      }
+      .blog-card.featured p {
+        max-width: 600px;
+      }
+    }
+  </style>
+</head>
+<body data-nav-init="true" data-active-page="blog">
+<main>
+  <div class="blog-container">
+    <div class="blog-hero">
+      <h1>The HomeWODrx <span>Blog</span></h1>
+      <p>Training tips, WOD breakdowns, scaling strategies, and home gym guides — written for athletes who train outside the box.</p>
+    </div>
+
+    <div class="blog-filters">
+      <a href="/blog" class="filter-chip active">All Posts</a>
+      <a href="/blog?cat=training" class="filter-chip">Training</a>
+      <a href="/blog?cat=equipment" class="filter-chip">Equipment</a>
+      <a href="/blog?cat=technique" class="filter-chip">Technique</a>
+    </div>
+
+    <div class="blog-grid">
+
+      <!-- POST 1 — Featured -->
+      <a href="/blog/hero-wod-guide" class="blog-card featured" data-cat="training">
+        <div class="blog-card-banner training"></div>
+        <div class="blog-card-body">
+          <div class="blog-card-meta">
+            <span class="blog-tag training">Training</span>
+            <span class="blog-card-date">April 10, 2026</span>
+          </div>
+          <h2>The Complete Guide to CrossFit Hero WODs: History, Purpose, and How to Attack Them</h2>
+          <p>Hero WODs are among the most demanding workouts in CrossFit — long, brutal, and deeply meaningful. Learn where they come from, what makes them different from standard benchmarks, and how to approach them with the right strategy whether you're a beginner or an experienced athlete.</p>
+          <div class="blog-card-footer">
+            <span class="read-time">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              8 min read
+            </span>
+            <span class="read-more">Read more →</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- POST 2 -->
+      <a href="/blog/best-home-gym-equipment" class="blog-card" data-cat="equipment">
+        <div class="blog-card-banner equipment"></div>
+        <div class="blog-card-body">
+          <div class="blog-card-meta">
+            <span class="blog-tag equipment">Equipment</span>
+            <span class="blog-card-date">April 10, 2026</span>
+          </div>
+          <h2>Best Home Gym Equipment for CrossFit-Style Training (2026 Guide)</h2>
+          <p>You don't need a full box to train like an athlete. We break down the essential gear — from barbells to kettlebells to gymnastics rings — so you can build a capable home gym at any budget.</p>
+          <div class="blog-card-footer">
+            <span class="read-time">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              7 min read
+            </span>
+            <span class="read-more">Read more →</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- POST 3 -->
+      <a href="/blog/how-to-scale-wods" class="blog-card" data-cat="technique">
+        <div class="blog-card-banner technique"></div>
+        <div class="blog-card-body">
+          <div class="blog-card-meta">
+            <span class="blog-tag technique">Technique</span>
+            <span class="blog-card-date">April 10, 2026</span>
+          </div>
+          <h2>How to Scale Any WOD for Your Fitness Level (Without Feeling Like You Cheated)</h2>
+          <p>Scaling isn't quitting — it's smart training. Learn the principles behind effective scaling for weight, volume, and movement substitutions, so every WOD challenges you at exactly the right level.</p>
+          <div class="blog-card-footer">
+            <span class="read-time">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              6 min read
+            </span>
+            <span class="read-more">Read more →</span>
+          </div>
+        </div>
+      </a>
+
+    </div><!-- /blog-grid -->
+  </div><!-- /blog-container -->
+</main>
+</body>
+</html>
