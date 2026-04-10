@@ -920,6 +920,14 @@ function getReps(m, level) {
   if (Array.isArray(r)) return r[0] + (Math.random() > .5 && r[1] ? '-' + r[1] : '');
   return r;
 }
+// Returns true for movements whose reps are distance/time/calories (not a plain count)
+function isTimedOrDistance(m) {
+  if (m.timed) return true;
+  const r = m.b || m.i || m.a;
+  if (!r) return false;
+  const first = Array.isArray(r) ? r[0] : r;
+  return typeof first === 'string';
+}
 
 function genAMRAP(pool, level, duration, bodyFocus) {
   const count = duration <= 15 ? 3 : duration <= 25 ? 4 : 5;
@@ -940,7 +948,7 @@ function genEMOM(pool, level, duration, bodyFocus) {
     title: `${duration}-Minute EMOM`,
     format: 'EMOM',
     description: `Every Minute On the Minute for ${duration} minutes. Start the prescribed work at the top of each minute; rest for whatever time remains.`,
-    rows: sel.map((m, i) => ({ movement: m.name, reps: `Min ${i+1} (repeat): ${getReps(m, level)} reps`, tip: m.tip })),
+    rows: sel.map((m, i) => ({ movement: m.name, reps: `Min ${i+1} (repeat): ${getReps(m, level)}${isTimedOrDistance(m) ? '' : ' reps'}`, tip: m.tip })),
     scoring: `Track whether you complete each minute before the next starts. Adjust reps if you're consistently missing.`,
     scoring_type: 'rounds_reps'
   };
@@ -953,7 +961,7 @@ function genForTime(pool, level) {
     title: `For Time — ${scheme.join('-')}`,
     format: 'For Time',
     description: `Complete all reps as fast as possible using the ${scheme.join('-')} rep scheme. Push the pace — this is a sprint, not a jog.`,
-    rows: sel.map(m => ({ movement: m.name, reps: scheme.join(' – ') + ' reps', tip: m.tip })),
+    rows: sel.map(m => ({ movement: m.name, reps: isTimedOrDistance(m) ? String(getReps(m, level)) : scheme.join(' – ') + ' reps', tip: m.tip })),
     scoring: `Record your total finish time. Aim to move continuously.`,
     scoring_type: 'time'
   };
