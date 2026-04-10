@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 340" width="800" height="340">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d0d14;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a1a2a;stop-opacity:1" />
+    </linearGradient>
+    <!-- Red glow -->
+    <radialGradient id="redGlow" cx="25%" cy="55%" r="45%">
+      <stop offset="0%" style="stop-color:#C41212;stop-opacity:0.18" />
+      <stop offset="100%" style="stop-color:#C41212;stop-opacity:0" />
+    </radialGradient>
+    <!-- Subtle grid pattern -->
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#2E2E42" stroke-width="0.5" opacity="0.6"/>
+    </pattern>
+    <!-- Clip path for rounded corners -->
+    <clipPath id="roundClip">
+      <rect width="800" height="340" rx="12" ry="12"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#roundClip)">
+    <!-- Base background -->
+    <rect width="800" height="340" fill="url(#bgGrad)"/>
+    <!-- Grid overlay -->
+    <rect width="800" height="340" fill="url(#grid)"/>
+    <!-- Red glow -->
+    <rect width="800" height="340" fill="url(#redGlow)"/>
+
+    <!-- Decorative left accent bar -->
+    <rect x="0" y="0" width="4" height="340" fill="#C41212"/>
+
+    <!-- Abstract barbell shape — left side -->
+    <!-- Left weight plate stack -->
+    <rect x="48" y="118" width="18" height="104" rx="4" fill="#2E2E42" stroke="#3a3a55" stroke-width="1"/>
+    <rect x="40" y="128" width="18" height="84" rx="4" fill="#252535" stroke="#3a3a55" stroke-width="1"/>
+    <rect x="32" y="140" width="18" height="60" rx="4" fill="#1E1E2C" stroke="#C41212" stroke-width="1.5"/>
+    <!-- Bar -->
+    <rect x="50" y="162" width="200" height="16" rx="4" fill="#2E2E42" stroke="#3a3a55" stroke-width="1"/>
+    <!-- Right weight plate stack -->
+    <rect x="250" y="140" width="18" height="60" rx="4" fill="#1E1E2C" stroke="#C41212" stroke-width="1.5"/>
+    <rect x="268" y="128" width="18" height="84" rx="4" fill="#252535" stroke="#3a3a55" stroke-width="1"/>
+    <rect x="286" y="118" width="18" height="104" rx="4" fill="#2E2E42" stroke="#3a3a55" stroke-width="1"/>
+
+    <!-- Kettlebell shape — lower right -->
+    <circle cx="358" cy="218" r="34" fill="#1E1E2C" stroke="#2E2E42" stroke-width="1.5"/>
+    <circle cx="358" cy="218" r="34" fill="none" stroke="#C41212" stroke-width="1" stroke-dasharray="4,8" opacity="0.5"/>
+    <!-- Kettlebell handle -->
+    <path d="M 340 188 Q 340 165 358 165 Q 376 165 376 188" fill="none" stroke="#2E2E42" stroke-width="12" stroke-linecap="round"/>
+    <path d="M 340 188 Q 340 165 358 165 Q 376 165 376 188" fill="none" stroke="#3a3a55" stroke-width="8" stroke-linecap="round"/>
+
+    <!-- Rings icon — far right decorative -->
+    <circle cx="458" cy="170" r="28" fill="none" stroke="#2E2E42" stroke-width="8"/>
+    <circle cx="458" cy="170" r="28" fill="none" stroke="#C41212" stroke-width="2" opacity="0.4"/>
+    <line x1="458" y1="90" x2="458" y2="142" stroke="#2E2E42" stroke-width="4"/>
+    <circle cx="518" cy="170" r="28" fill="none" stroke="#2E2E42" stroke-width="8"/>
+    <circle cx="518" cy="170" r="28" fill="none" stroke="#C41212" stroke-width="2" opacity="0.4"/>
+    <line x1="518" y1="90" x2="518" y2="142" stroke="#2E2E42" stroke-width="4"/>
+
+    <!-- Right side text content -->
+    <!-- Category chip -->
+    <rect x="500" y="120" width="110" height="26" rx="13" fill="rgba(37,99,235,0.2)" stroke="rgba(96,165,250,0.4)" stroke-width="1"/>
+    <text x="555" y="138" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" font-weight="700" fill="#60a5fa" text-anchor="middle" letter-spacing="0.8">EQUIPMENT</text>
+
+    <!-- Main headline -->
+    <text x="500" y="185" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="26" font-weight="900" fill="#EAEAF0" letter-spacing="-0.5">Build Your</text>
+    <text x="500" y="218" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="26" font-weight="900" fill="#C41212" letter-spacing="-0.5">Home Gym</text>
+    <text x="500" y="248" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="14" fill="#888899" letter-spacing="0">2026 Equipment Guide</text>
+
+    <!-- HomeWODrx watermark -->
+    <text x="500" y="305" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" font-weight="700" fill="#C41212" opacity="0.5" letter-spacing="1">HOMEWODRX.COM</text>
+
+    <!-- Bottom accent line -->
+    <line x1="0" y1="338" x2="800" y2="338" stroke="#C41212" stroke-width="2" opacity="0.4"/>
+  </g>
+</svg>
