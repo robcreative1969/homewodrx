@@ -903,7 +903,14 @@ function balancedPick(pool, count) {
     if (result.some(m => m._eq === eq)) return; // already represented
     const candidates = pool.filter(m => m._eq === eq && !result.includes(m));
     if (!candidates.length) return;
-    const pick = candidates[Math.floor(Math.random() * candidates.length)];
+    // For equipment where calories are the primary metric (air bike, rower), prefer cal-based movements
+    const calBased = candidates.filter(m => {
+      const r = m.b || m.i || m.a;
+      const first = Array.isArray(r) ? r[0] : r;
+      return typeof first === 'string' && first.includes('cal');
+    });
+    const pickPool = calBased.length ? calBased : candidates;
+    const pick = pickPool[Math.floor(Math.random() * pickPool.length)];
     // Prefer swapping a bodyweight movement that shares a muscle tag for balance
     const eqTags = pick.tags || [];
     let swapIdx = result.findIndex(m => m._eq === 'bodyweight' && m.tags && m.tags.some(t => eqTags.includes(t)));
@@ -957,6 +964,17 @@ function genForTime(pool, level) {
   const schemes = { beginner:[15,12,9], intermediate:[21,15,9], advanced:[30,20,10] };
   const scheme = schemes[level];
   const sel = balancedPick(pool, 3);
+  const allCardio = sel.every(m => isTimedOrDistance(m));
+  if (allCardio) {
+    return {
+      title: 'Cardio Chipper',
+      format: 'For Time',
+      description: `Complete all work as fast as possible. Attack each machine — no pacing, no resting between efforts.`,
+      rows: sel.map(m => ({ movement: m.name, reps: String(getReps(m, level)), tip: m.tip })),
+      scoring: `Record your total finish time.`,
+      scoring_type: 'time'
+    };
+  }
   return {
     title: `For Time — ${scheme.join('-')}`,
     format: 'For Time',
