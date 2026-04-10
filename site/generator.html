@@ -839,8 +839,9 @@ function buildWorkout(equipment, bodyFocuses, level, formatPref, duration) {
 }
 
 function buildPool(equipment, level, bodyFocuses) {
-  let moves = [...(MOVEMENT_DB.bodyweight || [])];
-  equipment.forEach(eq => { if (eq !== 'bodyweight' && MOVEMENT_DB[eq]) moves.push(...MOVEMENT_DB[eq]); });
+  // Tag each movement with _eq so the guarantee logic can enforce equipment representation
+  let moves = (MOVEMENT_DB.bodyweight || []).map(m => ({ ...m, _eq: 'bodyweight' }));
+  equipment.forEach(eq => { if (eq !== 'bodyweight' && MOVEMENT_DB[eq]) moves.push(...MOVEMENT_DB[eq].map(m => ({ ...m, _eq: eq }))); });
   if (level === 'beginner') moves = moves.filter(m => !/(muscle.up|snatch|toes.to.bar|double under|turkish)/i.test(m.name));
   if (level === 'intermediate') moves = moves.filter(m => !/(muscle.up)/i.test(m.name));
 
@@ -858,8 +859,9 @@ function buildPool(equipment, level, bodyFocuses) {
     if (tagSet.size) tags = [...tagSet];
   }
   if (tags) {
-    const primary = moves.filter(m => m.tags && m.tags.some(t => tags.includes(t)));
-    if (primary.length >= 3) moves = primary;
+    // Always keep equipment movements so guarantee logic can fire; only filter bodyweight
+    const bwFiltered = moves.filter(m => m._eq !== 'bodyweight' || (m.tags && m.tags.some(t => tags.includes(t))));
+    if (bwFiltered.length >= 3) moves = bwFiltered;
   }
   return moves;
 }
@@ -868,7 +870,7 @@ function balancedPick(pool, count) {
   const buckets = { lower:[], push:[], pull:[], core:[], full:[], other:[] };
   pool.forEach(m => {
     const t = m.tags || [];
-    if (t.includes('full')) buckets.full.push(m);
+    if (t.includes('full'))       buckets.full.push(m);
     else if (t.includes('lower')) buckets.lower.push(m);
     else if (t.includes('push'))  buckets.push.push(m);
     else if (t.includes('pull'))  buckets.pull.push(m);
@@ -894,6 +896,22 @@ function balancedPick(pool, count) {
     if (!rem.length) break;
     result.push(rem[Math.floor(Math.random() * rem.length)]);
   }
+
+  // Guarantee at least one movement per non-bodyweight equipment type selected
+  const equipTypes = [...new Set(pool.filter(m => m._eq && m._eq !== 'bodyweight').map(m => m._eq))];
+  equipTypes.forEach(eq => {
+    if (result.some(m => m._eq === eq)) return; // already represented
+    const candidates = pool.filter(m => m._eq === eq && !result.includes(m));
+    if (!candidates.length) return;
+    const pick = candidates[Math.floor(Math.random() * candidates.length)];
+    // Prefer swapping a bodyweight movement that shares a muscle tag for balance
+    const eqTags = pick.tags || [];
+    let swapIdx = result.findIndex(m => m._eq === 'bodyweight' && m.tags && m.tags.some(t => eqTags.includes(t)));
+    if (swapIdx === -1) swapIdx = result.findIndex(m => m._eq === 'bodyweight'); // any bodyweight
+    if (swapIdx === -1) swapIdx = result.length - 1; // last resort
+    result[swapIdx] = pick;
+  });
+
   return result;
 }
 
