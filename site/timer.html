@@ -1626,14 +1626,6 @@ function populateWhiteboard(w) {
     renderMoveRows(moves, cfgMoves, 'cfg');
   }
 
-  // ── Done screen: show Log Result button if we have a workout slug ─────────
-  const params  = new URLSearchParams(window.location.search);
-  const slug    = params.get('wod_slug');
-  const logBtn  = document.getElementById('btn-log-result');
-  if (logBtn && slug) {
-    logBtn.href  = `/workouts/${slug}`;
-    logBtn.style.display = '';
-  }
 }
 
 // Whiteboard collapse/expand toggle
@@ -1673,6 +1665,19 @@ async function loadWodFromUrl() {
 
   // Open config screen directly (skip mode select)
   openConfig(mode);
+
+  // Show Log Result button immediately — don't wait for the Supabase fetch.
+  // If we have a slug, link directly; if only wod_id, fall back to history.back().
+  const logBtn = document.getElementById('btn-log-result');
+  if (logBtn) {
+    if (wodSlug) {
+      logBtn.href = `/workouts/${wodSlug}`;
+    } else {
+      logBtn.href = '#';
+      logBtn.addEventListener('click', (e) => { e.preventDefault(); history.back(); }, { once: true });
+    }
+    logBtn.style.display = '';
+  }
 
   // Also pre-set wb-name so whiteboard shows name even before full fetch
   if (urlName) document.getElementById('wb-name').textContent = urlName;
