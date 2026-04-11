@@ -210,7 +210,7 @@
     <p style="color:var(--mu);font-size:13px;margin:0 0 14px">The generator will fill your session with the right number of stretches to fit this window — including time to switch sides where needed.</p>
     <div class="pill-group" id="duration-group">
       <div class="pill" data-val="5">5 min</div>
-      <div class="pill sel" data-val="10">10 min</div>
+      <div class="pill" data-val="10">10 min</div>
       <div class="pill" data-val="15">15 min</div>
       <div class="pill" data-val="20">20 min</div>
     </div>
@@ -252,7 +252,7 @@
     <p style="color:var(--mu);font-size:13px;margin:0 0 14px">This sets hold times and which stretches are included. Beginner avoids advanced poses; Advanced uses longer holds and deeper variations.</p>
     <div class="pill-group" id="level-group">
       <div class="pill" data-val="b">Beginner</div>
-      <div class="pill sel" data-val="i">Intermediate</div>
+      <div class="pill" data-val="i">Intermediate</div>
       <div class="pill" data-val="a">Advanced</div>
     </div>
   </div>
@@ -337,8 +337,6 @@ function buildFocusGrid() {
     });
     grid.appendChild(card);
   });
-  // Default: Full Body selected
-  grid.querySelector('[data-id="full"]').classList.add('sel');
 }
 
 // ── Pill groups (duration + level) ───────────────────────────
@@ -371,13 +369,13 @@ function getSelections() {
   const focusAreas = focusCards.map(c => c.dataset.id);
 
   const durPill = document.querySelector('#duration-group .pill.sel');
-  const duration = durPill ? parseInt(durPill.dataset.val) : 10;
+  const duration = durPill ? parseInt(durPill.dataset.val) : null;
 
   const modCards = [...document.querySelectorAll('.mod-card.sel')];
   const modalities = modCards.map(c => c.dataset.mod);
 
   const lvlPill = document.querySelector('#level-group .pill.sel');
-  const level = lvlPill ? lvlPill.dataset.val : 'i';
+  const level = lvlPill ? lvlPill.dataset.val : null;
 
   return { focusAreas, duration, modalities, level };
 }
@@ -392,15 +390,29 @@ function handleGenerate() {
     try {
       const prefs = getSelections();
 
-      if (!prefs.modalities.length) {
-        showToast('Pick at least one stretching type above', 'error');
+      if (!prefs.focusAreas.length) {
+        showToast('Pick a focus area first (Step 1)', 'error');
         btn.classList.remove('loading');
         btn.disabled = false;
         return;
       }
 
-      if (!prefs.focusAreas.length) {
-        showToast('Pick a focus area above', 'error');
+      if (!prefs.duration) {
+        showToast('Choose a session duration (Step 2)', 'error');
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        return;
+      }
+
+      if (!prefs.modalities.length) {
+        showToast('Pick at least one stretching type (Step 3)', 'error');
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        return;
+      }
+
+      if (!prefs.level) {
+        showToast('Choose your flexibility level (Step 4)', 'error');
         btn.classList.remove('loading');
         btn.disabled = false;
         return;
