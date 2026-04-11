@@ -31,6 +31,12 @@
     <lastmod>2026-04-05</lastmod>
   </url>
   <url>
+    <loc>https://homewodrx.com/stretch</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-04-11</lastmod>
+  </url>
+  <url>
     <loc>https://homewodrx.com/leaderboard</loc>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -47,6 +53,30 @@
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-04-05</lastmod>
+  </url>
+  <url>
+    <loc>https://homewodrx.com/blog/hero-wod-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-04-10</lastmod>
+  </url>
+  <url>
+    <loc>https://homewodrx.com/blog/best-home-gym-equipment</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-04-10</lastmod>
+  </url>
+  <url>
+    <loc>https://homewodrx.com/blog/how-to-scale-wods</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-04-10</lastmod>
+  </url>
+  <url>
+    <loc>https://homewodrx.com/blog/why-stretching-matters</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-04-11</lastmod>
   </url>
   <url>
     <loc>https://homewodrx.com/privacy</loc>
