@@ -15,6 +15,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="/js/config.js"></script>
   <script src="/js/db.js"></script>
+  <script src="/js/benchmarks.js"></script>
   <script src="/js/nav.js"></script>
 
   <style>
@@ -410,6 +411,111 @@
     letter-spacing: -0.03em;
   }
   .done-meta  { color: var(--mu); font-size: 0.8rem; }
+
+  /* Editable time on done screen */
+  .done-time-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .done-edit-btn {
+    background: none;
+    border: 1px solid var(--bd);
+    border-radius: 6px;
+    color: var(--mu);
+    cursor: pointer;
+    font-size: 0.75rem;
+    padding: 4px 12px;
+    transition: border-color 0.15s, color 0.15s;
+    letter-spacing: 0.04em;
+  }
+  .done-edit-btn:hover { border-color: var(--or); color: var(--or); }
+
+  /* Inline time editor */
+  .done-time-editor {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+  .done-time-editor.visible { display: flex; }
+  .time-editor-fields {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .time-field-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .time-field-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--mu);
+  }
+  .time-field-stepper {
+    display: flex;
+    align-items: stretch;
+    background: var(--dk2, #16161F);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .time-field-btn {
+    background: none;
+    border: none;
+    color: var(--tx);
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: 300;
+    padding: 8px 14px;
+    transition: background 0.1s, color 0.1s;
+    line-height: 1;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .time-field-btn:hover { background: rgba(196,18,18,0.12); color: var(--or); }
+  .time-field-val {
+    font-size: 1.8rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    font-family: 'SF Mono', 'Courier New', ui-monospace, monospace;
+    color: var(--tx);
+    padding: 8px 4px;
+    min-width: 52px;
+    text-align: center;
+    line-height: 1;
+  }
+  .time-sep {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--mu);
+    line-height: 1;
+    padding-top: 8px;
+  }
+  .time-editor-confirm {
+    background: var(--or);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 24px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: background 0.15s;
+  }
+  .time-editor-confirm:hover { background: var(--orl); }
+  .time-editor-note {
+    font-size: 0.73rem;
+    color: var(--mu);
+    text-align: center;
+    line-height: 1.4;
+  }
+
   .done-actions {
     display: flex;
     gap: 10px;
@@ -755,7 +861,35 @@
       <div class="done-icon">🏁</div>
       <div class="done-title" id="done-title">Time!</div>
       <div class="done-sub"  id="done-sub"></div>
-      <div class="done-clock" id="done-clock">00:00</div>
+      <div class="done-time-wrap">
+        <div class="done-clock" id="done-clock">00:00</div>
+        <button class="done-edit-btn" id="done-edit-btn" title="Forgot to stop the clock? Fix your time here.">✏️ Edit time</button>
+
+        <!-- Inline MM:SS editor — shown when edit button is tapped -->
+        <div class="done-time-editor" id="done-time-editor">
+          <div class="time-editor-fields">
+            <div class="time-field-wrap">
+              <div class="time-field-label">Min</div>
+              <div class="time-field-stepper">
+                <button class="time-field-btn" id="min-dec">−</button>
+                <div class="time-field-val" id="edit-min">00</div>
+                <button class="time-field-btn" id="min-inc">+</button>
+              </div>
+            </div>
+            <div class="time-sep">:</div>
+            <div class="time-field-wrap">
+              <div class="time-field-label">Sec</div>
+              <div class="time-field-stepper">
+                <button class="time-field-btn" id="sec-dec">−</button>
+                <div class="time-field-val" id="edit-sec">00</div>
+                <button class="time-field-btn" id="sec-inc">+</button>
+              </div>
+            </div>
+          </div>
+          <button class="time-editor-confirm" id="time-editor-confirm">✓ Confirm</button>
+          <div class="time-editor-note">Every second counts — but if you got caught up in the moment and forgot to stop the clock, no sweat. Fix your time here before logging.</div>
+        </div>
+      </div>
       <div class="done-meta"  id="done-meta"></div>
       <div class="done-actions">
         <button class="t-action-btn btn-again" id="btn-again">↺ Same Config</button>
@@ -1271,8 +1405,15 @@ document.querySelectorAll('.mode-card').forEach(card => {
   card.addEventListener('click', () => openConfig(card.dataset.mode));
 });
 
-// Back
-document.getElementById('btn-back').addEventListener('click', () => show('s-select'));
+// Back — return to workout page if we came from one, otherwise show mode select
+document.getElementById('btn-back').addEventListener('click', () => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('wod_slug') || params.get('wod_id')) {
+    history.back();
+  } else {
+    show('s-select');
+  }
+});
 
 // Start timer
 document.getElementById('btn-start').addEventListener('click', runCountdown);
@@ -1294,6 +1435,52 @@ document.querySelectorAll('.preset-btn').forEach(btn => {
 document.getElementById('btn-pause').addEventListener('click', togglePause);
 document.getElementById('btn-reset').addEventListener('click', resetTimer);
 document.getElementById('btn-done-early').addEventListener('click', doneEarly);
+
+// ── Done screen: editable time override ──────────────────────────────────────
+// Lets users correct their time when they forgot to hit Done! mid-workout.
+
+let _editMin = 0;
+let _editSec = 0;
+
+function openTimeEditor() {
+  // Seed editor with the current displayed time
+  const totalSec = Math.max(0, Math.floor(T.finalMs / 1000));
+  _editMin = Math.floor(totalSec / 60);
+  _editSec = totalSec % 60;
+  refreshTimeEditor();
+  document.getElementById('done-time-editor').classList.add('visible');
+  document.getElementById('done-edit-btn').style.display = 'none';
+}
+
+function refreshTimeEditor() {
+  document.getElementById('edit-min').textContent = String(_editMin).padStart(2, '0');
+  document.getElementById('edit-sec').textContent = String(_editSec).padStart(2, '0');
+}
+
+function confirmTimeEdit() {
+  const newMs = (_editMin * 60 + _editSec) * 1000;
+  T.finalMs = newMs;
+  document.getElementById('done-clock').textContent = fmtMs(newMs);
+  document.getElementById('done-time-editor').classList.remove('visible');
+  document.getElementById('done-edit-btn').style.display = '';
+  document.getElementById('done-edit-btn').textContent = '✏️ Edit time';
+}
+
+document.getElementById('done-edit-btn').addEventListener('click', openTimeEditor);
+document.getElementById('time-editor-confirm').addEventListener('click', confirmTimeEdit);
+
+document.getElementById('min-inc').addEventListener('click', () => { _editMin = Math.min(99, _editMin + 1); refreshTimeEditor(); });
+document.getElementById('min-dec').addEventListener('click', () => { _editMin = Math.max(0,  _editMin - 1); refreshTimeEditor(); });
+document.getElementById('sec-inc').addEventListener('click', () => {
+  _editSec++;
+  if (_editSec >= 60) { _editSec = 0; _editMin = Math.min(99, _editMin + 1); }
+  refreshTimeEditor();
+});
+document.getElementById('sec-dec').addEventListener('click', () => {
+  _editSec--;
+  if (_editSec < 0) { _editSec = 59; _editMin = Math.max(0, _editMin - 1); }
+  refreshTimeEditor();
+});
 
 // Done screen
 document.getElementById('btn-again').addEventListener('click', runCountdown);
@@ -1471,9 +1658,11 @@ async function loadWodFromUrl() {
   }
 }
 
-// Init nav (no active page — timer is off-nav)
-document.addEventListener('DOMContentLoaded', () => {
-  if (window.Nav) Nav.init('');
+// Init nav (no active page — timer is off-nav), then load WOD if needed.
+// Awaiting Nav.init() ensures Supabase is initialized before we try to fetch
+// workout data — Nav.init() calls ensureSupabase() internally.
+document.addEventListener('DOMContentLoaded', async () => {
+  if (window.Nav) await Nav.init('');
   loadWodFromUrl();
 });
 
