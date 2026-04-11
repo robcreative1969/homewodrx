@@ -268,8 +268,12 @@
           ${wod.bodyFocus ? `<span class="wod-meta-item"><span class="wod-meta-label">Focus</span><span class="wod-meta-value">${cap(wod.bodyFocus)}</span></span>` : ''}
           ${wod.isBodyweightOnly ? `<span class="wod-meta-item"><span class="wod-meta-label">Style</span><span class="wod-meta-value">Bodyweight</span></span>` : ''}
         </div>
-        <div style="display:flex;gap:1rem;">
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
           <button class="btn btn-primary" onclick="openResultModal()">Log Your Result</button>
+          <a href="${buildDailyTimerUrl(wod)}" class="btn btn-secondary" style="display:inline-flex;align-items:center;gap:0.4rem;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Start WOD Timer
+          </a>
           <a href="/workouts.html" class="btn btn-secondary">Browse Workouts</a>
           <button class="btn btn-secondary" onclick="printWod()">🖨️ Print WOD</button>
         </div>
@@ -316,6 +320,16 @@
         setTimeout(() => { pa.innerHTML = ''; }, 500);
       });
     });
+  }
+
+  function buildDailyTimerUrl(wod) {
+    const fmtMap = { amrap: 'amrap', emom: 'emom', fortime: 'fortime', circuit: 'fortime' };
+    const mode = fmtMap[wod.format] || 'fortime';
+    const duration = wod.duration || 20;
+    const p = new URLSearchParams({ mode, duration });
+    if (wod.id)    p.set('wod_id', wod.id);
+    if (wod.title) p.set('name', wod.title);
+    return `/timer.html?${p.toString()}`;
   }
 
   function escHtml(s) {
