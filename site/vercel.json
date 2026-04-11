@@ -1,5 +1,9 @@
 {
   "routes": [
+    { "src": "/movements/deadlift$",       "headers": { "Location": "/movements/deadlifts"       }, "status": 301 },
+    { "src": "/movements/power-clean$",    "headers": { "Location": "/movements/power-cleans"    }, "status": 301 },
+    { "src": "/movements/thruster$",       "headers": { "Location": "/movements/thrusters"       }, "status": 301 },
+    { "src": "/movements/db-lateral-raise$", "headers": { "Location": "/movements/db-lateral-raises" }, "status": 301 },
     { "src": "/movements/([^/]+)", "dest": "/movement.html" },
     { "src": "/workouts/([^/]+)",  "dest": "/workout.html"  },
     { "src": "/u/([^/]+)",         "dest": "/profile.html"  },
