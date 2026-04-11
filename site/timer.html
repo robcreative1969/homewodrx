@@ -1604,7 +1604,11 @@ function populateWhiteboard(w) {
 
   const name  = w.title || w.name || 'Workout';
   const fmt   = w.format || '';
-  const moves = w.movements || [];
+  // Benchmarks use w.movements[]{name,reps,tip,rx_men,rx_women}
+  // Daily 20 WODs use w.rows[]{movement,reps,tip} — normalise to a common shape
+  const moves = (w.movements && w.movements.length)
+    ? w.movements
+    : (w.rows || []).map(r => ({ name: r.movement || r.name || '', reps: r.reps || '', tip: r.tip || '' }));
 
   // ── Active screen whiteboard ──────────────────────────────────────────────
   document.getElementById('wb-name').textContent = name;
@@ -1686,6 +1690,18 @@ async function loadWodFromUrl() {
   if (urlName) document.getElementById('wb-name').textContent = urlName;
 
   // Fetch full workout for whiteboard data
+  // Daily 20 WODs are generated client-side — read from sessionStorage instead of DB
+  if (ref === 'daily-wod') {
+    try {
+      const stored = sessionStorage.getItem('dailyWodForTimer');
+      if (stored) {
+        const wod = JSON.parse(stored);
+        populateWhiteboard(wod);
+      }
+    } catch(e) { console.warn('[Timer] Could not load daily WOD from sessionStorage:', e); }
+    return;
+  }
+
   try {
     // Ensure Supabase is ready
     if (typeof db !== 'undefined' && CONFIG.isConfigured()) {
