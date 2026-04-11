@@ -1450,7 +1450,7 @@ document.querySelectorAll('.mode-card').forEach(card => {
 // Back — return to workout page if we came from one, otherwise show mode select
 document.getElementById('btn-back').addEventListener('click', () => {
   const params = new URLSearchParams(window.location.search);
-  if (params.get('wod_slug') || params.get('wod_id')) {
+  if (params.get('wod_slug') || params.get('wod_id') || params.get('ref')) {
     history.back();
   } else {
     show('s-select');
@@ -1646,7 +1646,8 @@ async function loadWodFromUrl() {
   const params   = new URLSearchParams(window.location.search);
   const wodSlug  = params.get('wod_slug');
   const wodId    = params.get('wod_id');
-  if (!wodSlug && !wodId) return; // standalone timer — show mode select as normal
+  const ref      = params.get('ref'); // e.g. 'daily-wod' — no DB record, but launched from a page
+  if (!wodSlug && !wodId && !ref) return; // standalone timer — show mode select as normal
 
   // URL-supplied hints (may be overridden by fetched WOD data)
   const urlMode     = params.get('mode');
@@ -1667,12 +1668,14 @@ async function loadWodFromUrl() {
   openConfig(mode);
 
   // Show Log Result button immediately — don't wait for the Supabase fetch.
-  // If we have a slug, link directly; if only wod_id, fall back to history.back().
   const logBtn = document.getElementById('btn-log-result');
   if (logBtn) {
     if (wodSlug) {
       logBtn.href = `/workouts/${wodSlug}`;
+    } else if (ref === 'daily-wod') {
+      logBtn.href = '/daily-wod';
     } else {
+      // wod_id or unknown ref — use history to return to the originating page
       logBtn.href = '#';
       logBtn.addEventListener('click', (e) => { e.preventDefault(); history.back(); }, { once: true });
     }

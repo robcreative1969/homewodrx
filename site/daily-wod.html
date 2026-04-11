@@ -326,8 +326,7 @@
     const fmtMap = { amrap: 'amrap', emom: 'emom', fortime: 'fortime', circuit: 'fortime' };
     const mode = fmtMap[wod.format] || 'fortime';
     const duration = wod.duration || 20;
-    const p = new URLSearchParams({ mode, duration });
-    if (wod.id)    p.set('wod_id', wod.id);
+    const p = new URLSearchParams({ mode, duration, ref: 'daily-wod' });
     if (wod.title) p.set('name', wod.title);
     return `/timer.html?${p.toString()}`;
   }
