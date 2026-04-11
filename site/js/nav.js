@@ -36,7 +36,11 @@ const Nav = {
   },
 
   loadSearchScript() {
-    if (window.Search) return; // already loaded
+    // Guard against both: (a) already fully loaded, (b) script tag injected but
+    // not yet executed — the window.Search check alone misses the download window,
+    // which causes a second <script> tag to be appended and search.js to run twice,
+    // triggering "Identifier 'Search' has already been declared".
+    if (window.Search || document.querySelector('script[src="/js/search.js"]')) return;
     const script = document.createElement('script');
     script.src = '/js/search.js';
     // search.js self-inits on load; no callback needed
