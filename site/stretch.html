@@ -197,6 +197,7 @@
   <div class="section">
     <div class="slabel">Step 1</div>
     <div class="stitle">What area do you want to target?</div>
+    <p style="color:var(--mu);font-size:13px;margin:0 0 14px">Pick one area for a targeted session, or choose <strong style="color:var(--tx)">Full Body</strong> to hit everything. Selecting Full Body clears the others.</p>
     <div class="focus-grid" id="focus-grid">
       <!-- injected by JS -->
     </div>
@@ -206,6 +207,7 @@
   <div class="section">
     <div class="slabel">Step 2</div>
     <div class="stitle">How long do you have?</div>
+    <p style="color:var(--mu);font-size:13px;margin:0 0 14px">The generator will fill your session with the right number of stretches to fit this window — including time to switch sides where needed.</p>
     <div class="pill-group" id="duration-group">
       <div class="pill" data-val="5">5 min</div>
       <div class="pill sel" data-val="10">10 min</div>
@@ -218,23 +220,24 @@
   <div class="section">
     <div class="slabel">Step 3</div>
     <div class="stitle">What type of stretching?</div>
+    <p style="color:var(--mu);font-size:13px;margin:0 0 14px">Select one or more. Mix types for variety, or keep it focused — Static works well for cooldowns, Dynamic for warm-ups, PNF for maximum flexibility gains.</p>
     <div class="mod-grid" id="mod-grid">
-      <div class="mod-card sel" data-mod="static">
+      <div class="mod-card" data-mod="static">
         <span class="m-icon">🧘</span>
         <span class="m-name">Static</span>
         <span class="m-sub">Hold-based stretches, 20–60 seconds each — the classic cooldown</span>
       </div>
-      <div class="mod-card sel" data-mod="dynamic">
+      <div class="mod-card" data-mod="dynamic">
         <span class="m-icon">🔄</span>
         <span class="m-name">Dynamic / Mobility</span>
         <span class="m-sub">Movement-based flows — great for warm-ups or active recovery</span>
       </div>
-      <div class="mod-card sel" data-mod="pnf">
+      <div class="mod-card" data-mod="pnf">
         <span class="m-icon">💥</span>
         <span class="m-name">PNF / Deep Tissue</span>
         <span class="m-sub">Contract-relax technique for maximum flexibility gains</span>
       </div>
-      <div class="mod-card sel" data-mod="yoga">
+      <div class="mod-card" data-mod="yoga">
         <span class="m-icon">🌿</span>
         <span class="m-name">Yoga-Inspired</span>
         <span class="m-sub">Familiar poses athletes know — pigeon, downward dog, warriors</span>
@@ -246,6 +249,7 @@
   <div class="section">
     <div class="slabel">Step 4</div>
     <div class="stitle">Your flexibility level</div>
+    <p style="color:var(--mu);font-size:13px;margin:0 0 14px">This sets hold times and which stretches are included. Beginner avoids advanced poses; Advanced uses longer holds and deeper variations.</p>
     <div class="pill-group" id="level-group">
       <div class="pill" data-val="b">Beginner</div>
       <div class="pill sel" data-val="i">Intermediate</div>
@@ -387,6 +391,21 @@ function handleGenerate() {
   setTimeout(() => {
     try {
       const prefs = getSelections();
+
+      if (!prefs.modalities.length) {
+        showToast('Pick at least one stretching type above', 'error');
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        return;
+      }
+
+      if (!prefs.focusAreas.length) {
+        showToast('Pick a focus area above', 'error');
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        return;
+      }
+
       const { stretches, estimatedMinutes } = generateStretchSession(prefs);
 
       if (!stretches || stretches.length === 0) {
@@ -490,7 +509,7 @@ function buildPrintArea(stretches, estimatedMinutes, prefs, focusLabel, levelLab
 
   pa.innerHTML = `
     <div class="ph">
-      <img src="/HomeWODRx-logo-black-red-040626.png" alt="HomeWODrx">
+      <img src="https://homewodrx.com/HomeWODRx-logo-black-red-040626.png" alt="HomeWODrx">
       <div class="ph-url">homewodrx.com/stretch<br>Stretch Session Generator</div>
     </div>
     <div class="pt">${focusLabel} Stretch Session</div>
