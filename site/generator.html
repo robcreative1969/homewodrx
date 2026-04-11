@@ -868,9 +868,10 @@ function buildPool(equipment, level, bodyFocuses) {
     if (tagSet.size) tags = [...tagSet];
   }
   if (tags) {
-    // Always keep equipment movements so guarantee logic can fire; only filter bodyweight
-    const bwFiltered = moves.filter(m => m._eq !== 'bodyweight' || (m.tags && m.tags.some(t => tags.includes(t))));
-    if (bwFiltered.length >= 3) moves = bwFiltered;
+    // Apply body-focus tag filter to ALL movements (bodyweight and equipment alike)
+    // The guarantee logic below still ensures each equipment type gets at least one rep
+    const filtered = moves.filter(m => m.tags && m.tags.some(t => tags.includes(t)));
+    if (filtered.length >= 3) moves = filtered;
   }
   return moves;
 }
@@ -1035,7 +1036,7 @@ function renderWorkout(w) {
   document.getElementById('wod-desc').textContent = w.description;
   document.getElementById('wod-movements').innerHTML = w.rows.map(r => `
     <tr>
-      <td><div class="mname"><a href="/movements/${slugify(r.movement)}.html">${r.movement}</a></div>${r.tip ? `<div class="mtip">💡 ${r.tip}</div>` : ''}</td>
+      <td><div class="mname"><a href="/movements/${slugify(r.movement)}">${r.movement}</a></div>${r.tip ? `<div class="mtip">💡 ${r.tip}</div>` : ''}</td>
       <td><span class="rbadge">${r.reps}</span></td>
       <td style="color:var(--mu);font-size:12px">${r.tip || ''}</td>
     </tr>`).join('');

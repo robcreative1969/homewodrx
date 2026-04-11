@@ -22,7 +22,7 @@
   <script>
     (function() {
       var parts = window.location.pathname.split('/').filter(Boolean);
-      var slug = parts[parts.length - 1] || '';
+      var slug = (parts[parts.length - 1] || '').replace(/\.html$/, '');
       if (slug && slug !== 'movements') {
         var name = slug.replace(/-/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
         document.title = name + ' - CrossFit Movement Guide - HomeWODrx';
@@ -441,7 +441,7 @@
   // ── Read slug from path (/movements/:slug) or query param (?slug=) ──────────
   function getSlug() {
     const pathMatch = window.location.pathname.match(/\/movements\/([^\/]+)/);
-    if (pathMatch) return decodeURIComponent(pathMatch[1]);
+    if (pathMatch) return decodeURIComponent(pathMatch[1]).replace(/\.html$/, '');
     return new URLSearchParams(window.location.search).get('slug');
   }
 
