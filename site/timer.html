@@ -1683,7 +1683,7 @@ async function loadWodFromUrl() {
       logBtn.href = '#';
       logBtn.addEventListener('click', (e) => { e.preventDefault(); history.back(); }, { once: true });
     }
-    logBtn.style.display = '';
+    logBtn.style.display = 'block';
   }
 
   // Also pre-set wb-name so whiteboard shows name even before full fetch
