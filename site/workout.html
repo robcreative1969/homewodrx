@@ -732,7 +732,7 @@
       partner:   '<span class="badge badge-partner">Partner WOD</span>',
       benchmark: '<span class="badge badge-benchmark">Benchmark</span>',
       user:      '<span class="badge badge-success">Community</span>',
-      daily:     '<span class="badge badge-orange">Daily WOD</span>',
+      daily:     '<span class="badge badge-orange">Daily 20</span>',
     };
     const categoryBadge = categoryBadgeMap[w.category] || '';
     const wkHeaderEl = document.getElementById('workout-header');
@@ -748,8 +748,12 @@
           ${w.difficulty ? `<span class="wod-meta-item"><span class="wod-meta-label">Level</span><span class="wod-meta-value">${w.difficulty}</span></span>` : ''}
           ${w.body_focus ? `<span class="wod-meta-item"><span class="wod-meta-label">Focus</span><span class="wod-meta-value">${w.body_focus}</span></span>` : ''}
         </div>
-        <div style="display:flex;gap:1rem;">
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;">
           <button class="btn btn-primary" onclick="openResultModal()">Log Your Result</button>
+          <a href="${buildTimerUrl(w, isBenchmark)}" class="btn btn-secondary" style="display:inline-flex;align-items:center;gap:0.4rem;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Start WOD Timer
+          </a>
           ${isBenchmark ? `<a href="/workouts.html" class="btn btn-secondary">Browse Similar</a>` : `<a href="/workouts.html" class="btn btn-secondary">Browse Workouts</a>`}
           <button class="btn btn-secondary" onclick="printWorkout()">🖨️ Print WOD</button>
         </div>
@@ -806,6 +810,42 @@
         setTimeout(() => { pa.innerHTML = ''; }, 500);
       });
     });
+  }
+
+  // ── WOD Timer launcher ──────────────────────────────────────────────────────
+  // Detects timer mode from the workout's format string and builds the timer URL.
+  function buildTimerUrl(w, isBm) {
+    const fmt = (w.format || '').toLowerCase();
+    let mode = 'fortime';
+    let duration = 20;
+
+    if (fmt.includes('amrap')) {
+      mode = 'amrap';
+      const m = fmt.match(/amrap\s+(\d+)/);
+      if (m) duration = parseInt(m[1]);
+    } else if (fmt.includes('emom')) {
+      mode = 'emom';
+      const m = fmt.match(/emom\s+(\d+)/);
+      if (m) duration = parseInt(m[1]);
+    } else if (fmt.includes('tabata')) {
+      mode = 'tabata';
+    }
+    // For Time and all round-scheme WODs (21-15-9, etc.) default to fortime
+
+    // Try to extract cap from duration_estimate if not already set by format
+    if (mode === 'fortime' && w.duration_estimate) {
+      const m = w.duration_estimate.match(/(\d+)/);
+      if (m) duration = Math.min(60, Math.max(1, parseInt(m[1])));
+    }
+
+    const p = new URLSearchParams({ mode, duration });
+    if (isBm && w.slug) {
+      p.set('wod_slug', w.slug);
+    } else if (w.id) {
+      p.set('wod_id', w.id);
+    }
+    if (w.title || w.name) p.set('name', w.title || w.name);
+    return `/timer.html?${p.toString()}`;
   }
 
   function copyShareLink(btn) {
