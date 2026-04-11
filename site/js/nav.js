@@ -65,6 +65,7 @@ const Nav = {
       { text: 'Workouts', href: '/workouts.html', page: 'workouts' },
       { text: 'Movements', href: '/movements.html', page: 'movements' },
       { text: 'Smart WOD Builder', href: '/generator.html', page: 'generator' },
+      { text: 'Stretch', href: '/stretch.html', page: 'stretch' },
       { text: 'Shop', href: '/shop.html', page: 'shop' },
       { text: 'Blog', href: '/blog.html', page: 'blog' }
     ];
