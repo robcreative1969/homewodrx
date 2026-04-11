@@ -549,11 +549,6 @@
         ${info?.muscles
           ? `<p style="margin-top: 0.75rem;"><strong>Primary muscles:</strong> <span class="text-muted">${info.muscles}</span></p>`
           : ''}
-        ${info?.daily_wod_eligible
-          ? `<p style="margin-top: 0.75rem; font-size: 0.88rem; color: var(--text-muted, #888);">
-               ⚡ Part of the <a href="/daily-wod.html" style="color: var(--orange, #f97316); text-decoration: none;">Daily 20</a> rotation
-             </p>`
-          : ''}
         <div class="share-bar">
           <span class="share-bar-label">Share:</span>
           <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(displayName+' movement guide on HomeWODrx 💪')}&url=${encodeURIComponent(window.location.href)}" target="_blank" rel="noopener" class="share-btn">𝕏 Post</a>
