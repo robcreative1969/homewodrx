@@ -103,7 +103,7 @@ const STRETCH_CONTENT = {
       'Flex the foot (toes toward shin) to increase the stretch intensity, or point it to decrease.',
       'Hold, breathing steadily, then slowly lower the leg and switch sides.',
     ],
-    youtube: null
+    youtube: 'r5Cc_V2MPrE' // Bob & Brad — Hamstring Stretches Are Useless, Unless You Do This First!
   },
 
   'standing-calf-stretch': {
@@ -129,7 +129,7 @@ const STRETCH_CONTENT = {
       'Adjust the depth by bending the back knee more (deeper) or less (lighter).',
       'Hold, then switch sides.',
     ],
-    youtube: null
+    youtube: 'u4o0Fz6MFe0' // Bob & Brad — Calf Stretches (includes soleus technique)
   },
 
   'cross-body-shoulder-stretch': {
@@ -142,7 +142,7 @@ const STRETCH_CONTENT = {
       'You should feel the stretch in the back of the shoulder (posterior deltoid). If you feel it in the front of the shoulder, adjust the arm angle.',
       'Hold, then switch arms.',
     ],
-    youtube: null
+    youtube: 'aVtKJ6hSKwo' // Bob & Brad — The Shoulder Crossover: Simple Test and Treatment for Shoulder Pain
   },
 
   'doorway-chest-stretch': {
@@ -155,7 +155,7 @@ const STRETCH_CONTENT = {
       'Adjust the arm height to find the spot that feels most restricted.',
       'Hold, then switch sides (or use both arms simultaneously if your doorway allows).',
     ],
-    youtube: null
+    youtube: 'LgVAfUaTi0g' // Bob & Brad — Door Posture Stretch
   },
 
   'overhead-tricep-stretch': {
@@ -207,7 +207,7 @@ const STRETCH_CONTENT = {
       'Place your right hand on the floor behind your right hip to help support an upright spine.',
       'Hold the twist, breathing steadily. Try to lengthen on each inhale and rotate a little further on each exhale. Switch sides.',
     ],
-    youtube: null
+    youtube: '0DdXlmpdf-Y' // Yoga With Adriene — Yoga For The Spine
   },
 
   'standing-side-stretch': {
@@ -233,7 +233,7 @@ const STRETCH_CONTENT = {
       'Stop when you feel a firm stretch deep in the back of the bottom shoulder. Never force through pain.',
       'Hold, breathe steadily, then release and switch sides.',
     ],
-    youtube: null
+    youtube: 'aYfx0Zbl96Q' // Bob & Brad — Can't Reach Behind Your Back? Try the Sleeper Stretch!
   },
 
   'lat-stretch-at-wall': {
@@ -287,7 +287,7 @@ const STRETCH_CONTENT = {
       'Complete half the reps circling in one direction, then reverse the circle direction for the remaining reps.',
       'Switch legs and repeat.',
     ],
-    youtube: null
+    youtube: 'Q-oOYQipCg8' // Movement Project PT — Best Warm Up for Exercise - Hip Circles
   },
 
   'arm-circles': {
@@ -339,7 +339,7 @@ const STRETCH_CONTENT = {
       'Return your right hand to the floor, then straighten your front leg slightly to load the hamstring if desired.',
       'Return to plank and step the left foot forward to repeat on the other side. This completes one rep per side.',
     ],
-    youtube: null
+    youtube: 'ExuOImbFFFY' // Squat University — The World's Greatest Stretch Tutorial
   },
 
   'hip-90-90-transitions': {
@@ -391,7 +391,7 @@ const STRETCH_CONTENT = {
       'As your hands approach your feet, try to straighten your legs more than on the walk-out, pressing your heels toward the floor to load the hamstrings.',
       'Return to standing. This completes one rep.',
     ],
-    youtube: null
+    youtube: 'ttxQ_UPOwWc' // Movement As Medicine — Inchworm Walkout
   },
 
   'neck-rolls': {
@@ -404,7 +404,7 @@ const STRETCH_CONTENT = {
       'Reverse the arc back to the right. Avoid rolling the head fully back — this can compress cervical joints.',
       'Move slowly and with full control. Never force range of motion in the neck.',
     ],
-    youtube: null
+    youtube: 'AaLt_-H5C1o' // Bob & Brad — The 5 Highest Rated Stretches For Neck Pain, Fast Relief!
   },
 
   'kang-squat': {
@@ -445,7 +445,7 @@ const STRETCH_CONTENT = {
       'Deepen: Drive your hips forward another centimeter or two into the new, greater available range. The nervous system should allow more than before.',
       'Repeat the contract-relax cycle 2–3 times per side, working progressively deeper each time.',
     ],
-    youtube: null
+    youtube: '0TRd1Qdn3nk' // Dani Winks Flexibility — Kneeling Lunge Hip Flexor Contract-Relax (PNF)
   },
 
   'pnf-hamstring-stretch': {
@@ -458,7 +458,7 @@ const STRETCH_CONTENT = {
       'Hold the new range for 3 seconds, then begin the next contract phase.',
       'Complete 2–3 cycles per leg, aiming to access a new, greater range with each cycle.',
     ],
-    youtube: null
+    youtube: 'JRQBmPRHSYk' // Dani Winks Flexibility — Supine Hamstring PNF (Hamstrings Engaged)
   },
 
   'pnf-chest-stretch': {
@@ -471,7 +471,7 @@ const STRETCH_CONTENT = {
       'Deepen: Step slightly further through the door frame, opening the chest a little more than before.',
       'Repeat 2–3 cycles, stepping progressively further with each relax-and-deepen.',
     ],
-    youtube: null
+    youtube: 'X27ASvkYUUc' // Dani Winks Flexibility — Wall Chest Stretch Pec Contract-Relax
   },
 
   'pnf-quad-stretch': {
@@ -484,7 +484,7 @@ const STRETCH_CONTENT = {
       'Hold the new range for 3 seconds, then begin the next contract phase.',
       'Complete 2–3 cycles per leg.',
     ],
-    youtube: null
+    youtube: 'caSKp2Zw0JE' // Dani Winks Flexibility — Prone Quad Contract-Relax (PNF)
   },
 
   'pnf-shoulder-stretch': {
@@ -497,7 +497,7 @@ const STRETCH_CONTENT = {
       'Hold 3 seconds, then repeat the contract phase.',
       'Complete 2–3 cycles per side.',
     ],
-    youtube: null
+    youtube: 'VNCe99-6WiE' // Physical Therapy San Pedro — Contract-Relax for Shoulder External Rotation
   },
 
   'pnf-calf-stretch': {
@@ -510,7 +510,7 @@ const STRETCH_CONTENT = {
       'Hold 3 seconds, then repeat the contract phase.',
       'Complete 2–3 cycles per leg. For the soleus, keep a slight bend in the back knee.',
     ],
-    youtube: null
+    youtube: '0RU5VPWoFPk' // Athlete Training and Health — PNF Calf Stretch
   },
 
   'pnf-glute-stretch': {
@@ -523,7 +523,7 @@ const STRETCH_CONTENT = {
       'Deepen: Gently press the right knee further from your body, or pull the left thigh a little closer to access a greater range.',
       'Complete 2–3 cycles per side.',
     ],
-    youtube: null
+    youtube: 'IRMlfbDZGgE' // Brian Abelson — Gluteal & Piriformis - PNF Stretching
   },
 
   // ── YOGA ──────────────────────────────────────────────────────────────────
@@ -590,7 +590,7 @@ const STRETCH_CONTENT = {
       'Each inhale creates length in the spine; each exhale deepens the forward fold slightly.',
       'Hold, keeping a flat back as long as possible. A gentle rounding at the end of range is acceptable.',
     ],
-    youtube: null
+    youtube: '-Mirm7LKvKk' // Yoga With Adriene — Yoga for Hamstrings
   },
 
   'supine-spinal-twist': {
@@ -616,7 +616,7 @@ const STRETCH_CONTENT = {
       'Flex both feet — soles face the ceiling, ankles over knees.',
       'Gently rock side to side to massage the lower back. Breathe deeply and relax into the pose.',
     ],
-    youtube: null
+    youtube: 'u1qayo-0aL4' // Yoga With Adriene — Morning Hip Release (features Happy Baby)
   },
 
   'thread-the-needle': {
@@ -629,7 +629,7 @@ const STRETCH_CONTENT = {
       'For a deeper stretch, walk the left hand further forward to increase the thoracic rotation.',
       'Hold, breathe into the right shoulder and upper back, then slowly unthread and switch sides.',
     ],
-    youtube: null
+    youtube: 'mgpjd4JMSZg' // Yoga With Adriene — Upper Back and Neck Mobility (features Thread the Needle)
   },
 
   'lizard-pose': {
@@ -642,7 +642,7 @@ const STRETCH_CONTENT = {
       'Keep your back leg extended and press the top of the back foot into the floor for stability.',
       'Hold, breathing deeply into the inner groin and hip, then return to plank and switch sides.',
     ],
-    youtube: '6mgjymhdyq' // casing uncertain — verify before finalizing
+    youtube: '-6MGjYmHdYQ' // Yoga With Adriene — Lizard Pose - Foundations of Yoga (corrected from broken '6mgjymhdyq')
   },
 
   'bridge-pose': {
@@ -668,7 +668,7 @@ const STRETCH_CONTENT = {
       'Keep your lower back gently in contact with the floor.',
       'Breathe slowly and deeply. This is a fully restorative stretch — complete relaxation is the goal.',
     ],
-    youtube: null
+    youtube: 'RQyX48NtDrQ' // Yoga With Adriene — Intro to Yin (features Reclined Butterfly/Supta Baddha Konasana)
   },
 
   'puppy-pose': {
@@ -681,7 +681,7 @@ const STRETCH_CONTENT = {
       'Press your hands gently into the floor without pushing your chest away — the goal is surrender, not pushing.',
       'Hold while breathing into the chest and upper back, then slowly walk the hands back in.',
     ],
-    youtube: null
+    youtube: 'JhWCtd9lyQU' // Dani Winks Flexibility — 3 Puppy Pose Variations for Open Shoulders
   },
 
 };
