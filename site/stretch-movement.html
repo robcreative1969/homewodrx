@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Sentry Error Monitoring -->
+  <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stretch Guide - HomeWODrx</title>
+  <meta name="description" content="Learn how to perform this stretch with step-by-step coaching cues, hold times by level, and related mobility work.">
+  <meta property="og:title" content="Stretch Guide - HomeWODrx">
+  <meta property="og:description" content="Step-by-step stretch coaching cues and mobility guidance from HomeWODrx.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://homewodrx.com/stretches/" id="og-url">
+  <meta property="og:image" content="https://homewodrx.com/images/og-default.png" id="og-image">
+  <meta property="og:image:width" content="1200" id="og-image-width">
+  <meta property="og:image:height" content="630" id="og-image-height">
+  <meta property="og:image:alt" content="Stretch Guide — HomeWODrx" id="og-image-alt">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://homewodrx.com/images/og-default.png" id="twitter-image">
+  <link rel="canonical" href="https://homewodrx.com/stretches/" id="canonical-url">
+  <!-- SEO: set canonical/title/description from slug before JS loads -->
+  <script>
+    (function() {
+      var parts = window.location.pathname.split('/').filter(Boolean);
+      var slug = (parts[parts.length - 1] || '').replace(/\.html$/, '');
+      if (slug && slug !== 'stretches') {
+        var name = slug.replace(/-/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+        document.title = name + ' - Stretch Guide & Coaching Cues | HomeWODrx';
+        document.querySelector('meta[name="description"]').setAttribute('content',
+          'How to perform ' + name + ': step-by-step coaching cues, hold times by level, and related stretches on HomeWODrx.');
+        document.querySelector('meta[property="og:title"]').setAttribute('content', name + ' - Stretch Guide | HomeWODrx');
+        document.querySelector('meta[property="og:description"]').setAttribute('content',
+          'Step-by-step coaching cues for ' + name + ' with hold times by level and related mobility work.');
+        var url = 'https://homewodrx.com/stretches/' + slug;
+        document.getElementById('canonical-url').setAttribute('href', url);
+        document.getElementById('og-url').setAttribute('content', url);
+      }
+    })();
+  </script>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/db.js"></script>
+  <script src="/js/nav.js"></script>
+  <script src="/js/stretch-db.js"></script>
+  <script src="/js/stretch-content.js"></script>
+  <style>
+    /* ── Hero ─────────────────────────────────────────────────────── */
+    .stretch-hero {
+      padding: 2.5rem 0 2rem;
+      border-bottom: 1px solid var(--dark-border, #333);
+      margin-bottom: 2rem;
+    }
+    .stretch-hero h1 {
+      margin-bottom: 0.6rem;
+    }
+    .stretch-hero .breadcrumb {
+      font-size: 0.9rem;
+      color: var(--text-muted, #888);
+      margin-bottom: 1rem;
+    }
+    .stretch-hero .breadcrumb a {
+      color: var(--or, #C41212);
+      text-decoration: none;
+    }
+    .stretch-hero .breadcrumb a:hover { text-decoration: underline; }
+
+    /* ── Badges ───────────────────────────────────────────────────── */
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin: 0.6rem 0 1rem;
+    }
+    .sbadge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.2rem;
+      border-radius: 4px;
+      padding: 0.2rem 0.55rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .sbadge-static   { background: rgba(59,130,246,0.15);  border: 1px solid rgba(59,130,246,0.35);  color: #60a5fa; }
+    .sbadge-dynamic  { background: rgba(34,197,94,0.12);   border: 1px solid rgba(34,197,94,0.3);    color: #4ade80; }
+    .sbadge-pnf      { background: rgba(168,85,247,0.12);  border: 1px solid rgba(168,85,247,0.35);  color: #c084fc; }
+    .sbadge-yoga     { background: rgba(20,184,166,0.12);   border: 1px solid rgba(20,184,166,0.35);  color: #2dd4bf; }
+    .sbadge-focus    { background: var(--dark-surface, #1e1e1e); border: 1px solid var(--dark-border, #444); color: var(--text-muted, #aaa); }
+    .sbadge-level-b  { background: rgba(34,197,94,0.1);   border: 1px solid rgba(34,197,94,0.3);   color: #4ade80; }
+    .sbadge-level-i  { background: rgba(249,115,22,0.1);  border: 1px solid rgba(249,115,22,0.3);  color: #fb923c; }
+    .sbadge-level-a  { background: rgba(239,68,68,0.1);   border: 1px solid rgba(239,68,68,0.3);   color: #f87171; }
+    .sbadge-sides    { background: rgba(99,102,241,0.1);  border: 1px solid rgba(99,102,241,0.3);  color: #a5b4fc; }
+
+    /* ── Description ──────────────────────────────────────────────── */
+    .stretch-description {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text-muted, #bbb);
+      max-width: 700px;
+      margin: 0.75rem 0 1rem;
+    }
+
+    /* ── Hold times table ─────────────────────────────────────────── */
+    .hold-table-wrap {
+      background: var(--dark-surface, #1e1e1e);
+      border: 1px solid var(--dark-border, #333);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .hold-table-wrap h3 {
+      margin-bottom: 0.9rem;
+      font-size: 1rem;
+    }
+    .hold-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .hold-table th,
+    .hold-table td {
+      text-align: center;
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid var(--dark-border, #333);
+      font-size: 0.9rem;
+    }
+    .hold-table th {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted, #888);
+    }
+    .hold-table tr:last-child td { border-bottom: none; }
+    .hold-table .level-b { color: #4ade80; font-weight: 700; }
+    .hold-table .level-i { color: #fb923c; font-weight: 700; }
+    .hold-table .level-a { color: #f87171; font-weight: 700; }
+    .hold-table .val     { font-size: 1.1rem; font-weight: 800; }
+    .sides-note {
+      font-size: 0.82rem;
+      color: var(--text-muted, #888);
+      margin-top: 0.6rem;
+      font-style: italic;
+    }
+
+    /* ── Coaching cues ────────────────────────────────────────────── */
+    .coaching-cues {
+      background: var(--dark-surface, #1e1e1e);
+      border: 1px solid var(--dark-border, #333);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .coaching-cues h3 { margin-bottom: 1rem; }
+    .cue-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .cue-list li {
+      display: flex;
+      gap: 0.85rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--dark-border, #2a2a2a);
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+    .cue-list li:last-child { border-bottom: none; }
+    .cue-num {
+      flex-shrink: 0;
+      width: 1.6rem;
+      height: 1.6rem;
+      border-radius: 50%;
+      background: var(--or, #C41212);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0.15rem;
+    }
+
+    /* ── PNF callout ──────────────────────────────────────────────── */
+    .pnf-callout {
+      background: rgba(168,85,247,0.07);
+      border: 1px solid rgba(168,85,247,0.3);
+      border-radius: 8px;
+      padding: 1.1rem 1.4rem;
+      margin: 1.25rem 0;
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+    .pnf-callout .pnf-icon { font-size: 1.3rem; flex-shrink: 0; }
+    .pnf-callout .pnf-body { }
+    .pnf-callout strong { color: #c084fc; }
+    .pnf-callout p { font-size: 0.9rem; line-height: 1.6; color: var(--text-muted, #bbb); margin: 0.2rem 0 0; }
+
+    /* ── YouTube embed / search button ───────────────────────────── */
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      border-radius: 8px;
+      margin: 1.5rem 0;
+      background: #000;
+    }
+    .video-container iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      border: 0;
+    }
+    .yt-search-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #ef4444;
+      border-radius: 8px;
+      padding: 0.7rem 1.2rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      margin: 1.5rem 0;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .yt-search-btn:hover {
+      background: rgba(239,68,68,0.15);
+      border-color: rgba(239,68,68,0.5);
+    }
+    .yt-icon { font-size: 1.1rem; }
+
+    /* ── Related stretches ────────────────────────────────────────── */
+    .related-section { margin: 2.5rem 0; }
+    .related-section h2 { margin-bottom: 1.25rem; }
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.75rem;
+    }
+    .related-card {
+      display: block;
+      background: var(--dark-surface, #1a1a1a);
+      border: 1px solid var(--dark-border, #333);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+      text-decoration: none;
+      color: var(--text, #e5e5e5);
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    }
+    .related-card:hover {
+      border-color: var(--or, #C41212);
+      background: rgba(196,18,18,0.06);
+      transform: translateY(-2px);
+    }
+    .related-card .rc-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.35rem;
+    }
+    .related-card .rc-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted, #888);
+    }
+
+    /* ── Generator CTA ───────────────────────────────────────────── */
+    .generator-cta {
+      background: linear-gradient(135deg, rgba(196,18,18,0.12) 0%, rgba(196,18,18,0.05) 100%);
+      border: 1px solid rgba(196,18,18,0.3);
+      border-radius: 12px;
+      padding: 1.75rem 2rem;
+      text-align: center;
+      margin: 2.5rem 0;
+    }
+    .generator-cta h3 { margin-bottom: 0.5rem; font-size: 1.15rem; }
+    .generator-cta p { color: var(--text-muted, #bbb); font-size: 0.9rem; margin-bottom: 1.1rem; }
+
+    /* ── Share bar ────────────────────────────────────────────────── */
+    .share-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .share-bar-label { font-size: 0.8rem; color: var(--text-muted, #888); }
+    .share-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.35rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1px solid var(--dark-border, #444);
+      background: var(--dark-surface, #1e1e1e);
+      color: var(--text, #e5e5e5);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      font-family: inherit;
+    }
+    .share-btn:hover { background: rgba(255,255,255,0.07); border-color: #666; }
+    .share-btn.copied { color: #22c55e; border-color: rgba(34,197,94,0.4); }
+
+    /* ── Affiliate recovery gear ──────────────────────────────────── */
+    .equipment-section {
+      margin-top: 1.5rem;
+      padding: 1.25rem 1.5rem;
+      border: 1px solid var(--dark-border, #333);
+      border-radius: 8px;
+      background: var(--dark-surface, #1a1a1a);
+    }
+    .equipment-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: var(--dark-surface, #1e1e1e);
+      border: 1px solid var(--dark-border, #444);
+      border-radius: 6px;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-decoration: none;
+      color: var(--text, #e5e5e5);
+      transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
+    }
+    .equipment-chip::after { content: ' →'; font-size: 0.75rem; opacity: 0.5; }
+    .equipment-chip:hover {
+      background: rgba(196,18,18,0.08);
+      border-color: var(--or, #C41212);
+      color: var(--or, #C41212);
+      transform: translateY(-1px);
+    }
+    .equipment-chip:hover::after { opacity: 1; }
+
+    @media (max-width: 600px) {
+      .hold-table th, .hold-table td { padding: 0.5rem 0.5rem; }
+      .related-grid { grid-template-columns: 1fr 1fr; }
+      .generator-cta { padding: 1.25rem 1rem; }
+    }
+  </style>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-HZM475VDN3');
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body data-nav-init="true" data-active-page="stretch">
+<main class="container">
+
+  <div id="stretch-header" class="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <div id="stretch-body" style="display:none;"></div>
+
+</main>
+
+<script src="/js/footer.js"></script>
+
+<script>
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function slugify(name) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+function titleCase(slug) {
+  return slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
+
+function getSlug() {
+  const m = window.location.pathname.match(/\/stretches\/([^\/]+)/);
+  if (m) return decodeURIComponent(m[1]).replace(/\.html$/, '');
+  return new URLSearchParams(window.location.search).get('slug');
+}
+
+function copyShareLink(btn) {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    btn.classList.add('copied');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => { btn.classList.remove('copied'); btn.textContent = '🔗 Copy Link'; }, 2000);
+  }).catch(() => { prompt('Copy this link:', window.location.href); });
+}
+
+// ── Modality display meta ─────────────────────────────────────────────────────
+const MODALITY_META = {
+  static:  { label: 'Static',  cls: 'sbadge-static',  emoji: '🧘' },
+  dynamic: { label: 'Dynamic', cls: 'sbadge-dynamic',  emoji: '🏃' },
+  pnf:     { label: 'PNF',     cls: 'sbadge-pnf',      emoji: '💪' },
+  yoga:    { label: 'Yoga',    cls: 'sbadge-yoga',      emoji: '🌿' },
+};
+
+const LEVEL_META = {
+  b: { label: 'Beginner',     cls: 'sbadge-level-b', tdcls: 'level-b' },
+  i: { label: 'Intermediate', cls: 'sbadge-level-i', tdcls: 'level-i' },
+  a: { label: 'Advanced',     cls: 'sbadge-level-a', tdcls: 'level-a' },
+};
+
+const FOCUS_META = {
+  full:       { label: 'Full Body',        emoji: '🧘' },
+  hips:       { label: 'Hips & Glutes',    emoji: '🦋' },
+  hamstrings: { label: 'Hamstrings',       emoji: '🦵' },
+  back:       { label: 'Back & Spine',     emoji: '🔄' },
+  shoulders:  { label: 'Shoulders',        emoji: '💪' },
+  chest:      { label: 'Chest',            emoji: '🫁' },
+  calves:     { label: 'Calves & Ankles',  emoji: '🦶' },
+};
+
+// ── Affiliate gear for stretching/recovery ────────────────────────────────────
+const AFFILIATE_TAG = 'homewodrx0f-20';
+const RECOVERY_GEAR = [
+  { name: 'Foam Roller',          url: `https://www.amazon.com/s?k=foam+roller&tag=${AFFILIATE_TAG}` },
+  { name: 'Resistance Bands',     url: `https://www.amazon.com/s?k=resistance+bands+set&tag=${AFFILIATE_TAG}` },
+  { name: 'Yoga Mat',             url: `https://www.amazon.com/s?k=yoga+mat&tag=${AFFILIATE_TAG}` },
+  { name: 'Massage Gun',          url: `https://www.amazon.com/s?k=massage+gun+recovery&tag=${AFFILIATE_TAG}` },
+  { name: 'Yoga Blocks',          url: `https://www.amazon.com/s?k=yoga+blocks&tag=${AFFILIATE_TAG}` },
+  { name: 'Stretching Strap',     url: `https://www.amazon.com/s?k=stretching+strap&tag=${AFFILIATE_TAG}` },
+  { name: 'Lacrosse Ball',        url: `https://www.amazon.com/s?k=lacrosse+ball+trigger+point&tag=${AFFILIATE_TAG}` },
+  { name: 'Knee Sleeves',         url: `https://www.amazon.com/s?k=knee+sleeves+compression&tag=${AFFILIATE_TAG}` },
+];
+
+// ── Collect ALL stretches from STRETCH_DB into a flat array ──────────────────
+function getAllStretches() {
+  const all = [];
+  for (const [modality, arr] of Object.entries(STRETCH_DB)) {
+    arr.forEach(s => all.push({ ...s, modality }));
+  }
+  return all;
+}
+
+// ── Find stretch entries by slug (may return multiple for pigeon-pose) ────────
+function findStretchBySlug(slug) {
+  const results = [];
+  for (const [modality, arr] of Object.entries(STRETCH_DB)) {
+    arr.forEach(s => {
+      if (slugify(s.name) === slug) results.push({ ...s, modality });
+    });
+  }
+  return results;
+}
+
+// ── Find related stretches ────────────────────────────────────────────────────
+function findRelated(currentSlug, currentFocus, limit = 4) {
+  const all = getAllStretches();
+  const scored = all
+    .filter(s => slugify(s.name) !== currentSlug)
+    .map(s => {
+      const overlap = (s.focus || []).filter(f => currentFocus.includes(f)).length;
+      return { ...s, overlap };
+    })
+    .filter(s => s.overlap > 0)
+    .sort((a, b) => b.overlap - a.overlap);
+
+  // Deduplicate by slug (same stretch in multiple modalities)
+  const seen = new Set();
+  const unique = [];
+  for (const s of scored) {
+    const sl = slugify(s.name);
+    if (!seen.has(sl)) {
+      seen.add(sl);
+      unique.push(s);
+    }
+    if (unique.length >= limit) break;
+  }
+  return unique;
+}
+
+// ── Hold/reps table HTML ──────────────────────────────────────────────────────
+function buildHoldTable(stretch) {
+  const levels = ['b', 'i', 'a'];
+  const isReps = stretch.timedOrReps === 'reps' || (stretch.reps && !stretch.hold);
+
+  const rows = levels.map(lv => {
+    const meta = LEVEL_META[lv];
+    const inLevel = (stretch.level || []).includes(lv);
+    let val = '—';
+    if (inLevel) {
+      if (isReps && stretch.reps) {
+        val = `${stretch.reps[lv]} reps`;
+      } else if (stretch.hold) {
+        val = `${stretch.hold[lv]}s hold`;
+      }
+    }
+    const dimmed = inLevel ? '' : 'style="opacity:0.35;"';
+    return `
+      <tr ${dimmed}>
+        <td><span class="sbadge ${meta.cls}">${meta.label}</span></td>
+        <td class="${meta.tdcls} val">${val}</td>
+        ${stretch.sides ? `<td style="color:var(--text-muted,#888);font-size:0.82rem">each side</td>` : '<td></td>'}
+      </tr>`;
+  }).join('');
+
+  const sidesNote = stretch.sides
+    ? `<div class="sides-note">↩ Perform on each side individually.</div>`
+    : '';
+
+  return `
+    <div class="hold-table-wrap">
+      <h3>Duration by Level</h3>
+      <table class="hold-table">
+        <thead>
+          <tr>
+            <th style="text-align:left">Level</th>
+            <th>${isReps ? 'Reps' : 'Hold Time'}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+      ${sidesNote}
+    </div>`;
+}
+
+// ── YouTube embed HTML ────────────────────────────────────────────────────────
+function buildVideoSection(stretchName, youtubeId) {
+  if (youtubeId) {
+    return `
+      <div class="video-container">
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/${youtubeId}"
+          title="${stretchName} technique video"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          loading="lazy">
+        </iframe>
+      </div>`;
+  }
+  const query = encodeURIComponent(stretchName + ' stretch tutorial');
+  return `
+    <a href="https://www.youtube.com/results?search_query=${query}" target="_blank" rel="noopener" class="yt-search-btn">
+      <span class="yt-icon">▶</span>
+      Watch "${stretchName}" on YouTube
+    </a>`;
+}
+
+// ── Recovery gear affiliate section ──────────────────────────────────────────
+function buildRecoverySection() {
+  const chips = RECOVERY_GEAR.map(g =>
+    `<a href="${g.url}" class="equipment-chip" target="_blank" rel="noopener sponsored">${g.name}</a>`
+  ).join('');
+  return `
+    <div class="equipment-section">
+      <h4 style="margin-bottom:0.3rem;">Recovery & Mobility Gear</h4>
+      <p class="text-muted" style="font-size:0.85rem;margin-bottom:0.85rem;">Get more from your mobility work. Shop on Amazon (affiliate links help support HomeWODrx at no extra cost to you).</p>
+      <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">${chips}</div>
+    </div>`;
+}
+
+// ── Related stretch cards ─────────────────────────────────────────────────────
+function buildRelatedCards(related) {
+  if (!related.length) return '';
+  const cards = related.map(s => {
+    const sl = slugify(s.name);
+    const modMeta = MODALITY_META[s.modality] || {};
+    const focusLabels = (s.focus || []).slice(0, 2)
+      .map(f => (FOCUS_META[f] || {}).label || f)
+      .join(' · ');
+    return `
+      <a href="/stretches/${sl}" class="related-card">
+        <div class="rc-name">${s.name}</div>
+        <div class="rc-meta">${modMeta.label || s.modality}${focusLabels ? ' · ' + focusLabels : ''}</div>
+      </a>`;
+  }).join('');
+  return `
+    <section class="related-section">
+      <h2>Related Stretches</h2>
+      <div class="related-grid">${cards}</div>
+    </section>`;
+}
+
+// ── Inject JSON-LD ────────────────────────────────────────────────────────────
+function injectJsonLd(data) {
+  const existing = document.getElementById('structured-data');
+  if (existing) existing.remove();
+  const script = document.createElement('script');
+  script.id = 'structured-data';
+  script.type = 'application/ld+json';
+  script.textContent = JSON.stringify(data);
+  document.head.appendChild(script);
+}
+
+// ── Main page render ──────────────────────────────────────────────────────────
+function renderStretchPage() {
+  const slug = getSlug();
+  const headerEl = document.getElementById('stretch-header');
+  const bodyEl   = document.getElementById('stretch-body');
+
+  if (!slug) {
+    headerEl.classList.remove('loading');
+    headerEl.innerHTML = '<p class="text-muted">No stretch specified.</p>';
+    return;
+  }
+
+  const matches = findStretchBySlug(slug);
+
+  if (!matches.length) {
+    headerEl.classList.remove('loading');
+    headerEl.innerHTML = `
+      <div style="padding:3rem 0;text-align:center;">
+        <p style="font-size:1.1rem;color:var(--text-muted,#888)">Stretch not found: <strong>${slug}</strong></p>
+        <a href="/stretch" style="color:var(--or,#C41212);margin-top:1rem;display:inline-block;">← Back to Stretch Generator</a>
+      </div>`;
+    return;
+  }
+
+  // Primary entry (first match); collect all modalities for this name
+  const primary = matches[0];
+  const modalities = [...new Set(matches.map(m => m.modality))];
+  const displayName = primary.name;
+
+  // Merge levels across all modality entries for this stretch
+  const allLevels = [...new Set(matches.flatMap(m => m.level || []))];
+
+  // Get rich content
+  const content = (typeof STRETCH_CONTENT !== 'undefined' && STRETCH_CONTENT[slug]) || null;
+
+  // ── Update SEO meta ──────────────────────────────────────────────
+  const canonicalPath = `https://homewodrx.com/stretches/${slug}`;
+  document.title = `${displayName} - Stretch Guide & Coaching Cues | HomeWODrx`;
+  const metaDesc = content?.description
+    ? content.description.substring(0, 155)
+    : `Learn how to perform ${displayName}: step-by-step coaching cues and hold times by level on HomeWODrx.`;
+  document.querySelector('meta[name="description"]').setAttribute('content', metaDesc);
+  document.querySelector('meta[property="og:title"]').setAttribute('content', `${displayName} - Stretch Guide | HomeWODrx`);
+  document.querySelector('meta[property="og:description"]').setAttribute('content', metaDesc);
+  document.getElementById('canonical-url').href = canonicalPath;
+  document.querySelector('meta[property="og:url"]').setAttribute('content', canonicalPath);
+
+  if (content?.youtube) {
+    const ogImg = `https://img.youtube.com/vi/${content.youtube}/maxresdefault.jpg`;
+    document.getElementById('og-image').setAttribute('content', ogImg);
+    document.getElementById('og-image-width').setAttribute('content', '1280');
+    document.getElementById('og-image-height').setAttribute('content', '720');
+    document.getElementById('twitter-image').setAttribute('content', ogImg);
+  }
+
+  // ── JSON-LD structured data ──────────────────────────────────────
+  const cues = content?.cues || [];
+  injectJsonLd([
+    {
+      '@context': 'https://schema.org',
+      '@type': 'HowTo',
+      'name': `How to Do ${displayName}`,
+      'description': metaDesc,
+      'url': canonicalPath,
+      ...(cues.length ? {
+        'step': cues.map((cue, i) => ({
+          '@type': 'HowToStep',
+          'position': i + 1,
+          'text': cue,
+        }))
+      } : {}),
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      'itemListElement': [
+        { '@type': 'ListItem', 'position': 1, 'name': 'Home',             'item': 'https://homewodrx.com/' },
+        { '@type': 'ListItem', 'position': 2, 'name': 'Stretch Generator','item': 'https://homewodrx.com/stretch' },
+        { '@type': 'ListItem', 'position': 3, 'name': displayName,        'item': canonicalPath },
+      ],
+    },
+  ]);
+
+  // ── Build modality badges ────────────────────────────────────────
+  const modBadges = modalities.map(m => {
+    const meta = MODALITY_META[m] || { label: m, cls: '' };
+    return `<span class="sbadge ${meta.cls}">${meta.emoji} ${meta.label}</span>`;
+  }).join('');
+
+  // ── Build level badges ───────────────────────────────────────────
+  const levelOrder = ['b','i','a'];
+  const levelBadges = levelOrder
+    .filter(lv => allLevels.includes(lv))
+    .map(lv => `<span class="sbadge ${LEVEL_META[lv].cls}">${LEVEL_META[lv].label}</span>`)
+    .join('');
+
+  // ── Build focus badges ───────────────────────────────────────────
+  const focusAreas = [...new Set(matches.flatMap(m => m.focus || []))];
+  const focusBadges = focusAreas.map(f => {
+    const meta = FOCUS_META[f] || { label: f, emoji: '' };
+    return `<span class="sbadge sbadge-focus">${meta.emoji} ${meta.label}</span>`;
+  }).join('');
+
+  // ── PNF callout ──────────────────────────────────────────────────
+  const pnfNote = primary.pnfNote;
+  const pnfHtml = pnfNote ? `
+    <div class="pnf-callout">
+      <span class="pnf-icon">💡</span>
+      <div class="pnf-body">
+        <strong>Contract-Relax Technique</strong>
+        <p>${pnfNote} — Contract the muscle isometrically for 5 seconds, relax fully, then deepen the stretch. Repeat 2–3 cycles per side.</p>
+      </div>
+    </div>` : '';
+
+  // ── Coaching cues ────────────────────────────────────────────────
+  const cuesHtml = cues.length
+    ? `<div class="coaching-cues">
+        <h3>Step-by-Step Coaching Cues</h3>
+        <ol class="cue-list">
+          ${cues.map((cue, i) => `
+            <li>
+              <span class="cue-num">${i + 1}</span>
+              <span>${cue}</span>
+            </li>`).join('')}
+        </ol>
+      </div>`
+    : `<div class="coaching-cues">
+        <h3>Coach's Tip</h3>
+        <p style="line-height:1.6;color:var(--text-muted,#bbb);">${primary.tip}</p>
+      </div>`;
+
+  // ── Related stretches ────────────────────────────────────────────
+  const related = findRelated(slug, focusAreas);
+  const relatedHtml = buildRelatedCards(related);
+
+  // ── Render hero ──────────────────────────────────────────────────
+  headerEl.classList.remove('loading');
+  headerEl.innerHTML = `
+    <div class="stretch-hero">
+      <div class="breadcrumb">
+        <a href="/stretch">Stretch Generator</a> › ${displayName}
+      </div>
+      <h1>${displayName}</h1>
+      <div class="badge-row">
+        ${modBadges}
+        ${levelBadges}
+        ${focusBadges}
+      </div>
+      ${content?.description
+        ? `<p class="stretch-description">${content.description}</p>`
+        : `<p class="stretch-description">${primary.tip}</p>`}
+      <div class="share-bar">
+        <span class="share-bar-label">Share:</span>
+        <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(displayName+' stretch guide on HomeWODrx 🧘')}&url=${encodeURIComponent(window.location.href)}" target="_blank" rel="noopener" class="share-btn">𝕏 Post</a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}" target="_blank" rel="noopener" class="share-btn">f Share</a>
+        <button class="share-btn" onclick="copyShareLink(this)">🔗 Copy Link</button>
+      </div>
+    </div>`;
+
+  // ── Render body ──────────────────────────────────────────────────
+  bodyEl.style.display = 'block';
+  bodyEl.innerHTML = `
+    ${buildHoldTable(primary)}
+    ${pnfHtml}
+    ${cuesHtml}
+    ${buildVideoSection(displayName, content?.youtube || null)}
+    ${buildRecoverySection()}
+    ${relatedHtml}
+    <div class="generator-cta">
+      <h3>Build Your Custom Stretch Session</h3>
+      <p>Choose your focus area, duration, and level — get a personalized stretch routine in seconds.</p>
+      <a href="/stretch" class="btn btn-primary">Open Stretch Generator →</a>
+    </div>`;
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', renderStretchPage);
+</script>
+</body>
+</html>
