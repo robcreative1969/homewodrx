@@ -25,7 +25,7 @@ const STRETCH_CONTENT = {
       'To deepen: raise the arm on the same side as your kneeling leg overhead and lean slightly away from it.',
       'Breathe steadily throughout the hold, then release and switch sides.',
     ],
-    youtube: null
+    youtube: 'hscXjknpoCs'
   },
 
   'seated-hamstring-stretch': {
@@ -38,7 +38,7 @@ const STRETCH_CONTENT = {
       'Stop the forward lean at the point where your lower back starts to round — depth comes from hip mobility, not spinal flexion.',
       'Hold, breathing into the back of your thighs. Use each exhale to relax a little further into the stretch.',
     ],
-    youtube: null
+    youtube: 'W2k8DMxK7zI'
   },
 
   'standing-quad-stretch': {
@@ -51,7 +51,7 @@ const STRETCH_CONTENT = {
       'If you cannot reach your foot, loop a resistance band around your ankle.',
       'Hold, then slowly lower the foot and switch sides.',
     ],
-    youtube: null
+    youtube: '3bWWW81IbPI'
   },
 
   'pigeon-pose': {
@@ -64,7 +64,7 @@ const STRETCH_CONTENT = {
       'You can stay upright on your hands or fold forward and rest on your forearms or forehead for a deeper release.',
       'Hold, breathing deeply into the outer hip, then carefully come back to hands and knees and switch sides.',
     ],
-    youtube: null
+    youtube: '0_zPqA65Nok'
   },
 
   'figure-4-stretch': {
@@ -77,7 +77,7 @@ const STRETCH_CONTENT = {
       'Keep your lower back flat on the floor and your head and shoulders relaxed. Do not strain your neck.',
       'Hold, then release and switch sides.',
     ],
-    youtube: null
+    youtube: '6sx9hFoP1lg'
   },
 
   'butterfly-stretch': {
@@ -90,7 +90,7 @@ const STRETCH_CONTENT = {
       'Do not force your knees down — let gravity do the work as your hips relax over time.',
       'Hold while breathing steadily. Try to release a little deeper with each exhale.',
     ],
-    youtube: null
+    youtube: 'B6tb4TncKhY'
   },
 
   'supine-hamstring-stretch': {
@@ -116,7 +116,7 @@ const STRETCH_CONTENT = {
       'Keep your back foot pointing straight ahead (not flared out) for maximum stretch.',
       'Hold, then switch sides.',
     ],
-    youtube: null
+    youtube: '5C24Pv4ahVg'
   },
 
   'soleus-stretch': {
@@ -168,7 +168,7 @@ const STRETCH_CONTENT = {
       'Keep your core braced to prevent excessive arching of the lower back.',
       'Hold, then switch arms.',
     ],
-    youtube: null
+    youtube: 'mveTEZvyxIY'
   },
 
   'child-s-pose': {
@@ -181,7 +181,7 @@ const STRETCH_CONTENT = {
       'To bias the lats, walk both hands to one side and hold, then switch sides.',
       'Breathe deeply, allowing your lower back to release with each exhale. This is a passive, restorative stretch — no forcing.',
     ],
-    youtube: null
+    youtube: 'eqVMAPM00DM'
   },
 
   'cat-cow-stretch': {
@@ -194,7 +194,7 @@ const STRETCH_CONTENT = {
       'Try to feel each vertebra moving sequentially, from tailbone to skull.',
       'Complete the prescribed reps, using the full breath to maximize spinal range of motion.',
     ],
-    youtube: null
+    youtube: 'y39PrKY_4JM'
   },
 
   'seated-spinal-twist': {
@@ -220,7 +220,7 @@ const STRETCH_CONTENT = {
       'Gaze forward or slightly upward. Breathe into the ribs on the stretched side.',
       'Hold, then return to center and switch sides.',
     ],
-    youtube: null
+    youtube: 'k_JxmsQQNpQ'
   },
 
   'sleeper-stretch': {
@@ -246,7 +246,7 @@ const STRETCH_CONTENT = {
       'Avoid rounding your upper back — keep reaching long and breathing into the side of your torso.',
       'Hold, then switch sides.',
     ],
-    youtube: null
+    youtube: 'eaetG6NgJFM'
   },
 
   // ── DYNAMIC ────────────────────────────────────────────────────────────────
@@ -261,7 +261,7 @@ const STRETCH_CONTENT = {
       'Keep your torso upright and your core lightly braced. Do not let your lower back rotate as the leg swings.',
       'Complete all reps on one side, then turn around and repeat on the other leg.',
     ],
-    youtube: null
+    youtube: 'A2x0oG58nD8'
   },
 
   'leg-swings-side-to-side': {
@@ -274,7 +274,7 @@ const STRETCH_CONTENT = {
       'Gradually increase the amplitude of the swing, but do not force range. The hip should remain in its socket.',
       'Keep your hips square to the wall throughout — do not let them rotate. Complete all reps on one side, then switch.',
     ],
-    youtube: null
+    youtube: 'EKhwBoKMm-c'
   },
 
   'hip-circles': {
@@ -300,7 +300,7 @@ const STRETCH_CONTENT = {
       'Keep your core braced and torso still — only the shoulders and arms move.',
       'You can also do single-arm circles to focus on one shoulder at a time.',
     ],
-    youtube: null
+    youtube: 'YLypUVjZEj0'
   },
 
   'shoulder-pass-throughs': {
@@ -313,7 +313,7 @@ const STRETCH_CONTENT = {
       'Reverse the motion to bring the bar back to the front. This completes one rep.',
       'As mobility improves over weeks, gradually narrow your grip width.',
     ],
-    youtube: null
+    youtube: 'rkb_lOtTx-U'
   },
 
   'thoracic-rotations': {
@@ -326,7 +326,7 @@ const STRETCH_CONTENT = {
       'The movement should come entirely from your mid-back — not your lower back, which should remain stable.',
       'Complete all reps on one side, then switch arms.',
     ],
-    youtube: null
+    youtube: 'KDVVUKTi3qc'
   },
 
   'world-s-greatest-stretch': {
@@ -352,7 +352,7 @@ const STRETCH_CONTENT = {
       'If one transition is significantly harder, that hip direction is your restriction. Spend extra holds on that side.',
       'Build up transitions over time until the movement feels smooth and effortless in both directions.',
     ],
-    youtube: null
+    youtube: '_I6vFSlcyPY'
   },
 
   'ankle-circles': {
@@ -365,7 +365,7 @@ const STRETCH_CONTENT = {
       'Go slowly and deliberately. Ankle circles are about range and control, not speed.',
       'Switch feet and repeat.',
     ],
-    youtube: null
+    youtube: 'lwSExRmYENQ'
   },
 
   'spiderman-lunges': {
@@ -378,7 +378,7 @@ const STRETCH_CONTENT = {
       'Return the right foot to the plank position and repeat with the left foot.',
       'Alternate sides for the prescribed number of reps.',
     ],
-    youtube: null
+    youtube: 'wkaA1W6NvYA'
   },
 
   'inchworm-walk-out': {
@@ -417,7 +417,7 @@ const STRETCH_CONTENT = {
       'Stand up from the squat position, then return through the good morning to standing. This is one rep.',
       'Move slowly and controlled. This is a mobility drill — do not rush or use momentum.',
     ],
-    youtube: null
+    youtube: 'rn05vS47b6k'
   },
 
   'deep-squat-hold': {
@@ -430,7 +430,7 @@ const STRETCH_CONTENT = {
       'If using a counterbalance, you can reduce your reliance on it over time as your mobility increases.',
       'Breathe steadily and try to relax deeper into the position over the hold period.',
     ],
-    youtube: null
+    youtube: 'wwMlpHh3qVw'
   },
 
   // ── PNF ────────────────────────────────────────────────────────────────────
@@ -538,7 +538,7 @@ const STRETCH_CONTENT = {
       'Gaze toward your knees or navel. Relax your neck — it should be in line with your arms, not hanging down.',
       'Breathe steadily. To intensify the calf stretch, press one heel down while softening the opposite knee (pedaling).',
     ],
-    youtube: null
+    youtube: 'j97SSGsnCAQ'
   },
 
   'low-lunge-crescent-pose': {
@@ -551,7 +551,7 @@ const STRETCH_CONTENT = {
       'For a deeper stretch, allow a slight backbend through your thoracic spine and gaze upward.',
       'Hold while breathing steadily, then return hands to the floor and switch sides.',
     ],
-    youtube: null
+    youtube: 'OfJl_jhJcWw'
   },
 
   'warrior-i': {
@@ -564,7 +564,7 @@ const STRETCH_CONTENT = {
       'Draw your shoulder blades together and down, lifting through your chest.',
       'Hold, breathing steadily. Switch sides.',
     ],
-    youtube: null
+    youtube: '5rT--p_cLOc'
   },
 
   'warrior-ii': {
@@ -577,7 +577,7 @@ const STRETCH_CONTENT = {
       'Sink deeper into the front knee while keeping the back leg straight and strong.',
       'Hold, breathing steadily, then straighten the front leg and switch to the left side.',
     ],
-    youtube: null
+    youtube: '4Ejz7IgODlU'
   },
 
   'seated-forward-fold': {
@@ -603,7 +603,7 @@ const STRETCH_CONTENT = {
       'Keep both shoulders in contact with the floor. Do not force the knee to the ground — let gravity do the work.',
       'Hold, breathing deeply into the twist with each exhale. Switch sides.',
     ],
-    youtube: null
+    youtube: 'mKC3IeldPOc'
   },
 
   'happy-baby': {
@@ -642,7 +642,7 @@ const STRETCH_CONTENT = {
       'Keep your back leg extended and press the top of the back foot into the floor for stability.',
       'Hold, breathing deeply into the inner groin and hip, then return to plank and switch sides.',
     ],
-    youtube: null
+    youtube: '6mgjymhdyq' // casing uncertain — verify before finalizing
   },
 
   'bridge-pose': {
@@ -655,7 +655,7 @@ const STRETCH_CONTENT = {
       'At the top, squeeze your glutes and feel the hip flexors lengthening.',
       'Hold for the prescribed time, then slowly lower your spine vertebra by vertebra back to the floor.',
     ],
-    youtube: null
+    youtube: 'NnbvPeAIhmA'
   },
 
   'reclined-butterfly': {
