@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Sentry Error Monitoring -->
+  <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Named Benchmark WODs: A Complete Guide to Fran, Diane, Grace & More | HomeWODrx Blog</title>
+  <meta name="description" content="What are the named benchmark WODs — Fran, Diane, Grace, Helen — and why do they matter? A practical guide for home and garage gym athletes.">
+  <meta property="og:title" content="Named Benchmark WODs: A Complete Guide to Fran, Diane, Grace & More | HomeWODrx">
+  <meta property="og:description" content="Fran, Diane, Grace, Helen — the named benchmark WODs are legendary for a reason. Learn what they are, why athletes track them, and how to use them in your own training.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://homewodrx.com/blog/named-benchmark-wods-guide">
+  <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://homewodrx.com/images/og-default.png">
+  <link rel="canonical" href="https://homewodrx.com/blog/named-benchmark-wods-guide">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Named Benchmark WODs: A Complete Guide to Fran, Diane, Grace, and More",
+    "description": "What are the named benchmark WODs — Fran, Diane, Grace, Helen — and why do they matter? A practical guide for home and garage gym athletes.",
+    "datePublished": "2026-04-13",
+    "dateModified": "2026-04-13",
+    "author": { "@type": "Organization", "name": "HomeWODrx" },
+    "publisher": { "@type": "Organization", "name": "HomeWODrx", "url": "https://homewodrx.com" },
+    "url": "https://homewodrx.com/blog/named-benchmark-wods-guide",
+    "mainEntityOfPage": "https://homewodrx.com/blog/named-benchmark-wods-guide",
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://homewodrx.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://homewodrx.com/blog" },
+        { "@type": "ListItem", "position": 3, "name": "Named Benchmark WODs Guide", "item": "https://homewodrx.com/blog/named-benchmark-wods-guide" }
+      ]
+    }
+  }
+  </script>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/db.js"></script>
+  <script src="/js/nav.js"></script>
+  <style>
+    .post-container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+    .post-breadcrumb {
+      padding: 20px 0 0;
+      font-size: 13px;
+      color: var(--mu);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .post-breadcrumb a { color: var(--mu); text-decoration: none; }
+    .post-breadcrumb a:hover { color: var(--or); }
+    .post-breadcrumb .sep { color: var(--bd); }
+
+    .post-header {
+      padding: 28px 0 32px;
+      border-bottom: 1px solid var(--bd);
+      margin-bottom: 36px;
+    }
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .post-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      background: rgba(196,18,18,.15);
+      color: #e85555;
+    }
+    .post-date, .post-readtime { font-size: 13px; color: var(--mu); }
+    .post-header h1 {
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      letter-spacing: -.3px;
+    }
+    .post-header .post-intro {
+      font-size: 17px;
+      color: var(--mu);
+      line-height: 1.75;
+      margin: 0;
+    }
+
+    .post-body { font-size: 16px; line-height: 1.8; color: var(--tx); }
+    .post-body h2 {
+      font-size: 22px;
+      font-weight: 800;
+      margin: 40px 0 14px;
+      border-left: 3px solid var(--or);
+      padding-left: 14px;
+    }
+    .post-body h3 { font-size: 18px; font-weight: 700; margin: 28px 0 10px; }
+    .post-body p { margin-bottom: 20px; }
+    .post-body ul, .post-body ol { margin: 0 0 20px 20px; }
+    .post-body li { margin-bottom: 8px; line-height: 1.7; }
+    .post-body strong { font-weight: 700; }
+    .post-body a { color: var(--or); text-decoration: none; font-weight: 600; }
+    .post-body a:hover { color: var(--orl); }
+
+    .wod-card {
+      background: var(--card);
+      border: 1px solid var(--bd);
+      border-left: 3px solid var(--or);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 20px 0;
+    }
+    .wod-card h4 {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--or);
+      margin: 0 0 8px;
+      text-transform: uppercase;
+      letter-spacing: .3px;
+    }
+    .wod-card p {
+      font-size: 14px;
+      color: var(--tx);
+      margin: 0 0 6px;
+      line-height: 1.6;
+    }
+    .wod-card .wod-note {
+      font-size: 13px;
+      color: var(--mu);
+      margin: 0;
+    }
+
+    .callout {
+      background: rgba(196,18,18,.07);
+      border: 1px solid rgba(196,18,18,.25);
+      border-left: 3px solid var(--or);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 28px 0;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+    .callout strong { color: var(--or); }
+
+    .post-related {
+      border-top: 1px solid var(--bd);
+      padding-top: 36px;
+      margin-top: 52px;
+    }
+    .post-related h3 {
+      font-size: 16px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--mu);
+      margin-bottom: 20px;
+    }
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .related-card {
+      background: var(--card);
+      border: 1px solid var(--bd);
+      border-radius: 10px;
+      padding: 16px 18px;
+      text-decoration: none;
+      transition: border-color .15s;
+    }
+    .related-card:hover { border-color: var(--or); }
+    .related-card .r-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--mu);
+      margin-bottom: 6px;
+    }
+    .related-card h4 { font-size: 15px; font-weight: 700; color: var(--tx); line-height: 1.35; }
+  </style>
+</head>
+<body data-nav-init="true" data-active-page="blog">
+<main>
+  <div class="post-container">
+
+    <nav class="post-breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span class="sep">›</span>
+      <a href="/blog">Blog</a>
+      <span class="sep">›</span>
+      <span>Named Benchmark WODs Guide</span>
+    </nav>
+
+    <header class="post-header">
+      <div class="post-meta">
+        <span class="post-tag">Training</span>
+        <span class="post-date">April 13, 2026</span>
+        <span class="post-readtime">· 7 min read</span>
+      </div>
+      <h1>Named Benchmark WODs: A Complete Guide to Fran, Diane, Grace, and More</h1>
+      <p class="post-intro">The named benchmarks are the closest thing functional fitness has to a universal report card — here's what each one tests, why athletes obsess over their times, and how to use them in your own training.</p>
+    </header>
+
+    <article class="post-body">
+
+      <p>If you've spent any time around high-intensity functional training, you've heard names like Fran, Grace, and Helen thrown around with a mix of reverence and dread. These aren't people — they're workouts. Specifically, they're a collection of named benchmark workouts that have become a universal measuring stick for athletes — whether they train at a local box, a health club, or a garage gym they built themselves.</p>
+
+      <p>The naming tradition started years ago as a simple way to identify recurring test pieces. Named workouts are easy to reference, easy to log, and easy to compare across athletes and over time. When someone says their Fran time is 4:30, every experienced athlete in the room immediately understands the context — the movements, the loading, the suffering involved. That shared language is part of what makes these benchmarks so useful.</p>
+
+      <h2>Why Benchmark Workouts Matter</h2>
+
+      <p>Benchmarks serve a different purpose than your everyday training. A regular workout is about stimulus — getting the work done, accumulating fitness. A benchmark is a test. You do it the same way every time, with the same loading and rep scheme, so that when you repeat it months later you have a true apples-to-apples comparison.</p>
+
+      <p>For home and garage gym athletes who don't have a coach watching them daily, benchmarks are especially valuable. They give you objective data on where your fitness actually stands, not just where it feels like it stands. A three-minute improvement on Helen doesn't lie. A PR on Grace is real, trackable progress — even if your day-to-day training felt inconsistent.</p>
+
+      <div class="callout">
+        <strong>Pro tip:</strong> Log your benchmark results as soon as you finish. Even a note on your phone is enough. You need that number six months from now when you retest. See all the <a href="/workouts">benchmark workouts on HomeWODrx</a> for a full database you can reference.
+      </div>
+
+      <h2>The Classic "Girl" WODs</h2>
+
+      <p>The original named benchmarks are often called the "Girl" WODs. They were designed to be short, brutal, and measurable — each one isolating a specific combination of movements and energy systems. Here's a breakdown of the most well-known ones:</p>
+
+      <h3>Fran</h3>
+      <div class="wod-card">
+        <h4>Fran</h4>
+        <p>21-15-9 reps for time of: Thrusters (95/65 lb) and Pull-Ups</p>
+        <p class="wod-note">The most iconic benchmark in the sport. Tests raw power endurance and the ability to keep moving when your lungs and arms are both maxed out.</p>
+      </div>
+      <p>Fran is short — elite athletes finish it in under 2 minutes — but don't let that fool you. The thruster is one of the most demanding movements in functional fitness, combining a front squat and push press into a single punishing rep. Paired with pull-ups at that volume, Fran creates a unique kind of metabolic suffering. A sub-5-minute Fran is a solid goal for most athletes; sub-3 is elite territory.</p>
+
+      <h3>Grace</h3>
+      <div class="wod-card">
+        <h4>Grace</h4>
+        <p>30 Clean &amp; Jerks for time (135/95 lb)</p>
+        <p class="wod-note">A pure barbell cycling test. Efficiency of movement and the ability to manage fatigue under load are everything here.</p>
+      </div>
+      <p>Grace is deceptively simple on paper. Thirty reps of a single movement sounds manageable until you're ten reps in. The key is pacing — going out too hot means grinding through ugly singles at the end. A smooth, sustainable rhythm beats a sprint-and-crash approach every time.</p>
+
+      <h3>Diane</h3>
+      <div class="wod-card">
+        <h4>Diane</h4>
+        <p>21-15-9 reps for time of: Deadlifts (225/155 lb) and Handstand Push-Ups</p>
+        <p class="wod-note">Heavy pulling meets overhead pressing strength. A great test of whether your posterior chain and shoulder strength are keeping pace with your conditioning.</p>
+      </div>
+
+      <h3>Helen</h3>
+      <div class="wod-card">
+        <h4>Helen</h4>
+        <p>3 rounds for time: 400m Run, 21 Kettlebell Swings (53/35 lb), 12 Pull-Ups</p>
+        <p class="wod-note">A classic triplet that tests aerobic capacity and grip stamina. One of the most home-gym-friendly benchmarks because the loading is moderate.</p>
+      </div>
+      <p>Helen is also one of the most equipment-accessible benchmarks — a kettlebell, a pull-up bar, and 400 meters of space is all it takes. Sub-10 minutes is the benchmark many athletes aim for; sub-8 is a sign your conditioning is in a very good place.</p>
+
+      <h3>Annie</h3>
+      <div class="wod-card">
+        <h4>Annie</h4>
+        <p>50-40-30-20-10 reps for time of: Double-Unders and Sit-Ups</p>
+        <p class="wod-note">A skill-and-stamina combo. If your double-unders are inconsistent, Annie will expose it immediately.</p>
+      </div>
+
+      <h3>Isabel</h3>
+      <div class="wod-card">
+        <h4>Isabel</h4>
+        <p>30 Snatches for time (135/95 lb)</p>
+        <p class="wod-note">The snatch version of Grace. Technical demands are higher, making it a better test of barbell skill under fatigue.</p>
+      </div>
+
+      <h2>Open Benchmarks Worth Knowing</h2>
+
+      <p>Beyond the classic Girls, the annual Open competition has produced its own set of benchmark workouts that have become reference points in the community. Workouts like 17.5, 19.1, and 21.1 are repeated or referenced regularly because they created clear data points across thousands of athletes worldwide. Many of these are accessible to home gym athletes — they're designed to be performed in any setting.</p>
+
+      <p>You can <a href="/workouts">browse the full benchmark database on HomeWODrx</a>, including Open workouts, Hero WODs, and partner formats.</p>
+
+      <h2>How to Use Benchmarks in Your Own Training</h2>
+
+      <p>The most common mistake athletes make with benchmarks is treating them as random hard workouts rather than deliberate tests. Here's a better approach:</p>
+
+      <ul>
+        <li><strong>Test, don't just train.</strong> Schedule a benchmark every 6–8 weeks, not every week. They're meant to be retested after a block of training, not used as regular programming.</li>
+        <li><strong>Go all out.</strong> A benchmark only gives you useful data if you push hard. Sandbagging a Fran because you're tired defeats the purpose.</li>
+        <li><strong>Record everything.</strong> Time, date, notes on how you felt, any scaling you used. The notes are as important as the number.</li>
+        <li><strong>Scale consistently.</strong> If you do Fran with 75 lb thrusters and ring rows, do it the same way every time until you can do it Rx. Mixing scaling approaches makes your times incomparable.</li>
+      </ul>
+
+      <h2>Scaling the Benchmarks</h2>
+
+      <p>Not every athlete is ready to hit a benchmark at its prescribed loading, and that's completely fine. The goal is to get a useful test result — and a benchmark done at a scale that lets you move continuously for the right amount of time is more valuable than grinding through a Rx workout that takes three times longer than intended.</p>
+
+      <p>For Fran, reducing the barbell load so you can do sets of 7–10 without dropping is the right call if 95 lb thrusters are too heavy. For pull-ups, banded or ring rows are reasonable substitutes. For Grace and Isabel, it's better to drop 20–30 lb and move well than to perform ugly reps at a weight that shreds your mechanics.</p>
+
+      <p>The <a href="/workouts">workouts section</a> includes scaling guidance for most benchmarks, and you can also use the <a href="/generator">WOD generator</a> to build benchmark-style workouts matched to whatever equipment you have available.</p>
+
+      <div class="callout">
+        <strong>Where to start:</strong> If you've never tested a named benchmark before, Helen is the most accessible starting point for most athletes. Moderate loading, no highly technical movements, and you'll know exactly where you stand on aerobic fitness and grip endurance after one honest effort.
+      </div>
+
+      <h2>Final Thoughts</h2>
+
+      <p>Named benchmark workouts have stuck around for decades because they work as tests. They're simple enough to repeat, demanding enough to matter, and specific enough to give you real feedback. Whether you're chasing a sub-5 Fran or just trying to beat last year's Helen time, these workouts give your training a goal that's bigger than today's session.</p>
+
+      <p>The athlete who tracks their benchmarks over years of training ends up with something valuable: an honest record of how their fitness has evolved. That's the real point. Not the leaderboard, not the bragging rights — just the knowledge that you're building something real, one retest at a time.</p>
+
+    </article>
+
+    <section class="post-related">
+      <h3>More from the blog</h3>
+      <div class="related-grid">
+        <a href="/blog/hero-wod-guide" class="related-card">
+          <div class="r-tag">Training</div>
+          <h4>The Complete Guide to Hero WODs: History, Purpose, and How to Attack Them</h4>
+        </a>
+        <a href="/blog/how-to-scale-wods" class="related-card">
+          <div class="r-tag">Training</div>
+          <h4>How to Scale WODs the Right Way (Without Losing the Point of the Workout)</h4>
+        </a>
+      </div>
+    </section>
+
+  </div>
+</main>
+</body>
+</html>
