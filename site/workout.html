@@ -474,7 +474,7 @@
     try {
       await db.deleteWorkout(currentWorkout.id);
       showToast('Workout deleted.', 'success');
-      setTimeout(() => { window.location.href = '/workouts.html'; }, 1200);
+      setTimeout(() => { window.location.href = '/workouts'; }, 1200);
     } catch (e) {
       showToast('Error deleting workout.', 'error');
     }
@@ -754,7 +754,7 @@
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             Start WOD Timer
           </a>
-          ${isBenchmark ? `<a href="/workouts.html" class="btn btn-secondary">Browse Similar</a>` : `<a href="/workouts.html" class="btn btn-secondary">Browse Workouts</a>`}
+          ${isBenchmark ? `<a href="/workouts" class="btn btn-secondary">Browse Similar</a>` : `<a href="/workouts" class="btn btn-secondary">Browse Workouts</a>`}
           <button class="btn btn-secondary" onclick="printWorkout()">🖨️ Print WOD</button>
         </div>
         <div class="share-bar">
@@ -880,7 +880,7 @@
                 ? `<td data-label="Rx"><span class="text-muted">${(m.rx_men || m.rx_women) ? `${m.rx_men || '—'} / ${m.rx_women || '—'}` : '—'}</span></td>`
                 : '';
               return `<tr>
-                <td data-label="Movement"><div class="mv-cell"><a href="/movement.html?slug=${slugify(mn)}" class="movement-link">${mn}</a>${tipHtml}</div></td>
+                <td data-label="Movement"><div class="mv-cell"><a href="/movements/${slugify(mn)}" class="movement-link">${mn}</a>${tipHtml}</div></td>
                 <td data-label="Reps"><span>${m.reps || '—'}</span></td>
                 ${rxCell}
               </tr>`;
@@ -981,7 +981,7 @@
       .map(b=>({...b,_score:(b.category===w.category?2:0)+wMovements.filter(m=>(b.movements||[]).map(m=>slugify(m.name||m.movement||'')).includes(m)).length}))
       .filter(b=>b._score>0).sort((a,b)=>b._score-a._score).slice(0,3);
     document.getElementById('related-workouts').innerHTML = related.length ?
-      related.map(b=>{const vb=b.youtube_url?`<span class="video-badge">▶ Video</span>`:'';return`<a href="/workout.html?slug=${b.slug}" style="text-decoration:none;"><div class="card"><h4>${b.name}${vb}</h4><p class="text-muted" style="font-size:0.9rem;margin-bottom:0.4rem;">${formatWodMeta(b)}</p><p style="font-size:0.85rem;color:var(--mu,#888);margin-bottom:0.75rem;">${summarizeMovements(b)}</p><div><span class="badge badge-orange">${b.difficulty}</span>${b.category==='girl'?'<span class="badge">The Girls</span>':''}${b.category==='hero'?'<span class="badge">Hero WOD</span>':''}</div></div></a>`}).join('') :
+      related.map(b=>{const vb=b.youtube_url?`<span class="video-badge">▶ Video</span>`:'';return`<a href="/workouts/${b.slug}" style="text-decoration:none;"><div class="card"><h4>${b.name}${vb}</h4><p class="text-muted" style="font-size:0.9rem;margin-bottom:0.4rem;">${formatWodMeta(b)}</p><p style="font-size:0.85rem;color:var(--mu,#888);margin-bottom:0.75rem;">${summarizeMovements(b)}</p><div><span class="badge badge-orange">${b.difficulty}</span>${b.category==='girl'?'<span class="badge">The Girls</span>':''}${b.category==='hero'?'<span class="badge">Hero WOD</span>':''}</div></div></a>`}).join('') :
       '<p class="text-muted">No related workouts found.</p>';
   }
 

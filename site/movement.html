@@ -620,7 +620,7 @@
         <div class="empty-state" style="grid-column: 1/-1;">
           <p>No workouts found for <strong>${displayName}</strong>.</p>
           <p style="margin-top: 0.5rem;">
-            <a href="/workouts.html" style="color: var(--orange);">Browse all workouts &rarr;</a>
+            <a href="/workouts" style="color: var(--orange);">Browse all workouts &rarr;</a>
           </p>
         </div>
       `;
@@ -638,7 +638,7 @@
         const [badgeClass, badgeLabel] = CATEGORY_LABELS[w.category] || ['badge', w.category];
         const videoBadge = w.youtube_url ? `<span class="video-badge">▶ Video</span>` : '';
         return `
-        <a href="/workout.html?slug=${w.slug}" style="text-decoration: none;">
+        <a href="/workouts/${w.slug}" style="text-decoration: none;">
           <div class="card">
             <h4>${w.name}${videoBadge}</h4>
             <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 0.4rem;">
@@ -681,7 +681,7 @@
       }).join('');
 
       const dailyWodCards = matchingDailyWods.map(w => `
-        <a href="/daily-wod.html?date=${w._date}" style="text-decoration: none;">
+        <a href="/daily-wod?date=${w._date}" style="text-decoration: none;">
           <div class="card">
             <h4>${w.name}</h4>
             <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 0.4rem;">

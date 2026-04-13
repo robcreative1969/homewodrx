@@ -274,7 +274,7 @@
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             Start WOD Timer
           </button>
-          <a href="/workouts.html" class="btn btn-secondary">Browse Workouts</a>
+          <a href="/workouts" class="btn btn-secondary">Browse Workouts</a>
           <button class="btn btn-secondary" onclick="printWod()">🖨️ Print WOD</button>
         </div>
       </div>`;
@@ -370,7 +370,7 @@
           <thead><tr><th>Movement</th><th>Reps / Duration</th></tr></thead>
           <tbody>
             ${rows.map(r => { const mn = r.movement || r.name || ''; return `<tr>
-              <td><a href="/movement.html?slug=${slugify(mn)}" class="movement-link">${escHtml(mn)}</a></td>
+              <td><a href="/movements/${slugify(mn)}" class="movement-link">${escHtml(mn)}</a></td>
               <td>${escHtml(String(r.reps || r.duration || '-'))}</td>
             </tr>`; }).join('')}
           </tbody>

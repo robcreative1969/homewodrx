@@ -190,7 +190,7 @@ function renderGrid(gridEl, movements) {
     const count = getWorkoutCount(m.slug);
     const countLabel = count > 0 ? `${count} benchmark${count === 1 ? '' : 's'}` : 'Movement guide';
     const videoBadge = m.youtube_url ? `<span class="video-badge">▶ Video</span>` : '';
-    return `<a href="/movement.html?slug=${m.slug}" class="movement-card">
+    return `<a href="/movements/${m.slug}" class="movement-card">
       <h3>${m.name}${videoBadge}</h3>
       <p class="muscles">${m.muscles || ''}</p>
       <span class="workout-count">${countLabel} →</span>
@@ -289,7 +289,7 @@ async function loadCommunityMovements(knownSlugs) {
     document.getElementById('community-section').style.display = '';
     document.getElementById('community-grid').innerHTML = communityMovements.map(([slug, info]) => {
       const label = `${info.count} community WOD${info.count === 1 ? '' : 's'}`;
-      return `<a href="/movement.html?slug=${slug}" class="movement-card">
+      return `<a href="/movements/${slug}" class="movement-card">
         <h3 style="text-transform:capitalize">${info.name}</h3>
         <p class="muscles">Community-submitted movement</p>
         <span class="workout-count">${label} →</span>

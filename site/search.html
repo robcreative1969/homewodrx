@@ -864,7 +864,7 @@ function renderResults() {
   container.innerHTML = displayed.map(w => {
     const isUser  = w.category === 'user';
     const isDaily = w.category === 'daily';
-    const href = isDaily  ? `/daily-wod.html?date=${w._date}`
+    const href = isDaily  ? `/daily-wod?date=${w._date}`
                : isUser   ? `/workout.html?id=${w.id}`
                :             `/workout.html?slug=${w.slug}`;
     const title  = w.title || w.name || '';
