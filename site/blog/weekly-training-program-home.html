@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Sentry Error Monitoring -->
+  <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>How to Build a Weekly Training Program at Home | HomeWODrx Blog</title>
+
+  <meta name="description" content="Learn how to structure a weekly training program for home and garage gym athletes — balancing intensity, recovery, and movement variety without a coach.">
+
+  <meta property="og:title" content="How to Build Your Own Weekly Training Program at Home | HomeWODrx">
+  <meta property="og:description" content="Learn how to structure a weekly training program for home and garage gym athletes — balancing intensity, recovery, and movement variety without a coach.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://homewodrx.com/blog/weekly-training-program-home">
+  <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://homewodrx.com/images/og-default.png">
+  <link rel="canonical" href="https://homewodrx.com/blog/weekly-training-program-home">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "How to Build Your Own Weekly Training Program at Home",
+    "description": "Learn how to structure a weekly training program for home and garage gym athletes — balancing intensity, recovery, and movement variety without a coach.",
+    "datePublished": "2026-04-20",
+    "dateModified": "2026-04-20",
+    "author": { "@type": "Organization", "name": "HomeWODrx" },
+    "publisher": { "@type": "Organization", "name": "HomeWODrx", "url": "https://homewodrx.com" },
+    "url": "https://homewodrx.com/blog/weekly-training-program-home",
+    "mainEntityOfPage": "https://homewodrx.com/blog/weekly-training-program-home",
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://homewodrx.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://homewodrx.com/blog" },
+        { "@type": "ListItem", "position": 3, "name": "How to Build Your Own Weekly Training Program at Home", "item": "https://homewodrx.com/blog/weekly-training-program-home" }
+      ]
+    }
+  }
+  </script>
+
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/db.js"></script>
+  <script src="/js/nav.js"></script>
+  <style>
+    .post-container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+    .post-breadcrumb {
+      padding: 20px 0 0;
+      font-size: 13px;
+      color: var(--mu);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .post-breadcrumb a { color: var(--mu); text-decoration: none; }
+    .post-breadcrumb a:hover { color: var(--or); }
+    .post-breadcrumb .sep { color: var(--bd); }
+
+    .post-header {
+      padding: 28px 0 32px;
+      border-bottom: 1px solid var(--bd);
+      margin-bottom: 36px;
+    }
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .post-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      background: rgba(5,150,105,.15);
+      color: #34d399;
+    }
+    .post-date, .post-readtime { font-size: 13px; color: var(--mu); }
+    .post-header h1 {
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      letter-spacing: -.3px;
+    }
+    .post-header .post-intro {
+      font-size: 17px;
+      color: var(--mu);
+      line-height: 1.75;
+      margin: 0;
+    }
+
+    .post-body { font-size: 16px; line-height: 1.8; color: var(--tx); }
+    .post-body h2 {
+      font-size: 22px;
+      font-weight: 800;
+      margin: 40px 0 14px;
+      border-left: 3px solid var(--or);
+      padding-left: 14px;
+    }
+    .post-body h3 { font-size: 18px; font-weight: 700; margin: 28px 0 10px; }
+    .post-body p { margin-bottom: 20px; }
+    .post-body ul, .post-body ol { margin: 0 0 20px 20px; }
+    .post-body li { margin-bottom: 8px; line-height: 1.7; }
+    .post-body strong { font-weight: 700; }
+    .post-body a { color: var(--or); text-decoration: none; font-weight: 600; }
+    .post-body a:hover { color: var(--orl); }
+
+    .callout {
+      background: rgba(196,18,18,.07);
+      border: 1px solid rgba(196,18,18,.25);
+      border-left: 3px solid var(--or);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 28px 0;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+    .callout strong { color: var(--or); }
+
+    .post-related {
+      border-top: 1px solid var(--bd);
+      padding-top: 36px;
+      margin-top: 52px;
+    }
+    .post-related h3 {
+      font-size: 16px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--mu);
+      margin-bottom: 20px;
+    }
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .related-card {
+      background: var(--card);
+      border: 1px solid var(--bd);
+      border-radius: 10px;
+      padding: 16px 18px;
+      text-decoration: none;
+      transition: border-color .15s;
+    }
+    .related-card:hover { border-color: var(--or); }
+    .related-card .r-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--mu);
+      margin-bottom: 6px;
+    }
+    .related-card h4 { font-size: 15px; font-weight: 700; color: var(--tx); line-height: 1.35; }
+  </style>
+</head>
+<body data-nav-init="true" data-active-page="blog">
+<main>
+  <div class="post-container">
+
+    <nav class="post-breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span class="sep">›</span>
+      <a href="/blog">Blog</a>
+      <span class="sep">›</span>
+      <span>How to Build Your Own Weekly Training Program at Home</span>
+    </nav>
+
+    <header class="post-header">
+      <div class="post-meta">
+        <span class="post-tag">Programming</span>
+        <span class="post-date">April 20, 2026</span>
+        <span class="post-readtime">· 7 min read</span>
+      </div>
+      <h1>How to Build Your Own Weekly Training Program at Home</h1>
+      <p class="post-intro">Training without a coach or a class schedule doesn't mean training without a plan — here's a practical framework for structuring your week so you make progress without burning out.</p>
+    </header>
+
+    <article class="post-body">
+
+      <p>One of the hardest parts of training on your own isn't the workouts themselves — it's deciding what to do each day. When there's no coach programming for you, it's easy to default to random effort: hit something hard today, rest tomorrow, repeat until your knees start complaining. That works for a while. Then it stops working.</p>
+
+      <p>Good programming is less complicated than most people think. You don't need a spreadsheet or a coaching certification to build a week of training that actually gets you fitter. You need a few principles and a willingness to be a little deliberate about what you put in each session.</p>
+
+      <h2>Start with How Many Days You Can Actually Train</h2>
+
+      <p>Before you pick movements or write a single WOD, answer this question honestly: how many days per week can you train, consistently, without it becoming a source of stress? Not how many days you want to train. How many days you'll actually show up for over the next month.</p>
+
+      <p>For most home and garage gym athletes, that number is three to five. Here's a rough framework for each:</p>
+
+      <ul>
+        <li><strong>3 days/week:</strong> Full-body sessions each day. Prioritize compound movements. Leave at least one rest day between sessions.</li>
+        <li><strong>4 days/week:</strong> A mix of strength-focused and conditioning-focused days works well. One active recovery or skill day is a good use of the fourth slot.</li>
+        <li><strong>5 days/week:</strong> You have room to specialize — dedicate sessions to specific monostructural work (running, rowing, biking), heavy lifting days, and shorter, higher-intensity WODs.</li>
+      </ul>
+
+      <p>More is not always better. Three hard, well-structured sessions will produce more results than five poorly managed ones that leave you perpetually fatigued.</p>
+
+      <h2>The Three Things Every Week Needs</h2>
+
+      <p>Regardless of how many days you're training, a functional weekly program should include three things in some proportion:</p>
+
+      <h3>1. Strength or Weightlifting Work</h3>
+
+      <p>This is the foundation. Pick two or three foundational patterns — a squat, a hinge, a press, a pull — and develop them over weeks and months. Progressive overload over time is how you get stronger. You don't need a barbell to do this. A quality adjustable dumbbell set or a pair of kettlebells can take you a long way. <!-- AFFILIATE: update with adjustable dumbbell or kettlebell product link when approved --></p>
+
+      <p>Aim for at least two sessions per week where strength work is the focus, even if it's only 15–20 minutes of lifting before a short metcon.</p>
+
+      <h3>2. Metabolic Conditioning</h3>
+
+      <p>This is the WOD-style work most functional fitness athletes love. Time-domain variety matters here: short and intense (under 10 minutes), medium-length (10–20 minutes), and longer-effort pieces (20–35 minutes) train different energy systems. If you only ever do 7-minute AMRAPs, you're leaving half your engine untrained.</p>
+
+      <p>The <a href="/generator">Smart WOD Builder</a> on HomeWODrx can help you generate workouts that match your available equipment and time — useful for filling in gaps in a week you've already partially planned.</p>
+
+      <h3>3. Recovery and Aerobic Base Work</h3>
+
+      <p>This is the most overlooked part of home programming. Active recovery doesn't mean doing nothing — it means keeping movement without accumulating stress. A 20-minute walk, a light row or bike, or a focused <a href="/movements">movement and stretch session</a> all count. Aerobic base work at a conversational pace builds the foundation that lets you recover faster between hard sessions.</p>
+
+      <div class="callout">
+        <strong>Simple weekly template:</strong> Monday — Strength + Short Metcon | Tuesday — Longer Conditioning Piece | Wednesday — Rest or Active Recovery | Thursday — Strength + Medium Metcon | Friday — Benchmark or Test | Saturday — Long Aerobic or Skill Work | Sunday — Rest
+      </div>
+
+      <h2>How to Balance Intensity Across the Week</h2>
+
+      <p>Not every session should be a 10 out of 10. If it is, you're not programming — you're just suffering. A practical rule: no more than two or three genuinely high-intensity sessions per week. The rest should sit at a moderate effort level where you're working but could hold a conversation.</p>
+
+      <p>Think of it in terms of traffic lights:</p>
+
+      <ul>
+        <li><strong>Red (max effort):</strong> 2–3 times per week max. Benchmark workouts, heavy strength days, all-out conditioning.</li>
+        <li><strong>Yellow (moderate effort):</strong> 1–2 times per week. Threshold pace work, moderate-weight lifting, tempo runs.</li>
+        <li><strong>Green (easy effort):</strong> 1–2 times per week. Active recovery, skill practice, aerobic base work at low intensity.</li>
+      </ul>
+
+      <p>Spreading the intensity out is what allows you to actually perform on your hard days instead of grinding through them half-recovered.</p>
+
+      <h2>Programming Around What You Have</h2>
+
+      <p>Your equipment is a real constraint, and that's fine. A well-structured program works within what you've got rather than constantly reminding you what's missing.</p>
+
+      <p>If you're working with minimal gear, bodyweight movements can carry far more training stimulus than most people realize — especially when you manipulate tempo, volume, and rest. A pull-up bar, a set of rings, and a kettlebell cover a surprisingly wide range of movement patterns. <!-- AFFILIATE: update with pull-up bar and rings product links when approved --></p>
+
+      <p>If you have a barbell and some plates, your programming options expand significantly. Squat, deadlift, press, clean, snatch — these are the core movements of high-intensity functional training, and you can build an entire year of programming around them. The <a href="/workouts">benchmark workouts library</a> on HomeWODrx is organized by equipment, so you can filter down to what actually works in your space.</p>
+
+      <h2>Tracking Progress Without Overcomplicating It</h2>
+
+      <p>You don't need a sophisticated logging system to see progress — but you do need some system. At minimum, write down:</p>
+
+      <ul>
+        <li>What you did</li>
+        <li>What weight you used (if applicable)</li>
+        <li>Your time or score</li>
+        <li>A one-word note on how you felt</li>
+      </ul>
+
+      <p>Revisit a benchmark workout every six to eight weeks. If your time improved or your weight went up, the program is working. If it didn't, something needs to change — usually either volume, intensity, or recovery.</p>
+
+      <p>The profile page on HomeWODrx lets you <a href="/profile">log personal records</a> for key lifts, which makes it easy to track progress on the strength side over time.</p>
+
+      <h2>Give It More Time Than Feels Comfortable</h2>
+
+      <p>The biggest mistake self-programmed athletes make is switching things up too soon. Six weeks on a program that you execute consistently will produce more results than six different programs sampled for a week each. The body adapts slowly. Consistency over a month is worth more than perfection in a single session.</p>
+
+      <p>Pick a structure, commit to it for at least four to six weeks, and resist the urge to overhaul it just because progress doesn't feel dramatic in the first two. Trust the process — and then actually run the process long enough to see what it does.</p>
+
+      <div class="callout">
+        <strong>Not sure where to start?</strong> Use the <a href="/generator">Smart WOD Builder</a> to generate daily workouts based on your equipment, or browse the <a href="/workouts">full workout library</a> to build your own weekly rotation from proven WOD-style sessions.
+      </div>
+
+    </article>
+
+    <section class="post-related">
+      <h3>More from the blog</h3>
+      <div class="related-grid">
+        <a href="/blog/named-benchmark-wods-guide" class="related-card">
+          <div class="r-tag">Training</div>
+          <h4>Named Benchmark WODs: A Complete Guide to Fran, Diane, Grace, and More</h4>
+        </a>
+        <a href="/blog/how-to-scale-wods" class="related-card">
+          <div class="r-tag">Training</div>
+          <h4>How to Scale WODs: A Practical Guide for Every Fitness Level</h4>
+        </a>
+      </div>
+    </section>
+
+  </div>
+</main>
+</body>
+</html>
