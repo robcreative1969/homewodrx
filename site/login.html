@@ -5,207 +5,291 @@
   <!-- Sentry Error Monitoring -->
   <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - HomeWODrx</title>
-  <meta name="description" content="Log in to your HomeWODrx account to track workouts and compete on leaderboards.">
-
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <title>Log In — HomeWODrx</title>
+  <meta name="description" content="Log in to your HomeWODrx account to track workouts, log PRs, and access all your training data.">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="/js/config.js"></script>
   <script src="/js/db.js"></script>
   <script src="/js/benchmarks.js"></script>
   <script src="/js/nav.js"></script>
   <style>
-    .auth-page {
-      min-height: 80vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 1rem;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --or:        #C41212;
+      --or-dark:   #a00e0e;
+      --or-xlight: #fdf2f2;
+      --or-light:  rgba(196,18,18,.1);
+      --text:      #1a1a1a;
+      --muted:     #666;
+      --muted2:    #999;
+      --border:    #e5e5e5;
+      --border2:   #d0d0d0;
+      --white:     #fff;
+      --bg:        #f3f3f3;
+      --card:      #fff;
+      --shadow:    0 2px 12px rgba(0,0,0,.07);
+      --shadow-md: 0 4px 20px rgba(0,0,0,.1);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,.13);
+      --radius:    10px;
+      --radius-lg: 14px;
+      --font-head: 'Bebas Neue', sans-serif;
+      --font-mark: 'Kalam', cursive;
+      --font-body: 'Barlow', system-ui, sans-serif;
+      --nav-h:     64px;
+    }
+    html   { font-family: var(--font-body); font-size: 16px; color: var(--text); background: var(--bg); }
+    body   { min-height: 100vh; }
+    a      { text-decoration: none; color: inherit; }
+    button { font-family: var(--font-body); cursor: pointer; }
+
+    /* ═══════════════════════════════════════
+       NAV  (classes injected by nav.js)
+    ═══════════════════════════════════════ */
+    .site-nav {
+      position: sticky; top: 0; z-index: 1000;
+      background: var(--white); border-bottom: 2px solid var(--or);
+      height: var(--nav-h); display: flex; align-items: center;
+      padding: 0 28px; gap: 4px;
+    }
+    .nav-logo {
+      text-decoration: none; display: flex; align-items: center; margin-right: 18px; flex-shrink: 0;
+    }
+    .nav-logo-img { height: 36px; width: auto; }
+    .nav-items  { display: flex; align-items: center; gap: 2px; flex: 1; }
+    .nav-dd     { position: relative; }
+    .nav-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 14px; background: none; border: none; cursor: pointer;
+      font-size: .9rem; font-weight: 600; color: var(--text);
+      border-radius: 8px; transition: background .15s, color .15s;
+      white-space: nowrap; font-family: var(--font-body); text-decoration: none;
+    }
+    .nav-btn:hover, .nav-dd.open > .nav-btn, .nav-btn.active { background: var(--or-xlight); color: var(--or); }
+    .nav-btn svg.chev { width: 14px; height: 14px; transition: transform .2s; flex-shrink: 0; opacity: .5; }
+    .nav-dd.open .nav-btn svg.chev { transform: rotate(180deg); opacity: 1; }
+    .dd-panel {
+      display: none; position: absolute; top: calc(100% + 10px); left: 0;
+      min-width: 260px; background: var(--white); border-radius: 12px;
+      box-shadow: var(--shadow-lg); border: 1px solid var(--border); padding: 8px; z-index: 1100;
+    }
+    .dd-panel-right { right: 0; left: auto; }
+    .nav-dd.open .dd-panel { display: block; }
+    .dd-panel a {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 10px 12px; border-radius: 8px;
+      text-decoration: none; color: var(--text); transition: background .12s, color .12s;
+    }
+    .dd-panel a:hover { background: var(--or-xlight); color: var(--or); }
+    .dl strong { display: block; font-size: .875rem; font-weight: 600; line-height: 1.3; }
+    .dl small  { font-size: .75rem; color: var(--muted); line-height: 1.3; }
+    .dd-div    { height: 1px; background: var(--border); margin: 6px 4px; }
+    .dd-section-label {
+      padding: 6px 12px 3px; font-size: .68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .07em; color: var(--muted2);
+    }
+    .dd-footer {
+      display: block; text-align: center; padding: 7px 12px 5px;
+      font-size: .78rem; font-weight: 700; color: var(--or);
+      text-decoration: none; border-radius: 8px; transition: background .12s;
+    }
+    .dd-footer:hover { background: var(--or-xlight); }
+    .dd-post {
+      display: flex; flex-direction: column; gap: 2px;
+      padding: 9px 12px; border-radius: 8px;
+      text-decoration: none; color: var(--text); transition: background .12s;
+    }
+    .dd-post:hover { background: var(--or-xlight); }
+    .dd-post-tag { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+    .dd-post-title { font-size: .84rem; font-weight: 600; line-height: 1.35; }
+    .dd-post:hover .dd-post-title { color: var(--or); }
+    .nav-end   { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+    .nav-search-btn {
+      width: 36px; height: 36px; border: 1.5px solid var(--border); background: none;
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--muted); transition: border-color .15s, color .15s;
+      text-decoration: none;
+    }
+    .nav-search-btn:hover { border-color: var(--or); color: var(--or); }
+    .nav-cta {
+      padding: 9px 18px; background: var(--or); color: #fff; border: none;
+      border-radius: 8px; font-size: .875rem; font-weight: 700;
+      cursor: pointer; transition: background .15s; white-space: nowrap;
+    }
+    .nav-cta:hover { background: var(--or-dark); }
+    .nav-hamburger {
+      display: none; width: 36px; height: 36px; padding: 0;
+      background: none; border: 1.5px solid var(--border); border-radius: 8px;
+      align-items: center; justify-content: center;
+      cursor: pointer; color: var(--text); transition: border-color .15s, color .15s;
+    }
+    .nav-hamburger:hover { border-color: var(--or); color: var(--or); }
+    .ham-icon-open  { width: 18px; height: 18px; display: block; }
+    .ham-icon-close { width: 18px; height: 18px; display: none; }
+    .nav-hamburger.open .ham-icon-open  { display: none; }
+    .nav-hamburger.open .ham-icon-close { display: block; }
+    .ham-panel {
+      display: none; position: fixed; top: var(--nav-h); left: 0; right: 0; bottom: 0;
+      background: var(--white); overflow-y: auto;
+      z-index: 999; border-top: 1px solid var(--border); padding: 8px 0 32px;
+    }
+    .ham-panel.open { display: block; }
+    .ham-section { padding: 4px 20px 12px; }
+    .ham-section-title {
+      font-size: .68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--muted2); padding: 12px 0 6px;
+    }
+    .ham-links { display: flex; flex-direction: column; gap: 1px; }
+    .ham-link {
+      display: block; padding: 9px 10px; border-radius: 8px;
+      font-size: .9rem; font-weight: 600; color: var(--text);
+      text-decoration: none; transition: background .12s, color .12s;
+    }
+    .ham-link:hover { background: var(--or-xlight); color: var(--or); }
+    .ham-divider { height: 1px; background: var(--border); margin: 4px 20px; }
+    .dd-panel-wide { min-width: 520px; }
+    .dd-cols { display: grid; grid-template-columns: 1fr 1fr; }
+    .dd-col-right { border-left: 1px solid var(--border); }
+
+    /* Avatar dropdown */
+    .nav-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--or); color: #fff;
+      font-family: var(--font-head); font-size: 15px; letter-spacing: .04em;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; user-select: none;
+      border: 2px solid transparent; transition: border-color .15s;
+    }
+    .nav-avatar:hover { border-color: var(--or-dark); }
+    .avatar-dd-user {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 12px 12px;
+    }
+    .avatar-dd-initials {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--or); color: #fff;
+      font-family: var(--font-head); font-size: 17px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .avatar-dd-info { display: flex; flex-direction: column; gap: 2px; }
+    .avatar-dd-name { font-size: .875rem; font-weight: 700; }
+    .avatar-dd-handle { font-size: .75rem; color: var(--muted); }
+    .avatar-dd-logout { color: #c00; }
+    .avatar-dd-logout:hover { background: rgba(196,0,0,.06) !important; }
+    .di {
+      width: 28px; height: 28px; border-radius: 6px; background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; color: var(--muted);
     }
 
+    @media (max-width: 800px) {
+      .nav-items, .nav-search-btn { display: none; }
+      .nav-hamburger { display: flex; }
+      .site-nav { padding: 0 16px; }
+    }
+
+    /* ═══════════════════════════════════════
+       AUTH PAGE
+    ═══════════════════════════════════════ */
+    .auth-wrap {
+      min-height: calc(100vh - var(--nav-h));
+      display: flex; align-items: center; justify-content: center;
+      padding: 48px 16px;
+    }
     .auth-card {
-      background: var(--dark-card);
-      border: 1px solid var(--dark-border);
-      border-radius: 16px;
-      padding: 2.5rem;
-      width: 100%;
-      max-width: 420px;
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); box-shadow: var(--shadow-md);
+      padding: 2.75rem 2.5rem; width: 100%; max-width: 440px;
     }
-
     .auth-logo {
-      text-align: center;
-      margin-bottom: 2rem;
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none; margin-bottom: 2rem;
     }
-
-    .auth-logo a {
-      text-decoration: none;
-      display: inline-block;
-    }
-
-    .auth-logo-img {
-      height: 36px;
-      width: auto;
-    }
-
+    .auth-logo-img { height: 40px; width: auto; }
     .auth-title {
-      font-size: 1.75rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      text-align: center;
+      font-family: var(--font-head); font-size: 2.2rem; letter-spacing: .04em;
+      text-align: center; margin-bottom: 0.4rem; line-height: 1;
     }
-
     .auth-subtitle {
-      color: var(--text-muted, #888);
-      text-align: center;
-      margin-bottom: 2rem;
-      font-size: 0.95rem;
+      color: var(--muted); text-align: center; margin-bottom: 2rem;
+      font-size: .9rem; line-height: 1.5;
     }
-
-    .form-group {
-      margin-bottom: 1.25rem;
-    }
-
+    .form-group { margin-bottom: 1.25rem; }
     .form-label {
-      display: block;
-      font-size: 0.875rem;
-      font-weight: 500;
-      margin-bottom: 0.5rem;
-      color: var(--text-primary);
+      display: block; font-size: .8rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .06em;
+      color: var(--muted); margin-bottom: 0.5rem;
     }
-
     .form-input {
-      width: 100%;
-      background: var(--dark-bg);
-      border: 1px solid var(--dark-border);
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      color: var(--text-primary);
-      font-size: 1rem;
-      transition: border-color 0.2s;
-      box-sizing: border-box;
+      width: 100%; background: var(--bg); border: 1.5px solid var(--border);
+      border-radius: var(--radius); padding: 0.8rem 1rem;
+      color: var(--text); font-size: .95rem; font-family: var(--font-body);
+      transition: border-color .2s, background .2s; outline: none;
     }
-
-    .form-input:focus {
-      outline: none;
-      border-color: var(--orange);
-    }
-
-    .form-input::placeholder {
-      color: #555;
-    }
-
-    .auth-error {
-      background: rgba(196, 18, 18, 0.1);
-      border: 1px solid rgba(196, 18, 18, 0.3);
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      color: var(--orange);
-      font-size: 0.9rem;
-      margin-bottom: 1.25rem;
-      display: none;
-    }
-
-    .auth-error.visible {
-      display: block;
-    }
-
-    .auth-success {
-      background: rgba(34, 197, 94, 0.1);
-      border: 1px solid rgba(34, 197, 94, 0.3);
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      color: #22c55e;
-      font-size: 0.9rem;
-      margin-bottom: 1.25rem;
-      display: none;
-    }
-
-    .auth-success.visible {
-      display: block;
-    }
-
-    .btn-submit {
-      width: 100%;
-      padding: 0.85rem;
-      font-size: 1rem;
-      font-weight: 600;
-      margin-top: 0.5rem;
-    }
-
-    .auth-footer {
-      text-align: center;
-      margin-top: 1.5rem;
-      font-size: 0.9rem;
-      color: var(--text-muted, #888);
-    }
-
-    .auth-footer a {
-      color: var(--orange);
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    .auth-footer a:hover {
-      text-decoration: underline;
-    }
-
-    .divider {
-      border: none;
-      border-top: 1px solid var(--dark-border);
-      margin: 1.5rem 0;
-    }
-
-    .recovery-link {
-      color: var(--orange);
-      text-decoration: none;
-      font-size: 0.85rem;
-    }
-    .recovery-link:hover {
-      text-decoration: underline;
-    }
-    .recovery-links {
-      display: flex;
-      justify-content: center;
-      gap: 1.25rem;
-      margin-top: 1rem;
-    }
-    .back-link {
-      display: inline-block;
-      margin-top: 1rem;
-      color: var(--orange);
-      text-decoration: none;
-      font-size: 0.85rem;
-    }
-    .back-link:hover {
-      text-decoration: underline;
-    }
-
-    /* ── Password reveal wrapper ── */
-    .password-wrapper {
-      position: relative;
-    }
-    .password-wrapper .form-input {
-      padding-right: 2.75rem;
-    }
+    .form-input:focus { background: var(--white); border-color: var(--or); }
+    .form-input::placeholder { color: #bbb; }
+    .password-wrapper { position: relative; }
+    .password-wrapper .form-input { padding-right: 2.75rem; }
     .toggle-pw {
-      position: absolute;
-      right: 0.75rem;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-      color: #666;
-      display: flex;
-      align-items: center;
-      transition: color 0.2s;
+      position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; padding: 0;
+      color: var(--muted2); display: flex; align-items: center; transition: color .2s;
     }
-    .toggle-pw:hover { color: var(--text-primary); }
+    .toggle-pw:hover { color: var(--text); }
     .toggle-pw svg { width: 18px; height: 18px; }
+    .auth-alert {
+      border-radius: var(--radius); padding: 0.75rem 1rem;
+      font-size: .875rem; margin-bottom: 1.25rem; display: none;
+    }
+    .auth-alert.visible { display: block; }
+    .auth-alert-error {
+      background: rgba(196,18,18,.07); border: 1px solid rgba(196,18,18,.25); color: var(--or);
+    }
+    .auth-alert-success {
+      background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.3); color: #16a34a;
+    }
+    .btn-submit {
+      width: 100%; padding: 0.95rem; background: var(--or); color: #fff; border: none;
+      border-radius: var(--radius); font-size: 1rem; font-weight: 700;
+      font-family: var(--font-body); margin-top: 0.5rem;
+      transition: background .15s, transform .1s; cursor: pointer;
+    }
+    .btn-submit:hover { background: var(--or-dark); transform: translateY(-1px); }
+    .btn-submit:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+    .auth-divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+    .recovery-links {
+      display: flex; justify-content: center; gap: 1.5rem; margin-top: 1rem;
+    }
+    .recovery-link {
+      font-size: .85rem; color: var(--or); font-weight: 600; transition: opacity .15s;
+    }
+    .recovery-link:hover { opacity: .75; }
+    .back-link {
+      display: inline-block; margin-top: 1rem; color: var(--or);
+      font-size: .85rem; font-weight: 600;
+    }
+    .back-link:hover { opacity: .75; }
+    .auth-footer {
+      text-align: center; font-size: .9rem; color: var(--muted);
+    }
+    .auth-footer a { color: var(--or); font-weight: 700; }
+    .auth-footer a:hover { opacity: .8; }
+    .sub-view-title {
+      font-family: var(--font-head); font-size: 1.9rem; letter-spacing: .04em;
+      text-align: center; margin-bottom: 0.4rem; line-height: 1;
+    }
+    .sub-view-subtitle {
+      color: var(--muted); text-align: center; margin-bottom: 1.5rem; font-size: .875rem;
+    }
+
+    @media (max-width: 480px) {
+      .auth-card { padding: 2rem 1.25rem; }
+    }
   </style>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
@@ -218,105 +302,88 @@
   <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body data-nav-init="true" data-active-page="">
-  <main class="auth-page">
+
+  <!-- Nav injected by nav.js -->
+
+  <main class="auth-wrap">
     <div class="auth-card">
-      <div class="auth-logo">
-        <a href="/"><img src="/HomeWODRx-logo-white-red-black-strip-040626.png" alt="HomeWODrx" class="auth-logo-img"></a>
-      </div>
 
-      <h1 class="auth-title">Welcome back</h1>
-      <p class="auth-subtitle">Log in to track your WODs and compete on leaderboards.</p>
+      <a class="auth-logo" href="/">
+        <img src="/HomeWODRx-logo-black-red-040626.png" alt="HomeWODrx" class="auth-logo-img">
+      </a>
 
-      <div class="auth-error" id="auth-error"></div>
-      <div class="auth-success" id="auth-success"></div>
-
-      <!-- Login Form -->
+      <!-- ── LOGIN VIEW ── -->
       <div id="login-view">
+        <h1 class="auth-title">Welcome Back</h1>
+        <p class="auth-subtitle">Log in to access your saved workouts, PRs, and training history.</p>
+
+        <div class="auth-alert auth-alert-error" id="auth-error"></div>
+        <div class="auth-alert auth-alert-success" id="auth-success"></div>
+
         <form id="login-form">
           <div class="form-group">
             <label class="form-label" for="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              class="form-input"
-              placeholder="you@example.com"
-              required
-              autocomplete="email"
-            />
+            <input type="email" id="email" class="form-input" placeholder="you@example.com" required autocomplete="email"/>
           </div>
-
           <div class="form-group">
             <label class="form-label" for="password">Password</label>
             <div class="password-wrapper">
-              <input
-                type="password"
-                id="password"
-                class="form-input"
-                placeholder="••••••••"
-                required
-                autocomplete="current-password"
-              />
+              <input type="password" id="password" class="form-input" placeholder="••••••••" required autocomplete="current-password"/>
               <button type="button" class="toggle-pw" onclick="togglePw('password', this)" aria-label="Show password">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
               </button>
             </div>
           </div>
-
-          <button type="submit" class="btn btn-primary btn-submit" id="submit-btn">
-            Log In
-          </button>
+          <button type="submit" class="btn-submit" id="submit-btn">Log In</button>
         </form>
 
         <div class="recovery-links">
-          <a href="#" class="recovery-link" onclick="showView('forgot-password');return false">Forgot password?</a>
-          <a href="#" class="recovery-link" onclick="showView('forgot-email');return false">Forgot email?</a>
+          <a href="#" class="recovery-link" onclick="showView('forgot-password'); return false">Forgot password?</a>
+          <a href="#" class="recovery-link" onclick="showView('forgot-email'); return false">Forgot email?</a>
         </div>
 
-        <hr class="divider">
-
-        <div class="auth-footer">
-          Don&#39;t have an account? <a href="/signup.html">Sign up free</a>
-        </div>
+        <hr class="auth-divider">
+        <p class="auth-footer">Don't have an account? <a href="/signup.html">Sign up free</a></p>
       </div>
 
-      <!-- Forgot Password View -->
+      <!-- ── FORGOT PASSWORD VIEW ── -->
       <div id="forgot-password-view" style="display:none">
-        <h1 class="auth-title">Reset Password</h1>
-        <p class="auth-subtitle">Enter your email and we'll send a password reset link.</p>
-        <div class="auth-error" id="reset-error"></div>
-        <div class="auth-success" id="reset-success"></div>
+        <h2 class="sub-view-title">Reset Password</h2>
+        <p class="sub-view-subtitle">Enter your email and we'll send a reset link.</p>
+        <div class="auth-alert auth-alert-error" id="reset-error"></div>
+        <div class="auth-alert auth-alert-success" id="reset-success"></div>
         <div class="form-group">
           <label class="form-label" for="reset-email">Email</label>
-          <input type="email" id="reset-email" class="form-input" placeholder="you@example.com" autocomplete="email" />
+          <input type="email" id="reset-email" class="form-input" placeholder="you@example.com" autocomplete="email"/>
         </div>
-        <button class="btn btn-primary btn-submit" onclick="sendReset()">Send Reset Link</button>
-        <a href="#" class="back-link" onclick="showView('login');return false">&larr; Back to login</a>
+        <button class="btn-submit" onclick="sendReset()">Send Reset Link</button>
+        <a href="#" class="back-link" onclick="showView('login'); return false">← Back to login</a>
       </div>
 
-      <!-- Forgot Email View -->
+      <!-- ── FORGOT EMAIL VIEW ── -->
       <div id="forgot-email-view" style="display:none">
-        <h1 class="auth-title">Find Your Email</h1>
-        <p class="auth-subtitle">Enter your username and we'll help you find your account.</p>
-        <div class="auth-error" id="lookup-error"></div>
-        <div class="auth-success" id="lookup-success"></div>
+        <h2 class="sub-view-title">Find Your Account</h2>
+        <p class="sub-view-subtitle">Enter your username and we'll help you locate your email.</p>
+        <div class="auth-alert auth-alert-error" id="lookup-error"></div>
+        <div class="auth-alert auth-alert-success" id="lookup-success"></div>
         <div class="form-group">
           <label class="form-label" for="lookup-username">Username</label>
-          <input type="text" id="lookup-username" class="form-input" placeholder="Your username" />
+          <input type="text" id="lookup-username" class="form-input" placeholder="Your username"/>
         </div>
-        <button class="btn btn-primary btn-submit" onclick="lookupMyEmail()">Look Up Email</button>
-        <a href="#" class="back-link" onclick="showView('login');return false">&larr; Back to login</a>
+        <button class="btn-submit" onclick="lookupMyEmail()">Look Up Email</button>
+        <a href="#" class="back-link" onclick="showView('login'); return false">← Back to login</a>
       </div>
 
-      <!-- New Password View (shown after clicking reset link in email) -->
+      <!-- ── NEW PASSWORD VIEW (after clicking reset link in email) ── -->
       <div id="new-password-view" style="display:none">
-        <h1 class="auth-title">Set New Password</h1>
-        <p class="auth-subtitle">Enter your new password below.</p>
-        <div class="auth-error" id="newpass-error"></div>
-        <div class="auth-success" id="newpass-success"></div>
+        <h2 class="sub-view-title">Set New Password</h2>
+        <p class="sub-view-subtitle">Enter your new password below.</p>
+        <div class="auth-alert auth-alert-error" id="newpass-error"></div>
+        <div class="auth-alert auth-alert-success" id="newpass-success"></div>
         <div class="form-group">
           <label class="form-label" for="new-pass">New Password</label>
           <div class="password-wrapper">
-            <input type="password" id="new-pass" class="form-input" placeholder="Min 8 characters" />
+            <input type="password" id="new-pass" class="form-input" placeholder="Min 8 characters"/>
             <button type="button" class="toggle-pw" onclick="togglePw('new-pass', this)" aria-label="Show password">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
             </button>
@@ -325,182 +392,156 @@
         <div class="form-group">
           <label class="form-label" for="new-pass-confirm">Confirm Password</label>
           <div class="password-wrapper">
-            <input type="password" id="new-pass-confirm" class="form-input" placeholder="Re-enter password" />
+            <input type="password" id="new-pass-confirm" class="form-input" placeholder="Re-enter password"/>
             <button type="button" class="toggle-pw" onclick="togglePw('new-pass-confirm', this)" aria-label="Show password">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
             </button>
           </div>
         </div>
-        <button class="btn btn-primary btn-submit" onclick="setNewPassword()">Set New Password</button>
+        <button class="btn-submit" onclick="setNewPassword()">Set New Password</button>
       </div>
+
     </div>
   </main>
 
   <script>
-    // ─── Show/hide password toggle ───
+    // ── Eye icons ──
     const EYE_OPEN = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>`;
     const EYE_OFF  = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.97 9.97 0 012.03-3.618m3.16-2.614A9.955 9.955 0 0112 5c4.477 0 8.268 2.943 9.542 7a9.97 9.97 0 01-1.526 2.872M6.343 6.343L3 3m18 18l-3.343-3.343M9.88 9.88a3 3 0 104.243 4.243"/></svg>`;
-    function togglePw(inputId, btn) {
-      const inp = document.getElementById(inputId);
+
+    function togglePw(id, btn) {
+      const inp = document.getElementById(id);
       const showing = inp.type === 'text';
       inp.type = showing ? 'password' : 'text';
       btn.innerHTML = showing ? EYE_OPEN : EYE_OFF;
       btn.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
     }
 
-    // ─── View switching ───
+    // ── View switching ──
     function showView(view) {
-      ['login','forgot-password','forgot-email','new-password'].forEach(v => {
+      ['login', 'forgot-password', 'forgot-email', 'new-password'].forEach(v => {
         const el = document.getElementById(v + '-view');
         if (el) el.style.display = v === view ? 'block' : 'none';
       });
-      // Hide the top title/subtitle when showing sub-views (they have their own)
-      const titleEl = document.querySelector('.auth-title');
-      const subtitleEl = document.querySelector('.auth-subtitle');
-      if (view === 'login') {
-        document.getElementById('login-view').style.display = 'block';
-      }
     }
 
-    // ─── Login form ───
+    // ── Alert helpers ──
+    function setAlert(id, type, msg) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = msg;
+      el.className = 'auth-alert auth-alert-' + type + ' visible';
+    }
+    function clearAlert(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.className = 'auth-alert';
+      el.textContent = '';
+    }
+
+    // ── Login form ──
     document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
+      const email     = document.getElementById('email').value.trim();
+      const password  = document.getElementById('password').value;
       const submitBtn = document.getElementById('submit-btn');
-      const errorEl = document.getElementById('auth-error');
-      const successEl = document.getElementById('auth-success');
-
-      errorEl.className = 'auth-error';
-      successEl.className = 'auth-success';
-
+      clearAlert('auth-error');
+      clearAlert('auth-success');
       submitBtn.disabled = true;
       submitBtn.textContent = 'Logging in...';
-
       try {
         const { user, error } = await db.signIn(email, password);
-
         if (error) {
-          errorEl.textContent = error.message || 'Invalid email or password. Please try again.';
-          errorEl.className = 'auth-error visible';
+          setAlert('auth-error', 'error', error.message || 'Invalid email or password. Please try again.');
           submitBtn.disabled = false;
           submitBtn.textContent = 'Log In';
           return;
         }
-
         if (user) {
-          successEl.textContent = 'Logged in! Redirecting...';
-          successEl.className = 'auth-success visible';
+          setAlert('auth-success', 'success', 'Logged in! Redirecting...');
           setTimeout(() => {
             const redirect = new URLSearchParams(window.location.search).get('redirect') || '/';
             window.location.href = redirect;
           }, 800);
         }
       } catch (err) {
-        errorEl.textContent = 'Something went wrong. Please try again.';
-        errorEl.className = 'auth-error visible';
+        setAlert('auth-error', 'error', 'Something went wrong. Please try again.');
         submitBtn.disabled = false;
         submitBtn.textContent = 'Log In';
       }
     });
 
-    // ─── Forgot Password ───
+    // ── Forgot Password ──
     async function sendReset() {
       const email = document.getElementById('reset-email').value.trim();
-      const errEl = document.getElementById('reset-error');
-      const okEl = document.getElementById('reset-success');
-      errEl.className = 'auth-error'; okEl.className = 'auth-success';
-
+      clearAlert('reset-error');
+      clearAlert('reset-success');
       if (!email) {
-        errEl.textContent = 'Please enter your email address.';
-        errEl.className = 'auth-error visible';
+        setAlert('reset-error', 'error', 'Please enter your email address.');
         return;
       }
-
       const { error } = await db.resetPassword(email, '/login.html');
       if (error) {
-        errEl.textContent = 'Something went wrong. Please try again.';
-        errEl.className = 'auth-error visible';
+        setAlert('reset-error', 'error', 'Something went wrong. Please try again.');
       } else {
-        okEl.textContent = 'Reset link sent! Check your inbox for an email with a reset link.';
-        okEl.className = 'auth-success visible';
+        setAlert('reset-success', 'success', 'Reset link sent! Check your inbox.');
       }
     }
 
-    // ─── Forgot Email (username lookup) ───
+    // ── Forgot Email (username lookup) ──
     async function lookupMyEmail() {
       const username = document.getElementById('lookup-username').value.trim();
-      const errEl = document.getElementById('lookup-error');
-      const okEl = document.getElementById('lookup-success');
-      errEl.className = 'auth-error'; okEl.className = 'auth-success';
-
+      clearAlert('lookup-error');
+      clearAlert('lookup-success');
       if (!username) {
-        errEl.textContent = 'Please enter your username.';
-        errEl.className = 'auth-error visible';
+        setAlert('lookup-error', 'error', 'Please enter your username.');
         return;
       }
-
       if (!supabaseClient) {
-        errEl.textContent = 'Not available in demo mode.';
-        errEl.className = 'auth-error visible';
+        setAlert('lookup-error', 'error', 'Not available at this time. Please contact support.');
         return;
       }
-
       const { data } = await supabaseClient
         .from('profiles')
         .select('id')
         .ilike('username', username)
         .single();
-
       if (!data) {
-        errEl.textContent = 'No account found with that username.';
-        errEl.className = 'auth-error visible';
+        setAlert('lookup-error', 'error', 'No account found with that username.');
         return;
       }
-
-      okEl.innerHTML = 'Account found for <strong>' + username + '</strong>! If you don\'t remember the email, contact the site admin for help. Or try the <a href="#" onclick="showView(\'forgot-password\');return false" style="color:#22c55e;text-decoration:underline">password reset</a> if you remember it.';
-      okEl.className = 'auth-success visible';
+      setAlert('lookup-success', 'success', 'Account found for "' + username + '"! Try the password reset if you remember your email, or contact support for help.');
     }
 
-    // ─── Set New Password (after clicking reset link in email) ───
+    // ── Set New Password (after clicking reset link in email) ──
     async function setNewPassword() {
-      const pass = document.getElementById('new-pass').value;
+      const pass    = document.getElementById('new-pass').value;
       const confirm = document.getElementById('new-pass-confirm').value;
-      const errEl = document.getElementById('newpass-error');
-      const okEl = document.getElementById('newpass-success');
-      errEl.className = 'auth-error'; okEl.className = 'auth-success';
-
+      clearAlert('newpass-error');
+      clearAlert('newpass-success');
       if (!pass || pass.length < 8) {
-        errEl.textContent = 'Password must be at least 8 characters.';
-        errEl.className = 'auth-error visible';
+        setAlert('newpass-error', 'error', 'Password must be at least 8 characters.');
         return;
       }
       if (pass !== confirm) {
-        errEl.textContent = 'Passwords do not match.';
-        errEl.className = 'auth-error visible';
+        setAlert('newpass-error', 'error', 'Passwords do not match.');
         return;
       }
-
       const { error } = await supabaseClient.auth.updateUser({ password: pass });
       if (error) {
-        errEl.textContent = 'Failed to update password: ' + error.message;
-        errEl.className = 'auth-error visible';
+        setAlert('newpass-error', 'error', 'Failed to update password: ' + error.message);
       } else {
-        okEl.textContent = 'Password updated! Redirecting to login...';
-        okEl.className = 'auth-success visible';
-        setTimeout(() => { showView('login'); }, 2000);
+        setAlert('newpass-success', 'success', 'Password updated! Redirecting to login...');
+        setTimeout(() => showView('login'), 2000);
       }
     }
 
-    // ─── Handle password reset redirect (Supabase appends tokens to URL hash) ───
+    // ── Handle password reset redirect (Supabase appends tokens to URL hash) ──
     (async function checkResetRedirect() {
       await initSupabase();
       if (!supabaseClient) return;
-
       const hash = window.location.hash;
       if (hash && (hash.includes('access_token') || hash.includes('type=recovery'))) {
-        // User arrived from a password reset email
         showView('new-password');
       }
     })();

@@ -5,187 +5,193 @@
   <!-- Sentry Error Monitoring -->
   <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Functional Fitness Equipment &amp; Gear Guide | HomeWODrx</title>
-  <meta name="description" content="Curated equipment recommendations for functional fitness athletes — barbells, kettlebells, rowers, plyo boxes, gymnastics rings, and more. Hand-picked for performance at any price point.">
-  <meta property="og:title" content="Functional Fitness Equipment &amp; Gear Guide | HomeWODrx">
-  <meta property="og:description" content="Curated equipment recommendations for functional fitness athletes — barbells, kettlebells, rowers, gymnastics rings, plyo boxes, and recovery gear.">
+
+  <title>Gear Guide — HomeWodRX</title>
+  <meta name="description" content="Curated equipment, apparel, and supplements for functional fitness athletes — hand-picked across every budget and training style.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://homewodrx.com/shop.html">
+
+  <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://homewodrx.com/shop">
+  <meta property="og:site_name" content="HomeWodRX">
+  <meta property="og:title" content="Gear Guide — HomeWodRX">
+  <meta property="og:description" content="Curated equipment, apparel, and supplements for functional fitness athletes — hand-picked across every budget and training style.">
+  <meta property="og:url" content="https://homewodrx.com/shop.html">
   <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Functional Fitness Equipment &amp; Gear Guide | HomeWODrx">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://homewodrx.com/images/og-default.png">
-  <link rel="canonical" href="https://homewodrx.com/shop">
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Shared site styles -->
   <link rel="stylesheet" href="/css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="/js/config.js"></script>
-  <script src="/js/db.js"></script>
-  <script src="/js/nav.js"></script>
 
+  <!-- Page-specific styles -->
   <style>
-    /* ── Page hero ───────────────────────────────────────────────────────── */
-    .shop-hero {
-      padding: 2.5rem 0 2rem;
-      border-bottom: 1px solid var(--bd);
-      margin-bottom: 2rem;
-    }
-    .shop-hero h1 {
-      font-size: 2rem;
-      font-weight: 800;
-      margin-bottom: 0.5rem;
-      line-height: 1.2;
-    }
-    .shop-hero p {
-      color: var(--mu);
-      font-size: 1rem;
-      max-width: 600px;
-      line-height: 1.6;
-    }
-    .shop-hero .amazon-note {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      margin-top: 1rem;
-      background: rgba(255, 153, 0, 0.08);
-      border: 1px solid rgba(255, 153, 0, 0.2);
-      border-radius: 6px;
-      padding: 0.4rem 0.75rem;
-      font-size: 0.78rem;
-      color: #f59e0b;
-    }
+/* ── Page Hero ── */
+.page-hero {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 52px 24px 44px; position: relative; overflow: hidden;
+}
+.page-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 80% at 50% -10%, rgba(196,18,18,.05) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-inner { max-width: 1200px; margin: 0 auto; position: relative; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--or-xlight); border: 1px solid rgba(196,18,18,.25);
+  padding: 5px 14px; border-radius: 20px;
+  font-size: .72rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--or); margin-bottom: 18px;
+}
+.page-hero h1 {
+  font-family: var(--font-head);
+  font-size: clamp(52px, 8vw, 88px);
+  line-height: .95; letter-spacing: .04em; color: var(--text);
+  margin-bottom: 16px;
+}
+.page-hero h1 span { color: var(--or); }
+.hero-sub {
+  font-size: clamp(16px, 2vw, 18px); color: var(--muted);
+  max-width: 540px; line-height: 1.65;
+}
 
-    /* ── Category jump links ─────────────────────────────────────────────── */
-    .category-jumps {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 2.5rem;
-    }
-    .jump-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      background: var(--card);
-      border: 1px solid var(--bd);
-      border-radius: 20px;
-      padding: 0.35rem 0.85rem;
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: var(--tx);
-      text-decoration: none;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
-      cursor: pointer;
-    }
-    .jump-chip:hover {
-      background: rgba(196, 18, 18, 0.1);
-      border-color: var(--or);
-      color: var(--or);
-    }
+/* ── Layout wrap ── */
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
-    /* ── Category section ────────────────────────────────────────────────── */
-    .gear-category {
-      margin-bottom: 3rem;
-      scroll-margin-top: 80px;
-    }
-    .category-header {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      margin-bottom: 1.25rem;
-      padding-bottom: 0.75rem;
-      border-bottom: 1px solid var(--bd);
-    }
-    .category-icon {
-      font-size: 1.4rem;
-      line-height: 1;
-    }
-    .category-header h2 {
-      font-size: 1.2rem;
-      font-weight: 700;
-      margin: 0;
-    }
-    .category-header .category-count {
-      margin-left: auto;
-      font-size: 0.78rem;
-      color: var(--mu);
-      font-weight: 500;
-    }
+/* ── Category filter bar ── */
+.filter-bar {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 18px 24px; position: sticky; top: var(--nav-h); z-index: 100;
+}
+.filter-wrap { max-width: 1200px; margin: 0 auto; }
+.filter-label {
+  font-size: .72rem; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+}
+.filter-inner { display: flex; gap: 6px; flex-wrap: wrap; }
+.filter-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 14px; border-radius: 20px;
+  border: 1.5px solid var(--border); background: none;
+  font-size: .9rem; font-weight: 600; color: var(--muted);
+  cursor: pointer; white-space: nowrap; transition: all .15s;
+  font-family: var(--font-body);
+}
+.filter-chip:hover { border-color: var(--or); color: var(--or); background: var(--or-xlight); }
+.filter-chip.active { border-color: var(--or); color: var(--or); background: var(--or-xlight); }
 
-    /* ── Gear grid & cards ───────────────────────────────────────────────── */
-    .gear-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 1rem;
-    }
-    .gear-card {
-      background: var(--card);
-      border: 1px solid var(--bd);
-      border-radius: 10px;
-      padding: 1.1rem 1.1rem 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-      text-decoration: none;
-      color: var(--tx);
-      transition: border-color 0.15s, background 0.15s, transform 0.1s;
-    }
-    .gear-card:hover {
-      border-color: var(--or);
-      background: rgba(196, 18, 18, 0.06);
-      transform: translateY(-2px);
-    }
-    .gear-card-name {
-      font-weight: 700;
-      font-size: 0.95rem;
-      line-height: 1.3;
-    }
-    .gear-card-desc {
-      font-size: 0.8rem;
-      color: var(--mu);
-      line-height: 1.5;
-      flex: 1;
-    }
-    .gear-card-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      margin-top: 0.5rem;
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--or);
-    }
-    .gear-card:hover .gear-card-cta {
-      gap: 0.4rem;
-    }
+/* ── Search ── */
+.search-wrap { position: relative; margin-top: 16px; }
+.search-icon {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  color: var(--muted2); pointer-events: none; width: 16px; height: 16px;
+}
+.search-input {
+  width: 100%; padding: 10px 14px 10px 38px;
+  border: 1.5px solid var(--border2); border-radius: 9px;
+  font-family: var(--font-body); font-size: .9rem; color: var(--text);
+  background: var(--bg); outline: none;
+  transition: border-color .15s, background .15s;
+}
+.search-input:focus { border-color: var(--or); background: var(--white); }
+.search-input::placeholder { color: var(--muted2); }
 
-    /* ── Bottom disclaimer ───────────────────────────────────────────────── */
-    .shop-disclaimer {
-      margin-top: 3rem;
-      padding: 1.25rem 1.5rem;
-      background: var(--card);
-      border: 1px solid var(--bd);
-      border-radius: 8px;
-      font-size: 0.8rem;
-      color: var(--mu);
-      line-height: 1.7;
-      text-align: center;
-    }
+/* ── No results ── */
+.no-results { display: none; text-align: center; padding: 72px 24px; color: var(--muted); }
+.no-results.visible { display: block; }
+.no-results h3 {
+  font-family: var(--font-head); font-size: 1.8rem; letter-spacing: .04em;
+  color: var(--text); margin-bottom: 10px;
+}
+.no-results p { font-size: .9rem; line-height: 1.6; max-width: 320px; margin: 0 auto 20px; }
+.no-results-clear {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 20px; background: var(--or); color: #fff;
+  border: none; border-radius: 8px; font-size: .875rem;
+  font-weight: 700; cursor: pointer; font-family: var(--font-body);
+  transition: background .15s;
+}
+.no-results-clear:hover { background: var(--or-dark); }
 
-    @media (max-width: 600px) {
-      .gear-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      }
-      .shop-hero h1 {
-        font-size: 1.6rem;
-      }
-    }
+/* ── Shop body ── */
+.shop-body { padding: 40px 0 80px; }
+
+/* ── Category sections ── */
+.gear-section { margin-bottom: 52px; scroll-margin-top: calc(var(--nav-h) + 58px); }
+.section-hdr {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 18px; padding-bottom: 14px;
+  border-bottom: 1.5px solid var(--border);
+}
+.section-hdr h2 {
+  font-family: var(--font-head); font-size: 1.6rem; letter-spacing: .04em;
+  line-height: 1; flex: 1;
+}
+.section-meta { font-size: .875rem; color: var(--muted); font-weight: 500; }
+
+/* ── Gear card grid ── */
+.gear-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 12px;
+}
+.gear-card {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: 16px 16px 14px;
+  display: flex; flex-direction: column; gap: 6px;
+  text-decoration: none; color: var(--text);
+  transition: border-color .15s, box-shadow .15s, transform .1s;
+  position: relative; overflow: hidden;
+}
+.gear-card:hover {
+  border-color: var(--or); box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+.gear-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: #f59e0b;
+}
+.card-name { font-family: var(--font-head); font-size: 1.15rem; letter-spacing: .03em; line-height: 1.2; }
+.card-desc { font-size: .875rem; color: var(--muted); line-height: 1.55; flex: 1; }
+.card-cta {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-top: 6px; font-size: .875rem; font-weight: 700;
+  color: #d97706; transition: gap .12s;
+}
+.gear-card:hover .card-cta { gap: 8px; }
+
+/* ── Affiliate disclaimer ── */
+.disclaimer {
+  background: var(--white); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px 20px; font-size: .78rem; color: var(--muted);
+  line-height: 1.7; text-align: center; margin-top: 24px;
+}
+
+@media (max-width: 600px) {
+  .gear-grid { grid-template-columns: 1fr 1fr; }
+  .page-hero { padding: 36px 16px 32px; }
+  .filter-bar { padding: 16px; position: static; }
+  .shop-body { padding: 28px 0 60px; }
+  .wrap { padding: 0 16px; }
+  .gear-section { scroll-margin-top: 24px; }
+}
+@media (max-width: 380px) {
+  .gear-grid { grid-template-columns: 1fr; }
+}
   </style>
-  <!-- Google tag (gtag.js) -->
+
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -193,300 +199,721 @@
     gtag('js', new Date());
     gtag('config', 'G-HZM475VDN3');
   </script>
+  <!-- Vercel Analytics -->
   <script defer src="/_vercel/insights/script.js"></script>
 </head>
+
 <body data-nav-init="true" data-active-page="shop">
-<main class="container">
 
-  <!-- HERO -->
-  <div class="shop-hero">
-    <h1>Functional Fitness Equipment Guide</h1>
-    <p>Curated equipment recommendations for functional fitness athletes — from barbells and kettlebells to rowers, rings, and recovery tools. Hand-picked for performance at any price point.</p>
-    <div class="amazon-note">
-      🔗 Links open Amazon searches. As an Amazon Associate, HomeWODrx earns from qualifying purchases.
+<!-- ── PAGE HERO ────────────────────────────────────────────── -->
+<div class="page-hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Curated Gear</div>
+    <h1>GEAR THAT <span>PERFORMS</span></h1>
+    <p class="hero-sub">Curated equipment, apparel, and supplements for functional fitness athletes — hand-picked across every budget and training style.</p>
+  </div>
+</div>
+
+<!-- ── CATEGORY FILTER BAR ──────────────────────────────────── -->
+<div class="filter-bar">
+  <div class="filter-wrap">
+    <div class="filter-label">Category</div>
+    <div class="filter-inner">
+      <button class="filter-chip active" onclick="setFilter('all', this)">All</button>
+      <button class="filter-chip" onclick="setFilter('barbells', this)">Barbells &amp; Weights</button>
+      <button class="filter-chip" onclick="setFilter('gymnastics', this)">Gymnastics</button>
+      <button class="filter-chip" onclick="setFilter('cardio', this)">Cardio</button>
+      <button class="filter-chip" onclick="setFilter('plyo', this)">Plyo &amp; Med Balls</button>
+      <button class="filter-chip" onclick="setFilter('accessories', this)">Accessories</button>
+      <button class="filter-chip" onclick="setFilter('supplements', this)">Supplements</button>
+      <button class="filter-chip" onclick="setFilter('apparel', this)">Apparel</button>
+      <button class="filter-chip" onclick="setFilter('recovery', this)">Recovery</button>
+    </div>
+    <div class="filter-label" style="margin-top:16px;">Search</div>
+    <div class="search-wrap" style="margin-top:0;">
+      <svg class="search-icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.7"/>
+        <path d="M13 13L17 17" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+      </svg>
+      <input
+        id="gear-search"
+        class="search-input"
+        type="search"
+        placeholder="Name or category..."
+        oninput="handleSearch()"
+        autocomplete="off"
+      >
     </div>
   </div>
+</div>
 
-  <!-- CATEGORY JUMP LINKS -->
-  <nav aria-label="Jump to category">
-    <div class="category-jumps">
-      <a href="#barbells" class="jump-chip">🏋️ Barbells &amp; Weights</a>
-      <a href="#gymnastics" class="jump-chip">🤸 Pull-up &amp; Gymnastics</a>
-      <a href="#cardio" class="jump-chip">🏃 Cardio &amp; Conditioning</a>
-      <a href="#plyo" class="jump-chip">🏐 Plyo &amp; Med Balls</a>
-      <a href="#accessories" class="jump-chip">🔧 Training Accessories</a>
-      <a href="#apparel" class="jump-chip">👟 Apparel &amp; Support</a>
-      <a href="#recovery" class="jump-chip">🛁 Recovery</a>
-    </div>
-  </nav>
+<!-- ── MAIN BODY ─────────────────────────────────────────────── -->
+<div class="shop-body">
+<div class="wrap">
 
-  <!-- ── CATEGORY: Barbells & Weights ──────────────────────────────────── -->
-  <section class="gear-category" id="barbells">
-    <div class="category-header">
-      <span class="category-icon">🏋️</span>
-      <h2>Barbells &amp; Weights</h2>
-      <span class="category-count">6 items</span>
+  <!-- ── BARBELLS & WEIGHTS ──────────────────────────────────── -->
+  <section class="gear-section" id="barbells" data-cat="barbells">
+    <div class="section-hdr">
+      <h2>BARBELLS &amp; WEIGHTS</h2>
+      <span class="section-meta">10 items</span>
     </div>
     <div class="gear-grid">
-      <a class="gear-card" href="https://www.amazon.com/s?k=barbell&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Barbell</div>
-        <div class="gear-card-desc">The foundation of any home gym. Look for 20kg Olympic bars with quality knurling for cleans, snatches, and deadlifts.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=olympic+barbell+20kg&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Olympic Barbell</div>
+        <div class="card-desc">20kg bar with quality knurling for cleans, snatches, and deadlifts. Look for 28–28.5mm grip diameter for WODs.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=bumper+plates&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Bumper Plates</div>
-        <div class="gear-card-desc">Rubber-coated plates designed to be dropped safely. Essential for Olympic lifting and barbell WODs at home.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=15kg+barbell+womens+training&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Women's 15kg Barbell</div>
+        <div class="card-desc">Shorter, lighter bar with a 25mm shaft — the right choice for snatches and cleans for most female athletes.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=dumbbells+set&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Dumbbells</div>
-        <div class="gear-card-desc">Adjustable sets save space. Used in DB snatches, thrusters, lunges, and dozens of WOD variations.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=bumper+plates+set&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Bumper Plates</div>
+        <div class="card-desc">Rubber-coated plates built to be dropped safely. Essential for Olympic lifting and barbell WODs at home.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=iron+weight+plates+set&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Iron Plates</div>
+        <div class="card-desc">Cast iron plates for strength work — deadlifts, squats, and pressing movements. More affordable than bumpers.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=adjustable+dumbbells&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Dumbbells</div>
+        <div class="card-desc">Adjustable sets save space. Used in DB snatches, thrusters, lunges, and dozens of WOD variations.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
       <a class="gear-card" href="https://www.amazon.com/s?k=kettlebell&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Kettlebell</div>
-        <div class="gear-card-desc">Swings, Turkish get-ups, goblet squats. One of the best single-item investments for home training.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+        <div class="card-name">Kettlebell</div>
+        <div class="card-desc">Swings, Turkish get-ups, goblet squats. One of the best single-item investments for home training.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=weight+bench&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Weight Bench</div>
-        <div class="gear-card-desc">A solid flat or adjustable bench opens up pressing movements and box step-up alternatives.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
-      </a>
+
       <a class="gear-card" href="https://www.amazon.com/s?k=squat+rack+home+gym&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Squat Rack</div>
-        <div class="gear-card-desc">Back squats, front squats, overhead press, and bench — a power rack anchors your home gym and opens up heavy barbell work safely.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+        <div class="card-name">Squat Rack</div>
+        <div class="card-desc">Back squats, front squats, overhead press, bench press. A power rack anchors every serious home gym.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=weight+bench+adjustable&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Weight Bench</div>
+        <div class="card-desc">An adjustable bench opens up pressing movements and step-up alternatives for home WODs.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=barbell+collars+clamps&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Barbell Collars</div>
+        <div class="card-desc">Essential for every barbell setup — keeps plates locked during cleans, snatches, and drops. Spring collars are fine; locking collars are better for heavy lifting.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=trap+bar+hex+bar+deadlift&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Trap Bar / Hex Bar</div>
+        <div class="card-desc">More forgiving on the lower back than a straight bar deadlift. Popular in home gyms for heavy pulls, farmer carries, and loaded jumps.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
     </div>
   </section>
 
-  <!-- ── CATEGORY: Pull-up & Gymnastics ────────────────────────────────── -->
-  <section class="gear-category" id="gymnastics">
-    <div class="category-header">
-      <span class="category-icon">🤸</span>
-      <h2>Pull-up &amp; Gymnastics</h2>
-      <span class="category-count">5 items</span>
+  <!-- ── PULL-UP & GYMNASTICS ───────────────────────────────── -->
+  <section class="gear-section" id="gymnastics" data-cat="gymnastics">
+    <div class="section-hdr">
+      <h2>PULL-UP &amp; GYMNASTICS</h2>
+      <span class="section-meta">7 items</span>
     </div>
     <div class="gear-grid">
-      <a class="gear-card" href="https://www.amazon.com/s?k=pull-up+bar&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Pull-up Bar</div>
-        <div class="gear-card-desc">Non-negotiable for home gyms. Door-mounted or rig-mounted — needed for pull-ups, toes-to-bar, and hanging work.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=pull-up+bar+door+mounted&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Pull-up Bar</div>
+        <div class="card-desc">Non-negotiable for home gyms. Door-mounted or rig-mounted — needed for pull-ups, toes-to-bar, and hanging work.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=gymnastics+rings&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Gymnastics Rings</div>
-        <div class="gear-card-desc">Ring dips, muscle-ups, rows. Rings are portable, versatile, and brutally effective for upper body development.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=gymnastics+rings+wood&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Gymnastics Rings</div>
+        <div class="card-desc">Ring dips, muscle-ups, rows. Rings are portable, versatile, and brutally effective for upper body development.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=parallettes&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Parallettes</div>
-        <div class="gear-card-desc">Handstand push-up practice, L-sits, and dips. Low parallettes work on any floor surface.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=parallettes+gymnastics&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Parallettes</div>
+        <div class="card-desc">Handstand push-up practice, L-sits, and dips. Low parallettes work on any floor surface.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=climbing+rope+crossfit&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Climbing Rope</div>
-        <div class="gear-card-desc">A full climbing rope needs ceiling height and anchor, but builds grip and pulling strength nothing else replicates.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=climbing+rope+gym&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Climbing Rope</div>
+        <div class="card-desc">Builds grip and pulling strength nothing else replicates. Needs ceiling height and a quality anchor point.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=parallel+bars+gymnastics&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Parallel Bars</div>
-        <div class="gear-card-desc">Dips, L-sits, handstand work. Freestanding parallel bars are stable and don't require a rig.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=freestanding+pull-up+bar+rig&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Freestanding Rig</div>
+        <div class="card-desc">Wall-less pull-up station for garages without mounting options. Supports pull-ups, rings, and muscle-up practice.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=gymnastics+grips+crossfit+hand+protection&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Gymnastics Grips</div>
+        <div class="card-desc">Protect your hands during high-rep pull-ups, toes-to-bar, and muscle-ups. Carbon fiber and leather grips are both popular — a non-negotiable once you're stringing reps together.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=liquid+chalk+gym+grip&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Chalk &amp; Liquid Chalk</div>
+        <div class="card-desc">Essential for barbells, kettlebells, and gymnastics work. Liquid chalk is mess-free and allowed in most gyms that ban block chalk.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
     </div>
   </section>
 
-  <!-- ── CATEGORY: Cardio & Conditioning ──────────────────────────────── -->
-  <section class="gear-category" id="cardio">
-    <div class="category-header">
-      <span class="category-icon">🏃</span>
-      <h2>Cardio &amp; Conditioning</h2>
-      <span class="category-count">7 items</span>
+  <!-- ── CARDIO & CONDITIONING ─────────────────────────────── -->
+  <section class="gear-section" id="cardio" data-cat="cardio">
+    <div class="section-hdr">
+      <h2>CARDIO &amp; CONDITIONING</h2>
+      <span class="section-meta">7 items</span>
     </div>
     <div class="gear-grid">
-      <a class="gear-card" href="https://www.amazon.com/s?k=rowing+machine&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Rowing Machine</div>
-        <div class="gear-card-desc">The king of home gym cardio — full-body, low-impact, and perfect for WOD intervals. Concept2 is the gold standard.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=concept2+rowing+machine&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Rowing Machine</div>
+        <div class="card-desc">The king of home gym cardio — full-body, low-impact, and perfect for WOD intervals. Concept2 is the gold standard.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=assault+bike+echo+bike&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Assault / Echo Bike</div>
-        <div class="gear-card-desc">Air resistance means infinite intensity. The assault bike is brutally effective for short, high-output intervals.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=echo+bike+air+bike&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Echo / Assault Bike</div>
+        <div class="card-desc">Air resistance means infinite intensity. The assault bike is brutally effective for short, high-output intervals.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=ski+erg&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Ski Erg</div>
-        <div class="gear-card-desc">Upper body pulling and core endurance. Wall-mounted to save floor space, great for Open WOD prep.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=concept2+ski+erg&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">SkiErg</div>
+        <div class="card-desc">Upper body pulling and core endurance. Wall-mounted to save floor space — great for Open WOD prep.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=crossfit+jump+rope+speed&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Speed Jump Rope</div>
+        <div class="card-desc">Double-unders demand a quality speed rope. Look for a lightweight cable and adjustable length for your height.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=battle+ropes+fitness&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Battle Ropes</div>
+        <div class="card-desc">High-intensity conditioning for arms, core, and lungs. Anchor to a wall or rig and go.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=weight+sled+push&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Weight Sled</div>
+        <div class="card-desc">Sled pushes and drags are low-skill, high-output conditioning. Best on turf or smooth concrete.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
       <a class="gear-card" href="https://www.amazon.com/s?k=treadmill+home+gym&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Treadmill</div>
-        <div class="gear-card-desc">Running WODs don't stop for weather. A solid folding treadmill lets you hit run-heavy workouts year-round from your garage.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+        <div class="card-name">Treadmill</div>
+        <div class="card-desc">Running WODs don't stop for weather. A solid folding treadmill lets you hit run-heavy workouts year-round.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=crossfit+jump+rope&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Jump Rope</div>
-        <div class="gear-card-desc">Double-unders demand a quality speed rope. Look for a lightweight cable and adjustable length.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
-      </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=battle+ropes&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Battle Ropes</div>
-        <div class="gear-card-desc">High-intensity conditioning for arms, core, and lungs. Anchor to a wall or rig and go.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
-      </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=weight+sled+crossfit&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Weight Sled</div>
-        <div class="gear-card-desc">Sled pushes and drags are low-skill, high-output conditioning. Best on turf or smooth concrete.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
-      </a>
+
     </div>
   </section>
 
-  <!-- ── CATEGORY: Plyo & Med Balls ────────────────────────────────────── -->
-  <section class="gear-category" id="plyo">
-    <div class="category-header">
-      <span class="category-icon">🏐</span>
-      <h2>Plyo &amp; Med Balls</h2>
-      <span class="category-count">5 items</span>
+  <!-- ── PLYO & MED BALLS ──────────────────────────────────── -->
+  <section class="gear-section" id="plyo" data-cat="plyo">
+    <div class="section-hdr">
+      <h2>PLYO &amp; MED BALLS</h2>
+      <span class="section-meta">5 items</span>
     </div>
     <div class="gear-grid">
-      <a class="gear-card" href="https://www.amazon.com/s?k=plyo+box&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Plyo Box</div>
-        <div class="gear-card-desc">Box jumps, step-ups, depth drops. A 20/24/30-inch wooden or foam box is a staple for every home gym.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=plyo+box+wood&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Plyo Box</div>
+        <div class="card-desc">Box jumps, step-ups, depth drops. A 20/24/30-inch wooden or foam box is a staple for every home gym.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=medicine+ball&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Medicine Ball</div>
-        <div class="gear-card-desc">Wall balls, slams, rotational throws. A 14 or 20 lb med ball shows up constantly in benchmark WODs.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=medicine+ball+wall+ball&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Medicine Ball</div>
+        <div class="card-desc">Wall balls, slams, rotational throws. A 14 or 20 lb med ball shows up constantly in benchmark WODs.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=slam+ball&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Slam Ball</div>
-        <div class="gear-card-desc">Built to absorb impact without bouncing back. Ball slams are a brutal full-body conditioning movement that never gets easier.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=slam+ball+no+bounce&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Slam Ball</div>
+        <div class="card-desc">Built to absorb impact without bouncing back. Ball slams are a brutal full-body conditioning movement.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=wall+ball&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Wall Ball Target</div>
-        <div class="gear-card-desc">A marked wall target makes wall ball shots consistent and sets the standard 10-foot height for scaled work.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=crossfit+sandbag+training&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Sandbag</div>
+        <div class="card-desc">An unstable, awkward implement that builds real-world functional strength. Great for carries and cleans.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=crossfit+sandbag&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Sandbag</div>
-        <div class="gear-card-desc">An unstable, awkward implement that builds real-world functional strength. Great for carries and cleans.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=d-ball+heavy+ball&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">D-Ball / Heavy Ball</div>
+        <div class="card-desc">The squat-clean-to-shoulder ball. Weighted carries and cleans with a 100+ lb D-ball are a serious conditioning test.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
+
     </div>
   </section>
 
-  <!-- ── CATEGORY: Training Accessories ───────────────────────────────── -->
-  <section class="gear-category" id="accessories">
-    <div class="category-header">
-      <span class="category-icon">🔧</span>
-      <h2>Training Accessories</h2>
-      <span class="category-count">4 items</span>
+  <!-- ── TRAINING ACCESSORIES ──────────────────────────────── -->
+  <section class="gear-section" id="accessories" data-cat="accessories">
+    <div class="section-hdr">
+      <h2>TRAINING ACCESSORIES</h2>
+      <span class="section-meta">9 items</span>
     </div>
     <div class="gear-grid">
-      <a class="gear-card" href="https://www.amazon.com/s?k=weight+vest&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Weight Vest</div>
-        <div class="gear-card-desc">Murph, strict pull-ups, and running WODs get a whole new dimension with a 20 lb vest. A classic progression tool.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
-      </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=resistance+bands+set&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Resistance Bands</div>
-        <div class="gear-card-desc">Banded pull-up assistance, mobility work, and accessory training. A full set covers light to heavy resistance.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
-      </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=ab+wheel&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Ab Wheel</div>
-        <div class="gear-card-desc">One of the most effective core tools around. Cheap, compact, and devastatingly hard when done right.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
-      </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=GHD+machine+crossfit&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">GHD Machine</div>
-        <div class="gear-card-desc">Glute-ham developer for GHD sit-ups and hamstring curls. Shows up in Open WODs and competitive programming.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
-      </a>
-    </div>
-  </section>
 
-  <!-- ── CATEGORY: Apparel & Support ────────────────────────────────────── -->
-  <section class="gear-category" id="apparel">
-    <div class="category-header">
-      <span class="category-icon">👟</span>
-      <h2>Apparel &amp; Joint Support</h2>
-      <span class="category-count">5 items</span>
-    </div>
-    <div class="gear-grid">
-      <a class="gear-card" href="https://www.amazon.com/s?k=cross+training+shoes&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Training Shoes</div>
-        <div class="gear-card-desc">Low-drop, stable shoes built for lifting and running. Nano, Metcon, and Lifter styles each serve different WODs.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+      <a class="gear-card" href="https://www.amazon.com/s?k=weight+vest+20+lb&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Weight Vest</div>
+        <div class="card-desc">Murph, strict pull-ups, and running WODs get a whole new dimension with a 20 lb vest. A classic progression tool.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=fitness+workout+clothing&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Workout Apparel</div>
-        <div class="gear-card-desc">Shorts, tanks, and compression gear designed for high-output movement. Sweat-wicking fabrics make a real difference.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=resistance+bands+set+pull+up&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Resistance Bands</div>
+        <div class="card-desc">Banded pull-up assistance, mobility work, and accessory training. A full set covers light to heavy resistance.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=lifting+belt+weightlifting&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Lifting Belt</div>
-        <div class="gear-card-desc">Core support for heavy barbell work — deadlifts, back squats, cleans. 4-inch belts are the functional fitness standard.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=GHD+machine&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">GHD Machine</div>
+        <div class="card-desc">Glute-ham developer for GHD sit-ups and hamstring curls. Shows up in Open WODs and competitive programming.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=knee+sleeves+weightlifting&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Knee Sleeves</div>
-        <div class="gear-card-desc">Warmth and compression for squat-heavy WODs. 7mm neoprene sleeves are the most popular option.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=steel+mace&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Steel Mace</div>
+        <div class="card-desc">Offset loading builds rotational strength, shoulder stability, and grip endurance. A serious tool for serious athletes.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=steel+clubs+fitness&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Steel Clubs</div>
+        <div class="card-desc">Shoulder rehab and rotational power training. Paired clubs open up a completely different movement vocabulary.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=ab+mat+crossfit&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Ab Mat</div>
+        <div class="card-desc">Full range sit-ups and GHD-free core work. The Ab Mat supports the lumbar curve so you get the full contraction.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
       <a class="gear-card" href="https://www.amazon.com/s?k=wrist+wraps+weightlifting&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Wrist Wraps</div>
-        <div class="gear-card-desc">Wrist stability for front squats, cleans, and heavy pressing. A small investment that protects high-volume joints.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+        <div class="card-name">Wrist Wraps</div>
+        <div class="card-desc">Wrist stability for heavy front squats, cleans, jerks, and pressing. A small investment that protects high-volume joints over years of training.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=lifting+straps+deadlift&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Lifting Straps</div>
+        <div class="card-desc">Take grip out of the equation on heavy deadlifts, RDLs, and pulls. Simple cotton or nylon straps are all you need.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=dip+belt+weighted+pull+ups&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Dip Belt</div>
+        <div class="card-desc">Add load to pull-ups, dips, and ring work. A chain-style dip belt is the most reliable option for heavier plates.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
     </div>
   </section>
 
-  <!-- ── CATEGORY: Recovery ─────────────────────────────────────────────── -->
-  <section class="gear-category" id="recovery">
-    <div class="category-header">
-      <span class="category-icon">🛁</span>
-      <h2>Recovery</h2>
-      <span class="category-count">4 items</span>
+  <!-- ── SUPPLEMENTS ────────────────────────────────────────── -->
+  <section class="gear-section" id="supplements" data-cat="supplements">
+    <div class="section-hdr">
+      <h2>SUPPLEMENTS</h2>
+      <span class="section-meta">19 items</span>
     </div>
     <div class="gear-grid">
-      <a class="gear-card" href="https://www.amazon.com/s?k=foam+roller+recovery&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Foam Roller</div>
-        <div class="gear-card-desc">Self-myofascial release for quads, IT band, lats, and thoracic spine. Use post-WOD for faster recovery.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=whey+protein+powder&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Whey Protein</div>
+        <div class="card-desc">Post-WOD recovery starts with protein. Look for 20–25g per serving with minimal additives and a third-party tested label.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=massage+gun+percussion+therapy&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Massage Gun</div>
-        <div class="gear-card-desc">Percussive therapy for deep tissue relief. Faster and more targeted than foam rolling for sore muscles.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=creatine+monohydrate+powder&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Creatine Monohydrate</div>
+        <div class="card-desc">The most studied performance supplement available. 3–5g daily supports power output on max-effort movements and AMRAP finishes.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=compression+recovery+sleeves&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Compression Gear</div>
-        <div class="gear-card-desc">Compression socks and calf sleeves improve circulation and reduce soreness during and after high-rep lower body work.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=onnit+alpha+brain&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Alpha Brain</div>
+        <div class="card-desc">Clinically studied nootropic for focus and mental clarity. Popular among competitive athletes for sharpening cognitive performance during training.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
-      <a class="gear-card" href="https://www.amazon.com/s?k=mobility+lacrosse+ball+stretching&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
-        <div class="gear-card-name">Mobility Tools</div>
-        <div class="gear-card-desc">Lacrosse balls, peanut rollers, stretching straps — small tools that keep you moving well and training consistently.</div>
-        <div class="gear-card-cta">Shop on Amazon →</div>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=shroom+tech+sport&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Shroom Tech Sport</div>
+        <div class="card-desc">Adaptogen-based performance formula with Cordyceps mushroom. No stimulant crash — just cleaner, more sustained output.</div>
+        <div class="card-cta">Shop Amazon →</div>
       </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=pre+workout+supplement&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Pre-Workout</div>
+        <div class="card-desc">A quality pre-workout for early morning WODs or high-volume training days. Look for caffeine + beta-alanine + citrulline.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=bcaa+amino+acids+workout&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">BCAAs</div>
+        <div class="card-desc">Branch-chain amino acids for intra-workout hydration and muscle preservation during fasted training or long sessions.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=electrolyte+powder+packets+lmnt&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Electrolytes</div>
+        <div class="card-desc">LMNT, Liquid IV, and similar products are essential for athletes sweating through daily WODs. Proper sodium and potassium balance prevents cramping and keeps performance up.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=collagen+peptides+joint+support&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Collagen &amp; Joint Support</div>
+        <div class="card-desc">High-rep Olympic lifting and gymnastics put serious wear on tendons and joints. Collagen peptides with vitamin C support connective tissue — especially important for athletes over 30.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=fish+oil+omega+3+supplement&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Fish Oil / Omega-3</div>
+        <div class="card-desc">Anti-inflammatory support for joints, heart health, and recovery. One of the most universally recommended supplements for high-volume athletes.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=vitamin+d3+k2+supplement&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Vitamin D3 + K2</div>
+        <div class="card-desc">Essential for athletes who train indoors or in garages year-round. D3 supports bone density, immune function, and mood — K2 ensures calcium goes where it belongs.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=greens+powder+superfood+supplement&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Greens Powder</div>
+        <div class="card-desc">AG1 and similar daily greens blends cover micronutrient gaps when diet isn't perfect. One of the fastest-growing supplement categories with a high repeat purchase rate.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=ashwagandha+supplement+stress&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Ashwagandha</div>
+        <div class="card-desc">Adaptogen for cortisol management, stress reduction, and recovery quality. Popular with athletes who train hard and live busy lives — trending strongly across fitness communities.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=turmeric+curcumin+supplement&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Turmeric / Curcumin</div>
+        <div class="card-desc">Natural anti-inflammatory for post-WOD soreness and joint comfort. Look for formulas with black pepper (piperine) for better absorption.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=protein+bars+high+protein&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Protein Bars</div>
+        <div class="card-desc">Convenient post-WOD nutrition when a shaker isn't an option. Quest, RxBar, and Built bars are popular choices — high repeat purchase and easy impulse buy.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=ready+to+drink+protein+shake+single+serving&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Protein Shakes (RTD)</div>
+        <div class="card-desc">Ready-to-drink single-serving shakes for post-WOD recovery without the mess. Fairlife, Muscle Milk, and Core Power are top sellers — grab-and-go convenience drives consistent repurchase.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=casein+protein+powder+slow+release&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Casein Protein</div>
+        <div class="card-desc">Slow-digesting overnight protein that keeps your muscles fed while you sleep. Pairs naturally with whey — whey post-WOD, casein before bed.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=lions+mane+mushroom+supplement&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Lion's Mane</div>
+        <div class="card-desc">Cognitive and neurological support from functional mushrooms. Trending alongside nootropics like Alpha Brain for athletes who prioritize mental clarity as much as physical output.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=tart+cherry+extract+supplement&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Tart Cherry Extract</div>
+        <div class="card-desc">Research-backed for reducing DOMS and improving sleep quality. Especially popular with athletes doing back-to-back training days who need to feel fresher faster.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=melatonin+sleep+supplement&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Melatonin</div>
+        <div class="card-desc">Sleep onset support for athletes with irregular schedules or early morning WOD alarms. Pairs with magnesium glycinate for a solid sleep stack.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
     </div>
   </section>
 
-  <!-- DISCLAIMER -->
-  <div class="shop-disclaimer">
-    As an Amazon Associate, HomeWODrx earns from qualifying purchases. Links on this page are affiliate links —
-    clicking them may earn us a small commission at no extra cost to you. We only link to product categories we
-    actually use and recommend for functional fitness training.
+  <!-- ── APPAREL & FOOTWEAR ─────────────────────────────────── -->
+  <section class="gear-section" id="apparel" data-cat="apparel">
+    <div class="section-hdr">
+      <h2>APPAREL &amp; FOOTWEAR</h2>
+      <span class="section-meta">17 items</span>
+    </div>
+    <div class="gear-grid">
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=nike+metcon+training+shoes&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Nike Metcon</div>
+        <div class="card-desc">The definitive training shoe — stable heel, grippy rope-climb rubber wrap, and enough flexibility for running intervals.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=reebok+nano+training+shoes&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Reebok Nano</div>
+        <div class="card-desc">The original functional fitness shoe. Wide toe box, flexible forefoot, and a flat heel — built for exactly this kind of training.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=workout+shorts+men+training&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Training Shorts</div>
+        <div class="card-desc">Sweat-wicking, 4-way stretch shorts designed for high-output movement. The right fit won't limit squat depth or rope climbs.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=womens+workout+leggings+training&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Training Leggings</div>
+        <div class="card-desc">High-waisted, squat-proof leggings for barbell work, box jumps, and everything in between. Compression fit for all-day wear.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=lifting+belt+4+inch&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Lifting Belt</div>
+        <div class="card-desc">Core support for heavy barbell work — deadlifts, back squats, cleans. 4-inch belts are the functional fitness standard.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=knee+sleeves+7mm+weightlifting&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Knee Sleeves</div>
+        <div class="card-desc">Warmth and compression for squat-heavy WODs. 7mm neoprene sleeves are the most popular option for functional fitness.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=weightlifting+shoes+olympic+lifting&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Weightlifting Shoes</div>
+        <div class="card-desc">Elevated heel and rigid sole improve squat depth and bar path on cleans, snatches, and front squats. Romaleos, Adipower, and Leistung are the go-to options.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=kane+recovery+shoes+revive&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Kane Recovery Shoes</div>
+        <div class="card-desc">Purpose-built post-workout footwear with a curved sole and cushioned base for active recovery. Popular among serious athletes for the hour after training when your feet need a break.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=mens+short+sleeve+workout+shirt+moisture+wicking&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Short Sleeve Workout Shirt</div>
+        <div class="card-desc">Moisture-wicking, 4-way stretch tees for high-output training. The right fabric keeps you dry through AMRAPs, metcons, and everything in between.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=mens+long+sleeve+athletic+shirt+training&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Long Sleeve Training Shirt</div>
+        <div class="card-desc">For cooler garage sessions and outdoor WODs. Lightweight compression or relaxed fit — both work. A staple for year-round training without overheating.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=mens+athletic+tank+top+workout&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Tank Top</div>
+        <div class="card-desc">Maximum airflow for hot garage sessions and high-rep conditioning work. Racerback and standard cut options — lighter is better when you're sweating through round five.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=compression+shorts+mens+athletic&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Compression Shorts</div>
+        <div class="card-desc">Muscle support and reduced chafing during heavy squats, runs, and rope climbs. Wear alone or under training shorts — a daily staple for most serious athletes.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=athletic+sweatpants+mens+training&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Sweatpants</div>
+        <div class="card-desc">Warm-up, cool-down, and recovery day staple. Tapered athletic sweats that work in the gym and outside it — not just loungewear.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=athletic+hoodie+pullover+workout&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Athletic Hoodie</div>
+        <div class="card-desc">Pre-WOD warmup layer and post-WOD cool-down essential. A quality pullover or zip hoodie gets worn more than almost any other piece of gym apparel.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=athletic+socks+workout+cushioned&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Workout Socks</div>
+        <div class="card-desc">Cushioned, moisture-wicking socks built for high-rep movement. The right socks prevent blisters on long runs and rope climbs — easy add-on purchase with any footwear.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=athletic+headband+sweat+wicking+workout&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Headbands</div>
+        <div class="card-desc">Keep sweat and hair out of your face during handstand work and metcons. Non-slip athletic headbands are a small buy with a high repeat rate.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=womens+workout+set+two+piece+matching+gym&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Women's Workout Sets</div>
+        <div class="card-desc">Matching two-piece sets — sports bra and leggings or shorts — designed for functional fitness. High-waisted, squat-proof, and built to move. One of the highest-converting women's fitness categories on Amazon.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ── RECOVERY ──────────────────────────────────────────── -->
+  <section class="gear-section" id="recovery" data-cat="recovery">
+    <div class="section-hdr">
+      <h2>RECOVERY</h2>
+      <span class="section-meta">11 items</span>
+    </div>
+    <div class="gear-grid">
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=chirp+wheel+back+roller&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Chirp Wheel</div>
+        <div class="card-desc">Spine decompression and thoracic mobility in one tool. The groove down the center takes pressure off the vertebrae while you roll — noticeably better than a flat foam roller for back tightness.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=pso-rite+psoas+muscle+release&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Pso-Rite</div>
+        <div class="card-desc">Targeted psoas and hip flexor release — the muscles that get wrecked by heavy squatting and sitting between WODs. The same company makes the Hip Hook and Pso-Mini for different areas.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=tens+ems+muscle+stimulator+recovery&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">TENS / EMS Stim Unit</div>
+        <div class="card-desc">Electrical muscle stimulation for active recovery and pain relief. Chirp Stim, PowerDot, and Compex are popular options — helps flush soreness between hard training days.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=resistance+loop+bands+set+multicolor&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Elastic Resistance Bands</div>
+        <div class="card-desc">Multi-color loop bands for hip activation, banded mobility drills, and warm-up work. A set gives you light through heavy resistance for glutes, shoulders, and hip openers.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=massage+gun+percussion&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Massage Gun</div>
+        <div class="card-desc">Percussive therapy for deep tissue relief. Faster and more targeted than rolling for specific muscle soreness — quads, calves, and lats after high-rep WODs.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=magnesium+glycinate+sleep+recovery&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Magnesium Glycinate</div>
+        <div class="card-desc">Quality sleep is the most underrated recovery tool available. Magnesium supports deeper sleep and reduced muscle cramps after high-volume training weeks.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=cold+plunge+tub+ice+bath&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Cold Plunge Tub</div>
+        <div class="card-desc">Cold water immersion for reducing inflammation and accelerating recovery after hard training. Inflatable and portable tubs make it accessible for home gyms without a permanent setup.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=infrared+sauna+blanket+portable&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Infrared Sauna</div>
+        <div class="card-desc">Heat therapy for muscle relaxation, circulation, and recovery. Infrared sauna blankets are a popular home option — effective and far more affordable than a full cabin unit.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=inversion+table+back+decompression&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Inversion Table</div>
+        <div class="card-desc">Spinal decompression for back pain and tightness from heavy lifting. A few minutes inverted can relieve compression that builds up over weeks of squats and deadlifts.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=foam+roller+deep+tissue&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Foam Roller</div>
+        <div class="card-desc">Still the go-to for full-body SMR — quads, IT band, lats, thoracic spine. Most athletes own more than one. Great entry point and a consistent Amazon seller.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+      <a class="gear-card" href="https://www.amazon.com/s?k=lacrosse+ball+mobility+trigger+point&tag=homewodrx0f-20" target="_blank" rel="noopener sponsored">
+        <div class="card-name">Lacrosse Ball</div>
+        <div class="card-desc">Targeted trigger point release for shoulders, pecs, glutes, and foot fascia. Pairs well with the Pso-Rite for deep hip work. One of the cheapest and most effective tools you can recommend.</div>
+        <div class="card-cta">Shop Amazon →</div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ── NO RESULTS ──────────────────────────────────────────── -->
+  <div class="no-results" id="no-results">
+    <h3>NO MATCHES FOUND</h3>
+    <p>Try a different search term, or browse all gear using the category filters above.</p>
+    <button class="no-results-clear" onclick="clearSearch()">Clear Search</button>
   </div>
 
-</main>
+  <!-- ── AFFILIATE DISCLAIMER ───────────────────────────────── -->
+  <div class="disclaimer">
+    As an Amazon Associate, HomeWODrx earns from qualifying purchases. Affiliate links appear at no extra cost to you — we only recommend gear we'd actually use.
+  </div>
 
+</div><!-- /wrap -->
+</div><!-- /shop-body -->
+
+<script>
+let currentCat = 'all';
+
+function setFilter(cat, btn) {
+  currentCat = cat;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function handleSearch() {
+  applyFilters();
+}
+
+function clearSearch() {
+  document.getElementById('gear-search').value = '';
+  applyFilters();
+}
+
+function applyFilters() {
+  const query = document.getElementById('gear-search').value.trim().toLowerCase();
+  const sections = document.querySelectorAll('.gear-section');
+  let visibleCards = 0;
+
+  sections.forEach(s => {
+    const catMatch = currentCat === 'all' || s.id === currentCat || s.dataset.cat === currentCat;
+
+    if (!catMatch) {
+      s.style.display = 'none';
+      s.querySelectorAll('.gear-card').forEach(card => card.style.display = '');
+      return;
+    }
+
+    const cards = s.querySelectorAll('.gear-card');
+    let sectionVisible = 0;
+    cards.forEach(card => {
+      const match = !query || card.textContent.toLowerCase().includes(query);
+      card.style.display = match ? '' : 'none';
+      if (match) sectionVisible++;
+    });
+    s.style.display = sectionVisible > 0 ? '' : 'none';
+    visibleCards += sectionVisible;
+  });
+
+  const noResults = document.getElementById('no-results');
+  if (noResults) noResults.classList.toggle('visible', query !== '' && visibleCards === 0);
+}
+</script>
+
+<script src="/js/nav.js"></script>
 <script src="/js/footer.js"></script>
-
 </body>
 </html>

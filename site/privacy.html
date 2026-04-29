@@ -5,27 +5,105 @@
   <!-- Sentry Error Monitoring -->
   <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Privacy Policy | HomeWODrx</title>
-  <meta name="description" content="HomeWODrx Privacy Policy — how we collect, use, and protect your data.">
-  <link rel="canonical" href="https://homewodrx.com/privacy">
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+  <title>Privacy Policy — HomeWodRX</title>
+  <meta name="description" content="HomeWodRX Privacy Policy — how we collect, use, and protect your personal information.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://homewodrx.com/privacy.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="HomeWodRX">
+  <meta property="og:title" content="Privacy Policy — HomeWodRX">
+  <meta property="og:description" content="HomeWodRX Privacy Policy — how we collect, use, and protect your personal information.">
+  <meta property="og:url" content="https://homewodrx.com/privacy.html">
+  <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Shared site styles -->
   <link rel="stylesheet" href="/css/style.css">
-  <script src="/js/nav.js"></script>
+
+  <!-- Page-specific styles -->
   <style>
-    .legal-page { max-width: 760px; margin: 0 auto; padding: 48px 20px 80px; }
-    .legal-page h1 { font-size: 32px; font-weight: 900; margin-bottom: 8px; }
-    .legal-page .last-updated { font-size: 13px; color: var(--mu); margin-bottom: 40px; }
-    .legal-page h2 { font-size: 18px; font-weight: 800; margin: 36px 0 12px; color: var(--tx); border-bottom: 1px solid var(--bd); padding-bottom: 8px; }
-    .legal-page p, .legal-page li { font-size: 14px; line-height: 1.8; color: var(--mu); margin-bottom: 12px; }
-    .legal-page ul { padding-left: 20px; margin-bottom: 12px; }
-    .legal-page a { color: var(--or); text-decoration: none; }
-    .legal-page a:hover { text-decoration: underline; }
-    .legal-page .contact-box { background: var(--card); border: 1px solid var(--bd); border-radius: 12px; padding: 20px 24px; margin-top: 32px; }
-    .legal-page .contact-box p { margin: 0; }
+.page-meta { font-size: .82rem; color: var(--muted2); margin-top: 4px; }
+
+.legal-wrap {
+  max-width: 1200px; margin: 0 auto;
+  padding: 32px 32px 80px;
+  display: grid; grid-template-columns: 200px 1fr; gap: 32px; align-items: start;
+}
+@media (max-width: 720px) {
+  .legal-wrap { grid-template-columns: 1fr; padding: 20px 16px 60px; }
+  .legal-toc  { display: none; }
+}
+.legal-toc {
+  position: sticky; top: calc(var(--nav-h) + 20px);
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: 18px 16px;
+}
+.toc-label {
+  font-size: .68rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--muted2); margin-bottom: 10px;
+}
+.toc-links { display: flex; flex-direction: column; gap: 2px; }
+.toc-link {
+  display: block; font-size: .8rem; font-weight: 500; color: var(--muted);
+  padding: 5px 8px; border-radius: 6px; transition: background .12s, color .12s;
+  text-decoration: none;
+}
+.toc-link:hover { background: var(--or-xlight); color: var(--or); }
+.toc-divider { height: 1px; background: var(--border); margin: 10px 0; }
+.toc-other-label {
+  font-size: .65rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .07em; color: var(--muted2); margin-bottom: 6px; padding: 0 8px;
+}
+.toc-other-link {
+  display: block; font-size: .78rem; color: var(--muted); padding: 4px 8px;
+  border-radius: 6px; transition: color .12s; text-decoration: none;
+}
+.toc-other-link:hover { color: var(--or); }
+.legal-content {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: 36px 40px;
+}
+@media (max-width: 600px) { .legal-content { padding: 24px 20px; } }
+.legal-section { margin-bottom: 36px; }
+.legal-section:last-child { margin-bottom: 0; }
+.legal-section h2 {
+  font-family: var(--font-head); font-size: 1.4rem; letter-spacing: .04em;
+  color: var(--text); border-top: 2px solid var(--or-xlight);
+  padding-top: 18px; margin-bottom: 12px;
+}
+.legal-section:first-child h2 { border-top: none; padding-top: 0; }
+.legal-section p { font-size: .9rem; color: #333; line-height: 1.8; margin-bottom: 12px; }
+.legal-section p:last-child { margin-bottom: 0; }
+.legal-section ul { margin: 8px 0 12px 20px; display: flex; flex-direction: column; gap: 6px; }
+.legal-section ul li { font-size: .9rem; color: #333; line-height: 1.7; }
+.legal-highlight {
+  background: var(--or-xlight); border: 1px solid rgba(196,18,18,.2);
+  border-radius: 8px; padding: 14px 16px; margin-bottom: 16px;
+  font-size: .875rem; color: var(--text); line-height: 1.7;
+}
+.legal-contact-box {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 18px; margin-top: 16px;
+  font-size: .875rem; color: var(--muted); line-height: 1.7;
+}
+.legal-contact-box a { color: var(--or); text-decoration: underline; }
+.legal-contact-box a:hover { color: var(--or-dark); }
   </style>
-  <!-- Google tag (gtag.js) -->
+
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -33,86 +111,106 @@
     gtag('js', new Date());
     gtag('config', 'G-HZM475VDN3');
   </script>
+  <!-- Vercel Analytics -->
   <script defer src="/_vercel/insights/script.js"></script>
 </head>
-<body>
-<div class="legal-page">
-  <h1>Privacy Policy</h1>
-  <p class="last-updated">Last updated: April 5, 2026</p>
 
-  <p>HomeWODrx ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains what information we collect, how we use it, and what choices you have. By using HomeWODrx at <a href="https://homewodrx.com">homewodrx.com</a>, you agree to the practices described here.</p>
+<body data-nav-init="true" data-active-page="">
 
-  <h2>1. Information We Collect</h2>
-  <p><strong>Information you provide directly:</strong></p>
-  <ul>
-    <li><strong>Account registration</strong> — When you create an account, we collect your email address, username, and any profile information you choose to add (bio, avatar).</li>
-    <li><strong>Workout results</strong> — Times, scores, and notes you log for workouts are stored so you can track your progress.</li>
-    <li><strong>Email subscription</strong> — If you subscribe to our Daily WOD or newsletter, we store your email address for that purpose.</li>
-  </ul>
-
-  <p><strong>Information collected automatically:</strong></p>
-  <ul>
-    <li><strong>Usage data</strong> — Pages you visit, features you use, and how you interact with the site. This is collected via Google Analytics 4 (see Section 3).</li>
-    <li><strong>Device and browser data</strong> — Browser type, operating system, screen size, and referring URL. This helps us optimize the site.</li>
-    <li><strong>IP address</strong> — Collected automatically as part of standard web server logs and by Google Analytics. We do not use IP addresses to identify you personally.</li>
-  </ul>
-
-  <h2>2. How We Use Your Information</h2>
-  <ul>
-    <li>To operate and improve the HomeWODrx platform</li>
-    <li>To create and manage your account</li>
-    <li>To store and display your workout history and personal records</li>
-    <li>To send you the Daily WOD or other communications you've opted into</li>
-    <li>To understand how visitors use the site so we can improve it</li>
-    <li>To comply with legal obligations</li>
-  </ul>
-  <p>We do not sell your personal information to third parties. We do not use your data for advertising targeting.</p>
-
-  <h2>3. Google Analytics</h2>
-  <p>We use <strong>Google Analytics 4</strong> to understand how visitors interact with HomeWODrx. Google Analytics uses cookies to collect anonymous usage data, including pages visited, time on site, geographic region, and device type.</p>
-  <p>Google may use this data in accordance with <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>. You can opt out of Google Analytics tracking by installing the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Google Analytics Opt-Out Browser Add-on</a>.</p>
-  <p>We do not share personally identifiable information with Google Analytics. IP addresses are anonymized before being sent to Google.</p>
-
-  <h2>4. Supabase — Data Storage</h2>
-  <p>User accounts, workout results, and site data are stored in <strong>Supabase</strong>, a managed database platform. Supabase stores data on secure, encrypted servers. For more information, see <a href="https://supabase.com/privacy" target="_blank" rel="noopener">Supabase's Privacy Policy</a>.</p>
-
-  <h2>5. Cookies</h2>
-  <p>HomeWODrx uses cookies for the following purposes:</p>
-  <ul>
-    <li><strong>Authentication</strong> — To keep you logged in to your account</li>
-    <li><strong>Analytics</strong> — Google Analytics cookies to measure site usage (see Section 3)</li>
-    <li><strong>Preferences</strong> — To remember your settings and preferences</li>
-  </ul>
-  <p>See our <a href="/cookies">Cookie Notice</a> for full details on the cookies we use and how to manage them.</p>
-
-  <h2>6. Amazon Associates</h2>
-  <p>HomeWODrx participates in the Amazon Associates Program. When you click an Amazon affiliate link on our site, Amazon may set cookies on your device to track referrals. We earn a commission on qualifying purchases at no extra cost to you. Amazon's data practices are governed by <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=468496" target="_blank" rel="noopener">Amazon's Privacy Notice</a>.</p>
-
-  <h2>7. Data Retention</h2>
-  <p>We retain your account data for as long as your account is active. You may request deletion of your account and associated data at any time by contacting us (see Section 10). Anonymized analytics data may be retained indefinitely.</p>
-
-  <h2>8. Data Security</h2>
-  <p>We take reasonable technical and organizational measures to protect your information from unauthorized access, loss, or misuse. However, no method of transmission over the internet is 100% secure, and we cannot guarantee absolute security.</p>
-
-  <h2>9. Children's Privacy</h2>
-  <p>HomeWODrx is not directed at children under 13. We do not knowingly collect personal information from children under 13. If you believe a child has provided us with personal information, please contact us and we will delete it promptly.</p>
-
-  <h2>10. Your Rights & Choices</h2>
-  <ul>
-    <li><strong>Access &amp; correction</strong> — You can view and update your account information at any time from your profile settings.</li>
-    <li><strong>Deletion</strong> — You may request deletion of your account and data by contacting us.</li>
-    <li><strong>Email opt-out</strong> — You can unsubscribe from any marketing email using the unsubscribe link included in every email.</li>
-    <li><strong>Analytics opt-out</strong> — Use the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Google Analytics Opt-Out Add-on</a>.</li>
-  </ul>
-
-  <h2>11. Changes to This Policy</h2>
-  <p>We may update this Privacy Policy from time to time. If we make material changes, we will update the "Last updated" date at the top of this page. Continued use of HomeWODrx after changes are posted constitutes your acceptance of the revised policy.</p>
-
-  <h2>12. Contact</h2>
-  <div class="contact-box">
-    <p>Questions about this Privacy Policy? Contact us at <a href="mailto:privacy@homewodrx.com">privacy@homewodrx.com</a>.</p>
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="page-eyebrow">Legal</div>
+    <h1 class="page-title">Privacy Policy</h1>
+    <p class="page-meta">Last updated: April 27, 2026</p>
   </div>
 </div>
+
+<!-- LEGAL BODY -->
+<div class="legal-wrap">
+
+  <!-- Sticky TOC -->
+  <aside class="legal-toc">
+    <div class="toc-label">On this page</div>
+    <div class="toc-links">
+      <a class="toc-link" href="#overview">Overview</a>
+      <a class="toc-link" href="#collect">Information We Collect</a>
+      <a class="toc-link" href="#use">How We Use Your Information</a>
+      <a class="toc-link" href="#sharing">Information Sharing</a>
+      <a class="toc-link" href="#cookies">Cookies</a>
+      <a class="toc-link" href="#rights">Your Rights</a>
+      <a class="toc-link" href="#contact-us">Contact Us</a>
+    </div>
+    <div class="toc-divider"></div>
+    <div class="toc-other-label">Also</div>
+    <a class="toc-other-link" href="/terms.html">Terms of Service</a>
+    <a class="toc-other-link" href="/disclaimer.html">Disclaimer</a>
+    <a class="toc-other-link" href="/cookies.html">Cookie Policy</a>
+  </aside>
+
+  <!-- Content -->
+  <article class="legal-content">
+
+    <div class="legal-section" id="overview">
+      <h2>Overview</h2>
+      <p>HomeWodRX ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains what information we collect, how we use it, and the choices you have.</p>
+      <div class="legal-highlight">We do not sell your personal information to third parties. Ever.</div>
+    </div>
+
+    <div class="legal-section" id="collect">
+      <h2>Information We Collect</h2>
+      <p>We collect information you provide directly to us, including:</p>
+      <ul>
+        <li>Account information — your email address and display name when you create an account</li>
+        <li>Workout data — results, scores, and notes you log on the site</li>
+        <li>Messages — feedback or support requests you send via the Contact page</li>
+      </ul>
+      <p>We also collect certain information automatically when you use the site, including your IP address, browser type, pages visited, and the date and time of your visit. This is standard web analytics data collected via Google Analytics and Vercel Analytics.</p>
+    </div>
+
+    <div class="legal-section" id="use">
+      <h2>How We Use Your Information</h2>
+      <p>We use the information we collect to:</p>
+      <ul>
+        <li>Provide, maintain, and improve the site and its features</li>
+        <li>Populate your training log and display your results on the leaderboard (if you opt in)</li>
+        <li>Respond to your feedback and support requests</li>
+        <li>Understand how the site is used so we can make it better</li>
+      </ul>
+    </div>
+
+    <div class="legal-section" id="sharing">
+      <h2>Information Sharing</h2>
+      <p>We do not sell, trade, or rent your personal information. We may share information only in the following limited circumstances:</p>
+      <ul>
+        <li><strong>Service providers</strong> — we use Supabase for our database and authentication, Resend for transactional email, and Vercel for hosting. Each operates under their own privacy policy.</li>
+        <li><strong>Legal requirements</strong> — if required by law or to protect the rights and safety of our users.</li>
+      </ul>
+      <p>Your publicly visible leaderboard entries (username and score) are visible to all site visitors. You control whether your results appear on the leaderboard.</p>
+    </div>
+
+    <div class="legal-section" id="cookies">
+      <h2>Cookies</h2>
+      <p>We use cookies and similar technologies to keep you logged in, remember your preferences, and collect analytics data. You can control cookies through your browser settings. See our <a href="/cookies.html" style="color:var(--or)">Cookie Policy</a> for full details.</p>
+    </div>
+
+    <div class="legal-section" id="rights">
+      <h2>Your Rights</h2>
+      <p>You may request access to, correction of, or deletion of your personal data at any time. To do so, contact us via the <a href="/contact.html" style="color:var(--or)">Contact page</a> and we will respond within 30 days.</p>
+      <p>You may also delete your account at any time from your Profile settings, which will remove your personal data from our systems.</p>
+    </div>
+
+    <div class="legal-section" id="contact-us">
+      <h2>Contact Us</h2>
+      <p>If you have questions about this Privacy Policy, please reach out:</p>
+      <div class="legal-contact-box">HomeWodRX &middot; <a href="/contact.html">Contact Page</a> &middot; rob@carlbloom.com</div>
+    </div>
+
+  </article>
+
+</div>
+
+<script src="/js/nav.js"></script>
 <script src="/js/footer.js"></script>
 </body>
 </html>

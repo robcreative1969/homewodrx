@@ -141,7 +141,7 @@
   </script>
   <script defer src="/_vercel/insights/script.js"></script>
 </head>
-<body style="background:var(--dk);color:var(--tx);font-family:'Segoe UI',system-ui,sans-serif">
+<body data-nav-init="true" style="background:var(--dk);color:var(--tx);font-family:'Segoe UI',system-ui,sans-serif">
 
 <!-- LOCK SCREEN -->
 <div id="lock-screen" class="admin-lock">
@@ -216,7 +216,7 @@
 
   <!-- Tab Nav -->
   <div class="tab-nav">
-    <button class="tab-btn active" onclick="showAdminTab('daily')">📅 Daily WOD</button>
+    <button class="tab-btn active" onclick="showAdminTab('daily')">📅 The Daily 20</button>
     <button class="tab-btn" onclick="showAdminTab('featured')">⭐ Featured WOD</button>
     <button class="tab-btn" onclick="showAdminTab('nominations')">🏆 Nominations</button>
     <button class="tab-btn" onclick="showAdminTab('results')">📊 Recent Results</button>
@@ -230,7 +230,7 @@
   <!-- ─── TAB: DAILY WOD ──────────────────────────────────── -->
   <div id="tab-daily" class="tab-pane active">
     <div class="section">
-      <h2>📅 Today's Daily WOD</h2>
+      <h2>📅 Today's Daily 20</h2>
       <p class="desc">Today's auto-generated workout. You can override it with a custom workout below.</p>
       <div class="alert alert-info vis" id="daily-status">Loading today's WOD...</div>
       <div id="today-wod-preview"></div>
@@ -351,10 +351,10 @@
   <!-- ─── TAB: WOD CONFIG ──────────────────────────────────── -->
   <div id="tab-config" class="tab-pane">
     <div class="section">
-      <h2>⚙️ Daily WOD Auto-Generation Config</h2>
+      <h2>⚙️ Daily 20 Auto-Generation Config</h2>
       <p class="desc">These parameters control what gets auto-generated each day.</p>
       <div class="alert" id="config-alert"></div>
-      <h3 style="font-size:14px;font-weight:700;margin-bottom:12px">Equipment Available for Daily WODs</h3>
+      <h3 style="font-size:14px;font-weight:700;margin-bottom:12px">Equipment Available for The Daily 20</h3>
       <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px" id="config-equipment"></div>
       <h3 style="font-size:14px;font-weight:700;margin:20px 0 12px">Difficulty by Day of Week</h3>
       <div class="day-grid" id="config-difficulty"></div>
@@ -553,7 +553,7 @@
         </select>
         <select id="movements-eligible" onchange="loadMovementsAdmin()" style="background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none">
           <option value="">All Eligibility</option>
-          <option value="true">Daily WOD Eligible</option>
+          <option value="true">Daily 20 Eligible</option>
           <option value="false">Not Eligible</option>
         </select>
         <select id="movements-has-desc" onchange="loadMovementsAdmin()" style="background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none">
@@ -599,7 +599,7 @@
       <div class="field"><label>Coaching Tips (one tip per line — saved as array)</label><textarea id="mf-tips" rows="5" placeholder="Keep chest up and heels down.&#10;Drive knees out at the bottom.&#10;Break parallel on every rep."></textarea></div>
       <div class="field"><label>WOD Tip (short one-liner for generator)</label><input type="text" id="mf-wod-tip" placeholder="e.g. Break at hips and knees together"></div>
       <div class="grid-2">
-        <div class="field"><label><input type="checkbox" id="mf-eligible" style="width:auto;margin-right:6px"> Daily WOD Eligible</label></div>
+        <div class="field"><label><input type="checkbox" id="mf-eligible" style="width:auto;margin-right:6px"> Daily 20 Eligible</label></div>
         <div class="field"><label><input type="checkbox" id="mf-timed" style="width:auto;margin-right:6px"> Timed (reps are durations e.g. "30s")</label></div>
       </div>
       <div style="margin-bottom:8px;font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.5px">Rep Ranges (number or range like "10-15" or "30s" for timed)</div>
@@ -964,7 +964,7 @@ async function refreshDailyWOD(){
   const today=new Date().toISOString().split('T')[0];
   if(supabaseClient)await supabaseClient.from('daily_wods').delete().eq('wod_date',today).eq('is_manual',true);
   await loadTodayWOD();
-  showAlert('daily-status','Daily WOD regenerated.','ok');
+  showAlert('daily-status','Daily 20 regenerated.','ok');
 }
 
 function showOverrideForm(){
@@ -1794,5 +1794,7 @@ async function deleteBenchmarkFromForm(){
   await loadBenchmarksAdmin();
 }
 </script>
+<script src="/js/nav.js"></script>
+<script src="/js/footer.js"></script>
 </body>
 </html>

@@ -1,375 +1,454 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <!-- Sentry Error Monitoring -->
-  <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stretch Guide - HomeWODrx</title>
-  <meta name="description" content="Learn how to perform this stretch with step-by-step coaching cues, hold times by level, and related mobility work.">
-  <meta property="og:title" content="Stretch Guide - HomeWODrx">
-  <meta property="og:description" content="Step-by-step stretch coaching cues and mobility guidance from HomeWODrx.">
-  <meta property="og:type" content="article">
-  <meta property="og:url" content="https://homewodrx.com/stretches/" id="og-url">
-  <meta property="og:image" content="https://homewodrx.com/images/og-default.png" id="og-image">
-  <meta property="og:image:width" content="1200" id="og-image-width">
-  <meta property="og:image:height" content="630" id="og-image-height">
-  <meta property="og:image:alt" content="Stretch Guide — HomeWODrx" id="og-image-alt">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://homewodrx.com/images/og-default.png" id="twitter-image">
-  <link rel="canonical" href="https://homewodrx.com/stretches/" id="canonical-url">
-  <!-- SEO: set canonical/title/description from slug before JS loads -->
-  <script>
-    (function() {
-      var parts = window.location.pathname.split('/').filter(Boolean);
-      var slug = (parts[parts.length - 1] || '').replace(/\.html$/, '');
-      if (slug && slug !== 'stretches') {
-        var name = slug.replace(/-/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
-        document.title = name + ' - Stretch Guide & Coaching Cues | HomeWODrx';
-        document.querySelector('meta[name="description"]').setAttribute('content',
-          'How to perform ' + name + ': step-by-step coaching cues, hold times by level, and related stretches on HomeWODrx.');
-        document.querySelector('meta[property="og:title"]').setAttribute('content', name + ' - Stretch Guide | HomeWODrx');
-        document.querySelector('meta[property="og:description"]').setAttribute('content',
-          'Step-by-step coaching cues for ' + name + ' with hold times by level and related mobility work.');
-        var url = 'https://homewodrx.com/stretches/' + slug;
-        document.getElementById('canonical-url').setAttribute('href', url);
-        document.getElementById('og-url').setAttribute('content', url);
-      }
-    })();
-  </script>
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="stylesheet" href="/css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="/js/config.js"></script>
-  <script src="/js/db.js"></script>
-  <script src="/js/nav.js"></script>
-  <script src="/js/stretch-db.js"></script>
-  <script src="/js/stretch-content.js"></script>
-  <style>
-    /* ── Hero ─────────────────────────────────────────────────────── */
-    .stretch-hero {
-      padding: 2.5rem 0 2rem;
-      border-bottom: 1px solid var(--dark-border, #333);
-      margin-bottom: 2rem;
-    }
-    .stretch-hero h1 {
-      margin-bottom: 0.6rem;
-    }
-    .stretch-hero .breadcrumb {
-      font-size: 0.9rem;
-      color: var(--text-muted, #888);
-      margin-bottom: 1rem;
-    }
-    .stretch-hero .breadcrumb a {
-      color: var(--or, #C41212);
-      text-decoration: none;
-    }
-    .stretch-hero .breadcrumb a:hover { text-decoration: underline; }
+<meta charset="UTF-8"/>
+<!-- Sentry Error Monitoring -->
+<script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Stretch Guide | HomeWodRX</title>
+<meta name="description" content="Learn how to perform this stretch with step-by-step coaching cues, hold times by level, and related mobility work."/>
+<meta property="og:title" content="Stretch Guide | HomeWodRX"/>
+<meta property="og:description" content="Step-by-step stretch coaching cues and mobility guidance from HomeWodRX."/>
+<meta property="og:type" content="article"/>
+<meta property="og:url" content="https://homewodrx.com/stretches/" id="og-url"/>
+<meta property="og:image" content="https://homewodrx.com/images/og-default.png" id="og-image"/>
+<meta property="og:image:width" content="1200" id="og-image-width"/>
+<meta property="og:image:height" content="630" id="og-image-height"/>
+<meta property="og:image:alt" content="Stretch Guide — HomeWodRX" id="og-image-alt"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://homewodrx.com/images/og-default.png" id="twitter-image"/>
+<link rel="canonical" href="https://homewodrx.com/stretches/" id="canonical-url"/>
+<!-- SEO: set canonical/title/description from slug before JS loads -->
+<script>
+(function() {
+  var parts = window.location.pathname.split('/').filter(Boolean);
+  var slug = (parts[parts.length - 1] || '').replace(/\.html$/, '');
+  if (slug && slug !== 'stretches') {
+    var name = slug.replace(/-/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+    document.title = name + ' — Stretch Guide & Coaching Cues | HomeWodRX';
+    document.querySelector('meta[name="description"]').setAttribute('content',
+      'How to perform ' + name + ': step-by-step coaching cues, hold times by level, and related stretches on HomeWodRX.');
+    document.querySelector('meta[property="og:title"]').setAttribute('content', name + ' — Stretch Guide | HomeWodRX');
+    document.querySelector('meta[property="og:description"]').setAttribute('content',
+      'Step-by-step coaching cues for ' + name + ' with hold times by level and related mobility work.');
+    var url = 'https://homewodrx.com/stretches/' + slug;
+    document.getElementById('canonical-url').setAttribute('href', url);
+    document.getElementById('og-url').setAttribute('content', url);
+  }
+})();
+</script>
+<link rel="icon" type="image/x-icon" href="/favicon.ico"/>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/css/style.css"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/js/config.js"></script>
+<script src="/js/db.js"></script>
+<script src="/js/nav.js"></script>
+<script src="/js/stretch-db.js"></script>
+<script src="/js/stretch-content.js"></script>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HZM475VDN3');
+</script>
+<!-- Vercel Analytics -->
+<script defer src="/_vercel/insights/script.js"></script>
 
-    /* ── Badges ───────────────────────────────────────────────────── */
-    .badge-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      margin: 0.6rem 0 1rem;
-    }
-    .sbadge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.2rem;
-      border-radius: 4px;
-      padding: 0.2rem 0.55rem;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-    }
-    .sbadge-static   { background: rgba(59,130,246,0.15);  border: 1px solid rgba(59,130,246,0.35);  color: #60a5fa; }
-    .sbadge-dynamic  { background: rgba(34,197,94,0.12);   border: 1px solid rgba(34,197,94,0.3);    color: #4ade80; }
-    .sbadge-pnf      { background: rgba(168,85,247,0.12);  border: 1px solid rgba(168,85,247,0.35);  color: #c084fc; }
-    .sbadge-yoga     { background: rgba(20,184,166,0.12);   border: 1px solid rgba(20,184,166,0.35);  color: #2dd4bf; }
-    .sbadge-focus    { background: var(--dark-surface, #1e1e1e); border: 1px solid var(--dark-border, #444); color: var(--text-muted, #aaa); }
-    .sbadge-level-b  { background: rgba(34,197,94,0.1);   border: 1px solid rgba(34,197,94,0.3);   color: #4ade80; }
-    .sbadge-level-i  { background: rgba(249,115,22,0.1);  border: 1px solid rgba(249,115,22,0.3);  color: #fb923c; }
-    .sbadge-level-a  { background: rgba(239,68,68,0.1);   border: 1px solid rgba(239,68,68,0.3);   color: #f87171; }
-    .sbadge-sides    { background: rgba(99,102,241,0.1);  border: 1px solid rgba(99,102,241,0.3);  color: #a5b4fc; }
+<style>
+/* ══════════════════════════════════════════
+   PAGE-SPECIFIC STYLES (light design)
+══════════════════════════════════════════ */
+:root {
+  --gr: #1a472a;
+  --gr-mid: #2d6a4f;
+  --gr-light: #f0f7f3;
+  --gr-border: #c8e0d4;
+}
 
-    /* ── Description ──────────────────────────────────────────────── */
-    .stretch-description {
-      font-size: 1rem;
-      line-height: 1.7;
-      color: var(--text-muted, #bbb);
-      max-width: 700px;
-      margin: 0.75rem 0 1rem;
-    }
+.page-header {
+  background: var(--white, #fff);
+  border-bottom: 1px solid var(--border, #e5e5e5);
+  padding: 24px 32px 28px;
+}
+.page-header-inner { max-width: 1200px; margin: 0 auto; }
+.page-wrap { max-width: 1200px; margin: 0 auto; padding: 28px 24px 100px; }
 
-    /* ── Hold times table ─────────────────────────────────────────── */
-    .hold-table-wrap {
-      background: var(--dark-surface, #1e1e1e);
-      border: 1px solid var(--dark-border, #333);
-      border-radius: 8px;
-      padding: 1.25rem 1.5rem;
-      margin: 1.5rem 0;
-    }
-    .hold-table-wrap h3 {
-      margin-bottom: 0.9rem;
-      font-size: 1rem;
-    }
-    .hold-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    .hold-table th,
-    .hold-table td {
-      text-align: center;
-      padding: 0.6rem 1rem;
-      border-bottom: 1px solid var(--dark-border, #333);
-      font-size: 0.9rem;
-    }
-    .hold-table th {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted, #888);
-    }
-    .hold-table tr:last-child td { border-bottom: none; }
-    .hold-table .level-b { color: #4ade80; font-weight: 700; }
-    .hold-table .level-i { color: #fb923c; font-weight: 700; }
-    .hold-table .level-a { color: #f87171; font-weight: 700; }
-    .hold-table .val     { font-size: 1.1rem; font-weight: 800; }
-    .sides-note {
-      font-size: 0.82rem;
-      color: var(--text-muted, #888);
-      margin-top: 0.6rem;
-      font-style: italic;
-    }
+/* Breadcrumb */
+.breadcrumb { font-size: .78rem; color: var(--muted, #666); display: flex; align-items: center; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.breadcrumb a { color: var(--muted, #666); text-decoration: none; }
+.breadcrumb a:hover { color: var(--gr-mid); }
+.breadcrumb span { opacity: .4; }
 
-    /* ── Coaching cues ────────────────────────────────────────────── */
-    .coaching-cues {
-      background: var(--dark-surface, #1e1e1e);
-      border: 1px solid var(--dark-border, #333);
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin: 1.5rem 0;
-    }
-    .coaching-cues h3 { margin-bottom: 1rem; }
-    .cue-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .cue-list li {
-      display: flex;
-      gap: 0.85rem;
-      padding: 0.6rem 0;
-      border-bottom: 1px solid var(--dark-border, #2a2a2a);
-      line-height: 1.6;
-      font-size: 0.95rem;
-    }
-    .cue-list li:last-child { border-bottom: none; }
-    .cue-num {
-      flex-shrink: 0;
-      width: 1.6rem;
-      height: 1.6rem;
-      border-radius: 50%;
-      background: var(--or, #C41212);
-      color: #fff;
-      font-size: 0.72rem;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 0.15rem;
-    }
+/* Two-column layout */
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 24px;
+  align-items: start;
+}
+.main-col { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.side-col { display: flex; flex-direction: column; gap: 16px; }
 
-    /* ── PNF callout ──────────────────────────────────────────────── */
-    .pnf-callout {
-      background: rgba(168,85,247,0.07);
-      border: 1px solid rgba(168,85,247,0.3);
-      border-radius: 8px;
-      padding: 1.1rem 1.4rem;
-      margin: 1.25rem 0;
-      display: flex;
-      gap: 0.75rem;
-      align-items: flex-start;
-    }
-    .pnf-callout .pnf-icon { font-size: 1.3rem; flex-shrink: 0; }
-    .pnf-callout .pnf-body { }
-    .pnf-callout strong { color: #c084fc; }
-    .pnf-callout p { font-size: 0.9rem; line-height: 1.6; color: var(--text-muted, #bbb); margin: 0.2rem 0 0; }
+/* Stretch title */
+.stretch-title {
+  font-family: var(--font-head, 'Bebas Neue', sans-serif);
+  font-size: clamp(2.4rem, 5vw, 3.5rem);
+  letter-spacing: .04em; line-height: 1; margin-bottom: 14px;
+  color: var(--text, #1a1a1a);
+}
 
-    /* ── YouTube embed / search button ───────────────────────────── */
-    .video-container {
-      position: relative;
-      padding-bottom: 56.25%;
-      height: 0;
-      overflow: hidden;
-      border-radius: 8px;
-      margin: 1.5rem 0;
-      background: #000;
-    }
-    .video-container iframe {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      border: 0;
-    }
-    .yt-search-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: rgba(239,68,68,0.08);
-      border: 1px solid rgba(239,68,68,0.3);
-      color: #ef4444;
-      border-radius: 8px;
-      padding: 0.7rem 1.2rem;
-      font-size: 0.9rem;
-      font-weight: 600;
-      text-decoration: none;
-      margin: 1.5rem 0;
-      transition: background 0.15s, border-color 0.15s;
-    }
-    .yt-search-btn:hover {
-      background: rgba(239,68,68,0.15);
-      border-color: rgba(239,68,68,0.5);
-    }
-    .yt-icon { font-size: 1.1rem; }
+/* Modality badges */
+.mod-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 12px; border-radius: 20px;
+  font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+  border: 1.5px solid;
+}
+.mod-badge.static  { background: rgba(59,130,246,.1);  border-color: rgba(59,130,246,.35); color: #2563eb; }
+.mod-badge.dynamic { background: rgba(34,197,94,.1);   border-color: rgba(34,197,94,.35);  color: #16a34a; }
+.mod-badge.pnf     { background: rgba(168,85,247,.1);  border-color: rgba(168,85,247,.35); color: #7c3aed; }
+.mod-badge.yoga    { background: rgba(20,184,166,.1);  border-color: rgba(20,184,166,.35); color: #0d9488; }
 
-    /* ── Related stretches ────────────────────────────────────────── */
-    .related-section { margin: 2.5rem 0; }
-    .related-section h2 { margin-bottom: 1.25rem; }
-    .related-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 0.75rem;
-    }
-    .related-card {
-      display: block;
-      background: var(--dark-surface, #1a1a1a);
-      border: 1px solid var(--dark-border, #333);
-      border-radius: 8px;
-      padding: 1rem 1.1rem;
-      text-decoration: none;
-      color: var(--text, #e5e5e5);
-      transition: border-color 0.15s, background 0.15s, transform 0.1s;
-    }
-    .related-card:hover {
-      border-color: var(--or, #C41212);
-      background: rgba(196,18,18,0.06);
-      transform: translateY(-2px);
-    }
-    .related-card .rc-name {
-      font-weight: 700;
-      font-size: 0.95rem;
-      margin-bottom: 0.35rem;
-    }
-    .related-card .rc-meta {
-      font-size: 0.78rem;
-      color: var(--text-muted, #888);
-    }
+/* Level pips */
+.level-pip { display: inline-flex; padding: 3px 10px; border-radius: 20px; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+.level-pip.beg { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+.level-pip.int { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+.level-pip.adv { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
 
-    /* ── Generator CTA ───────────────────────────────────────────── */
-    .generator-cta {
-      background: linear-gradient(135deg, rgba(196,18,18,0.12) 0%, rgba(196,18,18,0.05) 100%);
-      border: 1px solid rgba(196,18,18,0.3);
-      border-radius: 12px;
-      padding: 1.75rem 2rem;
-      text-align: center;
-      margin: 2.5rem 0;
-    }
-    .generator-cta h3 { margin-bottom: 0.5rem; font-size: 1.15rem; }
-    .generator-cta p { color: var(--text-muted, #bbb); font-size: 0.9rem; margin-bottom: 1.1rem; }
+/* Meta row */
+.hero-meta-row {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  font-size: .82rem; color: var(--muted, #666); font-weight: 500;
+  padding-top: 14px; border-top: 1px solid var(--border, #e5e5e5);
+}
+.hero-meta-item { display: flex; align-items: center; gap: 5px; }
+.hero-meta-item svg { width: 14px; height: 14px; flex-shrink: 0; opacity: .7; }
 
-    /* ── Share bar ────────────────────────────────────────────────── */
-    .share-bar {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-top: 1.25rem;
-      flex-wrap: wrap;
-    }
-    .share-bar-label { font-size: 0.8rem; color: var(--text-muted, #888); }
-    .share-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      padding: 0.35rem 0.8rem;
-      border-radius: 6px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      text-decoration: none;
-      border: 1px solid var(--dark-border, #444);
-      background: var(--dark-surface, #1e1e1e);
-      color: var(--text, #e5e5e5);
-      cursor: pointer;
-      transition: background 0.15s, border-color 0.15s;
-      font-family: inherit;
-    }
-    .share-btn:hover { background: rgba(255,255,255,0.07); border-color: #666; }
-    .share-btn.copied { color: #22c55e; border-color: rgba(34,197,94,0.4); }
+/* Video card */
+.video-card {
+  background: var(--white, #fff); border-radius: var(--radius, 10px);
+  border: 1px solid var(--border, #e5e5e5); overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+}
+.video-header {
+  padding: 14px 18px 0; display: flex; align-items: center; gap: 8px;
+}
+.video-title { font-family: var(--font-head, 'Bebas Neue', sans-serif); font-size: 1rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted, #666); }
+.yt-badge { display: inline-flex; align-items: center; gap: 4px; background: #fee2e2; border: 1px solid #fca5a5; color: #dc2626; border-radius: 4px; padding: 2px 8px; font-size: .68rem; font-weight: 700; letter-spacing: .03em; }
+.yt-badge svg { width: 10px; height: 10px; }
+.video-wrap {
+  position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;
+  margin: 12px 0 0; background: #0f0f0f;
+}
+.video-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+.video-no-embed { padding: 20px 18px 18px; display: flex; flex-direction: column; gap: 10px; }
+.video-no-embed p { font-size: .88rem; color: var(--muted, #666); line-height: 1.55; }
+.yt-search-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #fff5f5; border: 1.5px solid rgba(196,18,18,.25);
+  color: var(--or, #C41212); border-radius: 8px;
+  padding: 10px 16px; font-size: .88rem; font-weight: 600;
+  text-decoration: none; font-family: var(--font-body, 'Barlow', sans-serif);
+  transition: background .15s, border-color .15s; align-self: flex-start;
+}
+.yt-search-btn:hover { background: #ffe5e5; border-color: rgba(196,18,18,.4); }
+.yt-search-btn svg { flex-shrink: 0; width: 18px; height: 18px; }
 
-    /* ── Affiliate recovery gear ──────────────────────────────────── */
-    .equipment-section {
-      margin-top: 1.5rem;
-      padding: 1.25rem 1.5rem;
-      border: 1px solid var(--dark-border, #333);
-      border-radius: 8px;
-      background: var(--dark-surface, #1a1a1a);
-    }
-    .equipment-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      background: var(--dark-surface, #1e1e1e);
-      border: 1px solid var(--dark-border, #444);
-      border-radius: 6px;
-      padding: 0.4rem 0.8rem;
-      font-size: 0.85rem;
-      font-weight: 500;
-      text-decoration: none;
-      color: var(--text, #e5e5e5);
-      transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
-    }
-    .equipment-chip::after { content: ' →'; font-size: 0.75rem; opacity: 0.5; }
-    .equipment-chip:hover {
-      background: rgba(196,18,18,0.08);
-      border-color: var(--or, #C41212);
-      color: var(--or, #C41212);
-      transform: translateY(-1px);
-    }
-    .equipment-chip:hover::after { opacity: 1; }
+/* Tabs card */
+.tabs-card {
+  background: var(--white, #fff); border-radius: var(--radius, 10px);
+  border: 1px solid var(--border, #e5e5e5);
+  box-shadow: 0 2px 12px rgba(0,0,0,.08); overflow: hidden;
+}
+.tabs-nav {
+  display: flex; border-bottom: 1px solid var(--border, #e5e5e5);
+  overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+}
+.tabs-nav::-webkit-scrollbar { display: none; }
+.tab-btn {
+  flex-shrink: 0; padding: 14px 20px;
+  font-family: var(--font-body, 'Barlow', sans-serif); font-size: .875rem; font-weight: 700;
+  color: var(--muted, #666); background: none; border: none; cursor: pointer;
+  border-bottom: 2.5px solid transparent; margin-bottom: -1px;
+  transition: color .15s, border-color .15s;
+  display: flex; align-items: center; gap: 7px; white-space: nowrap;
+}
+.tab-btn:hover { color: var(--or, #C41212); }
+.tab-btn.active { color: var(--or, #C41212); border-bottom-color: var(--or, #C41212); }
+.tab-pane { display: none; padding: 24px; }
+.tab-pane.active { display: block; }
 
-    @media (max-width: 600px) {
-      .hold-table th, .hold-table td { padding: 0.5rem 0.5rem; }
-      .related-grid { grid-template-columns: 1fr 1fr; }
-      .generator-cta { padding: 1.25rem 1rem; }
-    }
-  </style>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-HZM475VDN3');
-  </script>
-  <script defer src="/_vercel/insights/script.js"></script>
+/* Overview tab content */
+.description-text { font-size: .95rem; line-height: 1.7; color: var(--text, #1a1a1a); }
+.description-text p { margin-bottom: 14px; }
+.description-text p:last-child { margin-bottom: 0; }
+
+/* Hold times table */
+.hold-section { margin-top: 24px; }
+.hold-section-title { font-family: var(--font-head, 'Bebas Neue', sans-serif); font-size: .9rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted, #666); margin-bottom: 12px; }
+.hold-table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+.hold-table th { text-align: left; padding: 10px 14px; background: #f9fafb; font-family: var(--font-head, 'Bebas Neue', sans-serif); font-size: .85rem; letter-spacing: .05em; color: var(--muted, #666); text-transform: uppercase; border-bottom: 2px solid var(--border, #e5e5e5); }
+.hold-table th:not(:first-child) { text-align: center; }
+.hold-table td { padding: 12px 14px; border-bottom: 1px solid var(--border, #e5e5e5); vertical-align: middle; }
+.hold-table td:not(:first-child) { text-align: center; }
+.hold-table tr:last-child td { border-bottom: 0; }
+.hold-table tr:hover td { background: #f9fafb; }
+.hold-table td[style*="opacity"] { opacity: .3; }
+.hold-val { font-size: 1.05rem; font-weight: 800; }
+.hold-val.beg { color: #15803d; }
+.hold-val.int { color: #92400e; }
+.hold-val.adv { color: #b91c1c; }
+.hold-meta { font-size: .78rem; color: var(--muted, #666); }
+.sides-note { font-size: .8rem; color: var(--muted, #666); margin-top: 10px; font-style: italic; }
+
+/* PNF callout */
+.pnf-callout {
+  margin-top: 20px;
+  background: rgba(168,85,247,.06); border: 1.5px solid rgba(168,85,247,.25);
+  border-radius: 8px; padding: 16px 18px;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.pnf-callout-icon { font-size: 1.25rem; flex-shrink: 0; line-height: 1.4; }
+.pnf-callout-label { font-weight: 700; color: #7c3aed; font-size: .82rem; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 5px; }
+.pnf-callout-text { font-size: .9rem; line-height: 1.65; color: #444; }
+
+/* Coaching cues */
+.cues-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.cue-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; background: #f9fafb; border-radius: 8px; border: 1px solid var(--border, #e5e5e5); }
+.cue-num { font-family: var(--font-head, 'Bebas Neue', sans-serif); font-size: 1.4rem; color: var(--gr-mid); letter-spacing: .04em; flex-shrink: 0; line-height: 1; min-width: 28px; }
+.cue-text { font-size: .88rem; line-height: 1.55; color: var(--text, #1a1a1a); padding-top: 3px; }
+.cue-text strong { font-weight: 700; display: block; margin-bottom: 2px; }
+
+/* Sidebar cards */
+.side-card { background: var(--white, #fff); border-radius: var(--radius, 10px); border: 1px solid var(--border, #e5e5e5); box-shadow: 0 2px 12px rgba(0,0,0,.08); overflow: hidden; }
+.side-card-head { padding: 14px 18px; border-bottom: 1px solid var(--border, #e5e5e5); font-family: var(--font-head, 'Bebas Neue', sans-serif); font-size: .9rem; letter-spacing: .06em; color: var(--muted, #666); text-transform: uppercase; }
+.side-card-body { padding: 16px 18px; }
+
+/* Quick stats */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.stat-item { display: flex; flex-direction: column; gap: 3px; }
+.stat-label { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted, #666); }
+.stat-value { font-family: var(--font-head, 'Bebas Neue', sans-serif); font-size: 1.15rem; letter-spacing: .04em; color: var(--text, #1a1a1a); line-height: 1.1; }
+.stat-value.highlight { color: var(--gr); }
+
+/* Recovery gear chips */
+.equip-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.equip-chip { display: inline-flex; align-items: center; gap: 5px; padding: 7px 12px; border-radius: 8px; border: 1.5px solid var(--border, #e5e5e5); background: var(--white, #fff); font-size: .8rem; font-weight: 600; text-decoration: none; color: var(--text, #1a1a1a); transition: all .15s; }
+.equip-chip:hover { border-color: var(--or, #C41212); color: var(--or, #C41212); background: #fdf2f2; }
+.equip-note { font-size: .72rem; color: var(--muted, #666); margin-top: 10px; line-height: 1.4; }
+
+/* Related stretches */
+.related-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+.rel-tag { display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 8px; background: #f5f5f5; border: 1px solid var(--border, #e5e5e5); font-size: .8rem; font-weight: 600; color: var(--text, #1a1a1a); text-decoration: none; transition: all .15s; }
+.rel-tag:hover { background: var(--gr-light); border-color: var(--gr-border); color: var(--gr); }
+.rel-tag .arrow { opacity: .4; font-size: .72rem; transition: opacity .15s; }
+.rel-tag:hover .arrow { opacity: 1; }
+
+/* CTA card — green */
+.cta-card { background: var(--gr); border-radius: var(--radius, 10px); padding: 20px 18px; text-align: center; box-shadow: 0 4px 16px rgba(26,71,42,.25); }
+.cta-card h3 { font-family: var(--font-head, 'Bebas Neue', sans-serif); font-size: 1.4rem; color: white; letter-spacing: .06em; margin-bottom: 6px; }
+.cta-card p { font-size: .78rem; color: rgba(255,255,255,.8); margin-bottom: 14px; line-height: 1.4; }
+.cta-btn { display: block; width: 100%; background: white; color: var(--gr); font-family: var(--font-head, 'Bebas Neue', sans-serif); font-size: 1rem; letter-spacing: .06em; padding: 10px; border-radius: 7px; border: none; cursor: pointer; transition: background .15s; text-decoration: none; }
+.cta-btn:hover { background: var(--gr-light); }
+.cta-sub { font-size: .7rem; color: rgba(255,255,255,.6); margin-top: 8px; }
+
+/* Share buttons */
+.share-pill-body { padding: 14px 18px; display: flex; flex-direction: column; gap: 8px; }
+.share-pill { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-radius: 8px; border: 1.5px solid var(--border, #e5e5e5); background: none; font-family: var(--font-body, 'Barlow', sans-serif); font-size: .82rem; font-weight: 600; color: var(--text, #1a1a1a); cursor: pointer; transition: border-color .15s, color .15s, background .15s; text-align: left; width: 100%; text-decoration: none; }
+.share-pill svg { width: 16px; height: 16px; flex-shrink: 0; }
+.share-x:hover    { border-color: #000; color: #000; background: #f5f5f5; }
+.share-fb:hover   { border-color: #1877f2; color: #1877f2; background: #f0f4ff; }
+.share-wa:hover   { border-color: #25d366; color: #25d366; background: #f0fdf4; }
+.share-copy:hover { border-color: var(--or, #C41212); color: var(--or, #C41212); background: #fdf2f2; }
+.share-pill.copied { border-color: #16a34a; color: #16a34a; background: #f0fdf4; }
+
+/* Error / not found state */
+.not-found { padding: 60px 24px; text-align: center; }
+.not-found h2 { font-family: var(--font-head, 'Bebas Neue', sans-serif); font-size: 2rem; letter-spacing: .04em; color: var(--text, #1a1a1a); margin-bottom: 12px; }
+.not-found p { color: var(--muted, #666); font-size: .95rem; margin-bottom: 20px; }
+.not-found a { color: var(--gr); font-weight: 700; text-decoration: underline; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .content-grid { grid-template-columns: 1fr; }
+  .side-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .cta-card, .side-card.share-card { grid-column: span 2; }
+}
+@media (max-width: 600px) {
+  .page-header { padding: 16px 16px 20px; }
+  .page-wrap { padding: 16px 14px 80px; }
+  .stretch-title { font-size: 2.2rem; }
+  .content-grid { gap: 16px; }
+  .side-col { grid-template-columns: 1fr; }
+  .cta-card, .side-card.share-card { grid-column: span 1; }
+  .tab-pane { padding: 16px; }
+  .hold-table th, .hold-table td { padding: 8px 10px; }
+}
+</style>
 </head>
 <body data-nav-init="true" data-active-page="stretch">
-<main class="container">
 
-  <div id="stretch-header" class="loading">
-    <div class="spinner"></div>
+<!-- PAGE HEADER (white) -->
+<div class="page-header" id="page-header" style="display:none;">
+  <div class="page-header-inner">
+    <nav class="breadcrumb" id="breadcrumb">
+      <a href="/">Home</a>
+      <span>›</span>
+      <a href="/stretches">Stretches</a>
+      <span>›</span>
+      <a href="/stretches" id="bc-focus">—</a>
+      <span>›</span>
+      <span id="bc-current">Loading…</span>
+    </nav>
+    <h1 class="stretch-title" id="stretch-title">Loading…</h1>
+    <div class="hero-meta-row" id="hero-meta"></div>
   </div>
+</div>
 
-  <div id="stretch-body" style="display:none;"></div>
+<!-- PAGE CONTENT (gray) -->
+<div class="page-wrap" id="page-wrap" style="display:none;">
+  <div class="content-grid">
 
-</main>
+    <!-- MAIN COLUMN -->
+    <div class="main-col">
 
-<script src="/js/footer.js"></script>
+      <!-- Video -->
+      <div class="video-card" id="video-card">
+        <div class="video-header">
+          <span class="video-title">Stretch Demo</span>
+          <span class="yt-badge">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.7-.8-2.1-.9C16.2 5 12 5 12 5s-4.2 0-6.9.1c-.4.1-1.3.1-2.1.9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.3.9C6.8 19 12 19 12 19s4.2 0 6.9-.2c.4-.1 1.3-.1 2.1-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8zM9.7 14.5V9.5l5.6 2.5-5.6 2.5z"/></svg>
+            YouTube
+          </span>
+        </div>
+        <div id="video-content"></div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs-card">
+        <div class="tabs-nav">
+          <button class="tab-btn active" onclick="switchTab('overview', this)">Overview</button>
+          <button class="tab-btn" onclick="switchTab('cues', this)">Coaching Cues</button>
+        </div>
+        <!-- Overview Tab -->
+        <div class="tab-pane active" id="tab-overview">
+          <div class="description-text" id="stretch-desc">
+            <p>Loading stretch information…</p>
+          </div>
+          <div class="hold-section">
+            <div class="hold-section-title">Hold Times by Level</div>
+            <table class="hold-table">
+              <thead>
+                <tr>
+                  <th>Level</th>
+                  <th>Hold Time</th>
+                  <th>Sets</th>
+                  <th>Frequency</th>
+                </tr>
+              </thead>
+              <tbody id="hold-tbody"></tbody>
+            </table>
+            <p class="sides-note" id="sides-note"></p>
+          </div>
+          <div class="pnf-callout" id="pnf-callout" style="display:none;">
+            <div class="pnf-callout-icon">🧠</div>
+            <div>
+              <div class="pnf-callout-label">Contract-Relax Technique</div>
+              <p class="pnf-callout-text" id="pnf-text"></p>
+            </div>
+          </div>
+        </div>
+        <!-- Coaching Cues Tab -->
+        <div class="tab-pane" id="tab-cues">
+          <ol class="cues-list" id="cues-list">
+            <li class="cue-item">
+              <span class="cue-num">01</span>
+              <div class="cue-text">Coaching cues loading…</div>
+            </li>
+          </ol>
+        </div>
+      </div><!-- /.tabs-card -->
+
+    </div><!-- /.main-col -->
+
+    <!-- SIDE COLUMN -->
+    <div class="side-col">
+
+      <!-- CTA -->
+      <div class="cta-card">
+        <h3>Build Your Routine</h3>
+        <p>Get a customized stretch session based on your focus areas, duration, and flexibility goals.</p>
+        <a href="/stretch" class="cta-btn">Open Stretch Builder →</a>
+        <div class="cta-sub">Free · No account required</div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="side-card">
+        <div class="side-card-head">At a Glance</div>
+        <div class="side-card-body">
+          <div class="stats-grid" id="stats-grid"></div>
+        </div>
+      </div>
+
+      <!-- Recovery Gear -->
+      <div class="side-card" id="equip-card">
+        <div class="side-card-head">Recovery Gear</div>
+        <div class="side-card-body">
+          <div class="equip-chips" id="equip-chips"></div>
+          <p class="equip-note">Amazon affiliate links — helps support HomeWodRX at no extra cost.</p>
+        </div>
+      </div>
+
+      <!-- Related Stretches -->
+      <div class="side-card">
+        <div class="side-card-head">Related Stretches</div>
+        <div class="side-card-body">
+          <div class="related-tags" id="related-tags"></div>
+        </div>
+      </div>
+
+      <!-- Share -->
+      <div class="side-card share-card">
+        <div class="side-card-head">Share This Stretch</div>
+        <div class="share-pill-body">
+          <button class="share-pill share-x" id="share-x">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            Share on X
+          </button>
+          <button class="share-pill share-fb" id="share-fb">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Facebook
+          </button>
+          <button class="share-pill share-wa" id="share-wa">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            WhatsApp
+          </button>
+          <button class="share-pill share-copy" id="share-copy">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            Copy Link
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /.side-col -->
+  </div><!-- /.content-grid -->
+</div><!-- /.page-wrap -->
+
+<!-- NOT FOUND STATE -->
+<div id="not-found" style="display:none;" class="page-wrap">
+  <div class="not-found">
+    <h2>Stretch Not Found</h2>
+    <p>We couldn't find a stretch matching this URL.</p>
+    <a href="/stretches">← Browse all stretches</a>
+  </div>
+</div>
 
 <script>
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -378,62 +457,59 @@ function slugify(name) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
-function titleCase(slug) {
-  return slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-}
-
 function getSlug() {
   const m = window.location.pathname.match(/\/stretches\/([^\/]+)/);
   if (m) return decodeURIComponent(m[1]).replace(/\.html$/, '');
   return new URLSearchParams(window.location.search).get('slug');
 }
 
-function copyShareLink(btn) {
-  navigator.clipboard.writeText(window.location.href).then(() => {
-    btn.classList.add('copied');
-    btn.textContent = '✓ Copied!';
-    setTimeout(() => { btn.classList.remove('copied'); btn.textContent = '🔗 Copy Link'; }, 2000);
-  }).catch(() => { prompt('Copy this link:', window.location.href); });
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
 }
 
-// ── Modality display meta ─────────────────────────────────────────────────────
-const MODALITY_META = {
-  static:  { label: 'Static',  cls: 'sbadge-static',  emoji: '🧘' },
-  dynamic: { label: 'Dynamic', cls: 'sbadge-dynamic',  emoji: '🏃' },
-  pnf:     { label: 'PNF',     cls: 'sbadge-pnf',      emoji: '💪' },
-  yoga:    { label: 'Yoga',    cls: 'sbadge-yoga',      emoji: '🌿' },
+// ── Modality/level/focus metadata ────────────────────────────────────────────
+
+const MOD_CSS = { static: 'static', dynamic: 'dynamic', pnf: 'pnf', yoga: 'yoga' };
+const MOD_LABELS = { static: 'Static', dynamic: 'Dynamic', pnf: 'PNF', yoga: 'Yoga' };
+
+const LEVEL_LABELS  = { b: 'Beginner', i: 'Intermediate', a: 'Advanced' };
+const LEVEL_CSS     = { b: 'beg', i: 'int', a: 'adv' };
+const LEVEL_FREQ    = { b: 'Daily', i: 'Daily', a: '2× Daily' };
+const LEVEL_SETS    = { b: 2, i: 3, a: 3 };
+
+const FOCUS_LABELS = {
+  full: 'Full Body', hips: 'Hips & Glutes', hamstrings: 'Hamstrings',
+  back: 'Back & Spine', shoulders: 'Shoulders', chest: 'Chest',
+  calves: 'Calves & Ankles', wrists: 'Wrists',
 };
 
-const LEVEL_META = {
-  b: { label: 'Beginner',     cls: 'sbadge-level-b', tdcls: 'level-b' },
-  i: { label: 'Intermediate', cls: 'sbadge-level-i', tdcls: 'level-i' },
-  a: { label: 'Advanced',     cls: 'sbadge-level-a', tdcls: 'level-a' },
-};
+// ── Affiliate gear ────────────────────────────────────────────────────────────
 
-const FOCUS_META = {
-  full:       { label: 'Full Body',        emoji: '🧘' },
-  hips:       { label: 'Hips & Glutes',    emoji: '🦋' },
-  hamstrings: { label: 'Hamstrings',       emoji: '🦵' },
-  back:       { label: 'Back & Spine',     emoji: '🔄' },
-  shoulders:  { label: 'Shoulders',        emoji: '💪' },
-  chest:      { label: 'Chest',            emoji: '🫁' },
-  calves:     { label: 'Calves & Ankles',  emoji: '🦶' },
-};
-
-// ── Affiliate gear for stretching/recovery ────────────────────────────────────
 const AFFILIATE_TAG = 'homewodrx0f-20';
-const RECOVERY_GEAR = [
-  { name: 'Foam Roller',          url: `https://www.amazon.com/s?k=foam+roller&tag=${AFFILIATE_TAG}` },
-  { name: 'Resistance Bands',     url: `https://www.amazon.com/s?k=resistance+bands+set&tag=${AFFILIATE_TAG}` },
-  { name: 'Yoga Mat',             url: `https://www.amazon.com/s?k=yoga+mat&tag=${AFFILIATE_TAG}` },
-  { name: 'Massage Gun',          url: `https://www.amazon.com/s?k=massage+gun+recovery&tag=${AFFILIATE_TAG}` },
-  { name: 'Yoga Blocks',          url: `https://www.amazon.com/s?k=yoga+blocks&tag=${AFFILIATE_TAG}` },
-  { name: 'Stretching Strap',     url: `https://www.amazon.com/s?k=stretching+strap&tag=${AFFILIATE_TAG}` },
-  { name: 'Lacrosse Ball',        url: `https://www.amazon.com/s?k=lacrosse+ball+trigger+point&tag=${AFFILIATE_TAG}` },
-  { name: 'Knee Sleeves',         url: `https://www.amazon.com/s?k=knee+sleeves+compression&tag=${AFFILIATE_TAG}` },
+const ALL_GEAR = [
+  { name: 'Foam Roller',      url: `https://www.amazon.com/s?k=foam+roller&tag=${AFFILIATE_TAG}`,                focuses: ['full','back','hips','hamstrings','calves'] },
+  { name: 'Yoga Mat',         url: `https://www.amazon.com/s?k=yoga+mat&tag=${AFFILIATE_TAG}`,                  focuses: ['full','hips','hamstrings','back','chest'] },
+  { name: 'Yoga Blocks',      url: `https://www.amazon.com/s?k=yoga+blocks&tag=${AFFILIATE_TAG}`,              focuses: ['hips','back'] },
+  { name: 'Stretching Strap', url: `https://www.amazon.com/s?k=stretching+strap&tag=${AFFILIATE_TAG}`,        focuses: ['hamstrings','shoulders','calves'] },
+  { name: 'Resistance Bands', url: `https://www.amazon.com/s?k=resistance+bands+set&tag=${AFFILIATE_TAG}`,    focuses: ['shoulders','chest','hips'] },
+  { name: 'Lacrosse Ball',    url: `https://www.amazon.com/s?k=lacrosse+ball+trigger+point&tag=${AFFILIATE_TAG}`, focuses: ['back','shoulders','calves'] },
+  { name: 'Knee Sleeves',     url: `https://www.amazon.com/s?k=knee+sleeves+compression&tag=${AFFILIATE_TAG}`, focuses: ['hips','hamstrings'] },
+  { name: 'Massage Gun',      url: `https://www.amazon.com/s?k=massage+gun+recovery&tag=${AFFILIATE_TAG}`,    focuses: ['full','back','hamstrings','calves'] },
 ];
 
-// ── Collect ALL stretches from STRETCH_DB into a flat array ──────────────────
+function pickGear(focusAreas, limit = 4) {
+  const scored = ALL_GEAR.map(g => {
+    const overlap = g.focuses.filter(f => focusAreas.includes(f)).length;
+    return { ...g, overlap };
+  }).sort((a, b) => b.overlap - a.overlap);
+  return scored.slice(0, limit);
+}
+
+// ── Data helpers ──────────────────────────────────────────────────────────────
+
 function getAllStretches() {
   const all = [];
   for (const [modality, arr] of Object.entries(STRETCH_DB)) {
@@ -442,7 +518,6 @@ function getAllStretches() {
   return all;
 }
 
-// ── Find stretch entries by slug (may return multiple for pigeon-pose) ────────
 function findStretchBySlug(slug) {
   const results = [];
   for (const [modality, arr] of Object.entries(STRETCH_DB)) {
@@ -453,137 +528,36 @@ function findStretchBySlug(slug) {
   return results;
 }
 
-// ── Find related stretches ────────────────────────────────────────────────────
-function findRelated(currentSlug, currentFocus, limit = 4) {
+function findRelated(currentSlug, focusAreas, limit = 4) {
   const all = getAllStretches();
   const scored = all
     .filter(s => slugify(s.name) !== currentSlug)
-    .map(s => {
-      const overlap = (s.focus || []).filter(f => currentFocus.includes(f)).length;
-      return { ...s, overlap };
-    })
+    .map(s => ({
+      ...s,
+      overlap: (s.focus || []).filter(f => focusAreas.includes(f)).length,
+    }))
     .filter(s => s.overlap > 0)
     .sort((a, b) => b.overlap - a.overlap);
 
-  // Deduplicate by slug (same stretch in multiple modalities)
   const seen = new Set();
   const unique = [];
   for (const s of scored) {
     const sl = slugify(s.name);
-    if (!seen.has(sl)) {
-      seen.add(sl);
-      unique.push(s);
-    }
+    if (!seen.has(sl)) { seen.add(sl); unique.push(s); }
     if (unique.length >= limit) break;
   }
   return unique;
 }
 
-// ── Hold/reps table HTML ──────────────────────────────────────────────────────
-function buildHoldTable(stretch) {
-  const levels = ['b', 'i', 'a'];
-  const isReps = stretch.timedOrReps === 'reps' || (stretch.reps && !stretch.hold);
-
-  const rows = levels.map(lv => {
-    const meta = LEVEL_META[lv];
-    const inLevel = (stretch.level || []).includes(lv);
-    let val = '—';
-    if (inLevel) {
-      if (isReps && stretch.reps) {
-        val = `${stretch.reps[lv]} reps`;
-      } else if (stretch.hold) {
-        val = `${stretch.hold[lv]}s hold`;
-      }
-    }
-    const dimmed = inLevel ? '' : 'style="opacity:0.35;"';
-    return `
-      <tr ${dimmed}>
-        <td><span class="sbadge ${meta.cls}">${meta.label}</span></td>
-        <td class="${meta.tdcls} val">${val}</td>
-        ${stretch.sides ? `<td style="color:var(--text-muted,#888);font-size:0.82rem">each side</td>` : '<td></td>'}
-      </tr>`;
-  }).join('');
-
-  const sidesNote = stretch.sides
-    ? `<div class="sides-note">↩ Perform on each side individually.</div>`
-    : '';
-
-  return `
-    <div class="hold-table-wrap">
-      <h3>Duration by Level</h3>
-      <table class="hold-table">
-        <thead>
-          <tr>
-            <th style="text-align:left">Level</th>
-            <th>${isReps ? 'Reps' : 'Hold Time'}</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>${rows}</tbody>
-      </table>
-      ${sidesNote}
-    </div>`;
+function fmtTime(sec) {
+  if (!sec) return '—';
+  if (sec < 60) return sec + 's';
+  const m = Math.floor(sec / 60), s = sec % 60;
+  return s === 0 ? m + ' min' : m + ':' + String(s).padStart(2, '0');
 }
 
-// ── YouTube embed HTML ────────────────────────────────────────────────────────
-function buildVideoSection(stretchName, youtubeId) {
-  if (youtubeId) {
-    return `
-      <div class="video-container">
-        <iframe
-          src="https://www.youtube-nocookie.com/embed/${youtubeId}"
-          title="${stretchName} technique video"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          loading="lazy">
-        </iframe>
-      </div>`;
-  }
-  const query = encodeURIComponent(stretchName + ' stretch tutorial');
-  return `
-    <a href="https://www.youtube.com/results?search_query=${query}" target="_blank" rel="noopener" class="yt-search-btn">
-      <span class="yt-icon">▶</span>
-      Watch "${stretchName}" on YouTube
-    </a>`;
-}
+// ── JSON-LD ───────────────────────────────────────────────────────────────────
 
-// ── Recovery gear affiliate section ──────────────────────────────────────────
-function buildRecoverySection() {
-  const chips = RECOVERY_GEAR.map(g =>
-    `<a href="${g.url}" class="equipment-chip" target="_blank" rel="noopener sponsored">${g.name}</a>`
-  ).join('');
-  return `
-    <div class="equipment-section">
-      <h4 style="margin-bottom:0.3rem;">Recovery & Mobility Gear</h4>
-      <p class="text-muted" style="font-size:0.85rem;margin-bottom:0.85rem;">Get more from your mobility work. Shop on Amazon (affiliate links help support HomeWODrx at no extra cost to you).</p>
-      <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">${chips}</div>
-    </div>`;
-}
-
-// ── Related stretch cards ─────────────────────────────────────────────────────
-function buildRelatedCards(related) {
-  if (!related.length) return '';
-  const cards = related.map(s => {
-    const sl = slugify(s.name);
-    const modMeta = MODALITY_META[s.modality] || {};
-    const focusLabels = (s.focus || []).slice(0, 2)
-      .map(f => (FOCUS_META[f] || {}).label || f)
-      .join(' · ');
-    return `
-      <a href="/stretches/${sl}" class="related-card">
-        <div class="rc-name">${s.name}</div>
-        <div class="rc-meta">${modMeta.label || s.modality}${focusLabels ? ' · ' + focusLabels : ''}</div>
-      </a>`;
-  }).join('');
-  return `
-    <section class="related-section">
-      <h2>Related Stretches</h2>
-      <div class="related-grid">${cards}</div>
-    </section>`;
-}
-
-// ── Inject JSON-LD ────────────────────────────────────────────────────────────
 function injectJsonLd(data) {
   const existing = document.getElementById('structured-data');
   if (existing) existing.remove();
@@ -594,53 +568,41 @@ function injectJsonLd(data) {
   document.head.appendChild(script);
 }
 
-// ── Main page render ──────────────────────────────────────────────────────────
+// ── Main render ───────────────────────────────────────────────────────────────
+
 function renderStretchPage() {
   const slug = getSlug();
-  const headerEl = document.getElementById('stretch-header');
-  const bodyEl   = document.getElementById('stretch-body');
 
   if (!slug) {
-    headerEl.classList.remove('loading');
-    headerEl.innerHTML = '<p class="text-muted">No stretch specified.</p>';
+    document.getElementById('not-found').style.display = 'block';
     return;
   }
 
   const matches = findStretchBySlug(slug);
-
   if (!matches.length) {
-    headerEl.classList.remove('loading');
-    headerEl.innerHTML = `
-      <div style="padding:3rem 0;text-align:center;">
-        <p style="font-size:1.1rem;color:var(--text-muted,#888)">Stretch not found: <strong>${slug}</strong></p>
-        <a href="/stretch" style="color:var(--or,#C41212);margin-top:1rem;display:inline-block;">← Back to Stretch Generator</a>
-      </div>`;
+    document.getElementById('not-found').style.display = 'block';
     return;
   }
 
-  // Primary entry (first match); collect all modalities for this name
   const primary = matches[0];
   const modalities = [...new Set(matches.map(m => m.modality))];
   const displayName = primary.name;
-
-  // Merge levels across all modality entries for this stretch
   const allLevels = [...new Set(matches.flatMap(m => m.level || []))];
-
-  // Get rich content
+  const focusAreas = [...new Set(matches.flatMap(m => m.focus || []))];
   const content = (typeof STRETCH_CONTENT !== 'undefined' && STRETCH_CONTENT[slug]) || null;
+  const isReps = primary.timedOrReps === 'reps' || (primary.reps && !primary.hold);
 
-  // ── Update SEO meta ──────────────────────────────────────────────
+  // ── SEO updates ──────────────────────────────────────────────
   const canonicalPath = `https://homewodrx.com/stretches/${slug}`;
-  document.title = `${displayName} - Stretch Guide & Coaching Cues | HomeWODrx`;
+  document.title = `${displayName} — Stretch Guide & Coaching Cues | HomeWodRX`;
   const metaDesc = content?.description
     ? content.description.substring(0, 155)
-    : `Learn how to perform ${displayName}: step-by-step coaching cues and hold times by level on HomeWODrx.`;
+    : `Learn how to perform ${displayName}: step-by-step coaching cues and hold times by level on HomeWodRX.`;
   document.querySelector('meta[name="description"]').setAttribute('content', metaDesc);
-  document.querySelector('meta[property="og:title"]').setAttribute('content', `${displayName} - Stretch Guide | HomeWODrx`);
+  document.querySelector('meta[property="og:title"]').setAttribute('content', `${displayName} — Stretch Guide | HomeWodRX`);
   document.querySelector('meta[property="og:description"]').setAttribute('content', metaDesc);
   document.getElementById('canonical-url').href = canonicalPath;
-  document.querySelector('meta[property="og:url"]').setAttribute('content', canonicalPath);
-
+  document.getElementById('og-url').setAttribute('content', canonicalPath);
   if (content?.youtube) {
     const ogImg = `https://img.youtube.com/vi/${content.youtube}/maxresdefault.jpg`;
     document.getElementById('og-image').setAttribute('content', ogImg);
@@ -649,7 +611,7 @@ function renderStretchPage() {
     document.getElementById('twitter-image').setAttribute('content', ogImg);
   }
 
-  // ── JSON-LD structured data ──────────────────────────────────────
+  // ── JSON-LD ──────────────────────────────────────────────────
   const cues = content?.cues || [];
   injectJsonLd([
     {
@@ -658,119 +620,172 @@ function renderStretchPage() {
       'name': `How to Do ${displayName}`,
       'description': metaDesc,
       'url': canonicalPath,
-      ...(cues.length ? {
-        'step': cues.map((cue, i) => ({
-          '@type': 'HowToStep',
-          'position': i + 1,
-          'text': cue,
-        }))
-      } : {}),
+      ...(cues.length ? { 'step': cues.map((cue, i) => ({ '@type': 'HowToStep', 'position': i + 1, 'text': cue })) } : {}),
     },
     {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       'itemListElement': [
-        { '@type': 'ListItem', 'position': 1, 'name': 'Home',             'item': 'https://homewodrx.com/' },
-        { '@type': 'ListItem', 'position': 2, 'name': 'Stretch Generator','item': 'https://homewodrx.com/stretch' },
-        { '@type': 'ListItem', 'position': 3, 'name': displayName,        'item': canonicalPath },
+        { '@type': 'ListItem', 'position': 1, 'name': 'Home',     'item': 'https://homewodrx.com/' },
+        { '@type': 'ListItem', 'position': 2, 'name': 'Stretches','item': 'https://homewodrx.com/stretches' },
+        { '@type': 'ListItem', 'position': 3, 'name': displayName,'item': canonicalPath },
       ],
     },
   ]);
 
-  // ── Build modality badges ────────────────────────────────────────
-  const modBadges = modalities.map(m => {
-    const meta = MODALITY_META[m] || { label: m, cls: '' };
-    return `<span class="sbadge ${meta.cls}">${meta.emoji} ${meta.label}</span>`;
+  // ── Breadcrumb ───────────────────────────────────────────────
+  const primaryFocus = focusAreas[0] || 'full';
+  document.getElementById('bc-focus').textContent = FOCUS_LABELS[primaryFocus] || primaryFocus;
+  document.getElementById('bc-current').textContent = displayName;
+
+  // ── Stretch title ────────────────────────────────────────────
+  document.getElementById('stretch-title').textContent = displayName;
+
+  // ── Hero meta row ────────────────────────────────────────────
+  const modBadgesHtml = modalities.map(m =>
+    `<span class="mod-badge ${MOD_CSS[m] || ''}">${MOD_LABELS[m] || m}</span>`
+  ).join(' ');
+  const levelLabel = allLevels.length === 3 ? 'All Levels' :
+    allLevels.map(l => LEVEL_LABELS[l]).join(' / ');
+
+  document.getElementById('hero-meta').innerHTML = `
+    ${modBadgesHtml}
+    <span class="hero-meta-item">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg>
+      ${focusAreas.map(f => FOCUS_LABELS[f] || f).join(' · ')}
+    </span>
+    <span class="hero-meta-item">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg>
+      ${primary.sides ? 'Both sides' : 'Single side'}
+    </span>
+    <span class="hero-meta-item">${levelLabel}</span>`;
+
+  // ── Video ────────────────────────────────────────────────────
+  const ytId = content?.youtube || null;
+  const videoContent = document.getElementById('video-content');
+  if (ytId) {
+    videoContent.innerHTML = `<div class="video-wrap">
+      <iframe src="https://www.youtube-nocookie.com/embed/${ytId}?rel=0&modestbranding=1"
+        allowfullscreen loading="lazy" title="${displayName} stretch demo"></iframe>
+    </div>`;
+  } else {
+    const ytQuery = encodeURIComponent(displayName + ' stretch how to');
+    videoContent.innerHTML = `<div class="video-no-embed">
+      <p>No confirmed video for this stretch yet. Search YouTube for a demonstration:</p>
+      <a href="https://www.youtube.com/results?search_query=${ytQuery}" target="_blank" rel="noopener noreferrer" class="yt-search-btn">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.7-.8-2.1-.9C16.2 5 12 5 12 5s-4.2 0-6.9.1c-.4.1-1.3.1-2.1.9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.3.9C6.8 19 12 19 12 19s4.2 0 6.9-.2c.4-.1 1.3-.1 2.1-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8zM9.7 14.5V9.5l5.6 2.5-5.6 2.5z"/></svg>
+        Search YouTube: "${displayName}"
+      </a>
+    </div>`;
+  }
+
+  // ── Description ──────────────────────────────────────────────
+  document.getElementById('stretch-desc').innerHTML = content?.description
+    ? `<p>${content.description}</p>`
+    : `<p>${primary.tip}</p>`;
+
+  // ── Hold times table ─────────────────────────────────────────
+  const levelOrder = ['b', 'i', 'a'];
+  const holdRows = levelOrder.map(lv => {
+    const inLevel = allLevels.includes(lv);
+    let holdVal = '—';
+    let freq = LEVEL_FREQ[lv];
+    let sets = LEVEL_SETS[lv];
+    if (inLevel) {
+      if (isReps && primary.reps) holdVal = primary.reps[lv] + ' reps';
+      else if (primary.hold) holdVal = fmtTime(primary.hold[lv]);
+      if (primary.modality === 'pnf') { sets = 3; freq = '3–4× / week'; }
+    }
+    const dim = inLevel ? '' : 'style="opacity:.3;"';
+    return `<tr ${dim}>
+      <td><span class="level-pip ${LEVEL_CSS[lv]}">${LEVEL_LABELS[lv]}</span></td>
+      <td><span class="hold-val ${LEVEL_CSS[lv]}">${holdVal}</span></td>
+      <td>${inLevel ? sets : '—'}</td>
+      <td class="hold-meta">${inLevel ? freq : ''}</td>
+    </tr>`;
   }).join('');
+  document.getElementById('hold-tbody').innerHTML = holdRows;
+  document.getElementById('sides-note').textContent = primary.sides
+    ? 'Perform on each side. Complete all sets on one side before switching.'
+    : '';
 
-  // ── Build level badges ───────────────────────────────────────────
-  const levelOrder = ['b','i','a'];
-  const levelBadges = levelOrder
-    .filter(lv => allLevels.includes(lv))
-    .map(lv => `<span class="sbadge ${LEVEL_META[lv].cls}">${LEVEL_META[lv].label}</span>`)
-    .join('');
+  // ── PNF callout ──────────────────────────────────────────────
+  const pnfCallout = document.getElementById('pnf-callout');
+  if (primary.pnfNote) {
+    document.getElementById('pnf-text').textContent = primary.pnfNote + ' — Contract the muscle isometrically for 5–8 seconds, relax fully, then breathe into a deeper range. Repeat 2–3 cycles per side.';
+    pnfCallout.style.display = '';
+  } else {
+    pnfCallout.style.display = 'none';
+  }
 
-  // ── Build focus badges ───────────────────────────────────────────
-  const focusAreas = [...new Set(matches.flatMap(m => m.focus || []))];
-  const focusBadges = focusAreas.map(f => {
-    const meta = FOCUS_META[f] || { label: f, emoji: '' };
-    return `<span class="sbadge sbadge-focus">${meta.emoji} ${meta.label}</span>`;
-  }).join('');
+  // ── Coaching cues ────────────────────────────────────────────
+  const cuesList = document.getElementById('cues-list');
+  if (cues.length) {
+    cuesList.innerHTML = cues.map((cue, i) => `
+      <li class="cue-item">
+        <span class="cue-num">${String(i + 1).padStart(2, '0')}</span>
+        <div class="cue-text">${cue}</div>
+      </li>`).join('');
+  } else {
+    cuesList.innerHTML = `
+      <li class="cue-item">
+        <span class="cue-num">01</span>
+        <div class="cue-text">${primary.tip}</div>
+      </li>`;
+  }
 
-  // ── PNF callout ──────────────────────────────────────────────────
-  const pnfNote = primary.pnfNote;
-  const pnfHtml = pnfNote ? `
-    <div class="pnf-callout">
-      <span class="pnf-icon">💡</span>
-      <div class="pnf-body">
-        <strong>Contract-Relax Technique</strong>
-        <p>${pnfNote} — Contract the muscle isometrically for 5 seconds, relax fully, then deepen the stretch. Repeat 2–3 cycles per side.</p>
-      </div>
-    </div>` : '';
+  // ── Quick stats ──────────────────────────────────────────────
+  const begHold = isReps
+    ? (primary.reps ? primary.reps.b + ' reps' : '—')
+    : (primary.hold ? fmtTime(primary.hold.b) : '—');
+  document.getElementById('stats-grid').innerHTML = [
+    { label: 'Focus', value: FOCUS_LABELS[primaryFocus] || primaryFocus, highlight: true },
+    { label: 'Modality', value: modalities.map(m => MOD_LABELS[m]).join(' / ') },
+    { label: 'Bilateral', value: primary.sides ? 'Both Sides' : 'Single' },
+    { label: 'Beginner Hold', value: begHold },
+  ].map(s => `
+    <div class="stat-item">
+      <span class="stat-label">${s.label}</span>
+      <span class="stat-value${s.highlight ? ' highlight' : ''}">${s.value}</span>
+    </div>`).join('');
 
-  // ── Coaching cues ────────────────────────────────────────────────
-  const cuesHtml = cues.length
-    ? `<div class="coaching-cues">
-        <h3>Step-by-Step Coaching Cues</h3>
-        <ol class="cue-list">
-          ${cues.map((cue, i) => `
-            <li>
-              <span class="cue-num">${i + 1}</span>
-              <span>${cue}</span>
-            </li>`).join('')}
-        </ol>
-      </div>`
-    : `<div class="coaching-cues">
-        <h3>Coach's Tip</h3>
-        <p style="line-height:1.6;color:var(--text-muted,#bbb);">${primary.tip}</p>
-      </div>`;
+  // ── Recovery gear ────────────────────────────────────────────
+  const gear = pickGear(focusAreas);
+  document.getElementById('equip-chips').innerHTML = gear.map(g =>
+    `<a href="${g.url}" target="_blank" rel="noopener noreferrer sponsored" class="equip-chip">${g.name} →</a>`
+  ).join('');
 
-  // ── Related stretches ────────────────────────────────────────────
+  // ── Related stretches ────────────────────────────────────────
   const related = findRelated(slug, focusAreas);
-  const relatedHtml = buildRelatedCards(related);
+  document.getElementById('related-tags').innerHTML = related.length
+    ? related.map(r => `<a href="/stretches/${slugify(r.name)}" class="rel-tag">${r.name} <span class="arrow">→</span></a>`).join('')
+    : '<p style="font-size:.82rem;color:var(--muted,#666);">No related stretches found.</p>';
 
-  // ── Render hero ──────────────────────────────────────────────────
-  headerEl.classList.remove('loading');
-  headerEl.innerHTML = `
-    <div class="stretch-hero">
-      <div class="breadcrumb">
-        <a href="/stretch">Stretch Generator</a> › ${displayName}
-      </div>
-      <h1>${displayName}</h1>
-      <div class="badge-row">
-        ${modBadges}
-        ${levelBadges}
-        ${focusBadges}
-      </div>
-      ${content?.description
-        ? `<p class="stretch-description">${content.description}</p>`
-        : `<p class="stretch-description">${primary.tip}</p>`}
-      <div class="share-bar">
-        <span class="share-bar-label">Share:</span>
-        <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(displayName+' stretch guide on HomeWODrx 🧘')}&url=${encodeURIComponent(window.location.href)}" target="_blank" rel="noopener" class="share-btn">𝕏 Post</a>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}" target="_blank" rel="noopener" class="share-btn">f Share</a>
-        <button class="share-btn" onclick="copyShareLink(this)">🔗 Copy Link</button>
-      </div>
-    </div>`;
+  // ── Share buttons ─────────────────────────────────────────────
+  const shareUrl = encodeURIComponent(window.location.href);
+  const shareTitle = encodeURIComponent(displayName + ' stretch guide — HomeWodRX 🧘');
+  document.getElementById('share-x').onclick = () => window.open(`https://twitter.com/intent/tweet?text=${shareTitle}&url=${shareUrl}`, '_blank', 'width=600,height=400');
+  document.getElementById('share-fb').onclick = () => window.open(`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`, '_blank', 'width=600,height=400');
+  document.getElementById('share-wa').onclick = () => window.open(`https://wa.me/?text=${shareTitle}%20${shareUrl}`, '_blank');
+  document.getElementById('share-copy').onclick = function() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      this.classList.add('copied');
+      this.textContent = '✓ Copied!';
+      setTimeout(() => {
+        this.classList.remove('copied');
+        this.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Copy Link';
+      }, 2000);
+    }).catch(() => prompt('Copy this link:', window.location.href));
+  };
 
-  // ── Render body ──────────────────────────────────────────────────
-  bodyEl.style.display = 'block';
-  bodyEl.innerHTML = `
-    ${buildHoldTable(primary)}
-    ${pnfHtml}
-    ${cuesHtml}
-    ${buildVideoSection(displayName, content?.youtube || null)}
-    ${buildRecoverySection()}
-    ${relatedHtml}
-    <div class="generator-cta">
-      <h3>Build Your Custom Stretch Session</h3>
-      <p>Choose your focus area, duration, and level — get a personalized stretch routine in seconds.</p>
-      <a href="/stretch" class="btn btn-primary">Open Stretch Generator →</a>
-    </div>`;
+  // ── Show page ────────────────────────────────────────────────
+  document.getElementById('page-header').style.display = 'block';
+  document.getElementById('page-wrap').style.display = 'block';
 }
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', renderStretchPage);
 </script>
+<script src="/js/footer.js"></script>
 </body>
 </html>

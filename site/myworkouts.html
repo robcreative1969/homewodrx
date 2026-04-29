@@ -1,80 +1,318 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+  <meta charset="UTF-8">
   <!-- Sentry Error Monitoring -->
   <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Workouts — HomeWODrx</title>
-<meta name="description" content="View and manage your saved and generated workouts on HomeWODrx.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>My Workouts — HomeWodRX</title>
+  <meta name="description" content="Your personal training log. Track benchmark WODs, Daily 20s, and generated workouts — all in one place.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://homewodrx.com/myworkouts.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="HomeWodRX">
+  <meta property="og:title" content="My Workouts — HomeWodRX">
+  <meta property="og:description" content="Your personal training log on HomeWodRX.">
+  <meta property="og:url" content="https://homewodrx.com/myworkouts.html">
+  <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
+
+  <!-- Favicons -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Shared site styles -->
   <link rel="stylesheet" href="/css/style.css">
-<script src="/js/config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="/js/db.js"></script>
-<script src="/js/benchmarks.js"></script>
-<script src="/js/nav.js"></script>
-<style>
-.myw-page{max-width:1200px;margin:0 auto;padding:32px 20px 80px}
-.myw-header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:28px}
-.myw-header h1{font-size:clamp(24px,4vw,34px);font-weight:900;margin-bottom:4px}
-.myw-header p{color:var(--mu);font-size:14px}
-.myw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
-.myw-card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:20px;transition:border-color .15s}
-.myw-card:hover{border-color:var(--or)}
-.myw-card-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-.myw-card h3{font-size:16px;font-weight:800;margin-bottom:4px}
-.myw-actions{display:flex;gap:8px;margin-top:12px}
-.myw-btn{padding:8px 14px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .15s}
-.myw-btn.pri{background:var(--or);color:#fff}.myw-btn.pri:hover{background:var(--orl)}
-.myw-btn.sec{background:var(--dk3);color:var(--mu);border:1px solid var(--bd)}.myw-btn.sec:hover{color:var(--tx);border-color:var(--mu)}
-.myw-btn.del{background:transparent;color:var(--danger);border:1px solid var(--danger);opacity:.7}.myw-btn.del:hover{opacity:1}
-.badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;display:inline-block}
-.badge-or{background:rgba(196,18,18,.15);color:var(--orl);border:1px solid rgba(196,18,18,.3)}
-.badge-mu{background:rgba(136,136,153,.15);color:var(--mu);border:1px solid rgba(136,136,153,.3)}
-.badge-gr{background:rgba(39,174,96,.15);color:#27ae60;border:1px solid rgba(39,174,96,.3)}
-.empty-state{text-align:center;padding:60px 20px;color:var(--mu)}
-.empty-state .icon{font-size:48px;margin-bottom:16px}
-.empty-state h3{font-size:20px;font-weight:800;color:var(--tx);margin-bottom:8px}
-.empty-state p{margin-bottom:20px;font-size:14px}
-.abtn{display:block;width:100%;padding:12px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;text-align:center;text-decoration:none;transition:all .15s}
-.abtn.pri{background:var(--or);color:#fff}.abtn.pri:hover{background:var(--orl)}
-.stats-bar{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:24px}
-.stat-card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px;text-align:center}
-.stat-card .val{font-size:24px;font-weight:900;color:var(--or)}
-.stat-card .lbl{font-size:10px;color:var(--mu);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-top:4px}
 
-/* ── WOD Detail Overlay ── */
-.wod-overlay{position:fixed;top:60px;left:0;right:0;bottom:0;z-index:900;background:var(--bg);overflow-y:auto;display:none}
-.wod-overlay.open{display:block}
-.wod-overlay .inner{max-width:800px;margin:0 auto;padding:32px 20px 80px}
-.back-btn{background:none;border:none;color:var(--or);font-size:14px;font-weight:700;cursor:pointer;padding:8px 0;margin-bottom:20px}
-.back-btn:hover{text-decoration:underline}
-.wod-detail-title{font-size:28px;font-weight:900;margin-bottom:8px}
-.wod-detail-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
-.wod-section{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:20px;margin-bottom:16px}
-.wod-section h3{font-size:13px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
-.wod-section pre{white-space:pre-wrap;font-family:inherit;font-size:14px;line-height:1.7;color:var(--tx)}
+  <!-- Page-specific styles -->
+  <style>
+.page-subtitle { font-size:.9rem; color:var(--muted); line-height:1.6; margin-top:4px; }
 
-/* ── Result Modal ── */
-.modal-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center}
-.modal-overlay.open{display:flex}
-.modal{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:28px;max-width:420px;width:90%;position:relative}
-.modal-close{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--mu);font-size:20px;cursor:pointer}
-.modal h2{font-size:20px;font-weight:900;margin-bottom:6px}
-.modal .msub{color:var(--mu);font-size:13px;margin-bottom:20px}
-.modal label{display:block;font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
-.modal input,.modal select,.modal textarea{width:100%;background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:10px;color:var(--tx);font-size:14px;outline:none;font-family:inherit;margin-bottom:14px}
-.modal input:focus,.modal select:focus,.modal textarea:focus{border-color:var(--or)}
-.msg{padding:10px 14px;border-radius:7px;font-size:13px;font-weight:600;margin-bottom:14px;display:none}
-.msg.vis{display:block}
-.msg.err{background:rgba(239,68,68,.12);color:var(--danger);border:1px solid rgba(239,68,68,.3)}
-.msg.ok{background:rgba(34,197,94,.12);color:var(--success);border:1px solid rgba(34,197,94,.3)}
-@media(max-width:600px){.myw-grid{grid-template-columns:1fr}.stats-bar{grid-template-columns:repeat(2,1fr)}}
-</style>
-  <!-- Google tag (gtag.js) -->
+/* ── Outer wrap ── */
+.mw-wrap { max-width:1100px; margin:0 auto; padding:32px 32px 80px; }
+@media(max-width:700px){ .mw-wrap { padding:20px 16px 60px; } }
+
+/* ── Auth wall (logged-out view) ── */
+#view-loggedout { display:none; }
+.auth-card {
+  max-width:520px; margin:0 auto; background:var(--white);
+  border:1.5px solid var(--border); border-radius:var(--radius-lg);
+  padding:40px 36px; text-align:center;
+}
+.auth-icon {
+  width:56px; height:56px; border-radius:50%; background:#fef2f2;
+  border:2px solid #fecaca; display:flex; align-items:center; justify-content:center;
+  margin:0 auto 20px;
+}
+.auth-card h2 {
+  font-family:var(--font-head); font-size:1.9rem; letter-spacing:.04em; margin-bottom:8px;
+}
+.auth-card p { font-size:.9rem; color:var(--muted); line-height:1.65; margin-bottom:24px; }
+.auth-perks { text-align:left; margin-bottom:28px; display:flex; flex-direction:column; gap:10px; }
+.auth-perk {
+  display:flex; align-items:flex-start; gap:10px;
+  font-size:.88rem; color:var(--text); line-height:1.5;
+}
+.auth-perk-icon {
+  width:18px; height:18px; flex-shrink:0; border-radius:50%;
+  background:#f0fdf4; border:1.5px solid #bbf7d0;
+  display:flex; align-items:center; justify-content:center; margin-top:1px;
+}
+.auth-btns { display:flex; gap:10px; }
+.btn-signin {
+  flex:1; padding:12px; background:var(--or); color:#fff; border:none;
+  border-radius:var(--radius); font-size:.95rem; font-weight:700;
+  cursor:pointer; text-decoration:none; display:block; text-align:center;
+  transition:background .15s;
+}
+.btn-signin:hover { background:var(--or-dark); }
+.btn-signup-ghost {
+  flex:1; padding:12px; background:var(--white); color:var(--text);
+  border:1.5px solid var(--border2); border-radius:var(--radius);
+  font-size:.95rem; font-weight:700; cursor:pointer; text-decoration:none;
+  display:block; text-align:center; transition:border-color .15s, color .15s;
+}
+.btn-signup-ghost:hover { border-color:var(--or); color:var(--or); }
+
+/* ── Empty view ── */
+#view-empty { display:none; }
+.empty-card {
+  max-width:480px; margin:0 auto; text-align:center;
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--radius-lg); padding:48px 32px;
+}
+.empty-icon {
+  width:60px; height:60px; border-radius:50%; background:var(--bg);
+  border:2px solid var(--border); display:flex; align-items:center; justify-content:center;
+  margin:0 auto 20px;
+}
+.empty-card h2 { font-family:var(--font-head); font-size:1.8rem; letter-spacing:.04em; margin-bottom:8px; }
+.empty-card p { font-size:.9rem; color:var(--muted); line-height:1.65; margin-bottom:24px; }
+.btn-generate {
+  display:inline-block; padding:12px 28px; background:var(--or); color:#fff;
+  border:none; border-radius:var(--radius); font-size:.95rem; font-weight:700;
+  cursor:pointer; text-decoration:none; transition:background .15s;
+}
+.btn-generate:hover { background:var(--or-dark); }
+
+/* ── Stats strip ── */
+.stats-strip {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px;
+}
+@media(max-width:700px){ .stats-strip { grid-template-columns:repeat(2,1fr); gap:10px; } }
+.stat-card {
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--radius-lg); padding:18px 20px;
+}
+.stat-num {
+  font-family:var(--font-head); font-size:2rem; letter-spacing:.03em;
+  color:var(--text); line-height:1;
+}
+.stat-label { font-size:.75rem; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.06em; margin-top:4px; }
+.stat-sub { font-size:.72rem; color:var(--muted2); margin-top:2px; }
+
+/* ── Filter tabs ── */
+.filter-bar {
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  margin-bottom:20px; border-bottom:2px solid var(--border); padding-bottom:12px;
+}
+.filter-tab {
+  padding:7px 16px; border-radius:20px; border:1.5px solid var(--border2);
+  font-size:.82rem; font-weight:700; cursor:pointer; background:var(--white);
+  color:var(--muted); font-family:var(--font-body); transition:all .15s;
+  display:flex; align-items:center; gap:6px;
+}
+.filter-tab:hover { border-color:var(--or); color:var(--or); }
+.filter-tab.active { background:var(--or); color:#fff; border-color:var(--or); }
+.tab-count {
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:18px; height:18px; padding:0 5px;
+  border-radius:20px; font-size:.7rem; font-weight:800;
+  background:rgba(255,255,255,.25); color:inherit;
+}
+.filter-tab:not(.active) .tab-count { background:var(--bg); color:var(--muted2); }
+
+/* ── Month group ── */
+.month-group { margin-bottom:28px; }
+.month-label {
+  font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em;
+  color:var(--muted2); margin-bottom:10px; padding-left:2px;
+}
+
+/* ── WOD Card ── */
+.wod-card {
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--radius-lg); padding:18px 20px;
+  margin-bottom:10px; transition:box-shadow .15s;
+}
+.wod-card:hover { box-shadow:var(--shadow-md); }
+.wod-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:10px; }
+.wod-card-left { flex:1; min-width:0; }
+.wod-card-chips { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:6px; }
+.chip {
+  display:inline-flex; align-items:center; padding:3px 10px; border-radius:20px;
+  font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em;
+}
+.chip-red    { background:#fef2f2; color:#b91c1c; }
+.chip-purple { background:#f5f3ff; color:#6d28d9; }
+.chip-blue   { background:#eff6ff; color:#1d4ed8; }
+.chip-green  { background:#f0fdf4; color:#15803d; }
+.chip-gray   { background:var(--bg); color:var(--muted); }
+
+.wod-name-link {
+  font-family:var(--font-head); font-size:1.25rem; letter-spacing:.04em;
+  color:var(--text); text-decoration:none; display:block;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.wod-name-link:hover { color:var(--or); }
+.wod-name-plain {
+  font-family:var(--font-head); font-size:1.25rem; letter-spacing:.04em;
+  color:var(--muted); display:block;
+}
+.wod-movements {
+  display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;
+}
+.wod-mov-link {
+  font-size:.78rem; color:var(--muted); text-decoration:none; font-weight:600;
+  background:var(--bg); border-radius:4px; padding:2px 8px;
+  border:1px solid var(--border); transition:color .15s, border-color .15s;
+}
+.wod-mov-link:hover { color:var(--or); border-color:var(--or); }
+
+.wod-date { font-size:.8rem; color:var(--muted2); margin-top:4px; }
+
+.wod-card-right { display:flex; flex-direction:column; gap:6px; align-items:flex-end; flex-shrink:0; }
+.wod-view-link {
+  font-size:.8rem; font-weight:700; color:var(--or); text-decoration:none;
+  white-space:nowrap; display:flex; align-items:center; gap:4px;
+}
+.wod-view-link:hover { color:var(--or-dark); }
+
+/* ── Result strip ── */
+.wod-result-strip {
+  background:var(--bg); border-radius:8px; padding:10px 14px;
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  flex-wrap:wrap;
+}
+.result-main { display:flex; align-items:center; gap:10px; }
+.result-score {
+  font-family:var(--font-head); font-size:1.3rem; letter-spacing:.04em; color:var(--text);
+}
+.result-rx-badge {
+  display:inline-flex; align-items:center; padding:2px 9px; border-radius:20px;
+  font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em;
+}
+.rx-yes { background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; }
+.rx-no  { background:#fef9c3; color:#92400e; border:1px solid #fde68a; }
+.result-notes { font-size:.8rem; color:var(--muted); line-height:1.4; font-style:italic; }
+
+/* ── Card footer ── */
+.wod-card-foot {
+  display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; padding-top:10px;
+  border-top:1px solid var(--border);
+}
+.btn-card-action {
+  padding:6px 14px; border-radius:var(--radius); font-size:.8rem; font-weight:700;
+  cursor:pointer; font-family:var(--font-body); transition:all .15s;
+}
+.btn-log-again {
+  background:var(--bg); color:var(--text); border:1.5px solid var(--border2);
+}
+.btn-log-again:hover { border-color:var(--or); color:var(--or); background:var(--white); }
+.btn-delete-result {
+  background:var(--bg); color:var(--muted); border:1.5px solid var(--border);
+}
+.btn-delete-result:hover { border-color:#b91c1c; color:#b91c1c; }
+
+/* ── Load more ── */
+.load-more-wrap { text-align:center; margin-top:16px; }
+.btn-load-more {
+  padding:10px 28px; border-radius:var(--radius); background:var(--white);
+  border:1.5px solid var(--border2); font-size:.88rem; font-weight:700;
+  cursor:pointer; color:var(--text); transition:all .15s; font-family:var(--font-body);
+}
+.btn-load-more:hover { border-color:var(--or); color:var(--or); }
+
+/* ── Modals ── */
+.modal-overlay {
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,.45);
+  z-index:1000; align-items:center; justify-content:center; padding:20px;
+}
+.modal-overlay.open { display:flex; }
+.modal-card {
+  background:var(--white); border-radius:var(--radius-lg);
+  padding:28px 28px 24px; width:100%; max-width:440px;
+  box-shadow:var(--shadow-lg); position:relative;
+}
+.modal-card h3 {
+  font-family:var(--font-head); font-size:1.5rem; letter-spacing:.04em; margin-bottom:16px;
+}
+.modal-close {
+  position:absolute; top:16px; right:16px; background:none; border:none;
+  cursor:pointer; color:var(--muted); padding:4px; line-height:1;
+}
+.modal-close:hover { color:var(--text); }
+
+.form-group { margin-bottom:14px; }
+.form-label {
+  display:block; font-size:.72rem; font-weight:700; text-transform:uppercase;
+  letter-spacing:.07em; color:var(--muted); margin-bottom:5px;
+}
+.form-input {
+  width:100%; background:var(--bg); border:1.5px solid var(--border);
+  border-radius:var(--radius); padding:10px 12px; color:var(--text);
+  font-size:.9rem; outline:none; font-family:var(--font-body);
+  transition:border-color .15s, background .15s; box-sizing:border-box;
+}
+.form-input:focus { border-color:var(--or); background:var(--white); }
+textarea.form-input { resize:vertical; min-height:80px; line-height:1.5; }
+
+.rx-toggle { display:flex; gap:8px; margin-bottom:4px; }
+.rx-btn {
+  flex:1; padding:9px; border-radius:var(--radius); border:1.5px solid var(--border2);
+  background:var(--white); font-size:.85rem; font-weight:700; cursor:pointer;
+  font-family:var(--font-body); transition:all .15s; color:var(--muted);
+}
+.rx-btn.selected { background:var(--or); color:#fff; border-color:var(--or); }
+
+.modal-actions { display:flex; gap:10px; margin-top:18px; }
+.btn-modal-primary {
+  flex:1; padding:11px; background:var(--or); color:#fff; border:none;
+  border-radius:var(--radius); font-size:.9rem; font-weight:700; cursor:pointer;
+  font-family:var(--font-body); transition:background .15s;
+}
+.btn-modal-primary:hover { background:var(--or-dark); }
+.btn-modal-cancel {
+  flex:1; padding:11px; background:var(--white); color:var(--text);
+  border:1.5px solid var(--border2); border-radius:var(--radius);
+  font-size:.9rem; font-weight:700; cursor:pointer; font-family:var(--font-body);
+  transition:all .15s;
+}
+.btn-modal-cancel:hover { border-color:var(--or); color:var(--or); }
+
+.delete-warning {
+  background:#fef2f2; border:1px solid #fecaca; border-radius:8px;
+  padding:12px 14px; font-size:.875rem; color:#b91c1c; margin-bottom:16px;
+  line-height:1.5;
+}
+.btn-modal-danger {
+  flex:1; padding:11px; background:#b91c1c; color:#fff; border:none;
+  border-radius:var(--radius); font-size:.9rem; font-weight:700; cursor:pointer;
+  font-family:var(--font-body); transition:background .15s;
+}
+.btn-modal-danger:hover { background:#991b1b; }
+  </style>
+
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -82,261 +320,524 @@
     gtag('js', new Date());
     gtag('config', 'G-HZM475VDN3');
   </script>
+  <!-- Vercel Analytics -->
   <script defer src="/_vercel/insights/script.js"></script>
 </head>
-<body>
 
-<main>
-<div class="myw-page">
+<body data-nav-init="true" data-active-page="">
 
-  <!-- Auth wall (shown if not logged in) -->
-  <div id="myw-auth-wall" style="display:none">
-    <div class="empty-state">
-      <div class="icon">🔐</div>
-      <h3>Sign in to view your workouts</h3>
-      <p>Create a free account to save workouts, track results, and monitor your progress over time.</p>
-      <a href="/login.html" class="abtn pri" style="max-width:200px;margin:0 auto">Sign In</a>
-    </div>
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="page-eyebrow">Training Log</div>
+    <h1 class="page-title">My Workouts</h1>
+    <p class="page-subtitle">Every WOD you've logged, all in one place.</p>
   </div>
+</div>
 
-  <!-- Main content (shown when logged in) -->
-  <div id="myw-content" style="display:none">
-    <div class="myw-header">
-      <div>
-        <h1>My Workouts</h1>
-        <p id="myw-subtitle">Your saved and generated workouts</p>
+<div class="mw-wrap">
+
+  <!-- ════════════════════════════════════
+       VIEW: LOGGED OUT
+  ════════════════════════════════════ -->
+  <div id="view-loggedout">
+    <div class="auth-card">
+      <div class="auth-icon">
+        <svg width="24" height="24" fill="none" stroke="var(--or)" stroke-width="2" viewBox="0 0 24 24">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
       </div>
-      <a href="/generator" class="abtn pri" style="flex:unset;padding:10px 18px;width:auto">+ Generate New</a>
-    </div>
-
-    <div class="stats-bar" id="myw-stats">
-      <div class="stat-card"><div class="val" id="stat-total">0</div><div class="lbl">Total WODs</div></div>
-      <div class="stat-card"><div class="val" id="stat-public">0</div><div class="lbl">Public</div></div>
-      <div class="stat-card"><div class="val" id="stat-private">0</div><div class="lbl">Private</div></div>
-    </div>
-
-    <div class="myw-grid" id="myw-grid"></div>
-
-    <div id="myw-empty" class="empty-state" style="display:none">
-      <div class="icon">💪</div>
-      <h3>No saved workouts yet</h3>
-      <p>Generate a workout and save it here to track your progress.</p>
-      <a href="/generator" class="abtn pri" style="max-width:200px;margin:0 auto">Generate a Workout</a>
+      <h2>Track Your Training</h2>
+      <p>Sign in to log workouts, track your PRs, and see your progress over time.</p>
+      <div class="auth-perks">
+        <div class="auth-perk">
+          <div class="auth-perk-icon">
+            <svg width="10" height="10" fill="none" stroke="#16a34a" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          Log benchmark WODs, Daily 20s, and generated workouts
+        </div>
+        <div class="auth-perk">
+          <div class="auth-perk-icon">
+            <svg width="10" height="10" fill="none" stroke="#16a34a" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          Track scores, Rx vs. scaled, and personal notes
+        </div>
+        <div class="auth-perk">
+          <div class="auth-perk-icon">
+            <svg width="10" height="10" fill="none" stroke="#16a34a" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          See your training history and keep momentum going
+        </div>
+        <div class="auth-perk">
+          <div class="auth-perk-icon">
+            <svg width="10" height="10" fill="none" stroke="#16a34a" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          Free account — no credit card required
+        </div>
+      </div>
+      <div class="auth-btns">
+        <a href="/login.html" class="btn-signin">Sign In</a>
+        <a href="/signup.html" class="btn-signup-ghost">Create Account</a>
+      </div>
     </div>
   </div>
 
-</div>
-</main>
+  <!-- ════════════════════════════════════
+       VIEW: EMPTY (logged in, no workouts yet)
+  ════════════════════════════════════ -->
+  <div id="view-empty">
+    <div class="empty-card">
+      <div class="empty-icon">
+        <svg width="28" height="28" fill="none" stroke="var(--muted)" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="12" y1="18" x2="12" y2="12"/>
+          <line x1="9" y1="15" x2="15" y2="15"/>
+        </svg>
+      </div>
+      <h2>No Workouts Yet</h2>
+      <p>Your training log is empty. Complete a workout and log your result to start tracking your progress.</p>
+      <a href="/generator.html" class="btn-generate">Generate a WOD</a>
+    </div>
+  </div>
 
-<!-- WOD Detail Overlay -->
-<div class="wod-overlay" id="wod-detail-overlay">
-  <div class="inner">
-    <button class="back-btn" onclick="closeWodDetail()">← Back to My Workouts</button>
-    <div id="wod-detail-content"></div>
+  <!-- ════════════════════════════════════
+       VIEW: LOGGED IN (training log)
+  ════════════════════════════════════ -->
+  <div id="view-loggedin" style="display:none">
+
+    <!-- Stats strip -->
+    <div class="stats-strip">
+      <div class="stat-card">
+        <div class="stat-num" id="stat-total">—</div>
+        <div class="stat-label">Total Logged</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-benchmark">—</div>
+        <div class="stat-label">Benchmark WODs</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-month">—</div>
+        <div class="stat-label">This Month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-last">—</div>
+        <div class="stat-label">Last Workout</div>
+        <div class="stat-sub" id="stat-last-date"></div>
+      </div>
+    </div>
+
+    <!-- Filter tabs -->
+    <div class="filter-bar">
+      <button class="filter-tab active" data-type="all" onclick="filterCards('all', this)">
+        All <span class="tab-count" id="count-all">0</span>
+      </button>
+      <button class="filter-tab" data-type="benchmark" onclick="filterCards('benchmark', this)">
+        Benchmark <span class="tab-count" id="count-benchmark">0</span>
+      </button>
+      <button class="filter-tab" data-type="daily20" onclick="filterCards('daily20', this)">
+        Daily 20 <span class="tab-count" id="count-daily20">0</span>
+      </button>
+      <button class="filter-tab" data-type="generated" onclick="filterCards('generated', this)">
+        Generated <span class="tab-count" id="count-generated">0</span>
+      </button>
+    </div>
+
+    <!-- Workout cards grouped by month -->
+    <div id="cards-container">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Load more -->
+    <div class="load-more-wrap" id="load-more-wrap" style="display:none">
+      <button class="btn-load-more" onclick="loadMore()">Load More Workouts</button>
+    </div>
+
+  </div><!-- /view-loggedin -->
+
+</div><!-- /mw-wrap -->
+
+<!-- ════════════════════════════════════
+     LOG RESULT MODAL
+════════════════════════════════════ -->
+<div class="modal-overlay" id="log-modal">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeLogModal()" aria-label="Close">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <h3 id="log-modal-title">Log Result</h3>
+
+    <div class="form-group">
+      <label class="form-label" for="log-score">Score / Time</label>
+      <input class="form-input" type="text" id="log-score" placeholder="e.g. 12:34 or 185 reps">
+    </div>
+
+    <div class="form-group">
+      <div class="form-label">Rx or Scaled?</div>
+      <div class="rx-toggle">
+        <button class="rx-btn selected" id="rx-yes" onclick="setRx(true)">Rx</button>
+        <button class="rx-btn" id="rx-no"  onclick="setRx(false)">Scaled</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="log-date">Date</label>
+      <input class="form-input" type="date" id="log-date">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="log-notes">Notes <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted2);font-size:.7rem">— optional</span></label>
+      <textarea class="form-input" id="log-notes" placeholder="How did it go? Any scaling notes…"></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-modal-primary" onclick="submitLog()">Save Result</button>
+      <button class="btn-modal-cancel" onclick="closeLogModal()">Cancel</button>
+    </div>
   </div>
 </div>
 
-<!-- Log Result Modal -->
-<div class="modal-overlay" id="result-modal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('result-modal')">✕</button>
-    <h2>Log Result</h2>
-    <p class="msub" id="result-modal-wod">—</p>
-    <div class="msg err" id="result-error"></div>
-    <div class="msg ok" id="result-success"></div>
-    <input type="hidden" id="result-workout-id">
-    <label>Score / Time</label>
-    <input type="text" id="result-score" placeholder="e.g. 12:34 or 225 reps">
-    <label>Rx?</label>
-    <select id="result-rx"><option value="true">Yes — Rx</option><option value="false">Scaled</option></select>
-    <label>Notes (optional)</label>
-    <textarea id="result-notes" rows="2" placeholder="How did it feel?"></textarea>
-    <button class="abtn pri" onclick="submitResult()" style="margin-top:4px">Save Result</button>
-  </div>
-</div>
-
-<!-- Delete Confirm Modal -->
+<!-- ════════════════════════════════════
+     DELETE CONFIRM MODAL
+════════════════════════════════════ -->
 <div class="modal-overlay" id="delete-modal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('delete-modal')">✕</button>
-    <h2>Delete Workout?</h2>
-    <p class="msub">This action cannot be undone. The workout and all its data will be permanently removed.</p>
-    <input type="hidden" id="delete-workout-id">
-    <div style="display:flex;gap:10px;margin-top:16px">
-      <button class="abtn pri" style="background:var(--danger)" onclick="confirmDelete()">Delete</button>
-      <button class="abtn sec" style="background:var(--dk3);color:var(--mu);border:1px solid var(--bd)" onclick="closeModal('delete-modal')">Cancel</button>
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeDeleteModal()" aria-label="Close">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <h3>Delete Result?</h3>
+    <div class="delete-warning">
+      This will permanently remove this workout result from your log. This cannot be undone.
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-danger" onclick="confirmDelete()">Delete</button>
+      <button class="btn-modal-cancel" onclick="closeDeleteModal()">Cancel</button>
     </div>
   </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/js/config.js"></script>
+<script src="/js/db.js"></script>
 
 <script>
-let currentUser = null;
-let myWorkouts = [];
+var MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
-function formatDate(d) {
-  if (!d) return '';
-  const dt = new Date(d);
-  return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
+var allWorkouts    = [];   // raw rows from user_workouts with results
+var visibleCount   = 20;   // pagination page size
+var currentType    = 'all';
+var logTargetId    = null; // user_workout id being logged against
+var deleteTargetId = null; // result id being deleted
+var logIsRx        = true;
 
-// ── Load Workouts ──
-async function loadMyWorkouts() {
-  currentUser = await db.getUser();
-  if (!currentUser) {
-    document.getElementById('myw-auth-wall').style.display = 'block';
-    document.getElementById('myw-content').style.display = 'none';
-    return;
-  }
-  document.getElementById('myw-auth-wall').style.display = 'none';
-  document.getElementById('myw-content').style.display = 'block';
-  document.getElementById('myw-subtitle').textContent = `Saved workouts for ${currentUser.email?.split('@')[0] || 'you'}`;
+/* ─── Auth init ─── */
+document.addEventListener('DOMContentLoaded', async function() {
+  /* Set today as default log date */
+  var today = new Date();
+  document.getElementById('log-date').value = today.toISOString().split('T')[0];
 
-  myWorkouts = await db.getWorkouts({ userId: currentUser.id });
+  var { data: { session } } = await supabase.auth.getSession();
 
-  // Stats
-  document.getElementById('stat-total').textContent = myWorkouts.length;
-  document.getElementById('stat-public').textContent = myWorkouts.filter(w => w.is_public || w.isPublic).length;
-  document.getElementById('stat-private').textContent = myWorkouts.filter(w => !(w.is_public || w.isPublic)).length;
-
-  const grid = document.getElementById('myw-grid');
-  const empty = document.getElementById('myw-empty');
-
-  if (!myWorkouts.length) {
-    grid.innerHTML = '';
-    empty.style.display = 'block';
-    return;
-  }
-  empty.style.display = 'none';
-
-  grid.innerHTML = myWorkouts.map(w => `
-    <div class="myw-card">
-      <div class="myw-card-meta">
-        <span class="badge badge-or">${escHtml(w.format || 'AMRAP')}</span>
-        <span class="badge badge-mu">${cap(w.level || 'intermediate')}</span>
-        <span class="badge ${w.is_public || w.isPublic ? 'badge-gr' : 'badge-mu'}">${w.is_public || w.isPublic ? '🌍 Public' : '🔒 Private'}</span>
-      </div>
-      <h3>${escHtml(w.title)}</h3>
-      <p style="color:var(--mu);font-size:12px;margin-bottom:12px">${formatDate(w.created_at || w.createdAt)}</p>
-      <div class="myw-actions">
-        <button class="myw-btn pri" onclick="openResultModal('${escHtml(w.id)}','${escHtml(w.title)}')">Log Result</button>
-        <button class="myw-btn sec" onclick="openWodDetail('${escHtml(w.id)}')">View</button>
-        <button class="myw-btn del" onclick="openDeleteModal('${escHtml(w.id)}')">Delete</button>
-      </div>
-    </div>`).join('');
-}
-
-// ── WOD Detail ──
-async function openWodDetail(workoutId) {
-  const w = myWorkouts.find(x => x.id === workoutId) || await db.getWorkoutById(workoutId);
-  if (!w) return;
-
-  // Build movements list
-  let movementsHtml = '';
-  if (w.movements) {
-    const moves = Array.isArray(w.movements) ? w.movements : (typeof w.movements === 'string' ? w.movements.split(',') : []);
-    movementsHtml = moves.map(m => typeof m === 'object' ? `${m.name || m.movement || ''}${m.reps ? ' × ' + m.reps : ''}` : m.trim()).filter(Boolean).join('\n');
-  }
-
-  document.getElementById('wod-detail-content').innerHTML = `
-    <h1 class="wod-detail-title">${escHtml(w.title)}</h1>
-    <div class="wod-detail-meta">
-      <span class="badge badge-or">${escHtml(w.format || 'AMRAP')}</span>
-      <span class="badge badge-mu">${cap(w.level || 'intermediate')}</span>
-      ${w.duration ? `<span class="badge badge-mu">${escHtml(String(w.duration))} min</span>` : ''}
-      ${w.equipment ? `<span class="badge badge-mu">${escHtml(w.equipment)}</span>` : ''}
-    </div>
-    ${w.description ? `<div class="wod-section"><h3>Description</h3><pre>${escHtml(w.description)}</pre></div>` : ''}
-    ${movementsHtml ? `<div class="wod-section"><h3>Movements</h3><pre>${escHtml(movementsHtml)}</pre></div>` : ''}
-    ${w.scoring ? `<div class="wod-section"><h3>Scoring</h3><pre>${escHtml(w.scoring)}</pre></div>` : ''}
-    <div style="margin-top:20px;display:flex;gap:10px">
-      <button class="myw-btn pri" onclick="openResultModal('${escHtml(w.id)}','${escHtml(w.title)}')">Log Result</button>
-      <button class="myw-btn del" onclick="closeWodDetail();openDeleteModal('${escHtml(w.id)}')">Delete Workout</button>
-    </div>`;
-
-  document.getElementById('wod-detail-overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeWodDetail() {
-  document.getElementById('wod-detail-overlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-// ── Modals ──
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
-function openResultModal(workoutId, title) {
-  document.getElementById('result-workout-id').value = workoutId;
-  document.getElementById('result-modal-wod').textContent = title;
-  document.getElementById('result-score').value = '';
-  document.getElementById('result-notes').value = '';
-  document.getElementById('result-error').classList.remove('vis');
-  document.getElementById('result-success').classList.remove('vis');
-  openModal('result-modal');
-}
-
-async function submitResult() {
-  const workoutId = document.getElementById('result-workout-id').value;
-  const score = document.getElementById('result-score').value.trim();
-  const isRx = document.getElementById('result-rx').value === 'true';
-  const notes = document.getElementById('result-notes').value.trim();
-
-  if (!score) {
-    document.getElementById('result-error').textContent = 'Please enter a score or time.';
-    document.getElementById('result-error').classList.add('vis');
+  if (!session) {
+    document.getElementById('view-loggedout').style.display = 'block';
     return;
   }
 
-  try {
-    await db.saveResult({
-      workout_id: workoutId,
-      user_id: currentUser.id,
-      username: currentUser.email?.split('@')[0] || 'athlete',
-      score_display: score,
-      is_rx: isRx,
-      notes: notes,
-      date: new Date().toISOString().split('T')[0]
+  var userId = session.user.id;
+
+  /* Load user_workouts joined with latest result for each */
+  var { data: workouts, error } = await supabase
+    .from('user_workouts')
+    .select('*, results(id, score, is_rx, notes, logged_at)')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error loading workouts:', error);
+    document.getElementById('view-empty').style.display = 'block';
+    return;
+  }
+
+  if (!workouts || workouts.length === 0) {
+    document.getElementById('view-empty').style.display = 'block';
+    return;
+  }
+
+  allWorkouts = workouts;
+  document.getElementById('view-loggedin').style.display = 'block';
+
+  buildStats(workouts);
+  buildTabCounts(workouts);
+  renderCards(workouts);
+});
+
+/* ─── Stats strip ─── */
+function buildStats(workouts) {
+  var now   = new Date();
+  var thisM = now.getMonth();
+  var thisY = now.getFullYear();
+
+  var total = workouts.length;
+  var bench = workouts.filter(function(w){ return w.wod_type === 'benchmark'; }).length;
+  var month = workouts.filter(function(w){
+    var d = new Date(w.created_at);
+    return d.getMonth() === thisM && d.getFullYear() === thisY;
+  }).length;
+
+  document.getElementById('stat-total').textContent     = total;
+  document.getElementById('stat-benchmark').textContent = bench;
+  document.getElementById('stat-month').textContent     = month;
+
+  /* Most recent workout name */
+  var sorted = workouts.slice().sort(function(a,b){
+    return new Date(b.created_at) - new Date(a.created_at);
+  });
+  if (sorted.length) {
+    var d = new Date(sorted[0].created_at);
+    var name = sorted[0].wod_name || 'WOD';
+    /* Truncate long names for the stat card */
+    document.getElementById('stat-last').textContent      = name.length > 14 ? name.slice(0,13) + '…' : name;
+    document.getElementById('stat-last-date').textContent = d.toLocaleDateString('en-US',{ month:'short', day:'numeric' });
+  }
+}
+
+/* ─── Tab counts ─── */
+function buildTabCounts(workouts) {
+  var counts = { all: 0, benchmark: 0, daily20: 0, generated: 0 };
+  workouts.forEach(function(w){
+    counts.all++;
+    var t = normalizeType(w.wod_type);
+    if (counts[t] !== undefined) counts[t]++;
+  });
+  document.getElementById('count-all').textContent       = counts.all;
+  document.getElementById('count-benchmark').textContent = counts.benchmark;
+  document.getElementById('count-daily20').textContent   = counts.daily20;
+  document.getElementById('count-generated').textContent = counts.generated;
+}
+
+function normalizeType(t) {
+  if (!t) return 'generated';
+  if (t === 'benchmark') return 'benchmark';
+  if (t === 'daily20' || t === 'daily-20') return 'daily20';
+  return 'generated';
+}
+
+/* ─── Filter tabs ─── */
+function filterCards(type, el) {
+  document.querySelectorAll('.filter-tab').forEach(function(b){ b.classList.remove('active'); });
+  el.classList.add('active');
+  currentType  = type;
+  visibleCount = 20;
+  var filtered = type === 'all'
+    ? allWorkouts
+    : allWorkouts.filter(function(w){ return normalizeType(w.wod_type) === type; });
+  renderCards(filtered);
+}
+
+/* ─── Render cards grouped by month ─── */
+function renderCards(workouts) {
+  var container = document.getElementById('cards-container');
+  var subset    = workouts.slice(0, visibleCount);
+
+  /* Group into month buckets, preserve order */
+  var groups = {};
+  var order  = [];
+  subset.forEach(function(w) {
+    var d   = new Date(w.created_at);
+    var key = d.getFullYear() + '-' + String(d.getMonth()).padStart(2,'0');
+    var lbl = MONTH_NAMES[d.getMonth()] + ' ' + d.getFullYear();
+    if (!groups[key]) { groups[key] = { label: lbl, items: [] }; order.push(key); }
+    groups[key].items.push(w);
+  });
+
+  var html = '';
+  order.forEach(function(key) {
+    html += '<div class="month-group">';
+    html += '<div class="month-label">' + groups[key].label + '</div>';
+    groups[key].items.forEach(function(w) { html += buildCard(w); });
+    html += '</div>';
+  });
+
+  container.innerHTML = html;
+
+  var loadWrap = document.getElementById('load-more-wrap');
+  loadWrap.style.display = workouts.length > visibleCount ? 'block' : 'none';
+}
+
+/* ─── Build a single WOD card ─── */
+function buildCard(w) {
+  var nt        = normalizeType(w.wod_type);
+  var chipClass = nt === 'benchmark' ? 'chip-red' : nt === 'daily20' ? 'chip-purple' : 'chip-blue';
+  var chipLabel = nt === 'benchmark' ? 'Benchmark'  : nt === 'daily20' ? 'Daily 20'    : 'Generated';
+
+  var d       = new Date(w.created_at);
+  var dateStr = d.toLocaleDateString('en-US',{ month:'short', day:'numeric', year:'numeric' });
+
+  /* WOD name — link if slug available */
+  var nameHtml = w.slug
+    ? '<a href="/workouts/' + w.slug + '" class="wod-name-link">' + esc(w.wod_name || 'Untitled WOD') + '</a>'
+    : '<span class="wod-name-plain">' + esc(w.wod_name || 'Custom WOD') + '</span>';
+
+  /* Movements strip */
+  var movHtml = '';
+  if (w.movements && w.movements.length) {
+    var movs = Array.isArray(w.movements) ? w.movements : [];
+    movHtml = '<div class="wod-movements">';
+    movs.slice(0, 4).forEach(function(m) {
+      var slug = typeof m === 'object' ? (m.slug || '') : '';
+      var name = typeof m === 'object' ? (m.name || String(m)) : String(m);
+      movHtml += slug
+        ? '<a href="/movements/' + slug + '" class="wod-mov-link">' + esc(name) + '</a>'
+        : '<span class="wod-mov-link" style="cursor:default">' + esc(name) + '</span>';
     });
-    document.getElementById('result-success').textContent = 'Result saved!';
-    document.getElementById('result-success').classList.add('vis');
-    document.getElementById('result-error').classList.remove('vis');
-    setTimeout(() => closeModal('result-modal'), 1200);
-  } catch (e) {
-    document.getElementById('result-error').textContent = e.message || 'Failed to save result.';
-    document.getElementById('result-error').classList.add('vis');
+    if (movs.length > 4) {
+      movHtml += '<span class="wod-mov-link" style="cursor:default">+' + (movs.length - 4) + ' more</span>';
+    }
+    movHtml += '</div>';
   }
+
+  /* Latest result (most recent logged_at) */
+  var latestResult = null;
+  var resultHtml   = '';
+  if (w.results && w.results.length) {
+    latestResult = w.results.sort(function(a,b){
+      return new Date(b.logged_at) - new Date(a.logged_at);
+    })[0];
+    var rxClass = latestResult.is_rx ? 'rx-yes' : 'rx-no';
+    var rxLabel = latestResult.is_rx ? 'Rx'      : 'Scaled';
+    resultHtml  = '<div class="wod-result-strip">';
+    resultHtml += '<div class="result-main">';
+    resultHtml += '<span class="result-score">' + esc(latestResult.score || '—') + '</span>';
+    resultHtml += '<span class="result-rx-badge ' + rxClass + '">' + rxLabel + '</span>';
+    resultHtml += '</div>';
+    if (latestResult.notes) {
+      resultHtml += '<span class="result-notes">' + esc(latestResult.notes) + '</span>';
+    }
+    resultHtml += '</div>';
+  }
+
+  /* Assemble card HTML */
+  var wid  = JSON.stringify(w.id);
+  var wname= JSON.stringify(w.wod_name || 'WOD');
+
+  var html = '<div class="wod-card" data-id="' + esc(String(w.id)) + '" data-type="' + nt + '">';
+
+  html += '<div class="wod-card-top">';
+  html += '<div class="wod-card-left">';
+  html += '<div class="wod-card-chips"><span class="chip ' + chipClass + '">' + chipLabel + '</span></div>';
+  html += nameHtml;
+  html += movHtml;
+  html += '<div class="wod-date">' + dateStr + '</div>';
+  html += '</div>'; /* wod-card-left */
+
+  if (w.slug) {
+    html += '<div class="wod-card-right">';
+    html += '<a href="/workouts/' + w.slug + '" class="wod-view-link">View WOD ';
+    html += '<svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>';
+    html += '</div>';
+  }
+  html += '</div>'; /* wod-card-top */
+
+  if (resultHtml) html += resultHtml;
+
+  html += '<div class="wod-card-foot">';
+  html += '<button class="btn-card-action btn-log-again" onclick="openLogModal(' + wid + ',' + wname + ')">Log Result</button>';
+  if (latestResult) {
+    html += '<button class="btn-card-action btn-delete-result" onclick="openDeleteModal(' + JSON.stringify(latestResult.id) + ')">Delete Result</button>';
+  }
+  html += '</div>'; /* wod-card-foot */
+
+  html += '</div>'; /* wod-card */
+  return html;
 }
 
-function openDeleteModal(workoutId) {
-  document.getElementById('delete-workout-id').value = workoutId;
-  openModal('delete-modal');
+/* ─── HTML escape helper ─── */
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
 }
 
+/* ─── Load more ─── */
+function loadMore() {
+  visibleCount += 20;
+  var filtered = currentType === 'all'
+    ? allWorkouts
+    : allWorkouts.filter(function(w){ return normalizeType(w.wod_type) === currentType; });
+  renderCards(filtered);
+}
+
+/* ─── Log modal ─── */
+function openLogModal(workoutId, name) {
+  logTargetId = workoutId;
+  document.getElementById('log-modal-title').textContent = 'Log Result — ' + name;
+  document.getElementById('log-score').value = '';
+  document.getElementById('log-notes').value = '';
+  logIsRx = true;
+  document.getElementById('rx-yes').classList.add('selected');
+  document.getElementById('rx-no').classList.remove('selected');
+  var today = new Date();
+  document.getElementById('log-date').value = today.toISOString().split('T')[0];
+  document.getElementById('log-modal').classList.add('open');
+}
+function closeLogModal() {
+  document.getElementById('log-modal').classList.remove('open');
+  logTargetId = null;
+}
+function setRx(isRx) {
+  logIsRx = isRx;
+  document.getElementById('rx-yes').classList.toggle('selected', isRx);
+  document.getElementById('rx-no').classList.toggle('selected', !isRx);
+}
+async function submitLog() {
+  if (!logTargetId) return;
+  var score = document.getElementById('log-score').value.trim();
+  var date  = document.getElementById('log-date').value;
+  var notes = document.getElementById('log-notes').value.trim();
+
+  var { error } = await supabase.from('results').insert({
+    user_workout_id: logTargetId,
+    score:      score  || null,
+    is_rx:      logIsRx,
+    logged_at:  date   || new Date().toISOString().split('T')[0],
+    notes:      notes  || null
+  });
+
+  if (error) { console.error('Log error:', error); return; }
+  closeLogModal();
+  window.location.reload();
+}
+
+/* ─── Delete modal ─── */
+function openDeleteModal(resultId) {
+  deleteTargetId = resultId;
+  document.getElementById('delete-modal').classList.add('open');
+}
+function closeDeleteModal() {
+  document.getElementById('delete-modal').classList.remove('open');
+  deleteTargetId = null;
+}
 async function confirmDelete() {
-  const workoutId = document.getElementById('delete-workout-id').value;
-  try {
-    await db.deleteWorkout(workoutId);
-    closeModal('delete-modal');
-    closeWodDetail();
-    loadMyWorkouts(); // Refresh
-  } catch (e) {
-    alert('Failed to delete: ' + (e.message || 'Unknown error'));
-  }
+  if (!deleteTargetId) return;
+  var { error } = await supabase.from('results').delete().eq('id', deleteTargetId);
+  if (error) { console.error('Delete error:', error); return; }
+  closeDeleteModal();
+  window.location.reload();
 }
 
-// ── Init — redirect to profile ──
-document.addEventListener('DOMContentLoaded', async () => {
-  const sb = typeof supabaseClient !== 'undefined' ? supabaseClient : null;
-  const user = sb ? (await sb.auth.getUser())?.data?.user : null;
-  const username = user?.email?.split('@')[0] || 'me';
-  window.location.replace(`/profile.html?user=${encodeURIComponent(username)}`);
+/* ─── Close modals on overlay click ─── */
+document.getElementById('log-modal').addEventListener('click', function(e){
+  if (e.target === this) closeLogModal();
+});
+document.getElementById('delete-modal').addEventListener('click', function(e){
+  if (e.target === this) closeDeleteModal();
 });
 </script>
 
-<!-- FOOTER -->
+<script src="/js/nav.js"></script>
 <script src="/js/footer.js"></script>
 </body>
 </html>

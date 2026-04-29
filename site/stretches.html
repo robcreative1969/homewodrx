@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<!-- Sentry Error Monitoring -->
+<script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Browse Stretches — Mobility Library | HomeWodRX</title>
+<meta name="description" content="Browse 54 stretching and mobility movements — static holds, dynamic warm-up, PNF techniques, and yoga flows. Filter by target area, modality, and more."/>
+<meta property="og:title" content="Browse Stretches — Mobility Library | HomeWodRX"/>
+<meta property="og:description" content="Browse 54 stretching and mobility movements — static holds, dynamic warm-up, PNF techniques, and yoga flows."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://homewodrx.com/stretches"/>
+<meta property="og:image" content="https://homewodrx.com/images/og-default.png"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+<meta property="og:image:alt" content="Browse Stretches — HomeWodRX"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://homewodrx.com/images/og-default.png"/>
+<link rel="canonical" href="https://homewodrx.com/stretches"/>
+<link rel="icon" type="image/x-icon" href="/favicon.ico"/>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/css/style.css"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HZM475VDN3');
+</script>
+<!-- Vercel Analytics -->
+<script defer src="/_vercel/insights/script.js"></script>
+<script src="/js/config.js"></script>
+<script src="/js/db.js"></script>
+<script src="/js/nav.js"></script>
+<script src="/js/stretch-db.js"></script>
+
+<style>
+/* ── PAGE-SPECIFIC VARS ──────────────────────────────────────────── */
+:root {
+  --gr:        #1a472a;
+  --gr-mid:    #2d6a4f;
+  --gr-dark:   #153a22;
+  --gr-light:  #f0f7f3;
+  --gr-border: #c8e0d4;
+}
+
+/* ── PAGE HEADER ─────────────────────────────────────────────────── */
+.page-header {
+  background: var(--white, #fff);
+  border-bottom: 1px solid var(--border, #e5e5e5);
+  padding: 28px 28px 0;
+}
+.page-header-inner { max-width: 1200px; margin: 0 auto; }
+
+.breadcrumb {
+  font-size: .78rem; color: var(--muted, #666);
+  display: flex; align-items: center; gap: 6px; margin-bottom: 18px;
+}
+.breadcrumb a { color: var(--muted, #666); text-decoration: none; }
+.breadcrumb a:hover { color: var(--gr-mid); }
+.breadcrumb-sep { opacity: .4; }
+
+.page-title-row {
+  display: flex; align-items: flex-end; gap: 16px;
+  margin-bottom: 20px; flex-wrap: wrap;
+}
+.page-title {
+  font-family: var(--font-head, 'Bebas Neue', sans-serif);
+  font-size: 3rem; letter-spacing: .04em; line-height: 1; color: var(--text, #1a1a1a);
+}
+.page-subtitle { font-size: .9rem; color: var(--muted, #666); padding-bottom: 4px; }
+.page-subtitle strong { color: var(--text, #1a1a1a); font-weight: 700; }
+
+/* ── FILTERS ──────────────────────────────────────────────────────── */
+.filter-section { display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px; }
+.filter-section + .filter-section { padding-top: 18px; }
+.filter-divider { height: 1px; background: var(--border, #e5e5e5); }
+.filter-label {
+  font-size: .72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .07em; color: var(--muted, #666);
+}
+
+/* Chips — green active state */
+.chip-row { display: flex; flex-wrap: wrap; gap: 7px; }
+.cat-chip {
+  padding: 6px 14px; border-radius: 20px;
+  border: 1.5px solid var(--border2, #d0d0d0);
+  background: none; color: #555; font-size: .8rem; font-weight: 600;
+  cursor: pointer; font-family: var(--font-body, 'Barlow', sans-serif);
+  transition: all .15s; white-space: nowrap;
+}
+.cat-chip:hover { border-color: var(--gr-mid); color: var(--gr); background: var(--gr-light); }
+.cat-chip.active { background: var(--gr); border-color: var(--gr); color: #fff; }
+
+/* Search */
+.search-wrap { position: relative; }
+.search-icon {
+  position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+  color: var(--muted2, #999); pointer-events: none;
+}
+.search-input {
+  width: 100%; padding: 10px 14px 10px 40px;
+  border: 1.5px solid var(--border2, #d0d0d0); border-radius: 9px;
+  font-family: var(--font-body, 'Barlow', sans-serif);
+  font-size: .9rem; color: var(--text, #1a1a1a);
+  background: var(--bg, #f3f3f3); outline: none;
+  transition: border-color .15s, background .15s;
+}
+.search-input::placeholder { color: var(--muted2, #999); }
+.search-input:focus { border-color: var(--gr-mid); background: var(--white, #fff); }
+
+/* ── PAGE WRAP ────────────────────────────────────────────────────── */
+.page-wrap { max-width: 1200px; margin: 0 auto; padding: 32px 28px 100px; }
+
+/* ── MODALITY SECTIONS ────────────────────────────────────────────── */
+.cat-section { margin-bottom: 40px; }
+.cat-heading { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.cat-heading-bar { width: 4px; height: 28px; background: var(--gr); border-radius: 2px; flex-shrink: 0; }
+.cat-heading-text {
+  font-family: var(--font-head, 'Bebas Neue', sans-serif);
+  font-size: 1.55rem; letter-spacing: .04em; color: var(--text, #1a1a1a); line-height: 1;
+}
+.cat-heading-count {
+  font-size: .72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .06em; color: var(--muted, #666); margin-left: 2px;
+}
+
+/* ── STRETCH CARDS ────────────────────────────────────────────────── */
+.mv-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px;
+}
+.mv-card {
+  display: flex; flex-direction: column;
+  background: var(--card, #fff); border: 1.5px solid var(--border, #e5e5e5);
+  border-radius: var(--radius-lg, 14px); box-shadow: var(--shadow, 0 2px 12px rgba(0,0,0,.07));
+  transition: transform .15s, box-shadow .15s, border-color .15s;
+  overflow: hidden; cursor: pointer; text-decoration: none; color: inherit;
+}
+.mv-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md, 0 4px 20px rgba(0,0,0,.11)); border-color: var(--gr-border); }
+
+.mv-card-head {
+  padding: 16px 18px 0;
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;
+}
+.mv-name {
+  font-family: var(--font-head, 'Bebas Neue', sans-serif);
+  font-size: 1.5rem; letter-spacing: .04em; line-height: 1.1;
+  color: var(--text, #1a1a1a); flex: 1;
+}
+.mv-badge-wrap { flex-shrink: 0; }
+
+/* Modality badges */
+.mod-badge {
+  display: inline-flex; align-items: center;
+  padding: 3px 10px; border-radius: 20px;
+  font-size: .66rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: .07em; border: 1.5px solid; white-space: nowrap;
+}
+.mod-badge.static  { background: rgba(59,130,246,.1);  border-color: rgba(59,130,246,.35); color: #2563eb; }
+.mod-badge.dynamic { background: rgba(34,197,94,.1);   border-color: rgba(34,197,94,.35);  color: #16a34a; }
+.mod-badge.pnf     { background: rgba(168,85,247,.1);  border-color: rgba(168,85,247,.35); color: #7c3aed; }
+.mod-badge.yoga    { background: rgba(20,184,166,.1);  border-color: rgba(20,184,166,.35); color: #0d9488; }
+
+.mv-card-body {
+  padding: 8px 18px 12px; flex: 1; display: flex; flex-direction: column; gap: 6px;
+}
+.mv-focus { font-size: .82rem; color: var(--muted, #666); line-height: 1.5; }
+
+.sides-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: .72rem; font-weight: 700; color: var(--gr-mid);
+  background: var(--gr-light); border: 1px solid var(--gr-border);
+  padding: 2px 8px; border-radius: 20px; width: fit-content;
+}
+
+.mv-card-footer {
+  padding: 10px 18px 14px;
+  border-top: 1px solid var(--border, #e5e5e5);
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+.mv-hold { font-size: .78rem; font-weight: 700; color: var(--gr); }
+.mv-arrow { color: var(--muted, #666); transition: color .15s, transform .15s; font-size: .9rem; }
+.mv-card:hover .mv-arrow { color: var(--gr); transform: translateX(3px); }
+
+/* ── EMPTY STATE ──────────────────────────────────────────────────── */
+.no-results { text-align: center; padding: 60px 24px; display: none; }
+.no-results.visible { display: block; }
+.no-results-icon { font-size: 2.5rem; margin-bottom: 12px; opacity: .4; }
+.no-results-title {
+  font-family: var(--font-head, 'Bebas Neue', sans-serif);
+  font-size: 1.8rem; letter-spacing: .04em; color: var(--text, #1a1a1a); margin-bottom: 6px;
+}
+.no-results-sub { font-size: .9rem; color: var(--muted, #666); }
+.no-results-clear {
+  margin-top: 18px; padding: 10px 24px; border-radius: 8px;
+  background: var(--gr); color: #fff; font-weight: 700; font-size: .88rem;
+  cursor: pointer; border: none;
+  font-family: var(--font-body, 'Barlow', sans-serif); transition: background .15s;
+}
+.no-results-clear:hover { background: var(--gr-dark); }
+
+/* ── RESPONSIVE ───────────────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .page-header { padding: 20px 16px 0; }
+  .page-wrap   { padding: 20px 16px 60px; }
+  .page-title  { font-size: 2.2rem; }
+  .mv-grid     { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body data-nav-init="true" data-active-page="stretch">
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-inner">
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <a href="/">Home</a>
+      <span class="breadcrumb-sep">›</span>
+      <a href="/stretch">Stretch</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Browse Stretches</span>
+    </div>
+
+    <!-- Page title -->
+    <div class="page-title-row">
+      <h1 class="page-title">STRETCHES</h1>
+      <p class="page-subtitle"><strong id="total-count">54</strong> mobility movements — static holds, dynamic prep, PNF techniques, and yoga flows</p>
+    </div>
+
+    <!-- Modality filter -->
+    <div class="filter-section">
+      <span class="filter-label">Modality</span>
+      <div class="chip-row" id="mod-chips">
+        <button class="cat-chip active" data-mod="all">All</button>
+        <button class="cat-chip" data-mod="static">Static</button>
+        <button class="cat-chip" data-mod="dynamic">Dynamic</button>
+        <button class="cat-chip" data-mod="pnf">PNF / Contract-Relax</button>
+        <button class="cat-chip" data-mod="yoga">Yoga</button>
+      </div>
+    </div>
+    <div class="filter-divider"></div>
+
+    <!-- Target area filter -->
+    <div class="filter-section">
+      <span class="filter-label">Target Area</span>
+      <div class="chip-row" id="focus-chips">
+        <button class="cat-chip active" data-focus="all">All</button>
+        <button class="cat-chip" data-focus="hips">Hips</button>
+        <button class="cat-chip" data-focus="hamstrings">Hamstrings</button>
+        <button class="cat-chip" data-focus="shoulders">Shoulders</button>
+        <button class="cat-chip" data-focus="back">Back</button>
+        <button class="cat-chip" data-focus="chest">Chest</button>
+        <button class="cat-chip" data-focus="calves">Calves</button>
+        <button class="cat-chip" data-focus="wrists">Wrists</button>
+        <button class="cat-chip" data-focus="full">Full Body</button>
+      </div>
+    </div>
+    <div class="filter-divider"></div>
+
+    <!-- Search -->
+    <div class="filter-section">
+      <span class="filter-label">Search</span>
+      <div class="search-wrap">
+        <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input class="search-input" id="search" type="text" placeholder="Search stretches…" autocomplete="off"/>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /.page-header -->
+
+<!-- PAGE CONTENT -->
+<div class="page-wrap">
+
+  <div id="sections-root"></div>
+
+  <div class="no-results" id="no-results">
+    <div class="no-results-icon">🔍</div>
+    <p class="no-results-title">NO STRETCHES FOUND</p>
+    <p class="no-results-sub">Try a different modality, target area, or search term.</p>
+    <button class="no-results-clear" onclick="clearFilters()">Clear filters</button>
+  </div>
+
+</div><!-- /.page-wrap -->
+
+<script>
+// ── Helpers ────────────────────────────────────────────────────────────────────
+function slugify(str) {
+  return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+function buildMeta(entry) {
+  if (entry.hold) {
+    const b = entry.hold.b, a = entry.hold.a;
+    return `Hold: ${b}–${a} sec`;
+  }
+  if (entry.reps) return entry.reps;
+  return '';
+}
+
+// ── Build STRETCHES from STRETCH_DB ───────────────────────────────────────────
+const MODALITY_CONFIG = [
+  { key: 'static',  label: 'Static Stretches',      desc: 'Hold-based stretches for flexibility and cool-down' },
+  { key: 'dynamic', label: 'Dynamic Stretches',      desc: 'Movement-based prep for warm-ups and activation' },
+  { key: 'pnf',     label: 'PNF / Contract-Relax',   desc: 'Advanced technique for maximum range of motion gains' },
+  { key: 'yoga',    label: 'Yoga Flows',             desc: 'Pose-based holds for mobility, balance, and recovery' },
+];
+
+const FOCUS_LABELS = {
+  hips: 'Hips', hamstrings: 'Hamstrings', shoulders: 'Shoulders',
+  back: 'Back', chest: 'Chest', calves: 'Calves', wrists: 'Wrists', full: 'Full Body'
+};
+
+const STRETCHES = [];
+MODALITY_CONFIG.forEach(cfg => {
+  const entries = STRETCH_DB[cfg.key] || [];
+  entries.forEach(entry => {
+    STRETCHES.push({
+      name:  entry.name,
+      slug:  slugify(entry.name),
+      mod:   cfg.key,
+      focus: entry.focus || [],
+      meta:  buildMeta(entry),
+      sides: !!entry.sides,
+    });
+  });
+});
+
+// ── Filter state ───────────────────────────────────────────────────────────────
+let currentMod    = 'all';
+let currentFocus  = 'all';
+let currentSearch = '';
+
+// ── Render ─────────────────────────────────────────────────────────────────────
+function render() {
+  const term      = currentSearch.toLowerCase().trim();
+  const root      = document.getElementById('sections-root');
+  const noResults = document.getElementById('no-results');
+
+  const byMod = {};
+  let totalShown = 0;
+
+  STRETCHES.forEach(s => {
+    const modMatch    = currentMod   === 'all' || s.mod === currentMod;
+    const focusMatch  = currentFocus === 'all' || s.focus.includes(currentFocus);
+    const searchMatch = !term || s.name.toLowerCase().includes(term);
+    if (!modMatch || !focusMatch || !searchMatch) return;
+    if (!byMod[s.mod]) byMod[s.mod] = [];
+    byMod[s.mod].push(s);
+    totalShown++;
+  });
+
+  document.getElementById('total-count').textContent = totalShown;
+
+  if (totalShown === 0) {
+    root.innerHTML = '';
+    noResults.classList.add('visible');
+    return;
+  }
+  noResults.classList.remove('visible');
+
+  const modsToShow = currentMod === 'all'
+    ? MODALITY_CONFIG.filter(m => byMod[m.key])
+    : MODALITY_CONFIG.filter(m => m.key === currentMod && byMod[m.key]);
+
+  root.innerHTML = modsToShow.map(cfg => {
+    const stretches = byMod[cfg.key] || [];
+    const badgeLabel = cfg.key === 'pnf' ? 'PNF' : cfg.key.charAt(0).toUpperCase() + cfg.key.slice(1);
+
+    const cards = stretches.map(s => {
+      const focusText = s.focus.map(f => FOCUS_LABELS[f] || f).join(' · ');
+      const sidesPill = s.sides
+        ? `<span class="sides-pill">↔ Both sides</span>`
+        : '';
+      return `
+        <a class="mv-card" href="/stretches/${s.slug}">
+          <div class="mv-card-head">
+            <h3 class="mv-name">${s.name}</h3>
+            <div class="mv-badge-wrap">
+              <span class="mod-badge ${s.mod}">${badgeLabel}</span>
+            </div>
+          </div>
+          <div class="mv-card-body">
+            <p class="mv-focus">${focusText}</p>
+            ${sidesPill}
+          </div>
+          <div class="mv-card-footer">
+            <span class="mv-hold">${s.meta}</span>
+            <span class="mv-arrow">→</span>
+          </div>
+        </a>`;
+    }).join('');
+
+    return `
+      <section class="cat-section">
+        <div class="cat-heading">
+          <div class="cat-heading-bar"></div>
+          <span class="cat-heading-text">${cfg.label}</span>
+          <span class="cat-heading-count">(${stretches.length})</span>
+        </div>
+        <div class="mv-grid">${cards}</div>
+      </section>`;
+  }).join('');
+}
+
+// ── Filter controls ────────────────────────────────────────────────────────────
+function clearFilters() {
+  currentMod = 'all'; currentFocus = 'all'; currentSearch = '';
+  document.getElementById('search').value = '';
+  document.querySelectorAll('#mod-chips .cat-chip').forEach(c =>
+    c.classList.toggle('active', c.dataset.mod === 'all'));
+  document.querySelectorAll('#focus-chips .cat-chip').forEach(c =>
+    c.classList.toggle('active', c.dataset.focus === 'all'));
+  render();
+}
+
+document.querySelectorAll('#mod-chips .cat-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('#mod-chips .cat-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    currentMod = chip.dataset.mod;
+    render();
+  });
+});
+
+document.querySelectorAll('#focus-chips .cat-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('#focus-chips .cat-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    currentFocus = chip.dataset.focus;
+    render();
+  });
+});
+
+document.getElementById('search').addEventListener('input', e => {
+  currentSearch = e.target.value;
+  render();
+});
+
+// ── Init ───────────────────────────────────────────────────────────────────────
+render();
+</script>
+<script src="/js/footer.js"></script>
+</body>
+</html>

@@ -5,357 +5,457 @@
   <!-- Sentry Error Monitoring -->
   <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blog — Training Tips, WOD Guides & Home Gym Advice | HomeWODrx</title>
-  <meta name="description" content="Training tips, WOD breakdowns, scaling strategies, and home gym equipment guides for functional fitness athletes. Updated regularly by the HomeWODrx team.">
-  <meta property="og:title" content="Blog — Training Tips & Home Gym Guides | HomeWODrx">
-  <meta property="og:description" content="Training tips, WOD breakdowns, scaling strategies, and home gym equipment guides for functional fitness athletes.">
+
+  <title>Blog — HomeWodRX</title>
+  <meta name="description" content="WOD guides, scaling strategies, home gym builds, and everything in between — written for athletes who train outside the box.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://homewodrx.com/blog.html">
+
+  <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://homewodrx.com/blog">
+  <meta property="og:site_name" content="HomeWodRX">
+  <meta property="og:title" content="Blog — HomeWodRX">
+  <meta property="og:description" content="WOD guides, scaling strategies, home gym builds, and everything in between — written for athletes who train outside the box.">
+  <meta property="og:url" content="https://homewodrx.com/blog.html">
   <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://homewodrx.com/images/og-default.png">
-  <link rel="canonical" href="https://homewodrx.com/blog">
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Blog",
-    "name": "HomeWODrx Blog",
-    "description": "Training tips, WOD guides, and home gym advice for functional fitness athletes.",
-    "url": "https://homewodrx.com/blog",
-    "publisher": {
-      "@type": "Organization",
-      "name": "HomeWODrx",
-      "url": "https://homewodrx.com"
-    }
-  }
-  </script>
+
+  <!-- Favicons -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Shared site styles -->
   <link rel="stylesheet" href="/css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="/js/config.js"></script>
-  <script src="/js/db.js"></script>
-  <script src="/js/nav.js"></script>
+
+  <!-- Page-specific styles -->
   <style>
-    .blog-hero {
-      padding: 48px 0 40px;
-      border-bottom: 1px solid var(--bd);
-      margin-bottom: 40px;
-    }
-    .blog-hero h1 {
-      font-size: clamp(28px, 4vw, 42px);
-      font-weight: 900;
-      margin-bottom: 10px;
-      line-height: 1.15;
-    }
-    .blog-hero h1 span { color: var(--or); }
-    .blog-hero p {
-      color: var(--mu);
-      font-size: 1rem;
-      max-width: 540px;
-      line-height: 1.7;
-    }
+/* ── Layout ── */
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
-    .blog-container {
-      max-width: 1080px;
-      margin: 0 auto;
-      padding: 0 20px 64px;
-    }
+/* ── Page header ── */
+.page-header {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 52px 0 44px;
+}
+.page-header-inner {
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+}
+.page-header-eyebrow {
+  font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--or); margin-bottom: 10px;
+}
+.page-header h1 {
+  font-family: var(--font-head); font-size: clamp(40px, 6vw, 64px);
+  letter-spacing: .04em; line-height: 1; color: var(--text); margin-bottom: 12px;
+}
+.page-header h1 span { color: var(--or); }
+.page-header-sub { font-size: 1rem; color: var(--muted); max-width: 460px; line-height: 1.65; }
 
-    /* Category filter chips */
-    .blog-filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 32px;
-    }
-    .filter-chip {
-      padding: 6px 16px;
-      border-radius: 20px;
-      border: 1px solid var(--bd);
-      background: var(--card);
-      color: var(--mu);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all .15s;
-      text-decoration: none;
-    }
-    .filter-chip:hover,
-    .filter-chip.active {
-      border-color: var(--or);
-      color: var(--or);
-      background: rgba(196,18,18,.06);
-    }
+/* ── Filter bar ── */
+.filter-bar {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  position: sticky; top: var(--nav-h); z-index: 90;
+}
+.filter-bar-inner {
+  display: flex; align-items: center; gap: 8px; padding: 12px 0; flex-wrap: wrap;
+}
+.filter-chip {
+  padding: 6px 16px; border-radius: 20px;
+  border: 1.5px solid var(--border); background: var(--white);
+  color: var(--muted); font-size: .8rem; font-weight: 600;
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+  font-family: var(--font-body);
+}
+.filter-chip:hover { border-color: var(--or); color: var(--or); background: var(--or-xlight); }
+.filter-chip.active { border-color: var(--or); color: var(--or); background: var(--or-xlight); }
+.filter-count {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--or); color: #fff; font-size: .65rem; font-weight: 700;
+  margin-left: 4px;
+}
 
-    /* Post grid */
-    .blog-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 24px;
-    }
+/* ── Blog main ── */
+.blog-main { padding: 48px 0 80px; }
 
-    .blog-card {
-      background: var(--card);
-      border: 1px solid var(--bd);
-      border-radius: var(--r);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      text-decoration: none;
-      transition: border-color .15s, transform .15s, box-shadow .15s;
-    }
-    .blog-card:hover {
-      border-color: var(--or);
-      transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(0,0,0,.4);
-    }
+/* ── Featured post ── */
+.featured-post {
+  background: var(--white); border-radius: var(--radius-lg);
+  border: 1.5px solid var(--border); box-shadow: var(--shadow);
+  overflow: hidden; display: grid; grid-template-columns: 1fr 420px;
+  margin-bottom: 48px; transition: box-shadow .2s;
+  text-decoration: none; color: var(--text);
+}
+.featured-post:hover { box-shadow: var(--shadow-md); }
+.featured-visual {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
+  position: relative; min-height: 320px;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.featured-visual-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 80% at 30% 50%, rgba(196,18,18,.25) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 70% 30%, rgba(196,18,18,.1) 0%, transparent 60%);
+}
+.featured-visual-text {
+  position: relative; z-index: 1; text-align: center; padding: 40px;
+}
+.feat-wod-name {
+  font-family: var(--font-head); font-size: clamp(60px, 8vw, 96px);
+  color: rgba(255,255,255,.12); letter-spacing: .08em; line-height: 1;
+  user-select: none; position: absolute; bottom: 20px; right: 24px;
+}
+.feat-category-badge {
+  display: inline-block; padding: 6px 14px; border-radius: 20px;
+  background: rgba(196,18,18,.9); color: #fff;
+  font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+  margin-bottom: 16px;
+}
+.feat-label {
+  font-family: var(--font-head); font-size: 1.5rem; color: rgba(255,255,255,.7);
+  letter-spacing: .06em;
+}
+.featured-body { padding: 36px 40px; display: flex; flex-direction: column; justify-content: space-between; }
+.feat-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.feat-tag {
+  font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--or); background: var(--or-xlight); padding: 4px 10px; border-radius: 6px;
+}
+.feat-read-time { font-size: .78rem; color: var(--muted); }
+.featured-body h2 {
+  font-family: var(--font-head); font-size: clamp(28px, 3.5vw, 38px);
+  letter-spacing: .03em; line-height: 1.1; margin-bottom: 14px; color: var(--text);
+}
+.featured-body p {
+  font-size: .95rem; color: var(--muted); line-height: 1.7; margin-bottom: 28px; flex: 1;
+}
+.feat-footer { display: flex; align-items: center; justify-content: space-between; }
+.feat-date { font-size: .78rem; color: var(--muted2); }
+.btn-read {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 22px; background: var(--or); color: #fff; border: none;
+  border-radius: var(--radius); font-size: .875rem; font-weight: 700;
+  transition: background .15s, transform .15s; cursor: pointer;
+}
+.btn-read:hover { background: var(--or-dark); transform: translateY(-1px); }
+.btn-read svg { width: 14px; height: 14px; }
+@media (max-width: 900px) {
+  .featured-post { grid-template-columns: 1fr; }
+  .featured-visual { min-height: 200px; }
+}
 
-    .blog-card-banner {
-      height: 6px;
-      background: var(--or);
-    }
-    .blog-card-banner.training   { background: #C41212; }
-    .blog-card-banner.equipment  { background: #2563eb; }
-    .blog-card-banner.technique  { background: #059669; }
-    .blog-card-banner.nutrition  { background: #d97706; }
-    .blog-card-banner.recovery   { background: #7c3aed; }
+/* ── Section heading ── */
+.section-hdr { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+.section-hdr h2 {
+  font-family: var(--font-head); font-size: clamp(22px, 3vw, 28px);
+  letter-spacing: .04em; color: var(--text);
+}
+.section-hdr-line { flex: 1; height: 1px; background: var(--border); }
 
-    .blog-card-body {
-      padding: 20px 22px 22px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
+/* ── Post grid ── */
+.post-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+@media (max-width: 960px) { .post-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .post-grid { grid-template-columns: 1fr; } }
 
-    .blog-card-meta {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .blog-tag {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      padding: 3px 8px;
-      border-radius: 4px;
-    }
-    .blog-tag.training  { background: rgba(196,18,18,.15); color: #e85555; }
-    .blog-tag.equipment { background: rgba(37,99,235,.15); color: #60a5fa; }
-    .blog-tag.technique { background: rgba(5,150,105,.15); color: #34d399; }
-    .blog-tag.nutrition { background: rgba(217,119,6,.15); color: #fbbf24; }
-    .blog-tag.recovery  { background: rgba(124,58,237,.15); color: #a78bfa; }
+.post-card {
+  background: var(--white); border-radius: var(--radius-lg);
+  border: 1.5px solid var(--border); box-shadow: var(--shadow);
+  overflow: hidden; display: flex; flex-direction: column;
+  transition: box-shadow .2s, transform .2s;
+  text-decoration: none; color: var(--text);
+}
+.post-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
 
-    .blog-card-date {
-      font-size: 12px;
-      color: var(--mu);
-    }
+.post-card-visual {
+  height: 160px; position: relative; overflow: hidden; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.post-card-visual .card-cat-badge {
+  position: absolute; top: 12px; left: 12px;
+  font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+  padding: 4px 10px; border-radius: 6px; color: #fff;
+}
+.post-card-visual .read-time-badge {
+  position: absolute; bottom: 12px; right: 12px;
+  font-size: .68rem; font-weight: 600; color: rgba(255,255,255,.85);
+  background: rgba(0,0,0,.35); padding: 3px 9px; border-radius: 20px;
+  backdrop-filter: blur(4px);
+}
+.vis-training  { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
+.vis-equipment { background: linear-gradient(135deg, #1e3a2f 0%, #0f2318 100%); }
+.vis-scaling   { background: linear-gradient(135deg, #2d1e3a 0%, #1a0f23 100%); }
+.vis-hero      { background: linear-gradient(135deg, #3a1e1e 0%, #231010 100%); }
+.vis-benchmark { background: linear-gradient(135deg, #1e2d3a 0%, #0f1a23 100%); }
+.vis-stretch   { background: linear-gradient(135deg, #1e3a2a 0%, #0f231a 100%); }
 
-    .blog-card h2 {
-      font-size: 17px;
-      font-weight: 800;
-      line-height: 1.35;
-      margin-bottom: 10px;
-      color: var(--tx);
-    }
-    .blog-card p {
-      font-size: 14px;
-      color: var(--mu);
-      line-height: 1.65;
-      flex: 1;
-      margin-bottom: 16px;
-    }
-    .blog-card-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-top: 1px solid var(--bd);
-      padding-top: 14px;
-      margin-top: auto;
-    }
-    .read-time {
-      font-size: 12px;
-      color: var(--mu);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .read-more {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--or);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
+.post-card-body { padding: 20px 20px 16px; flex: 1; display: flex; flex-direction: column; }
+.pc-tag {
+  font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--or); margin-bottom: 8px;
+}
+.post-card-body h3 {
+  font-size: 1rem; font-weight: 700; line-height: 1.35;
+  color: var(--text); margin-bottom: 8px; flex: 1;
+}
+.post-card-body p { font-size: .825rem; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
+.pc-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 12px; border-top: 1px solid var(--border);
+}
+.pc-date { font-size: .72rem; color: var(--muted2); }
+.pc-link {
+  font-size: .78rem; font-weight: 700; color: var(--or);
+  display: inline-flex; align-items: center; gap: 4px;
+  transition: gap .15s;
+}
+.pc-link:hover { gap: 8px; }
 
-    /* Featured post (first card spans full width on wide screens) */
-    @media (min-width: 700px) {
-      .blog-card.featured {
-        grid-column: 1 / -1;
-        flex-direction: row;
-      }
-      .blog-card.featured .blog-card-banner {
-        width: 6px;
-        height: auto;
-      }
-      .blog-card.featured .blog-card-body {
-        padding: 28px 32px;
-      }
-      .blog-card.featured h2 {
-        font-size: 22px;
-      }
-      .blog-card.featured p {
-        max-width: 600px;
-      }
-    }
+/* ── Newsletter strip ── */
+.newsletter-strip {
+  background: var(--text); border-radius: var(--radius-lg);
+  padding: 44px 48px; margin: 48px 0 0;
+  display: flex; align-items: center; gap: 40px; flex-wrap: wrap;
+  position: relative; overflow: hidden;
+}
+.newsletter-strip::before {
+  content: ''; position: absolute; top: -40px; right: -40px;
+  width: 260px; height: 260px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(196,18,18,.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+.nl-copy { flex: 1; min-width: 240px; }
+.nl-eyebrow {
+  font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--or); margin-bottom: 8px;
+}
+.nl-copy h2 {
+  font-family: var(--font-head); font-size: clamp(24px, 3.5vw, 34px);
+  letter-spacing: .04em; color: #fff; margin-bottom: 8px; line-height: 1.1;
+}
+.nl-copy p { font-size: .9rem; color: rgba(255,255,255,.6); line-height: 1.6; }
+.nl-form { display: flex; gap: 10px; flex-wrap: wrap; }
+.nl-input {
+  flex: 1; min-width: 220px; padding: 12px 16px;
+  border: 1.5px solid rgba(255,255,255,.15); background: rgba(255,255,255,.07);
+  border-radius: var(--radius); color: #fff; font-size: .9rem;
+  font-family: var(--font-body); outline: none; transition: border-color .15s;
+}
+.nl-input::placeholder { color: rgba(255,255,255,.35); }
+.nl-input:focus { border-color: var(--or); }
+.nl-btn {
+  padding: 12px 22px; background: var(--or); color: #fff; border: none;
+  border-radius: var(--radius); font-size: .875rem; font-weight: 700;
+  cursor: pointer; transition: background .15s; white-space: nowrap;
+  font-family: var(--font-body);
+}
+.nl-btn:hover { background: var(--or-dark); }
   </style>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-HZM475VDN3');
+  </script>
+  <!-- Vercel Analytics -->
+  <script defer src="/_vercel/insights/script.js"></script>
 </head>
+
 <body data-nav-init="true" data-active-page="blog">
-<main>
-  <div class="blog-container">
-    <div class="blog-hero">
-      <h1>The HomeWODrx <span>Blog</span></h1>
-      <p>Training tips, WOD breakdowns, scaling strategies, and home gym guides — written for athletes who train outside the box.</p>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="wrap">
+    <div class="page-header-inner">
+      <div>
+        <div class="page-header-eyebrow">Training Knowledge</div>
+        <h1>The <span>Blog</span></h1>
+        <p class="page-header-sub">WOD guides, scaling strategies, home gym builds, and everything in between — written for athletes who train outside the box.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="wrap">
+    <div class="filter-bar-inner">
+      <button class="filter-chip active" onclick="filterPosts('all', this)">All <span class="filter-count">5</span></button>
+      <button class="filter-chip" onclick="filterPosts('training', this)">Training</button>
+      <button class="filter-chip" onclick="filterPosts('wod-guides', this)">WOD Guides</button>
+      <button class="filter-chip" onclick="filterPosts('equipment', this)">Equipment</button>
+      <button class="filter-chip" onclick="filterPosts('mobility', this)">Mobility</button>
+      <button class="filter-chip" onclick="filterPosts('programming', this)">Programming</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="blog-main">
+  <div class="wrap">
+
+    <!-- FEATURED POST -->
+    <a class="featured-post" href="/blog/hero-wod-guide.html" data-category="wod-guides">
+      <div class="featured-visual">
+        <div class="featured-visual-bg"></div>
+        <div class="featured-visual-text">
+          <span class="feat-category-badge">WOD Guide</span>
+          <span class="feat-label">Hero WODs</span>
+        </div>
+        <div class="feat-wod-name">MURPH</div>
+      </div>
+      <div class="featured-body">
+        <div>
+          <div class="feat-meta">
+            <span class="feat-tag">Featured</span>
+            <span class="feat-read-time">8 min read</span>
+          </div>
+          <h2>The Complete Guide to Hero WODs: History, Purpose & How to Attack Them</h2>
+          <p>Hero WODs are the most emotionally charged workouts in functional fitness — brutal by design, meaningful by intent. Learn their origins, what makes them different from benchmark WODs, and how to approach them whether you're a beginner or a seasoned athlete.</p>
+        </div>
+        <div class="feat-footer">
+          <span class="feat-date">April 10, 2026</span>
+          <span class="btn-read">
+            Read Article
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </a>
+
+    <!-- MORE POSTS -->
+    <div class="section-hdr">
+      <h2>More Articles</h2>
+      <div class="section-hdr-line"></div>
     </div>
 
-    <div class="blog-filters">
-      <a href="/blog" class="filter-chip active">All Posts</a>
-      <a href="/blog?cat=training" class="filter-chip">Training</a>
-      <a href="/blog?cat=equipment" class="filter-chip">Equipment</a>
-      <a href="/blog?cat=technique" class="filter-chip">Technique</a>
+    <div class="post-grid" id="postGrid">
+
+      <a class="post-card" href="/blog/how-to-scale-wods.html" data-category="training">
+        <div class="post-card-visual vis-scaling">
+          <span class="card-cat-badge" style="background:rgba(139,92,246,.8);">Training</span>
+          <span class="read-time-badge">6 min read</span>
+        </div>
+        <div class="post-card-body">
+          <div class="pc-tag">Training</div>
+          <h3>How to Scale WODs Without Losing the Intent of the Workout</h3>
+          <p>Scaling isn't cheating — it's smart training. Here's a framework for modifying any WOD while preserving its stimulus.</p>
+          <div class="pc-footer">
+            <span class="pc-date">March 28, 2026</span>
+            <span class="pc-link">Read <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          </div>
+        </div>
+      </a>
+
+      <a class="post-card" href="/blog/best-home-gym-equipment.html" data-category="equipment">
+        <div class="post-card-visual vis-equipment">
+          <span class="card-cat-badge" style="background:rgba(16,185,129,.8);">Equipment</span>
+          <span class="read-time-badge">10 min read</span>
+        </div>
+        <div class="post-card-body">
+          <div class="pc-tag">Equipment</div>
+          <h3>The Best Home Gym Equipment for Functional Fitness Athletes (2026)</h3>
+          <p>From budget starter setups to full garage gyms — the gear that actually matters and what to buy first.</p>
+          <div class="pc-footer">
+            <span class="pc-date">March 22, 2026</span>
+            <span class="pc-link">Read <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          </div>
+        </div>
+      </a>
+
+      <a class="post-card" href="/blog/named-benchmark-wods-guide.html" data-category="wod-guides">
+        <div class="post-card-visual vis-benchmark">
+          <span class="card-cat-badge" style="background:rgba(196,18,18,.85);">WOD Guide</span>
+          <span class="read-time-badge">7 min read</span>
+        </div>
+        <div class="post-card-body">
+          <div class="pc-tag">WOD Guide</div>
+          <h3>Named Benchmark WODs Explained: The Girls, Heroes, and Open Tests</h3>
+          <p>Why certain workouts have names — and why you should track your performance on them over time.</p>
+          <div class="pc-footer">
+            <span class="pc-date">March 15, 2026</span>
+            <span class="pc-link">Read <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          </div>
+        </div>
+      </a>
+
+      <a class="post-card" href="/blog/weekly-training-program-home.html" data-category="programming">
+        <div class="post-card-visual vis-training">
+          <span class="card-cat-badge" style="background:rgba(245,158,11,.85);">Programming</span>
+          <span class="read-time-badge">9 min read</span>
+        </div>
+        <div class="post-card-body">
+          <div class="pc-tag">Programming</div>
+          <h3>How to Structure a Weekly Training Program at Home</h3>
+          <p>The difference between random workouts and real progress. How to balance intensity, volume, and recovery week to week.</p>
+          <div class="pc-footer">
+            <span class="pc-date">March 8, 2026</span>
+            <span class="pc-link">Read <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          </div>
+        </div>
+      </a>
+
+      <a class="post-card" href="/blog/why-stretching-matters.html" data-category="mobility">
+        <div class="post-card-visual vis-stretch">
+          <span class="card-cat-badge" style="background:rgba(16,185,129,.8);">Mobility</span>
+          <span class="read-time-badge">5 min read</span>
+        </div>
+        <div class="post-card-body">
+          <div class="pc-tag">Mobility</div>
+          <h3>Why Stretching Matters More Than You Think (And When to Do It)</h3>
+          <p>Static vs. dynamic, pre vs. post-WOD — what the research actually says and the routine that makes a difference.</p>
+          <div class="pc-footer">
+            <span class="pc-date">February 27, 2026</span>
+            <span class="pc-link">Read <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          </div>
+        </div>
+      </a>
+
+    </div><!-- /post-grid -->
+
+    <!-- NEWSLETTER -->
+    <div class="newsletter-strip">
+      <div class="nl-copy">
+        <div class="nl-eyebrow">Stay in the loop</div>
+        <h2>New Guides, Every Week</h2>
+        <p>WOD breakdowns, scaling tips, and home gym advice — straight to your inbox. No spam, ever.</p>
+      </div>
+      <form class="nl-form" onsubmit="return false">
+        <input class="nl-input" type="email" placeholder="your@email.com" aria-label="Email address"/>
+        <button class="nl-btn" type="submit">Subscribe Free</button>
+      </form>
     </div>
 
-    <div class="blog-grid">
+  </div><!-- /wrap -->
+</div><!-- /blog-main -->
 
-      <!-- POST 1 — Featured -->
-      <a href="/blog/hero-wod-guide" class="blog-card featured" data-cat="training">
-        <div class="blog-card-banner training"></div>
-        <div class="blog-card-body">
-          <div class="blog-card-meta">
-            <span class="blog-tag training">Training</span>
-            <span class="blog-card-date">April 10, 2026</span>
-          </div>
-          <h2>The Complete Guide to CrossFit Hero WODs: History, Purpose, and How to Attack Them</h2>
-          <p>Hero WODs are among the most demanding workouts in CrossFit — long, brutal, and deeply meaningful. Learn where they come from, what makes them different from standard benchmarks, and how to approach them with the right strategy whether you're a beginner or an experienced athlete.</p>
-          <div class="blog-card-footer">
-            <span class="read-time">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              8 min read
-            </span>
-            <span class="read-more">Read more →</span>
-          </div>
-        </div>
-      </a>
+<script>
+function filterPosts(category, btn) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
 
-      <!-- POST 2 -->
-      <a href="/blog/best-home-gym-equipment" class="blog-card" data-cat="equipment">
-        <div class="blog-card-banner equipment"></div>
-        <div class="blog-card-body">
-          <div class="blog-card-meta">
-            <span class="blog-tag equipment">Equipment</span>
-            <span class="blog-card-date">April 10, 2026</span>
-          </div>
-          <h2>Best Home Gym Equipment for CrossFit-Style Training (2026 Guide)</h2>
-          <p>You don't need a full box to train like an athlete. We break down the essential gear — from barbells to kettlebells to gymnastics rings — so you can build a capable home gym at any budget.</p>
-          <div class="blog-card-footer">
-            <span class="read-time">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              7 min read
-            </span>
-            <span class="read-more">Read more →</span>
-          </div>
-        </div>
-      </a>
+  document.querySelectorAll('#postGrid .post-card[data-category]').forEach(card => {
+    card.style.display = (category === 'all' || card.dataset.category === category) ? '' : 'none';
+  });
 
-      <!-- POST 3 -->
-      <a href="/blog/how-to-scale-wods" class="blog-card" data-cat="technique">
-        <div class="blog-card-banner technique"></div>
-        <div class="blog-card-body">
-          <div class="blog-card-meta">
-            <span class="blog-tag technique">Technique</span>
-            <span class="blog-card-date">April 10, 2026</span>
-          </div>
-          <h2>How to Scale Any WOD for Your Fitness Level (Without Feeling Like You Cheated)</h2>
-          <p>Scaling isn't quitting — it's smart training. Learn the principles behind effective scaling for weight, volume, and movement substitutions, so every WOD challenges you at exactly the right level.</p>
-          <div class="blog-card-footer">
-            <span class="read-time">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              6 min read
-            </span>
-            <span class="read-more">Read more →</span>
-          </div>
-        </div>
-      </a>
+  // Featured post
+  var feat = document.querySelector('.featured-post[data-category]');
+  if (feat) feat.style.display = (category === 'all' || feat.dataset.category === category) ? '' : 'none';
+}
+</script>
 
-      <!-- POST 4 -->
-      <a href="/blog/why-stretching-matters" class="blog-card" data-cat="recovery">
-        <div class="blog-card-banner recovery"></div>
-        <div class="blog-card-body">
-          <div class="blog-card-meta">
-            <span class="blog-tag recovery">Recovery</span>
-            <span class="blog-card-date">April 11, 2026</span>
-          </div>
-          <h2>Why Stretching Matters More Than You Think</h2>
-          <p>Most athletes treat stretching as optional. Here's why it's quietly limiting your performance, slowing your recovery, and shortening your time in the gym — and how to fix it in just 10 minutes a day.</p>
-          <div class="blog-card-footer">
-            <span class="read-time">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              7 min read
-            </span>
-            <span class="read-more">Read more →</span>
-          </div>
-        </div>
-      </a>
-
-
-      <!-- POST 5 -->
-      <a href="/blog/named-benchmark-wods-guide" class="blog-card" data-cat="training">
-        <div class="blog-card-banner training"></div>
-        <div class="blog-card-body">
-          <div class="blog-card-meta">
-            <span class="blog-tag training">Training</span>
-            <span class="blog-card-date">April 13, 2026</span>
-          </div>
-          <h2>Named Benchmark WODs: A Complete Guide to Fran, Diane, Grace, and More</h2>
-          <p>The benchmark workouts have names, histories, and standards for a reason. Learn what makes each one unique, what they test, and how to approach them whether you're hitting them for the first time or chasing a PR.</p>
-          <div class="blog-card-footer">
-            <span class="read-time">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              8 min read
-            </span>
-            <span class="read-more">Read more →</span>
-          </div>
-        </div>
-      </a>
-
-      <!-- POST 6 -->
-      <a href="/blog/weekly-training-program-home" class="blog-card" data-cat="technique">
-        <div class="blog-card-banner technique"></div>
-        <div class="blog-card-body">
-          <div class="blog-card-meta">
-            <span class="blog-tag technique">Programming</span>
-            <span class="blog-card-date">April 20, 2026</span>
-          </div>
-          <h2>How to Build Your Own Weekly Training Program at Home</h2>
-          <p>Training without a coach doesn't mean training without a plan. Here's a practical framework for structuring your week — balancing strength, conditioning, and recovery — so you make real progress without burning out.</p>
-          <div class="blog-card-footer">
-            <span class="read-time">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              7 min read
-            </span>
-            <span class="read-more">Read more →</span>
-          </div>
-        </div>
-      </a>
-
-    </div><!-- /blog-grid -->
-  </div><!-- /blog-container -->
-</main>
+<script src="/js/nav.js"></script>
+<script src="/js/footer.js"></script>
 </body>
 </html>

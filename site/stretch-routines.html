@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<!-- Sentry Error Monitoring -->
+<script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Stretch Routines — Curated Mobility Programs | HomeWODrx</title>
+<meta name="description" content="Curated stretch and mobility routines for functional fitness athletes. Pre-WOD warm-ups, post-WOD cool downs, targeted hip, shoulder, and morning yoga flows."/>
+<meta property="og:title" content="Stretch Routines — Curated Mobility Programs | HomeWODrx"/>
+<meta property="og:description" content="Follow proven stretch routines built for functional fitness athletes. Pre-WOD warm-ups, post-WOD cool downs, hip openers, shoulder mobility, and more."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://homewodrx.com/stretch-routines"/>
+<meta property="og:image" content="https://homewodrx.com/images/og-default.png"/>
+<link rel="canonical" href="https://homewodrx.com/stretch-routines"/>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Stretch Routines — HomeWODrx",
+  "description": "Curated stretch and mobility routines for functional fitness athletes.",
+  "url": "https://homewodrx.com/stretch-routines",
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://homewodrx.com/" },
+      { "@type": "ListItem", "position": 2, "name": "Stretch Routines", "item": "https://homewodrx.com/stretch-routines" }
+    ]
+  }
+}
+</script>
+<link rel="icon" type="image/x-icon" href="/favicon.ico"/>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/css/style.css"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-HZM475VDN3');</script>
+<!-- Vercel Analytics -->
+<script defer src="/_vercel/insights/script.js"></script>
+<script src="/js/config.js"></script>
+<script src="/js/db.js"></script>
+<script src="/js/nav.js"></script>
+<style>
+/* ── ROUTINES GRID ───────────────────────────────────── */
+.routines-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;}
+@media(max-width:480px){.routines-grid{grid-template-columns:1fr;}}
+
+/* ── ROUTINE CARD ────────────────────────────────────── */
+.routine-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;text-decoration:none;color:var(--text);display:flex;flex-direction:column;transition:box-shadow .18s,border-color .18s,transform .15s;cursor:pointer;}
+.routine-card:hover{box-shadow:var(--shadow-lg);border-color:var(--or);transform:translateY(-2px);}
+.card-header{padding:22px 22px 16px;border-bottom:1px solid var(--border);}
+.card-icon{font-size:2rem;margin-bottom:10px;display:block;}
+.card-name{font-family:var(--font-head);font-size:1.6rem;letter-spacing:.04em;line-height:1.05;color:var(--text);margin-bottom:6px;}
+.card-tagline{font-size:.875rem;color:var(--muted);line-height:1.45;}
+.card-meta{padding:14px 22px;display:flex;flex-wrap:wrap;gap:8px;}
+.meta-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:.75rem;font-weight:700;letter-spacing:.02em;}
+.chip-duration{background:rgba(196,18,18,.08);color:var(--or);border:1px solid rgba(196,18,18,.2);}
+.chip-level{background:rgba(34,197,94,.08);color:#16a34a;border:1px solid rgba(34,197,94,.2);}
+.chip-level.intermediate{background:rgba(249,115,22,.08);color:#ea580c;border:1px solid rgba(249,115,22,.2);}
+.chip-modality{background:rgba(99,102,241,.08);color:#4f46e5;border:1px solid rgba(99,102,241,.2);}
+.card-footer{margin-top:auto;padding:12px 22px 18px;display:flex;align-items:center;justify-content:space-between;}
+.card-steps{font-size:.8rem;color:var(--muted);}
+.card-cta{font-size:.82rem;font-weight:700;color:var(--or);display:flex;align-items:center;gap:4px;}
+.card-cta svg{width:14px;height:14px;transition:transform .15s;}
+.routine-card:hover .card-cta svg{transform:translateX(3px);}
+
+/* ── SECTION LABEL ───────────────────────────────────── */
+.section-label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:14px;}
+
+/* ── ALSO SEE ─────────────────────────────────────────── */
+.also-see{margin-top:48px;padding:24px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);}
+.also-see h3{font-family:var(--font-head);font-size:1.5rem;letter-spacing:.04em;margin-bottom:8px;}
+.also-see p{font-size:.9rem;color:var(--muted);margin-bottom:16px;line-height:1.5;}
+.also-links{display:flex;flex-wrap:wrap;gap:10px;}
+.also-link{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;background:var(--or);color:white;border-radius:8px;text-decoration:none;font-size:.875rem;font-weight:600;transition:background .15s;}
+.also-link:hover{background:var(--or-dark);}
+.also-link-ghost{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border:1.5px solid var(--border);border-radius:8px;text-decoration:none;font-size:.875rem;font-weight:600;color:var(--text);transition:all .15s;}
+.also-link-ghost:hover{border-color:var(--or);color:var(--or);}
+</style>
+</head>
+<body data-nav-init="true" data-active-page="stretch">
+
+
+<div class="page-wrap">
+
+  <!-- BREADCRUMB -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="/">Home</a><span>›</span>
+    <a href="/stretch">Stretch</a><span>›</span>
+    Routines
+  </nav>
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <h1>Stretch Routines</h1>
+    <p>Curated, step-by-step mobility sequences built for functional fitness athletes — from pre-WOD warm-ups to targeted recovery work.</p>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-chip active" data-filter="all">All Routines</button>
+    <button class="filter-chip" data-filter="All Levels">All Levels</button>
+    <button class="filter-chip" data-filter="Intermediate+">Intermediate+</button>
+    <button class="filter-chip" data-filter="Dynamic">Dynamic</button>
+    <button class="filter-chip" data-filter="Static">Static</button>
+    <button class="filter-chip" data-filter="Yoga">Yoga</button>
+    <button class="filter-chip" data-filter="Mixed">Mixed</button>
+  </div>
+
+  <!-- ROUTINES GRID -->
+  <div class="section-label" id="grid-label">5 routines</div>
+  <div class="routines-grid" id="routines-grid"></div>
+
+  <!-- ALSO SEE -->
+  <div class="also-see">
+    <h3>More Stretch Tools</h3>
+    <p>Build a custom routine with the generator, or browse all 50+ individual stretches in the library.</p>
+    <div class="also-links">
+      <a href="/stretch" class="also-link">🎲 Stretch Generator</a>
+      <a href="/stretches/hip-flexor-stretch" class="also-link-ghost">📚 Browse Individual Stretches</a>
+    </div>
+  </div>
+
+</div>
+
+<script src="/js/stretch-routines-db.js"></script>
+<script>
+  // ── Render ──────────────────────────────────────────────────────────────
+  const grid = document.getElementById('routines-grid');
+  const label = document.getElementById('grid-label');
+
+  function levelChipClass(r) {
+    return r.levelLabel === 'Intermediate+' ? 'chip-level intermediate' : 'chip-level';
+  }
+
+  function renderCard(r) {
+    return `
+      <a href="/stretch-routines/${r.slug}" class="routine-card" data-modality="${r.modality}" data-level="${r.levelLabel}">
+        <div class="card-header">
+          <span class="card-icon">${r.icon}</span>
+          <div class="card-name">${r.name}</div>
+          <div class="card-tagline">${r.tagline}</div>
+        </div>
+        <div class="card-meta">
+          <span class="meta-chip chip-duration">⏱ ${r.duration} min</span>
+          <span class="meta-chip ${levelChipClass(r)}">● ${r.levelLabel}</span>
+          <span class="meta-chip chip-modality">${r.modalityIcon} ${r.modality}</span>
+        </div>
+        <div class="card-footer">
+          <span class="card-steps">${r.stretches.length} stretches</span>
+          <span class="card-cta">View Routine
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </div>
+      </a>`;
+  }
+
+  function render(filter) {
+    let routines = STRETCH_ROUTINES;
+    if (filter && filter !== 'all') {
+      routines = STRETCH_ROUTINES.filter(r =>
+        r.levelLabel === filter || r.modality === filter
+      );
+    }
+    grid.innerHTML = routines.length
+      ? routines.map(renderCard).join('')
+      : '<p style="color:var(--muted);grid-column:1/-1;padding:20px 0;">No routines match this filter.</p>';
+    label.textContent = routines.length + (routines.length === 1 ? ' routine' : ' routines');
+  }
+
+  render('all');
+
+  // ── Filter chips ─────────────────────────────────────────────────────────
+  document.getElementById('filter-bar').addEventListener('click', function(e) {
+    const chip = e.target.closest('.filter-chip');
+    if (!chip) return;
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    render(chip.dataset.filter);
+  });
+</script>
+<script src="/js/footer.js"></script>
+</body>
+</html>

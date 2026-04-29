@@ -5,753 +5,573 @@
   <!-- Sentry Error Monitoring -->
   <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>WOD Timer — AMRAP, EMOM, Tabata & For Time | HomeWODrx</title>
-  <meta name="description" content="Free WOD timer for AMRAP, EMOM, Tabata, and For Time workouts. Features 3-2-1 countdown, audio cues, and screen wake lock. Built for CrossFit and home gym athletes.">
-  <link rel="canonical" href="https://homewodrx.com/timer.html">
+
+  <title>WOD Timer — AMRAP, For Time, EMOM &amp; Tabata | HomeWodRX</title>
+  <meta name="description" content="Free WOD timer for AMRAP, For Time, EMOM, and Tabata workouts. Countdown, progress tracking, and whiteboard — all in one tool for home athletes.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://homewodrx.com/timer">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="HomeWodRX">
+  <meta property="og:title" content="WOD Timer — AMRAP, For Time, EMOM &amp; Tabata | HomeWodRX">
+  <meta property="og:description" content="Free WOD timer for every workout style. Countdown, whiteboard display, and progress tracking for home athletes.">
+  <meta property="og:url" content="https://homewodrx.com/timer">
+  <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
+
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-HZM475VDN3');
+  </script>
+
+  <!-- Vercel Analytics -->
+  <script defer src="/_vercel/insights/script.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Rubik:wght@700;800;900&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="/css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="/js/config.js"></script>
-  <script src="/js/db.js"></script>
-  <script src="/js/benchmarks.js"></script>
   <script src="/js/nav.js"></script>
 
   <style>
-  /* ── WOD TIMER PAGE STYLES ─────────────────────────────────────────────── */
+  /* ── Timer-specific tokens ────────────────────────────────────────────── */
+  :root {
+    --dk-bg:   #0f0f14;
+    --dk-card: #1a1a22;
+    --dk-bdr:  #2a2a35;
+    --dk-tx:   #f0f0f0;
+    --dk-mu:   #888;
+    --or-dim:  rgba(196,18,18,0.12);
+    --or-bdr:  rgba(196,18,18,0.30);
+  }
 
+  /* ── Timer page layout ──────────────────────────────────────────────── */
   .timer-main {
-    max-width: 640px;
+    max-width: 720px;
     margin: 0 auto;
-    padding: 0 16px 60px;
-    min-height: calc(100vh - 60px);
+    padding: 0 20px 100px;
+    min-height: calc(100vh - var(--nav-h));
     display: flex;
     flex-direction: column;
   }
 
-  /* ── Screen switching ── */
+  /* ── Screen switching ──────────────────────────────────────────────── */
   .t-screen { display: none; flex-direction: column; flex: 1; animation: tFadeIn 0.2s ease; }
   .t-screen.active { display: flex; }
-  @keyframes tFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @keyframes tFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; } }
 
-  /* ── MODE SELECT ── */
-  .t-header {
-    text-align: center;
-    padding: 28px 0 20px;
+  /* ══════════════════════════════════════════════════════════════════
+     SCREEN 1 · MODE SELECT  (light)
+  ══════════════════════════════════════════════════════════════════ */
+  .t-header { text-align: center; padding: 36px 0 28px; }
+  .t-header h1 {
+    font-family: var(--font-head);
+    font-size: 3rem; letter-spacing: 0.04em; color: var(--text); line-height: 1; margin-bottom: 8px;
   }
-  .t-header h1 { font-size: 1.9rem; margin-bottom: 6px; letter-spacing: -0.03em; }
-  .t-header p { color: var(--mu); font-size: 0.9rem; }
+  .t-header p { color: var(--muted); font-size: 0.9rem; }
 
-  .mode-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
+  .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .mode-card {
-    background: var(--card);
-    border: 2px solid var(--bd);
-    border-radius: 14px;
-    padding: 22px 16px 18px;
-    cursor: pointer;
-    transition: border-color 0.15s, background 0.15s, transform 0.1s;
-    text-align: center;
-    user-select: none;
-    -webkit-user-select: none;
-    -webkit-tap-highlight-color: transparent;
+    background: var(--card); border: 2px solid var(--border); border-radius: 16px;
+    padding: 26px 20px 22px; cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+    text-align: center; user-select: none; -webkit-tap-highlight-color: transparent;
   }
-  .mode-card:hover  { border-color: var(--or); background: rgba(196,18,18,0.06); }
+  .mode-card:hover { border-color: var(--or); box-shadow: 0 0 0 4px var(--or-dim); }
   .mode-card:active { transform: scale(0.97); }
-  .mode-icon  { font-size: 2rem; margin-bottom: 8px; line-height: 1; display: block; }
-  .mode-name  { font-size: 1.05rem; font-weight: 700; color: var(--tx); margin-bottom: 4px; }
-  .mode-desc  { font-size: 0.75rem; color: var(--mu); line-height: 1.45; }
 
-  /* ── CONFIG SCREEN ── */
-  .t-config-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 18px 0 20px;
+  .mode-icon-wrap {
+    width: 56px; height: 56px; background: var(--or-dim); border-radius: 14px;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;
   }
+  .mode-icon-wrap svg { width: 26px; height: 26px; stroke: var(--or); }
+  .mode-name  { font-family: var(--font-head); font-size: 1.5rem; color: var(--text); letter-spacing: 0.04em; margin-bottom: 6px; }
+  .mode-desc  { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+
+  /* ══════════════════════════════════════════════════════════════════
+     SCREEN 2 · CONFIG  (light)
+  ══════════════════════════════════════════════════════════════════ */
+  .t-config-header { display: flex; align-items: center; gap: 10px; padding: 22px 0 20px; }
   .t-back-btn {
-    background: none;
-    border: 1px solid var(--bd);
-    border-radius: 8px;
-    color: var(--tx);
-    cursor: pointer;
-    padding: 7px 12px;
-    font-size: 0.82rem;
-    transition: border-color 0.15s, color 0.15s;
-    white-space: nowrap;
+    background: none; border: 1px solid var(--border); border-radius: 8px;
+    color: var(--text); cursor: pointer; padding: 8px 14px; font-size: 0.82rem; font-weight: 600;
+    font-family: var(--font-body); transition: border-color 0.15s, color 0.15s; white-space: nowrap;
   }
   .t-back-btn:hover { border-color: var(--or); color: var(--or); }
-  .t-config-title { font-size: 1rem; font-weight: 600; color: var(--mu); flex: 1; }
+  .t-config-title { font-size: 0.9rem; font-weight: 600; color: var(--muted); flex: 1; }
   .t-mode-badge {
-    font-size: 0.78rem;
-    background: rgba(196,18,18,0.15);
-    color: var(--or);
-    border: 1px solid rgba(196,18,18,0.35);
-    border-radius: 6px;
-    padding: 3px 10px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    white-space: nowrap;
+    font-size: 0.75rem; background: var(--or-dim); color: var(--or);
+    border: 1px solid var(--or-bdr); border-radius: 6px; padding: 4px 12px;
+    font-weight: 700; letter-spacing: 0.08em; white-space: nowrap; font-family: var(--font-body);
   }
 
+  /* WOD Banner */
+  .cfg-wod-banner {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px; margin-bottom: 14px;
+  }
+  .cfg-wod-header { display: flex; align-items: flex-start; gap: 12px; }
+  .cfg-wod-icon {
+    width: 38px; height: 38px; background: var(--or-dim); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;
+  }
+  .cfg-wod-title { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+  .cfg-wod-meta  { font-size: 0.78rem; color: var(--muted); }
+  .cfg-movements { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .cfg-move-row {
+    display: flex; align-items: baseline; gap: 10px;
+    padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem;
+  }
+  .cfg-move-row:last-child { border-bottom: none; }
+  .cfg-move-reps { font-weight: 700; color: var(--or); min-width: 36px; }
+  .cfg-move-name { color: var(--text); }
+
+  /* Config cards */
   .config-card {
-    background: var(--card);
-    border: 1px solid var(--bd);
-    border-radius: 14px;
-    padding: 18px 18px 14px;
-    margin-bottom: 12px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px 20px 16px; margin-bottom: 12px;
   }
   .config-label {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.09em;
-    color: var(--mu);
-    font-weight: 600;
-    margin-bottom: 10px;
+    font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--muted); font-weight: 700; margin-bottom: 12px;
   }
+
+  /* Stepper */
   .stepper {
-    display: flex;
-    align-items: stretch;
-    background: var(--dk2, #16161F);
-    border-radius: 10px;
-    overflow: hidden;
+    display: flex; align-items: stretch;
+    background: var(--bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
   }
   .stepper-btn {
-    background: none;
-    border: none;
-    color: var(--tx);
-    cursor: pointer;
-    font-size: 1.6rem;
-    font-weight: 300;
-    padding: 10px 22px;
-    transition: background 0.1s, color 0.1s;
-    line-height: 1;
-    flex-shrink: 0;
-    -webkit-tap-highlight-color: transparent;
+    background: none; border: none; color: var(--text); cursor: pointer;
+    font-size: 1.8rem; font-weight: 300; padding: 8px 24px;
+    transition: background 0.1s, color 0.1s; line-height: 1;
+    flex-shrink: 0; -webkit-tap-highlight-color: transparent;
   }
-  .stepper-btn:hover  { background: rgba(196,18,18,0.12); color: var(--or); }
-  .stepper-btn:active { background: rgba(196,18,18,0.22); }
+  .stepper-btn:hover  { background: var(--or-dim); color: var(--or); }
+  .stepper-btn:active { background: rgba(196,18,18,0.2); }
   .stepper-val {
-    flex: 1;
-    text-align: center;
-    padding: 10px 0;
+    flex: 1; text-align: center; padding: 10px 0;
+    border-left: 1px solid var(--border); border-right: 1px solid var(--border);
   }
-  .stepper-num {
-    display: block;
-    font-size: 2.2rem;
-    font-weight: 800;
-    font-variant-numeric: tabular-nums;
-    color: var(--tx);
-    line-height: 1;
-  }
-  .stepper-unit {
-    display: block;
-    font-size: 0.68rem;
-    color: var(--mu);
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    margin-top: 3px;
-  }
+  .stepper-num  { display: block; font-family: var(--font-head); font-size: 3rem; color: var(--text); line-height: 1; letter-spacing: 0.02em; }
+  .stepper-unit { display: block; font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
 
-  .config-presets {
-    display: flex;
-    gap: 7px;
-    margin-top: 10px;
-    flex-wrap: wrap;
-  }
+  .config-presets { display: flex; gap: 7px; margin-top: 12px; flex-wrap: wrap; }
   .preset-btn {
-    background: var(--dk3, #13131A);
-    border: 1px solid var(--bd);
-    border-radius: 6px;
-    color: var(--mu);
-    cursor: pointer;
-    font-size: 0.78rem;
-    padding: 5px 12px;
-    transition: border-color 0.15s, color 0.15s;
+    background: var(--bg); border: 1px solid var(--border); border-radius: 20px;
+    color: var(--muted); cursor: pointer; font-size: 0.78rem; font-family: var(--font-body);
+    font-weight: 600; padding: 5px 14px;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
     -webkit-tap-highlight-color: transparent;
   }
-  .preset-btn:hover { border-color: var(--or); color: var(--or); }
+  .preset-btn:hover { border-color: var(--or); color: var(--or); background: var(--or-dim); }
 
   .t-start-btn {
-    display: block;
-    width: 100%;
-    padding: 15px;
-    background: var(--or);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 1.05rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    cursor: pointer;
-    margin-top: 4px;
-    transition: background 0.15s, transform 0.1s;
-    text-transform: uppercase;
+    display: block; width: 100%; padding: 17px;
+    background: var(--or); color: white; border: none; border-radius: 12px;
+    font-family: var(--font-head); font-size: 1.4rem; letter-spacing: 0.1em;
+    cursor: pointer; margin-top: 6px; transition: background 0.15s, transform 0.1s;
   }
-  .t-start-btn:hover  { background: var(--orl); }
+  .t-start-btn:hover  { background: var(--or-dark); }
   .t-start-btn:active { transform: scale(0.98); }
 
-  /* ── COUNTDOWN SCREEN ── */
+  /* ══════════════════════════════════════════════════════════════════
+     SCREEN 3 · COUNTDOWN  (dark)
+  ══════════════════════════════════════════════════════════════════ */
+  #s-countdown {
+    background: var(--dk-bg); margin: 0 -20px; padding: 0 20px;
+    min-height: calc(100vh - var(--nav-h));
+  }
   .countdown-wrap {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 20px 0;
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center; padding: 40px 0;
   }
   .countdown-label {
-    font-size: 0.82rem;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--mu);
-    margin-bottom: 16px;
+    font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.28em;
+    color: var(--dk-mu); margin-bottom: 20px; font-weight: 600;
   }
   .countdown-number {
-    font-size: min(42vw, 240px);
-    font-weight: 900;
-    font-variant-numeric: tabular-nums;
-    color: var(--tx);
-    line-height: 0.85;
-    transition: color 0.2s;
-    user-select: none;
+    font-family: 'Rubik', sans-serif;
+    font-size: clamp(120px, 40vw, 280px);
+    color: var(--dk-tx); line-height: 0.85;
+    user-select: none; transition: color 0.2s; letter-spacing: -0.02em;
   }
-  .countdown-number.is-go {
-    font-size: min(22vw, 120px);
-    color: var(--or);
-  }
-  .countdown-sub {
-    margin-top: 24px;
-    color: var(--mu);
-    font-size: 0.85rem;
-    letter-spacing: 0.03em;
-  }
+  .countdown-number.is-go { font-size: min(28vw, 140px); color: var(--or); }
+  .countdown-sub { margin-top: 28px; color: var(--dk-mu); font-size: 0.85rem; letter-spacing: 0.03em; }
 
-  /* ── ACTIVE TIMER SCREEN ── */
+  /* ══════════════════════════════════════════════════════════════════
+     SCREEN 4 · ACTIVE TIMER  (dark)
+  ══════════════════════════════════════════════════════════════════ */
+  #s-active {
+    background: var(--dk-bg); margin: 0 -20px; padding: 0 20px;
+    min-height: calc(100vh - var(--nav-h));
+  }
   .active-topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 0 4px;
+    display: flex; align-items: center; justify-content: space-between; padding: 16px 0 6px;
   }
   .active-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .active-mode-badge {
-    background: rgba(196,18,18,0.15);
-    color: var(--or);
-    border: 1px solid rgba(196,18,18,0.35);
-    border-radius: 6px;
-    padding: 3px 10px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
+    background: var(--or-dim); color: var(--or); border: 1px solid var(--or-bdr);
+    border-radius: 6px; padding: 4px 12px; font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.08em; font-family: var(--font-body);
   }
-  .active-round-info { font-size: 0.82rem; color: var(--mu); }
-  .active-right { display: flex; gap: 6px; }
+  .active-round-info { font-size: 0.82rem; color: var(--dk-mu); }
+  .active-right { display: flex; gap: 8px; }
 
   .icon-btn {
-    background: var(--card);
-    border: 1px solid var(--bd);
-    border-radius: 8px;
-    color: var(--mu);
-    cursor: pointer;
-    padding: 8px;
+    background: var(--dk-card); border: 1px solid var(--dk-bdr);
+    border-radius: 10px; color: var(--dk-mu); cursor: pointer; padding: 9px;
     transition: border-color 0.15s, color 0.15s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     -webkit-tap-highlight-color: transparent;
   }
   .icon-btn:hover { border-color: var(--or); color: var(--or); }
-  .icon-btn.muted  { color: var(--danger); border-color: var(--danger); }
+  .icon-btn.is-muted { color: var(--or); border-color: var(--or-bdr); }
+  .icon-btn svg { width: 17px; height: 17px; }
 
-  /* The big clock */
+  /* Big clock */
   .clock-wrap {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    padding: 8px 0;
-    min-height: 200px;
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 0; padding: 10px 0;
   }
   .timer-clock {
-    font-size: min(30vw, 168px);
-    font-weight: 900;
-    font-variant-numeric: tabular-nums;
-    font-family: 'SF Mono', 'Courier New', ui-monospace, monospace;
-    letter-spacing: -0.03em;
-    line-height: 0.9;
-    color: var(--tx);
-    transition: color 0.25s;
-    user-select: none;
+    font-family: 'Rubik', sans-serif;
+    font-size: clamp(72px, 22vw, 160px); font-weight: 700;
+    font-variant-numeric: tabular-nums; letter-spacing: 0.02em; line-height: 0.95;
+    color: var(--dk-tx); user-select: none; transition: color 0.25s;
   }
   .timer-clock.clr-warn   { color: #F59E0B; }
   .timer-clock.clr-danger { color: #EF4444; }
-  .timer-clock.clr-rest   { color: #22C55E; }
+  .timer-clock.paused { animation: pausePulse 1.6s ease-in-out infinite; }
+  @keyframes pausePulse { 0%,100% { opacity:1; } 50% { opacity:0.35; } }
 
   .phase-label {
-    margin-top: 14px;
-    font-size: 0.9rem;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--mu);
-    transition: color 0.25s;
+    margin-top: 16px; font-size: 0.85rem; font-weight: 700;
+    letter-spacing: 0.22em; text-transform: uppercase; color: var(--dk-mu); transition: color 0.25s;
   }
   .phase-label.lbl-work { color: var(--or); }
   .phase-label.lbl-rest { color: #22C55E; }
-  .phase-label.lbl-up   { color: var(--tx); }
 
-  /* Round dots (Tabata) */
+  /* Tabata round dots */
   .round-dots {
-    display: flex;
-    gap: 7px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 16px;
-    max-width: 340px;
+    display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+    margin-top: 18px; max-width: 380px;
   }
   .r-dot {
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-    background: var(--bd);
-    transition: background 0.2s;
-    flex-shrink: 0;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: rgba(255,255,255,0.15); transition: background 0.2s;
   }
   .r-dot.done    { background: var(--or); }
   .r-dot.current { background: #F59E0B; }
 
-  /* Progress bar (EMOM / Tabata) */
+  /* Progress bar */
   .phase-bar-wrap {
-    width: 100%;
-    max-width: 380px;
-    margin-top: 18px;
-    height: 7px;
-    background: var(--bd);
-    border-radius: 4px;
-    overflow: hidden;
+    width: 100%; max-width: 440px; margin-top: 20px;
+    height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;
   }
-  .phase-bar {
-    height: 100%;
-    border-radius: 4px;
-    background: var(--or);
-    transition: width 0.12s linear, background 0.25s;
-    width: 0%;
-  }
+  .phase-bar { height: 100%; border-radius: 4px; background: var(--or); transition: width 0.12s linear; }
   .phase-bar.rest { background: #22C55E; }
 
-  /* Paused overlay pulse */
-  .timer-clock.paused { animation: pausePulse 1.6s ease-in-out infinite; }
-  @keyframes pausePulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-
-  /* Bottom buttons */
-  .timer-actions {
-    display: flex;
-    gap: 10px;
-    padding: 12px 0 20px;
+  /* WOD Whiteboard */
+  .wod-whiteboard {
+    background: var(--dk-card); border: 1px solid var(--dk-bdr);
+    border-radius: 14px; margin-bottom: 10px; overflow: hidden; flex-shrink: 0;
   }
-  .t-action-btn {
-    flex: 1;
-    padding: 14px 10px;
-    border-radius: 12px;
-    border: none;
-    font-size: 0.95rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: opacity 0.15s, transform 0.1s, background 0.2s;
-    letter-spacing: 0.02em;
+  .wb-header {
+    display: flex; align-items: center; justify-content: space-between; padding: 10px 16px;
+    background: rgba(196,18,18,0.08); border-bottom: 1px solid var(--dk-bdr);
+  }
+  .wb-title-row { display: flex; align-items: center; gap: 8px; flex: 1; cursor: pointer; user-select: none; }
+  .wb-name { font-size: 0.88rem; font-weight: 700; color: var(--dk-tx); }
+  .wb-format-badge {
+    font-size: 0.65rem; background: var(--or-dim); color: var(--or);
+    border: 1px solid var(--or-bdr); border-radius: 4px; padding: 2px 8px;
+    font-weight: 700; letter-spacing: 0.06em; font-family: var(--font-body);
+  }
+  .wb-chevron { color: var(--dk-mu); font-size: 0.75rem; margin-left: 4px; }
+  .wb-close-btn {
+    background: none; border: none; color: var(--dk-mu); font-size: 1.2rem;
+    line-height: 1; padding: 4px 8px; cursor: pointer; border-radius: 6px;
+    flex-shrink: 0; transition: color 0.15s, background 0.15s;
     -webkit-tap-highlight-color: transparent;
   }
+  .wb-close-btn:hover { color: var(--dk-tx); background: rgba(255,255,255,0.08); }
+  .wb-reopen-btn {
+    display: flex; align-items: center; gap: 7px;
+    background: rgba(255,255,255,0.06); border: 1px solid var(--dk-bdr);
+    border-radius: 8px; color: var(--dk-mu); font-size: 0.78rem;
+    font-family: var(--font-body); font-weight: 600; letter-spacing: 0.04em;
+    padding: 8px 14px; cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .wb-reopen-btn:hover { background: rgba(255,255,255,0.1); color: var(--dk-tx); border-color: rgba(255,255,255,0.2); }
+  .wb-body { padding: 10px 16px 12px; }
+  .wb-move-row {
+    display: flex; align-items: baseline; gap: 12px;
+    padding: 7px 0; border-bottom: 1px solid var(--dk-bdr);
+  }
+  .wb-move-row:last-child { border-bottom: none; }
+  .wb-reps     { font-weight: 800; color: var(--or); font-size: 1rem; min-width: 36px; }
+  .wb-movement { font-size: 0.95rem; color: var(--dk-tx); font-weight: 500; }
+
+  /* Bottom action buttons */
+  .timer-actions { display: flex; gap: 10px; padding: 12px 0 24px; }
+  .t-action-btn {
+    flex: 1; padding: 15px 10px; border-radius: 12px; border: none;
+    font-family: var(--font-body); font-size: 0.95rem; font-weight: 700;
+    cursor: pointer; transition: opacity 0.15s, transform 0.1s;
+    letter-spacing: 0.02em; -webkit-tap-highlight-color: transparent;
+  }
   .t-action-btn:active { transform: scale(0.96); }
-  .btn-pause {
-    background: var(--or);
-    color: #fff;
-  }
+  .btn-pause      { background: var(--or); color: #fff; }
   .btn-pause.is-paused { background: #22C55E; }
-  .btn-done-early {
-    background: #22C55E;
-    color: #fff;
-    flex: 0.7;
-  }
-  .btn-reset {
-    background: var(--card);
-    border: 1px solid var(--bd);
-    color: var(--tx);
-    flex: 0.65;
-  }
+  .btn-done-early { background: #22C55E; color: #fff; flex: 0.75; }
+  .btn-reset      { background: var(--dk-card); border: 1px solid var(--dk-bdr); color: var(--dk-tx); flex: 0.65; }
 
-  /* ── DONE SCREEN ── */
+  /* Active screen body */
+  .active-body { display: flex; flex-direction: column; flex: 1; }
+  .active-col-right { display: flex; flex-direction: column; }
+
+  /* ══════════════════════════════════════════════════════════════════
+     SCREEN 5 · DONE  (light)
+  ══════════════════════════════════════════════════════════════════ */
   .done-wrap {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    gap: 12px;
-    padding: 24px 0;
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; text-align: center; gap: 14px; padding: 28px 0 40px;
   }
-  .done-icon  { font-size: 3.5rem; line-height: 1; }
-  .done-title { font-size: 2.4rem; font-weight: 900; color: var(--or); letter-spacing: -0.03em; }
-  .done-sub   { color: var(--mu); font-size: 0.88rem; letter-spacing: 0.04em; }
-  .done-clock {
-    font-size: min(22vw, 100px);
-    font-weight: 900;
-    font-variant-numeric: tabular-nums;
-    font-family: 'SF Mono', 'Courier New', ui-monospace, monospace;
-    color: var(--tx);
-    line-height: 1.05;
-    letter-spacing: -0.03em;
+  .done-check {
+    width: 68px; height: 68px; background: var(--or); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
   }
-  .done-meta  { color: var(--mu); font-size: 0.8rem; }
-
-  /* Editable time on done screen */
+  .done-check svg { width: 34px; height: 34px; stroke: #fff; stroke-width: 2.5; }
+  .done-title { font-family: var(--font-head); font-size: 3.2rem; color: var(--or); letter-spacing: 0.06em; line-height: 1; }
+  .done-sub   { color: var(--muted); font-size: 0.88rem; letter-spacing: 0.04em; }
   .done-time-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+    padding: 20px 40px; width: 100%; max-width: 360px;
   }
+  .done-clock {
+    font-family: 'Rubik', sans-serif; font-weight: 900;
+    font-size: min(20vw, 88px); font-variant-numeric: tabular-nums;
+    color: var(--text); line-height: 1.05; letter-spacing: -0.03em;
+  }
+  .done-clock-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 700; }
   .done-edit-btn {
-    background: none;
-    border: 1px solid var(--bd);
-    border-radius: 6px;
-    color: var(--mu);
-    cursor: pointer;
-    font-size: 0.75rem;
-    padding: 4px 12px;
-    transition: border-color 0.15s, color 0.15s;
-    letter-spacing: 0.04em;
+    background: none; border: 1px solid var(--border); border-radius: 6px;
+    color: var(--muted); cursor: pointer; font-size: 0.75rem;
+    font-family: var(--font-body); padding: 5px 14px;
+    transition: border-color 0.15s, color 0.15s; letter-spacing: 0.04em; margin-top: 2px;
   }
   .done-edit-btn:hover { border-color: var(--or); color: var(--or); }
 
-  /* Inline time editor */
-  .done-time-editor {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-  }
+  /* Time editor */
+  .done-time-editor { display: none; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
   .done-time-editor.visible { display: flex; }
-  .time-editor-fields {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .time-field-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
-  .time-field-label {
-    font-size: 0.68rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--mu);
-  }
+  .time-editor-fields { display: flex; align-items: center; gap: 8px; }
+  .time-field-wrap { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+  .time-field-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; }
   .time-field-stepper {
-    display: flex;
-    align-items: stretch;
-    background: var(--dk2, #16161F);
-    border-radius: 8px;
-    overflow: hidden;
+    display: flex; align-items: stretch;
+    background: var(--bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
   }
   .time-field-btn {
-    background: none;
-    border: none;
-    color: var(--tx);
-    cursor: pointer;
-    font-size: 1.2rem;
-    font-weight: 300;
-    padding: 8px 14px;
-    transition: background 0.1s, color 0.1s;
-    line-height: 1;
-    -webkit-tap-highlight-color: transparent;
+    background: none; border: none; color: var(--text); cursor: pointer;
+    font-size: 1.3rem; font-weight: 300; padding: 8px 14px;
+    transition: background 0.1s; -webkit-tap-highlight-color: transparent;
   }
-  .time-field-btn:hover { background: rgba(196,18,18,0.12); color: var(--or); }
+  .time-field-btn:hover { background: var(--or-dim); color: var(--or); }
   .time-field-val {
-    font-size: 1.8rem;
-    font-weight: 800;
-    font-variant-numeric: tabular-nums;
-    font-family: 'SF Mono', 'Courier New', ui-monospace, monospace;
-    color: var(--tx);
-    padding: 8px 4px;
-    min-width: 52px;
-    text-align: center;
-    line-height: 1;
+    font-size: 1.6rem; font-weight: 800; font-variant-numeric: tabular-nums;
+    font-family: 'SF Mono', monospace; color: var(--text); padding: 8px 4px;
+    min-width: 48px; text-align: center;
+    border-left: 1px solid var(--border); border-right: 1px solid var(--border);
   }
-  .time-sep {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--mu);
-    line-height: 1;
-    padding-top: 8px;
-  }
+  .time-sep { font-size: 1.6rem; font-weight: 700; color: var(--muted); }
   .time-editor-confirm {
-    background: var(--or);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 9px 24px;
-    font-size: 0.88rem;
-    font-weight: 700;
-    cursor: pointer;
-    letter-spacing: 0.03em;
-    transition: background 0.15s;
+    background: var(--or); color: #fff; border: none; border-radius: 8px;
+    padding: 10px 28px; font-size: 0.88rem; font-weight: 700;
+    font-family: var(--font-body); cursor: pointer; letter-spacing: 0.04em; transition: background 0.15s;
   }
-  .time-editor-confirm:hover { background: var(--orl); }
-  .time-editor-note {
-    font-size: 0.73rem;
-    color: var(--mu);
-    text-align: center;
-    line-height: 1.4;
-  }
+  .time-editor-confirm:hover { background: var(--or-dark); }
+  .time-editor-note { font-size: 0.73rem; color: var(--muted); text-align: center; line-height: 1.5; max-width: 280px; }
 
-  .done-actions {
-    display: flex;
-    gap: 10px;
-    width: 100%;
-    max-width: 400px;
-    margin-top: 12px;
-  }
-  .done-actions .t-action-btn { padding: 14px 20px; }
-  .btn-again { background: var(--or);  color: #fff; }
-  .btn-new   { background: var(--card); border: 1px solid var(--bd); color: var(--tx); }
+  .done-meta { color: var(--muted); font-size: 0.8rem; }
+
   .btn-log-result {
-    display: none;
-    width: 100%;
-    max-width: 400px;
-    padding: 14px;
-    background: var(--card);
-    border: 1px solid var(--bd);
-    border-radius: 12px;
-    color: var(--tx);
-    font-size: 0.95rem;
-    font-weight: 700;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
-    letter-spacing: 0.02em;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; max-width: 360px; padding: 15px;
+    background: var(--or); border: none; border-radius: 12px; color: #fff;
+    font-size: 0.95rem; font-weight: 700; font-family: var(--font-body);
+    text-align: center; text-decoration: none; cursor: pointer;
+    transition: background 0.15s; letter-spacing: 0.03em;
   }
-  .btn-log-result:hover { border-color: var(--or); background: rgba(196,18,18,0.06); }
+  .btn-log-result:hover { background: var(--or-dark); }
+  .btn-log-result svg { width: 16px; height: 16px; stroke: #fff; flex-shrink: 0; }
 
-  /* ── WOD Whiteboard ─────────────────────────────────────────────────────── */
-  .wod-whiteboard {
-    background: var(--card);
-    border: 1px solid var(--bd);
-    border-radius: 12px;
-    margin-bottom: 10px;
-    overflow: hidden;
-    flex-shrink: 0;
+  .done-actions { display: flex; gap: 10px; width: 100%; max-width: 360px; }
+  .btn-again, .btn-new {
+    flex: 1; padding: 13px; background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; color: var(--text); font-size: 0.88rem; font-weight: 700;
+    font-family: var(--font-body); cursor: pointer; transition: border-color 0.15s;
   }
-  .wb-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 9px 14px;
-    background: rgba(196,18,18,0.07);
-    border-bottom: 1px solid var(--bd);
-    cursor: pointer;
-    user-select: none;
-    -webkit-user-select: none;
-  }
-  .wb-title-row { display: flex; align-items: center; gap: 8px; }
-  .wb-icon { font-size: 0.85rem; }
-  .wb-name { font-size: 0.88rem; font-weight: 700; color: var(--tx); }
-  .wb-format-badge {
-    font-size: 0.68rem;
-    background: rgba(196,18,18,0.15);
-    color: var(--or);
-    border: 1px solid rgba(196,18,18,0.3);
-    border-radius: 4px;
-    padding: 1px 7px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-  }
-  .wb-chevron {
-    font-size: 0.65rem;
-    color: var(--mu);
-    transition: transform 0.2s;
-    flex-shrink: 0;
-  }
-  .wb-chevron.collapsed { transform: rotate(-90deg); }
-  .wb-body {
-    padding: 8px 14px 12px;
-    transition: max-height 0.25s ease, padding 0.25s, opacity 0.2s;
-  }
-  .wb-body.hidden { max-height: 0 !important; padding: 0 14px; overflow: hidden; opacity: 0; }
+  .btn-again:hover, .btn-new:hover { border-color: var(--or); color: var(--or); }
 
-  /* Movement rows — readable from across a home gym */
-  .wb-movement {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 7px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
-  .wb-movement:last-child { border-bottom: none; }
-  .wb-reps {
-    font-weight: 800;
-    color: var(--or);
-    font-size: 1rem;
-    min-width: 56px;
-    font-variant-numeric: tabular-nums;
-    flex-shrink: 0;
-    letter-spacing: -0.01em;
-  }
-  .wb-move {
-    color: var(--tx);
-    flex: 1;
-    font-size: 1.05rem;
-    font-weight: 600;
-  }
-  .wb-rx {
-    font-size: 0.78rem;
-    color: var(--mu);
-    white-space: nowrap;
-    flex-shrink: 0;
+  /* ── Phone landscape: auto-collapse whiteboard ───────────────────────── */
+  @media (orientation: landscape) and (max-height: 500px) {
+    #s-active { padding-top: 0; }
+    .active-topbar { padding: 8px 0 4px; }
+    #s-active #wb-body { display: none; }
+    #s-active .wb-chevron::after {
+      content: ' tap to expand'; font-size: 0.62rem; color: var(--dk-mu);
+      font-family: var(--font-body); font-weight: 400; letter-spacing: 0.02em;
+    }
+    .timer-clock { font-size: clamp(80px, 38vh, 160px); }
+    .clock-wrap  { min-height: 0; padding: 6px 0; }
+    .phase-label { margin-top: 8px; }
+    .timer-actions { padding: 8px 0 12px; }
+    .t-action-btn { padding: 11px 10px; font-size: 0.88rem; }
   }
 
-  /* Shrink clock when whiteboard is visible */
-  #s-active.has-wb .clock-wrap { min-height: 0; }
-  #s-active.has-wb .timer-clock { font-size: min(20vw, 110px); }
+  /* ── Tablet landscape: two-column layout ────────────────────────────── */
+  @media (min-width: 720px) and (orientation: landscape) {
+    .timer-main { height: calc(100vh - var(--nav-h)); min-height: unset; }
+    .active-body { flex-direction: row; gap: 24px; align-items: stretch; min-height: 0; }
+    .active-body .clock-wrap { flex: 1; justify-content: center; min-height: 0; padding: 0; }
+    .active-col-right { width: 300px; flex-shrink: 0; align-self: stretch; justify-content: center; gap: 24px; padding-bottom: 0; }
+    #s-active .wb-body { max-height: calc(100vh - 220px); overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--dk-bdr) transparent; }
+    .active-col-right .timer-actions { justify-content: center; gap: 12px; }
+    .active-col-right .t-action-btn  { flex: none; min-width: 110px; }
+    .timer-clock { font-size: clamp(80px, 20vw, 180px); }
+  }
 
-  /* ── Config WOD banner ── */
-  .cfg-wod-banner {
-    background: rgba(196,18,18,0.06);
-    border: 1px solid rgba(196,18,18,0.25);
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin-bottom: 14px;
+  /* ── Mobile ──────────────────────────────────────────────────────────── */
+  @media (max-width: 480px) {
+    .mode-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .mode-card { padding: 18px 12px 16px; }
+    .mode-icon-wrap { width: 46px; height: 46px; border-radius: 10px; }
+    .mode-icon-wrap svg { width: 20px; height: 20px; }
+    .mode-name  { font-size: 1.25rem; }
+    .done-time-wrap { padding: 16px 24px; }
   }
-  .cfg-wod-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-  .cfg-wod-icon { font-size: 1.2rem; flex-shrink: 0; }
-  .cfg-wod-info { flex: 1; min-width: 0; }
-  .cfg-wod-title {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--tx);
-    margin-bottom: 1px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .cfg-wod-meta { font-size: 0.75rem; color: var(--mu); }
-
-  /* Movements list on config screen */
-  .cfg-movements { display: flex; flex-direction: column; gap: 0; }
-  .cfg-move-row {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    padding: 6px 0;
-    border-top: 1px solid rgba(255,255,255,0.05);
-    font-size: 0.9rem;
-  }
-  .cfg-move-reps { font-weight: 700; color: var(--or); font-size: 0.85rem; min-width: 60px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
-  .cfg-move-name { color: var(--tx); flex: 1; }
-  .cfg-move-rx   { font-size: 0.75rem; color: var(--mu); white-space: nowrap; }
-
-  /* ── Responsive ── */
-  @media (max-width: 400px) {
-    .mode-card  { padding: 16px 10px 14px; }
-    .mode-icon  { font-size: 1.7rem; }
-    .mode-name  { font-size: 0.95rem; }
-    .timer-clock { font-size: min(33vw, 168px); }
-    .stepper-btn { padding: 10px 16px; }
-  }
-  @media (min-height: 800px) {
-    .clock-wrap { min-height: 280px; }
+  @media (min-width: 600px) {
+    .timer-clock      { font-size: min(22vw, 160px); }
+    .countdown-number { font-size: min(40vw, 280px); }
   }
   </style>
 </head>
-<body data-nav-init="true" data-active-page="">
+<body data-nav-init="true" data-active-page="timer">
 
+<!-- ─── TIMER ─────────────────────────────────────────────────────────────── -->
 <main class="timer-main">
 
-  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
-  <!-- SCREEN 1 · MODE SELECT                        -->
-  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <!-- ════════════════════════════════════════
+       SCREEN 1 · MODE SELECT
+  ════════════════════════════════════════ -->
   <div id="s-select" class="t-screen active">
     <div class="t-header">
       <h1>WOD Timer</h1>
       <p>Choose your workout type to get started</p>
     </div>
     <div class="mode-grid">
-      <button class="mode-card" data-mode="amrap">
-        <span class="mode-icon">⬆️</span>
+
+      <button class="mode-card" onclick="selectMode('AMRAP')">
+        <div class="mode-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="17 11 12 6 7 11"/><polyline points="17 18 12 13 7 18"/>
+          </svg>
+        </div>
         <div class="mode-name">AMRAP</div>
         <div class="mode-desc">As Many Rounds As Possible — count up within a set time</div>
       </button>
-      <button class="mode-card" data-mode="fortime">
-        <span class="mode-icon">⏱</span>
+
+      <button class="mode-card" onclick="selectMode('FOR TIME')">
+        <div class="mode-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
         <div class="mode-name">For Time</div>
         <div class="mode-desc">Race against the clock — countdown from a time cap</div>
       </button>
-      <button class="mode-card" data-mode="emom">
-        <span class="mode-icon">🔄</span>
+
+      <button class="mode-card" onclick="selectMode('EMOM')">
+        <div class="mode-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="17 1 21 5 17 9"/>
+            <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+            <polyline points="7 23 3 19 7 15"/>
+            <path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+          </svg>
+        </div>
         <div class="mode-name">EMOM</div>
         <div class="mode-desc">Every Minute On the Minute — interval-based rounds</div>
       </button>
-      <button class="mode-card" data-mode="tabata">
-        <span class="mode-icon">⚡</span>
+
+      <button class="mode-card" onclick="selectMode('TABATA')">
+        <div class="mode-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+        </div>
         <div class="mode-name">Tabata</div>
-        <div class="mode-desc">Work / rest intervals — default 20s on, 10s off, 8 rounds</div>
+        <div class="mode-desc">Work / rest intervals — 20s on, 10s off, 8 rounds</div>
       </button>
+
     </div>
   </div>
 
-  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
-  <!-- SCREEN 2 · CONFIG                             -->
-  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <!-- ════════════════════════════════════════
+       SCREEN 2 · CONFIG
+  ════════════════════════════════════════ -->
   <div id="s-config" class="t-screen">
     <div class="t-config-header">
-      <button class="t-back-btn" id="btn-back">← Back</button>
+      <button class="t-back-btn" onclick="showScreen('s-select')">← Back</button>
       <div class="t-config-title" id="cfg-title">Set duration</div>
       <div class="t-mode-badge" id="cfg-badge">AMRAP</div>
     </div>
 
-    <!-- WOD Preview Banner (shown when launched from a workout page) -->
+    <!-- WOD Banner: populated via URL params when launched from a workout page -->
     <div id="cfg-wod-banner" class="cfg-wod-banner" style="display:none">
       <div class="cfg-wod-header">
         <div class="cfg-wod-icon">📋</div>
-        <div class="cfg-wod-info">
-          <div class="cfg-wod-title" id="cfg-wod-title">Workout</div>
-          <div class="cfg-wod-meta" id="cfg-wod-meta">Timer auto-configured. Adjust below if needed.</div>
+        <div>
+          <div class="cfg-wod-title" id="cfg-wod-name"></div>
+          <div class="cfg-wod-meta"  id="cfg-wod-meta"></div>
         </div>
       </div>
-      <div class="cfg-movements" id="cfg-movements" style="display:none"></div>
+      <div class="cfg-movements" id="cfg-movements-list"></div>
     </div>
 
-    <!-- Duration (AMRAP / For Time / EMOM) -->
+    <!-- AMRAP / For Time / EMOM: Duration -->
     <div id="cfg-duration" class="config-card">
       <div class="config-label" id="cfg-dur-label">Duration</div>
       <div class="stepper">
-        <button class="stepper-btn" data-field="duration" data-dir="-1">−</button>
+        <button class="stepper-btn" onclick="stepperAdj('val-duration',-1,1,99)">−</button>
         <div class="stepper-val">
           <span class="stepper-num" id="val-duration">20</span>
           <span class="stepper-unit">minutes</span>
         </div>
-        <button class="stepper-btn" data-field="duration" data-dir="1">+</button>
+        <button class="stepper-btn" onclick="stepperAdj('val-duration',1,1,99)">+</button>
       </div>
       <div class="config-presets">
-        <button class="preset-btn" data-field="duration" data-val="5">5</button>
-        <button class="preset-btn" data-field="duration" data-val="7">7</button>
-        <button class="preset-btn" data-field="duration" data-val="10">10</button>
-        <button class="preset-btn" data-field="duration" data-val="12">12</button>
-        <button class="preset-btn" data-field="duration" data-val="15">15</button>
-        <button class="preset-btn" data-field="duration" data-val="20">20</button>
-        <button class="preset-btn" data-field="duration" data-val="30">30</button>
+        <button class="preset-btn" onclick="setVal('val-duration',5)">5</button>
+        <button class="preset-btn" onclick="setVal('val-duration',7)">7</button>
+        <button class="preset-btn" onclick="setVal('val-duration',10)">10</button>
+        <button class="preset-btn" onclick="setVal('val-duration',12)">12</button>
+        <button class="preset-btn" onclick="setVal('val-duration',15)">15</button>
+        <button class="preset-btn" onclick="setVal('val-duration',20)">20</button>
+        <button class="preset-btn" onclick="setVal('val-duration',30)">30</button>
       </div>
     </div>
 
@@ -759,20 +579,19 @@
     <div id="cfg-work" class="config-card" style="display:none">
       <div class="config-label">Work Time</div>
       <div class="stepper">
-        <button class="stepper-btn" data-field="work" data-dir="-1">−</button>
+        <button class="stepper-btn" onclick="stepperAdj('val-work',-5,5,120)">−</button>
         <div class="stepper-val">
           <span class="stepper-num" id="val-work">20</span>
           <span class="stepper-unit">seconds</span>
         </div>
-        <button class="stepper-btn" data-field="work" data-dir="1">+</button>
+        <button class="stepper-btn" onclick="stepperAdj('val-work',5,5,120)">+</button>
       </div>
       <div class="config-presets">
-        <button class="preset-btn" data-field="work" data-val="10">10s</button>
-        <button class="preset-btn" data-field="work" data-val="15">15s</button>
-        <button class="preset-btn" data-field="work" data-val="20">20s</button>
-        <button class="preset-btn" data-field="work" data-val="30">30s</button>
-        <button class="preset-btn" data-field="work" data-val="40">40s</button>
-        <button class="preset-btn" data-field="work" data-val="45">45s</button>
+        <button class="preset-btn" onclick="setVal('val-work',10)">10s</button>
+        <button class="preset-btn" onclick="setVal('val-work',15)">15s</button>
+        <button class="preset-btn" onclick="setVal('val-work',20)">20s</button>
+        <button class="preset-btn" onclick="setVal('val-work',30)">30s</button>
+        <button class="preset-btn" onclick="setVal('val-work',40)">40s</button>
       </div>
     </div>
 
@@ -780,18 +599,18 @@
     <div id="cfg-rest" class="config-card" style="display:none">
       <div class="config-label">Rest Time</div>
       <div class="stepper">
-        <button class="stepper-btn" data-field="rest" data-dir="-1">−</button>
+        <button class="stepper-btn" onclick="stepperAdj('val-rest',-5,5,120)">−</button>
         <div class="stepper-val">
           <span class="stepper-num" id="val-rest">10</span>
           <span class="stepper-unit">seconds</span>
         </div>
-        <button class="stepper-btn" data-field="rest" data-dir="1">+</button>
+        <button class="stepper-btn" onclick="stepperAdj('val-rest',5,5,120)">+</button>
       </div>
       <div class="config-presets">
-        <button class="preset-btn" data-field="rest" data-val="10">10s</button>
-        <button class="preset-btn" data-field="rest" data-val="15">15s</button>
-        <button class="preset-btn" data-field="rest" data-val="20">20s</button>
-        <button class="preset-btn" data-field="rest" data-val="30">30s</button>
+        <button class="preset-btn" onclick="setVal('val-rest',10)">10s</button>
+        <button class="preset-btn" onclick="setVal('val-rest',15)">15s</button>
+        <button class="preset-btn" onclick="setVal('val-rest',20)">20s</button>
+        <button class="preset-btn" onclick="setVal('val-rest',30)">30s</button>
       </div>
     </div>
 
@@ -799,28 +618,28 @@
     <div id="cfg-rounds" class="config-card" style="display:none">
       <div class="config-label">Rounds</div>
       <div class="stepper">
-        <button class="stepper-btn" data-field="rounds" data-dir="-1">−</button>
+        <button class="stepper-btn" onclick="stepperAdj('val-rounds',-1,1,20)">−</button>
         <div class="stepper-val">
           <span class="stepper-num" id="val-rounds">8</span>
           <span class="stepper-unit">rounds</span>
         </div>
-        <button class="stepper-btn" data-field="rounds" data-dir="1">+</button>
+        <button class="stepper-btn" onclick="stepperAdj('val-rounds',1,1,20)">+</button>
       </div>
       <div class="config-presets">
-        <button class="preset-btn" data-field="rounds" data-val="4">4</button>
-        <button class="preset-btn" data-field="rounds" data-val="6">6</button>
-        <button class="preset-btn" data-field="rounds" data-val="8">8</button>
-        <button class="preset-btn" data-field="rounds" data-val="10">10</button>
-        <button class="preset-btn" data-field="rounds" data-val="12">12</button>
+        <button class="preset-btn" onclick="setVal('val-rounds',4)">4</button>
+        <button class="preset-btn" onclick="setVal('val-rounds',6)">6</button>
+        <button class="preset-btn" onclick="setVal('val-rounds',8)">8</button>
+        <button class="preset-btn" onclick="setVal('val-rounds',10)">10</button>
+        <button class="preset-btn" onclick="setVal('val-rounds',12)">12</button>
       </div>
     </div>
 
-    <button class="t-start-btn" id="btn-start">Start Timer</button>
+    <button class="t-start-btn" onclick="beginCountdown()">Start Timer</button>
   </div>
 
-  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
-  <!-- SCREEN 3 · COUNTDOWN                          -->
-  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <!-- ════════════════════════════════════════
+       SCREEN 3 · COUNTDOWN  (dark)
+  ════════════════════════════════════════ -->
   <div id="s-countdown" class="t-screen">
     <div class="countdown-wrap">
       <div class="countdown-label">Get Ready</div>
@@ -829,927 +648,537 @@
     </div>
   </div>
 
-  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
-  <!-- SCREEN 4 · ACTIVE TIMER                       -->
-  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <!-- ════════════════════════════════════════
+       SCREEN 4 · ACTIVE TIMER  (dark)
+  ════════════════════════════════════════ -->
   <div id="s-active" class="t-screen">
 
     <div class="active-topbar">
       <div class="active-left">
-        <div class="active-mode-badge" id="active-badge">AMRAP</div>
+        <div class="active-mode-badge" id="active-badge">FOR TIME</div>
         <div class="active-round-info" id="active-round"></div>
       </div>
       <div class="active-right">
-        <!-- Mute -->
-        <button class="icon-btn" id="btn-mute" title="Toggle sound" aria-label="Toggle sound">
-          <svg id="svg-speaker" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <button class="icon-btn" id="btn-mute" onclick="toggleMute()" title="Toggle sound">
+          <svg id="mute-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
             <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
             <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
           </svg>
-          <svg id="svg-muted" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-            <line x1="23" y1="9" x2="17" y2="15"/>
-            <line x1="17" y1="9" x2="23" y2="15"/>
-          </svg>
         </button>
-        <!-- Fullscreen -->
-        <button class="icon-btn" id="btn-fullscreen" title="Fullscreen" aria-label="Toggle fullscreen">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <button class="icon-btn" id="btn-fullscreen" title="Fullscreen">
+          <svg id="fs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
           </svg>
         </button>
       </div>
     </div>
 
-    <div class="clock-wrap">
-      <div class="timer-clock" id="timer-clock">00:00</div>
-      <div class="phase-label" id="phase-label">WORK</div>
-      <div class="round-dots" id="round-dots" style="display:none"></div>
-      <div class="phase-bar-wrap" id="phase-bar-wrap" style="display:none">
-        <div class="phase-bar" id="phase-bar"></div>
-      </div>
-    </div>
+    <div class="active-body">
 
-    <!-- WOD Whiteboard — shown when launched from a workout page -->
-    <div id="wod-whiteboard" class="wod-whiteboard" style="display:none">
-      <div class="wb-header" id="wb-header">
-        <div class="wb-title-row">
-          <span class="wb-icon">📋</span>
-          <span class="wb-name" id="wb-name">Workout</span>
-          <span class="wb-format-badge" id="wb-format-badge"></span>
+      <div class="clock-wrap">
+        <div class="timer-clock" id="timer-clock">0:00</div>
+        <div class="phase-label lbl-work" id="phase-label">WORK</div>
+        <div class="round-dots" id="round-dots" style="display:none"></div>
+        <div class="phase-bar-wrap" id="phase-bar-wrap" style="display:none">
+          <div class="phase-bar" id="phase-bar" style="width:100%"></div>
         </div>
-        <span class="wb-chevron" id="wb-chevron">▼</span>
       </div>
-      <div class="wb-body" id="wb-body">
-        <div id="wb-movements"></div>
-      </div>
-    </div>
 
-    <div class="timer-actions" id="timer-actions">
-      <button class="t-action-btn btn-pause" id="btn-pause">⏸ Pause</button>
-      <!-- "Done!" only shown for For Time -->
-      <button class="t-action-btn btn-done-early" id="btn-done-early" style="display:none">✓ Done!</button>
-      <button class="t-action-btn btn-reset" id="btn-reset">↺ Reset</button>
-    </div>
+      <!-- Right column: whiteboard + action buttons -->
+      <div class="active-col-right">
+
+        <div id="wod-whiteboard" class="wod-whiteboard" style="display:none">
+          <div class="wb-header">
+            <div class="wb-title-row" onclick="toggleWb()">
+              <span class="wb-name"         id="wb-name"></span>
+              <span class="wb-format-badge" id="wb-format"></span>
+              <span class="wb-chevron"      id="wb-chevron">▼</span>
+            </div>
+            <button class="wb-close-btn" onclick="closeWb()" title="Close whiteboard">×</button>
+          </div>
+          <div class="wb-body" id="wb-body"></div>
+        </div>
+
+        <button id="wb-reopen-btn" class="wb-reopen-btn" onclick="openWb()" style="display:none">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/>
+          </svg>
+          Show WOD
+        </button>
+
+        <div class="timer-actions">
+          <button class="t-action-btn btn-pause"      id="btn-pause"      onclick="togglePause()">⏸ Pause</button>
+          <button class="t-action-btn btn-done-early" id="btn-done-early" onclick="finishTimer()" style="display:none">✓ Done!</button>
+          <button class="t-action-btn btn-reset"      id="btn-reset"      onclick="resetTimer()">↺ Reset</button>
+        </div>
+
+      </div><!-- /active-col-right -->
+    </div><!-- /active-body -->
   </div>
 
-  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
-  <!-- SCREEN 5 · DONE                               -->
-  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <!-- ════════════════════════════════════════
+       SCREEN 5 · DONE  (light)
+  ════════════════════════════════════════ -->
   <div id="s-done" class="t-screen">
     <div class="done-wrap">
-      <div class="done-icon">🏁</div>
-      <div class="done-title" id="done-title">Time!</div>
-      <div class="done-sub"  id="done-sub"></div>
-      <div class="done-time-wrap">
-        <div class="done-clock" id="done-clock">00:00</div>
-        <button class="done-edit-btn" id="done-edit-btn" title="Forgot to stop the clock? Fix your time here.">✏️ Edit time</button>
+      <div class="done-check">
+        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <div class="done-title">Time!</div>
+      <div class="done-sub" id="done-sub"></div>
 
-        <!-- Inline MM:SS editor — shown when edit button is tapped -->
+      <div class="done-time-wrap">
+        <div class="done-clock-label" id="done-label">Your time</div>
+        <div class="done-clock" id="done-clock">0:00</div>
+        <button class="done-edit-btn" id="done-edit-btn" onclick="toggleTimeEditor()">✏ Edit time</button>
         <div class="done-time-editor" id="done-time-editor">
           <div class="time-editor-fields">
             <div class="time-field-wrap">
               <div class="time-field-label">Min</div>
               <div class="time-field-stepper">
-                <button class="time-field-btn" id="min-dec">−</button>
+                <button class="time-field-btn" onclick="editTimeAdj('edit-min',-1,0,99)">−</button>
                 <div class="time-field-val" id="edit-min">00</div>
-                <button class="time-field-btn" id="min-inc">+</button>
+                <button class="time-field-btn" onclick="editTimeAdj('edit-min',1,0,99)">+</button>
               </div>
             </div>
             <div class="time-sep">:</div>
             <div class="time-field-wrap">
               <div class="time-field-label">Sec</div>
               <div class="time-field-stepper">
-                <button class="time-field-btn" id="sec-dec">−</button>
+                <button class="time-field-btn" onclick="editTimeAdj('edit-sec',-1,0,59)">−</button>
                 <div class="time-field-val" id="edit-sec">00</div>
-                <button class="time-field-btn" id="sec-inc">+</button>
+                <button class="time-field-btn" onclick="editTimeAdj('edit-sec',1,0,59)">+</button>
               </div>
             </div>
           </div>
-          <button class="time-editor-confirm" id="time-editor-confirm">✓ Confirm</button>
-          <div class="time-editor-note">Every second counts — but if you got caught up in the moment and forgot to stop the clock, no sweat. Fix your time here before logging.</div>
+          <button class="time-editor-confirm" onclick="confirmTimeEdit()">✓ Confirm</button>
+          <div class="time-editor-note">Forgot to stop the clock? No sweat — fix your time before logging.</div>
         </div>
       </div>
-      <div class="done-meta"  id="done-meta"></div>
-      <a href="#" id="btn-log-result" class="btn-log-result">📝 Log Your Result</a>
+
+      <div class="done-meta" id="done-meta"></div>
+
+      <a href="/myworkouts.html" class="btn-log-result" id="btn-log-result">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+        Log Your Result
+      </a>
+
       <div class="done-actions">
-        <button class="t-action-btn btn-again" id="btn-again">↺ Same Config</button>
-        <button class="t-action-btn btn-new"   id="btn-new">New Timer</button>
+        <button class="btn-again" onclick="rerunTimer()">↺ Same Config</button>
+        <button class="btn-new"   onclick="showScreen('s-select')">New Timer</button>
       </div>
     </div>
   </div>
 
 </main>
 
-<!-- ============================================================
-     WOD TIMER SCRIPT
-     ============================================================ -->
+<script src="/js/footer.js"></script>
+
 <script>
-(function() {
-'use strict';
+/* ══════════════════════════════════════════════════════════════════════════
+   WOD TIMER — HomeWodRX
+   Supports: AMRAP · FOR TIME · EMOM · TABATA
+   URL params: ?mode=fortime&wod=Fran&format=For+Time&time=20&moves=21:Thrusters,21:Pull-ups
+══════════════════════════════════════════════════════════════════════════ */
 
-// ── Web Worker (inline blob — no separate file needed) ──────────────────────
-const WORKER_SRC = `
-  let _tid = null;
-  self.onmessage = function(e) {
-    if (e.data === 'start') {
-      if (_tid) clearInterval(_tid);
-      _tid = setInterval(function() { self.postMessage('tick'); }, 80);
-    } else if (e.data === 'stop') {
-      if (_tid) { clearInterval(_tid); _tid = null; }
-    }
-  };
-`;
-const timerWorker = new Worker(
-  URL.createObjectURL(new Blob([WORKER_SRC], { type: 'text/javascript' }))
-);
+// ── Timer state ─────────────────────────────────────────────────────────
+const T = {
+  mode:          'AMRAP',
+  durationSecs:  20 * 60,
+  workSecs:      20,
+  restSecs:      10,
+  totalRounds:   8,
 
-// ── Audio Engine ────────────────────────────────────────────────────────────
-let _audioCtx = null;
-function getACtx() {
-  if (!_audioCtx) {
-    try { _audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
-  }
-  if (_audioCtx && _audioCtx.state === 'suspended') {
-    _audioCtx.resume().catch(() => {});
-  }
+  startTs:       null,
+  pausedAt:      null,
+  totalPausedMs: 0,
+  rafId:         null,
+  isPaused:      false,
+  isDone:        false,
+  finalSecs:     0,
+  soundEnabled:  true,
+
+  wodName:   null,
+  wodFormat: null,
+  wodMoves:  [],
+};
+
+// Snapshot config for "Same Config" rerun
+const CFG = { mode:'AMRAP', durationSecs:20*60, workSecs:20, restSecs:10, totalRounds:8 };
+
+// ── Audio (Web Audio API) ────────────────────────────────────────────────
+let _audioCtx;
+function getAudioCtx() {
+  if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   return _audioCtx;
 }
-
-function tone(freq, durSec, vol, type) {
-  if (T.muted) return;
-  const ctx = getACtx();
-  if (!ctx) return;
+function beep(freq=880, dur=0.12, vol=0.4) {
+  if (!T.soundEnabled) return;
   try {
+    const ctx  = getAudioCtx();
     const osc  = ctx.createOscillator();
     const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    gain.gain.setValueAtTime(vol || 0.45, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + durSec);
+    osc.connect(gain); gain.connect(ctx.destination);
     osc.frequency.value = freq;
-    osc.type = type || 'sine';
+    gain.gain.setValueAtTime(vol, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
     osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + durSec);
+    osc.stop(ctx.currentTime + dur);
   } catch(e) {}
 }
-
-const SFX = {
-  // 3-2-1 each number
-  tick:     () => tone(440,  0.12, 0.4),
-  // GO!
-  go:       () => { tone(880, 0.18, 0.55); setTimeout(() => tone(1100, 0.3, 0.5), 160); },
-  // Last 3 seconds
-  warn:     () => tone(660,  0.07, 0.3),
-  // Round end / phase change
-  roundEnd: () => { tone(660, 0.1, 0.4); setTimeout(() => tone(880, 0.18, 0.5), 120); },
-  // Rest end → work begins
-  restEnd:  () => { tone(880, 0.1, 0.5); setTimeout(() => tone(1100, 0.18, 0.5), 110); },
-  // Workout complete
-  done:     () => {
-    tone(440, 0.12, 0.5);
-    setTimeout(() => tone(660, 0.12, 0.5), 140);
-    setTimeout(() => tone(880, 0.4,  0.6), 280);
-  },
-};
-
-// ── Wake Lock ───────────────────────────────────────────────────────────────
-let _wakeLock = null;
-function grabWakeLock() {
-  if ('wakeLock' in navigator) {
-    navigator.wakeLock.request('screen')
-      .then(wl => { _wakeLock = wl; })
-      .catch(() => {});
-  }
-}
-function dropWakeLock() {
-  if (_wakeLock) { _wakeLock.release().catch(() => {}); _wakeLock = null; }
-}
-// Re-acquire on tab visibility (wake locks are released when tab hides)
-document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && _wakeLock === null && !T.paused && T.running) grabWakeLock();
-});
-
-// ── State ───────────────────────────────────────────────────────────────────
-const T = {
-  mode:    'amrap',   // amrap | fortime | emom | tabata
-  phase:   'work',   // work | rest
-  running: false,
-  paused:  false,
-  muted:   false,
-  cfg: {
-    duration: 20,    // minutes (AMRAP / For Time / EMOM)
-    work:     20,    // seconds (Tabata)
-    rest:     10,    // seconds (Tabata)
-    rounds:   8,     // (Tabata)
-  },
-  // Runtime
-  startTs:         null,  // performance.now() at start of current phase run
-  phaseAccMs:      0,     // ms accumulated before most recent resume
-  currentRound:    1,
-  lastWarnSec:     -1,
-  finalMs:         0,     // set on completion for done screen
-};
-
-// ── Phase duration ───────────────────────────────────────────────────────────
-function phaseDurMs() {
-  if (T.mode === 'tabata') {
-    return T.phase === 'work' ? T.cfg.work * 1000 : T.cfg.rest * 1000;
-  }
-  if (T.mode === 'emom') return 60 * 1000;
-  return T.cfg.duration * 60 * 1000;
+function beepSeq(freqs) {
+  freqs.forEach((f, i) => setTimeout(() => beep(f, 0.18, 0.45), i * 200));
 }
 
-// ── Screen helper ────────────────────────────────────────────────────────────
-function show(id) {
+// ── Helpers ──────────────────────────────────────────────────────────────
+function pad(n) { return String(Math.floor(Math.abs(n))).padStart(2,'0'); }
+function fmtTime(secs) {
+  secs = Math.max(0, Math.floor(secs));
+  return `${Math.floor(secs/60)}:${pad(secs%60)}`;
+}
+
+// ── Screen manager ───────────────────────────────────────────────────────
+function showScreen(id) {
   document.querySelectorAll('.t-screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  document.body.style.background = (id==='s-countdown'||id==='s-active') ? '#0f0f14' : '';
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
-// ── Formatting ───────────────────────────────────────────────────────────────
-function fmtMs(ms) {
-  const sec = Math.max(0, Math.floor(ms / 1000));
-  const m   = Math.floor(sec / 60);
-  const s   = sec % 60;
-  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-}
-
-// ── Config UI ────────────────────────────────────────────────────────────────
-const MODE_META = {
-  amrap:   { badge: 'AMRAP',    title: 'Set workout duration' },
-  fortime: { badge: 'FOR TIME', title: 'Set your time cap'    },
-  emom:    { badge: 'EMOM',     title: 'Set total minutes'    },
-  tabata:  { badge: 'TABATA',   title: 'Set intervals & rounds' },
-};
-const DUR_LABELS = {
-  amrap:   'Duration (minutes)',
-  fortime: 'Time Cap (minutes)',
-  emom:    'Total Minutes',
-};
-
-function openConfig(mode) {
+// ── Mode selection ───────────────────────────────────────────────────────
+function selectMode(mode) {
   T.mode = mode;
-  const meta = MODE_META[mode];
-  document.getElementById('cfg-badge').textContent = meta.badge;
-  document.getElementById('cfg-title').textContent = meta.title;
-
-  const isTabata = mode === 'tabata';
+  const isTabata = mode==='TABATA';
+  document.getElementById('cfg-badge').textContent  = mode;
   document.getElementById('cfg-duration').style.display = isTabata ? 'none' : '';
   document.getElementById('cfg-work').style.display     = isTabata ? '' : 'none';
   document.getElementById('cfg-rest').style.display     = isTabata ? '' : 'none';
   document.getElementById('cfg-rounds').style.display   = isTabata ? '' : 'none';
-
-  if (!isTabata) {
-    document.getElementById('cfg-dur-label').textContent = DUR_LABELS[mode] || 'Duration';
-  }
-
-  syncCfgUI();
-  show('s-config');
+  const titles = { AMRAP:'Set duration','FOR TIME':'Set time cap',EMOM:'Set duration',TABATA:'Set intervals' };
+  document.getElementById('cfg-title').textContent = titles[mode] || 'Configure';
+  const hasBanner = T.wodName && mode==='FOR TIME';
+  document.getElementById('cfg-wod-banner').style.display = hasBanner ? '' : 'none';
+  showScreen('s-config');
 }
 
-function syncCfgUI() {
-  document.getElementById('val-duration').textContent = T.cfg.duration;
-  document.getElementById('val-work').textContent     = T.cfg.work;
-  document.getElementById('val-rest').textContent     = T.cfg.rest;
-  document.getElementById('val-rounds').textContent   = T.cfg.rounds;
+// ── Steppers ─────────────────────────────────────────────────────────────
+function stepperAdj(id, delta, min, max) {
+  const el = document.getElementById(id);
+  let v = parseInt(el.textContent) + delta;
+  el.textContent = Math.max(min, Math.min(max, v));
 }
+function setVal(id, val) { document.getElementById(id).textContent = val; }
 
-const FIELD_LIMITS = {
-  duration: { min: 1,  max: 99, step: 1  },
-  work:     { min: 5,  max: 90, step: 5  },
-  rest:     { min: 5,  max: 90, step: 5  },
-  rounds:   { min: 1,  max: 30, step: 1  },
-};
-
-function adjustField(field, dir) {
-  const L = FIELD_LIMITS[field];
-  T.cfg[field] = Math.min(L.max, Math.max(L.min, T.cfg[field] + dir * L.step));
-  syncCfgUI();
-}
-
-// ── Countdown ────────────────────────────────────────────────────────────────
-function runCountdown() {
-  // Unlock audio on this user gesture
-  try { getACtx(); } catch(e) {}
-
-  // Build summary string
-  let sub = '';
-  if (T.mode === 'amrap')   sub = `AMRAP · ${T.cfg.duration} min`;
-  if (T.mode === 'fortime') sub = `For Time · ${T.cfg.duration} min cap`;
-  if (T.mode === 'emom')    sub = `EMOM · ${T.cfg.duration} min`;
-  if (T.mode === 'tabata')  sub = `Tabata · ${T.cfg.work}s / ${T.cfg.rest}s · ${T.cfg.rounds} rounds`;
-
-  const numEl = document.getElementById('cd-number');
-  document.getElementById('cd-sub').textContent = sub;
-  numEl.classList.remove('is-go');
-  numEl.textContent = '3';
-  show('s-countdown');
-  SFX.tick();
-
-  let count = 2;
-  const iv = setInterval(() => {
-    if (count > 0) {
-      numEl.textContent = count;
-      SFX.tick();
-      count--;
-    } else if (count === 0) {
-      numEl.classList.add('is-go');
-      numEl.textContent = 'GO!';
-      SFX.go();
-      count = -1;
-    } else {
-      clearInterval(iv);
-      startTimer();
-    }
-  }, 1000);
-}
-
-// ── Start timer ──────────────────────────────────────────────────────────────
-function startTimer() {
-  T.phase        = 'work';
-  T.currentRound = 1;
-  T.paused       = false;
-  T.running      = true;
-  T.phaseAccMs   = 0;
-  T.lastWarnSec  = -1;
-  T.startTs      = performance.now();
-
-  grabWakeLock();
-  refreshActiveUI();
-  show('s-active');
-  timerWorker.postMessage('start');
-}
-
-// ── Worker tick ──────────────────────────────────────────────────────────────
-timerWorker.onmessage = function() {
-  if (T.paused || !T.running) return;
-
-  const phaseMs  = T.phaseAccMs + (performance.now() - T.startTs);
-  const phaseDur = phaseDurMs();
-
-  refreshClock(phaseMs, phaseDur);
-  checkWarnings(phaseMs, phaseDur);
-
-  if (phaseMs >= phaseDur) {
-    onPhaseEnd();
-  }
-};
-
-function checkWarnings(phaseMs, phaseDur) {
-  if (T.mode === 'amrap') return;
-  const remSec = Math.ceil((phaseDur - phaseMs) / 1000);
-  if (remSec === T.lastWarnSec) return;
-  T.lastWarnSec = remSec;
-  if (remSec > 0 && remSec <= 3) SFX.warn();
-}
-
-function onPhaseEnd() {
-  timerWorker.postMessage('stop');
-
-  // ── AMRAP / For Time: single phase, just finish ──
-  if (T.mode === 'amrap' || T.mode === 'fortime') {
-    T.finalMs = T.cfg.duration * 60 * 1000;
-    finishWorkout();
-    return;
-  }
-
-  // ── EMOM ──
-  if (T.mode === 'emom') {
-    if (T.currentRound >= T.cfg.duration) {
-      T.finalMs = T.cfg.duration * 60 * 1000;
-      finishWorkout();
-    } else {
-      T.currentRound++;
-      nextPhase('work');
-      SFX.roundEnd();
-    }
-    return;
-  }
-
-  // ── TABATA ──
-  if (T.mode === 'tabata') {
-    if (T.phase === 'work') {
-      nextPhase('rest');
-      SFX.roundEnd();
-    } else {
-      // rest ended
-      if (T.currentRound >= T.cfg.rounds) {
-        T.finalMs = T.cfg.rounds * (T.cfg.work + T.cfg.rest) * 1000;
-        finishWorkout();
-      } else {
-        T.currentRound++;
-        nextPhase('work');
-        SFX.restEnd();
-      }
-    }
-  }
-}
-
-function nextPhase(phase) {
-  T.phase       = phase;
-  T.phaseAccMs  = 0;
-  T.lastWarnSec = -1;
-  T.startTs     = performance.now();
-  refreshActiveUI();
-  timerWorker.postMessage('start');
-}
-
-// ── Clock display ────────────────────────────────────────────────────────────
-function refreshClock(phaseMs, phaseDur) {
-  const clockEl = document.getElementById('timer-clock');
-
-  // What to display
-  const displayMs = T.mode === 'amrap'
-    ? phaseMs                         // count UP
-    : Math.max(0, phaseDur - phaseMs); // count DOWN
-
-  clockEl.textContent = fmtMs(displayMs);
-
-  // Color
-  clockEl.classList.remove('clr-warn', 'clr-danger', 'clr-rest');
-  if (T.mode !== 'amrap') {
-    const remSec = Math.ceil((phaseDur - phaseMs) / 1000);
-    if (T.phase === 'rest') {
-      clockEl.classList.add('clr-rest');
-    } else if (remSec <= 5) {
-      clockEl.classList.add('clr-danger');
-    } else if (remSec <= 10) {
-      clockEl.classList.add('clr-warn');
-    }
-  }
-
-  // Progress bar
-  if (T.mode === 'emom' || T.mode === 'tabata') {
-    const pct = Math.min(100, (phaseMs / phaseDur) * 100);
-    const bar = document.getElementById('phase-bar');
-    bar.style.width = pct + '%';
-    bar.className   = 'phase-bar' + (T.phase === 'rest' ? ' rest' : '');
-  }
-
-  // Round dots (Tabata)
-  if (T.mode === 'tabata') {
-    const dots = document.querySelectorAll('.r-dot');
-    dots.forEach((d, i) => {
-      d.classList.remove('done', 'current');
-      if (i + 1 < T.currentRound)  d.classList.add('done');
-      if (i + 1 === T.currentRound) d.classList.add('current');
-    });
-  }
-}
-
-// ── Active screen UI state ────────────────────────────────────────────────────
-const BADGE_LABELS = { amrap: 'AMRAP', fortime: 'FOR TIME', emom: 'EMOM', tabata: 'TABATA' };
-
-function refreshActiveUI() {
-  document.getElementById('active-badge').textContent = BADGE_LABELS[T.mode];
-
-  const roundEl    = document.getElementById('active-round');
-  const phaseEl    = document.getElementById('phase-label');
-  const dotsEl     = document.getElementById('round-dots');
-  const barWrapEl  = document.getElementById('phase-bar-wrap');
-  const clockEl    = document.getElementById('timer-clock');
-  const doneEarlyBtn = document.getElementById('btn-done-early');
-
-  // Mode-specific layout
-  if (T.mode === 'amrap') {
-    roundEl.textContent = `${T.cfg.duration} min`;
-    phaseEl.textContent = 'COUNT UP';
-    phaseEl.className   = 'phase-label lbl-up';
-    dotsEl.style.display    = 'none';
-    barWrapEl.style.display = 'none';
-    clockEl.textContent     = '00:00';
-    doneEarlyBtn.style.display = 'none';
-
-  } else if (T.mode === 'fortime') {
-    roundEl.textContent = `${T.cfg.duration} min cap`;
-    phaseEl.textContent = 'TIME REMAINING';
-    phaseEl.className   = 'phase-label lbl-work';
-    dotsEl.style.display    = 'none';
-    barWrapEl.style.display = 'none';
-    clockEl.textContent     = fmtMs(T.cfg.duration * 60 * 1000);
-    doneEarlyBtn.style.display = '';   // show "Done!" button for For Time
-
-  } else if (T.mode === 'emom') {
-    roundEl.textContent = `Round ${T.currentRound} / ${T.cfg.duration}`;
-    phaseEl.textContent = 'THIS MINUTE';
-    phaseEl.className   = 'phase-label lbl-work';
-    dotsEl.style.display    = 'none';
-    barWrapEl.style.display = '';
-    clockEl.textContent     = fmtMs(60000);
-    doneEarlyBtn.style.display = 'none';
-
-  } else if (T.mode === 'tabata') {
-    roundEl.textContent = `Round ${T.currentRound} / ${T.cfg.rounds}`;
-    const isWork        = T.phase === 'work';
-    phaseEl.textContent = isWork ? 'WORK' : 'REST';
-    phaseEl.className   = `phase-label ${isWork ? 'lbl-work' : 'lbl-rest'}`;
-    dotsEl.style.display    = 'flex';
-    barWrapEl.style.display = '';
-    clockEl.textContent     = fmtMs(isWork ? T.cfg.work * 1000 : T.cfg.rest * 1000);
-    doneEarlyBtn.style.display = 'none';
-
-    // Rebuild round dots
-    dotsEl.innerHTML = '';
-    for (let i = 1; i <= T.cfg.rounds; i++) {
-      const d = document.createElement('div');
-      d.className = 'r-dot';
-      if (i < T.currentRound)  d.classList.add('done');
-      if (i === T.currentRound) d.classList.add('current');
-      dotsEl.appendChild(d);
-    }
-  }
-
-  // Reset clock color
-  clockEl.classList.remove('clr-warn', 'clr-danger', 'clr-rest', 'paused');
-  // Reset bar
-  document.getElementById('phase-bar').style.width = '0%';
-}
-
-// ── Pause / Resume ────────────────────────────────────────────────────────────
-function togglePause() {
-  const pauseBtn = document.getElementById('btn-pause');
-  const clockEl  = document.getElementById('timer-clock');
-
-  if (T.paused) {
-    T.phaseAccMs += 0; // already accumulated on pause
-    T.startTs = performance.now();
-    T.paused  = false;
-    pauseBtn.textContent = '⏸ Pause';
-    pauseBtn.classList.remove('is-paused');
-    clockEl.classList.remove('paused');
-    timerWorker.postMessage('start');
-    grabWakeLock();
+// ── Countdown ────────────────────────────────────────────────────────────
+function beginCountdown() {
+  if (T.mode !== 'TABATA') {
+    T.durationSecs = parseInt(document.getElementById('val-duration').textContent) * 60;
   } else {
-    T.phaseAccMs += performance.now() - T.startTs;
-    T.paused = true;
-    pauseBtn.textContent = '▶ Resume';
-    pauseBtn.classList.add('is-paused');
-    clockEl.classList.add('paused');
-    timerWorker.postMessage('stop');
-    dropWakeLock();
+    T.workSecs    = parseInt(document.getElementById('val-work').textContent);
+    T.restSecs    = parseInt(document.getElementById('val-rest').textContent);
+    T.totalRounds = parseInt(document.getElementById('val-rounds').textContent);
   }
+  Object.assign(CFG, { mode:T.mode, durationSecs:T.durationSecs, workSecs:T.workSecs, restSecs:T.restSecs, totalRounds:T.totalRounds });
+
+  const parts = [];
+  if (T.wodName) parts.push(T.wodName);
+  parts.push(T.mode);
+  document.getElementById('cd-sub').textContent = parts.join(' · ');
+
+  showScreen('s-countdown');
+  cdStep(3);
+}
+function cdStep(n) {
+  const el = document.getElementById('cd-number');
+  el.textContent = n || 'GO!';
+  el.classList.toggle('is-go', n===0);
+  if (n > 0) { beep(660, 0.1, 0.35); setTimeout(() => cdStep(n-1), 1000); }
+  else       { beepSeq([880,1100,1320]); setTimeout(startActiveTimer, 900); }
 }
 
-// ── Reset (go back to config) ─────────────────────────────────────────────────
-function resetTimer() {
-  timerWorker.postMessage('stop');
-  dropWakeLock();
-  T.running = false;
-  T.paused  = false;
-  T.phaseAccMs  = 0;
-  T.currentRound = 1;
-  T.phase   = 'work';
-  document.getElementById('btn-pause').textContent = '⏸ Pause';
+// ── Active timer setup ───────────────────────────────────────────────────
+function startActiveTimer() {
+  T.startTs = Date.now(); T.pausedAt = null;
+  T.totalPausedMs = 0; T.isPaused = false; T.isDone = false;
+  _lastBeepSec = -1; _tabataPhaseKey = '';
+
+  document.getElementById('active-badge').textContent   = T.mode;
+  document.getElementById('btn-pause').textContent      = '⏸ Pause';
   document.getElementById('btn-pause').classList.remove('is-paused');
-  document.getElementById('timer-clock').classList.remove('paused');
-  openConfig(T.mode);
-}
+  document.getElementById('timer-clock').className      = 'timer-clock';
+  document.getElementById('btn-done-early').style.display = T.mode==='FOR TIME' ? '' : 'none';
 
-// ── For Time: user finishes early ────────────────────────────────────────────
-function doneEarly() {
-  timerWorker.postMessage('stop');
-  const phaseMs = T.phaseAccMs + (performance.now() - T.startTs);
-  T.finalMs = phaseMs;  // record actual elapsed time
-  finishWorkout();
-}
-
-// ── Finish ────────────────────────────────────────────────────────────────────
-function finishWorkout() {
-  timerWorker.postMessage('stop');
-  dropWakeLock();
-  T.running = false;
-  SFX.done();
-
-  // Done screen content
-  const titles = { amrap: 'Time!', fortime: 'Finished!', emom: 'Time!', tabata: 'Complete!' };
-  document.getElementById('done-title').textContent = titles[T.mode] || 'Done!';
-
-  let sub = '';
-  if (T.mode === 'amrap')   sub = `AMRAP · ${T.cfg.duration} min`;
-  if (T.mode === 'fortime') sub = `For Time · ${T.cfg.duration} min cap`;
-  if (T.mode === 'emom')    sub = `EMOM · ${T.cfg.duration} min`;
-  if (T.mode === 'tabata')  sub = `Tabata · ${T.cfg.rounds} rounds`;
-  document.getElementById('done-sub').textContent   = sub;
-  document.getElementById('done-clock').textContent = fmtMs(T.finalMs);
-
-  let meta = '';
-  if (T.mode === 'tabata') meta = `${T.cfg.work}s work / ${T.cfg.rest}s rest`;
-  document.getElementById('done-meta').textContent = meta;
-
-  show('s-done');
-}
-
-// ── Events ────────────────────────────────────────────────────────────────────
-
-// Mode cards
-document.querySelectorAll('.mode-card').forEach(card => {
-  card.addEventListener('click', () => openConfig(card.dataset.mode));
-});
-
-// Back — return to workout page if we came from one, otherwise show mode select
-document.getElementById('btn-back').addEventListener('click', () => {
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('wod_slug') || params.get('wod_id') || params.get('ref')) {
-    history.back();
+  // Whiteboard
+  if (T.wodName) {
+    document.getElementById('wb-name').textContent      = T.wodName;
+    document.getElementById('wb-format').textContent    = T.wodFormat || T.mode;
+    document.getElementById('wb-body').innerHTML        = T.wodMoves.map(m =>
+      `<div class="wb-move-row"><span class="wb-reps">${m.reps}</span><span class="wb-movement">${m.name}</span></div>`
+    ).join('');
+    document.getElementById('wod-whiteboard').style.display = '';
+    document.getElementById('wb-reopen-btn').style.display  = 'none';
+    document.getElementById('wb-body').style.display        = '';
+    document.getElementById('wb-chevron').textContent        = '▼';
+    _wbOpen = true;
   } else {
-    show('s-select');
+    document.getElementById('wod-whiteboard').style.display = 'none';
+    document.getElementById('wb-reopen-btn').style.display  = 'none';
   }
-});
 
-// Start timer
-document.getElementById('btn-start').addEventListener('click', runCountdown);
+  // Tabata dots
+  if (T.mode==='TABATA') {
+    document.getElementById('round-dots').innerHTML = Array.from({length:T.totalRounds}, () =>
+      '<div class="r-dot"></div>').join('');
+    document.getElementById('round-dots').style.display     = '';
+    document.getElementById('phase-bar-wrap').style.display = '';
+  } else if (T.mode==='EMOM') {
+    document.getElementById('round-dots').style.display     = 'none';
+    document.getElementById('phase-bar-wrap').style.display = '';
+  } else {
+    document.getElementById('round-dots').style.display     = 'none';
+    document.getElementById('phase-bar-wrap').style.display = 'none';
+  }
 
-// Stepper ± buttons
-document.querySelectorAll('.stepper-btn').forEach(btn => {
-  btn.addEventListener('click', () => adjustField(btn.dataset.field, +btn.dataset.dir));
-});
-
-// Preset buttons
-document.querySelectorAll('.preset-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    T.cfg[btn.dataset.field] = +btn.dataset.val;
-    syncCfgUI();
-  });
-});
-
-// Active screen
-document.getElementById('btn-pause').addEventListener('click', togglePause);
-document.getElementById('btn-reset').addEventListener('click', resetTimer);
-document.getElementById('btn-done-early').addEventListener('click', doneEarly);
-
-// ── Done screen: editable time override ──────────────────────────────────────
-// Lets users correct their time when they forgot to hit Done! mid-workout.
-
-let _editMin = 0;
-let _editSec = 0;
-
-function openTimeEditor() {
-  // Seed editor with the current displayed time
-  const totalSec = Math.max(0, Math.floor(T.finalMs / 1000));
-  _editMin = Math.floor(totalSec / 60);
-  _editSec = totalSec % 60;
-  refreshTimeEditor();
-  document.getElementById('done-time-editor').classList.add('visible');
-  document.getElementById('done-edit-btn').style.display = 'none';
+  showScreen('s-active');
+  T.rafId = requestAnimationFrame(tick);
 }
 
-function refreshTimeEditor() {
-  document.getElementById('edit-min').textContent = String(_editMin).padStart(2, '0');
-  document.getElementById('edit-sec').textContent = String(_editSec).padStart(2, '0');
+// ── Tick ─────────────────────────────────────────────────────────────────
+let _lastBeepSec    = -1;
+let _tabataPhaseKey = '';
+
+function tick() {
+  if (T.isPaused || T.isDone) return;
+  const elapsed = Math.floor((Date.now() - T.startTs - T.totalPausedMs) / 1000);
+  switch(T.mode) {
+    case 'AMRAP':    tickAMRAP(elapsed);    break;
+    case 'FOR TIME': tickForTime(elapsed);  break;
+    case 'EMOM':     tickEMOM(elapsed);     break;
+    case 'TABATA':   tickTabata(elapsed);   break;
+  }
+  T.rafId = requestAnimationFrame(tick);
 }
 
+function tickAMRAP(elapsed) {
+  const rem = T.durationSecs - elapsed;
+  if (rem <= 0) { finishTimer(); return; }
+  setClock(fmtTime(elapsed), 'COUNT UP', '', rem, false);
+  document.getElementById('active-round').textContent = fmtTime(T.durationSecs) + ' cap';
+  beepNearEnd(rem);
+}
+
+function tickForTime(elapsed) {
+  const rem = T.durationSecs - elapsed;
+  if (rem <= 0) { finishTimer(); return; }
+  setClock(fmtTime(rem), 'WORK', 'lbl-work', rem, true);
+  document.getElementById('active-round').textContent = '';
+  beepNearEnd(rem);
+}
+
+function tickEMOM(elapsed) {
+  const totalMins   = Math.floor(T.durationSecs / 60);
+  const curMin      = Math.floor(elapsed / 60);
+  if (curMin >= totalMins) { finishTimer(); return; }
+  const withinMin   = elapsed % 60;
+  const rem         = 60 - withinMin;
+
+  if (withinMin===0 && elapsed>0 && elapsed!==_lastBeepSec) { _lastBeepSec=elapsed; beep(880,0.12,0.4); }
+  setClock(fmtTime(rem), 'WORK', 'lbl-work', rem, true);
+  document.getElementById('active-round').textContent = `Round ${curMin+1} of ${totalMins}`;
+  const bar = document.getElementById('phase-bar');
+  bar.style.width = ((rem/60)*100)+'%'; bar.className='phase-bar';
+  beepNearEnd(rem);
+}
+
+function tickTabata(elapsed) {
+  const interval  = T.workSecs + T.restSecs;
+  const curRound  = Math.floor(elapsed / interval);
+  if (curRound >= T.totalRounds) { finishTimer(); return; }
+  const wi        = elapsed % interval;
+  const isWork    = wi < T.workSecs;
+  const phaseEl   = isWork ? wi : wi - T.workSecs;
+  const phaseTot  = isWork ? T.workSecs : T.restSecs;
+  const rem       = phaseTot - phaseEl;
+  const key       = `${curRound}-${isWork?'w':'r'}`;
+
+  if (key !== _tabataPhaseKey) { _tabataPhaseKey=key; beep(isWork?880:440,0.15,0.4); }
+  setClock(fmtTime(rem), isWork?'WORK':'REST', isWork?'lbl-work':'lbl-rest', rem, true);
+  document.getElementById('active-round').textContent = `Round ${curRound+1} of ${T.totalRounds}`;
+
+  const bar = document.getElementById('phase-bar');
+  bar.style.width = ((rem/phaseTot)*100)+'%';
+  bar.className   = 'phase-bar'+(isWork?'':' rest');
+
+  const dots = document.getElementById('round-dots').children;
+  for (let i=0;i<dots.length;i++) {
+    dots[i].className = 'r-dot'+(i<curRound?' done':i===curRound?' current':'');
+  }
+  beepNearEnd(rem);
+}
+
+function setClock(display, phaseText, phaseClass, warnSecs, useColor) {
+  const c = document.getElementById('timer-clock');
+  const p = document.getElementById('phase-label');
+  c.textContent = display;
+  p.textContent = phaseText;
+  p.className   = 'phase-label'+(phaseClass?' '+phaseClass:'');
+  if (useColor) {
+    c.classList.toggle('clr-danger', warnSecs<=5);
+    c.classList.toggle('clr-warn',   warnSecs>5 && warnSecs<=15);
+    if (warnSecs>15) c.classList.remove('clr-warn','clr-danger');
+  } else { c.classList.remove('clr-warn','clr-danger'); }
+}
+function beepNearEnd(rem) {
+  if (rem>0 && rem<=3 && rem!==_lastBeepSec) { _lastBeepSec=rem; beep(660,0.08,0.3); }
+}
+
+// ── Pause / Resume ───────────────────────────────────────────────────────
+function togglePause() {
+  if (T.isDone) return;
+  if (T.isPaused) {
+    T.totalPausedMs += Date.now() - T.pausedAt;
+    T.pausedAt = null; T.isPaused = false;
+    document.getElementById('btn-pause').textContent = '⏸ Pause';
+    document.getElementById('btn-pause').classList.remove('is-paused');
+    document.getElementById('timer-clock').classList.remove('paused');
+    beep(880,0.1,0.3);
+    T.rafId = requestAnimationFrame(tick);
+  } else {
+    cancelAnimationFrame(T.rafId);
+    T.pausedAt = Date.now(); T.isPaused = true;
+    document.getElementById('btn-pause').textContent = '▶ Resume';
+    document.getElementById('btn-pause').classList.add('is-paused');
+    document.getElementById('timer-clock').classList.add('paused');
+    document.getElementById('phase-label').textContent = 'PAUSED';
+    document.getElementById('phase-label').className   = 'phase-label';
+  }
+}
+
+// ── Reset ────────────────────────────────────────────────────────────────
+function resetTimer() {
+  cancelAnimationFrame(T.rafId);
+  T.isDone = true;
+  showScreen('s-select');
+}
+
+// ── Finish ───────────────────────────────────────────────────────────────
+function finishTimer() {
+  if (T.isDone) return;
+  T.isDone = true;
+  cancelAnimationFrame(T.rafId);
+  T.finalSecs = Math.floor((Date.now() - T.startTs - T.totalPausedMs) / 1000);
+  beepSeq([880,1100,1320,880]);
+  buildDoneScreen();
+  showScreen('s-done');
+}
+
+function buildDoneScreen() {
+  const parts = [];
+  if (T.wodName) parts.push(T.wodName);
+  parts.push(T.mode);
+  document.getElementById('done-sub').textContent = parts.join(' · ');
+  const isForTime = T.mode==='FOR TIME';
+  document.getElementById('done-label').textContent = isForTime ? 'Your time' : 'Completed in';
+  document.getElementById('done-clock').textContent = fmtTime(T.finalSecs);
+  document.getElementById('done-edit-btn').style.display = isForTime ? '' : 'none';
+  const m = Math.floor(T.finalSecs/60);
+  const s = T.finalSecs%60;
+  document.getElementById('edit-min').textContent = pad(m);
+  document.getElementById('edit-sec').textContent = pad(s);
+  document.getElementById('done-meta').textContent = new Date().toLocaleDateString('en-US', {weekday:'short',month:'short',day:'numeric',year:'numeric'});
+}
+
+// ── Time editor ──────────────────────────────────────────────────────────
+function toggleTimeEditor() { document.getElementById('done-time-editor').classList.toggle('visible'); }
+function editTimeAdj(id, delta, min, max) {
+  const el = document.getElementById(id);
+  el.textContent = pad(Math.max(min, Math.min(max, parseInt(el.textContent)+delta)));
+}
 function confirmTimeEdit() {
-  const newMs = (_editMin * 60 + _editSec) * 1000;
-  T.finalMs = newMs;
-  document.getElementById('done-clock').textContent = fmtMs(newMs);
+  T.finalSecs = parseInt(document.getElementById('edit-min').textContent)*60 + parseInt(document.getElementById('edit-sec').textContent);
+  document.getElementById('done-clock').textContent = fmtTime(T.finalSecs);
   document.getElementById('done-time-editor').classList.remove('visible');
-  document.getElementById('done-edit-btn').style.display = '';
-  document.getElementById('done-edit-btn').textContent = '✏️ Edit time';
 }
 
-document.getElementById('done-edit-btn').addEventListener('click', openTimeEditor);
-document.getElementById('time-editor-confirm').addEventListener('click', confirmTimeEdit);
-
-document.getElementById('min-inc').addEventListener('click', () => { _editMin = Math.min(99, _editMin + 1); refreshTimeEditor(); });
-document.getElementById('min-dec').addEventListener('click', () => { _editMin = Math.max(0,  _editMin - 1); refreshTimeEditor(); });
-document.getElementById('sec-inc').addEventListener('click', () => {
-  _editSec++;
-  if (_editSec >= 60) { _editSec = 0; _editMin = Math.min(99, _editMin + 1); }
-  refreshTimeEditor();
-});
-document.getElementById('sec-dec').addEventListener('click', () => {
-  _editSec--;
-  if (_editSec < 0) { _editSec = 59; _editMin = Math.max(0, _editMin - 1); }
-  refreshTimeEditor();
-});
-
-// Done screen
-document.getElementById('btn-again').addEventListener('click', runCountdown);
-document.getElementById('btn-new').addEventListener('click', () => show('s-select'));
-
-// Mute toggle
-document.getElementById('btn-mute').addEventListener('click', () => {
-  T.muted = !T.muted;
-  document.getElementById('btn-mute').classList.toggle('muted', T.muted);
-  document.getElementById('svg-speaker').style.display = T.muted ? 'none' : '';
-  document.getElementById('svg-muted').style.display   = T.muted ? ''     : 'none';
-});
-
-// Fullscreen
-document.getElementById('btn-fullscreen').addEventListener('click', () => {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen({ navigationUI: 'hide' }).catch(() => {});
-  } else {
-    document.exitFullscreen().catch(() => {});
-  }
-});
-
-// Keyboard shortcuts (space = pause, r = reset, m = mute)
-document.addEventListener('keydown', e => {
-  const screen = document.querySelector('.t-screen.active')?.id;
-  if (screen !== 's-active') return;
-  if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
-  if (e.code === 'Space')   { e.preventDefault(); togglePause(); }
-  if (e.code === 'KeyR')    { e.preventDefault(); resetTimer();  }
-  if (e.code === 'KeyM')    { document.getElementById('btn-mute').click(); }
-});
-
-// ── WOD Whiteboard ────────────────────────────────────────────────────────────
-
-// Parse AMRAP/EMOM duration from format string like "AMRAP 20", "EMOM 12 min"
-function parseDurationFromFormat(fmt) {
-  if (!fmt) return null;
-  const m = fmt.match(/(\d+)\s*min/i) || fmt.match(/(?:amrap|emom)\s+(\d+)/i);
-  return m ? Math.min(99, Math.max(1, parseInt(m[1]))) : null;
+// ── Re-run same config ───────────────────────────────────────────────────
+function rerunTimer() {
+  Object.assign(T, { mode:CFG.mode, durationSecs:CFG.durationSecs, workSecs:CFG.workSecs, restSecs:CFG.restSecs, totalRounds:CFG.totalRounds });
+  beginCountdown();
 }
 
-// Detect timer mode from WOD format string
-function detectMode(fmt) {
-  if (!fmt) return null;
-  const f = fmt.toLowerCase();
-  if (f.includes('amrap'))  return 'amrap';
-  if (f.includes('emom'))   return 'emom';
-  if (f.includes('tabata')) return 'tabata';
-  if (f.includes('for time') || f.includes('fortime')) return 'fortime';
-  return null; // unknown — let user pick
+// ── Whiteboard ───────────────────────────────────────────────────────────
+let _wbOpen = true;
+function toggleWb() {
+  _wbOpen = !_wbOpen;
+  document.getElementById('wb-body').style.display  = _wbOpen ? '' : 'none';
+  document.getElementById('wb-chevron').textContent = _wbOpen ? '▼' : '▲';
 }
-
-// Render a movements array into a target element.
-// prefix: 'wb' → uses .wb-movement / .wb-reps / .wb-move / .wb-rx
-//         'cfg' → uses .cfg-move-row / .cfg-move-reps / .cfg-move-name / .cfg-move-rx
-function renderMoveRows(moves, container, prefix) {
-  if (!moves.length) { container.style.display = 'none'; return; }
-  const isWb = prefix === 'wb';
-  const row   = isWb ? 'wb-movement'  : 'cfg-move-row';
-  const rCls  = isWb ? 'wb-reps'      : 'cfg-move-reps';
-  const nCls  = isWb ? 'wb-move'      : 'cfg-move-name';
-  const rxCls = isWb ? 'wb-rx'        : 'cfg-move-rx';
-  container.innerHTML = moves.map(m => {
-    const mName = m.name || m.movement || '';
-    const reps  = m.reps || '';
-    const rx    = [m.rx_men, m.rx_women].filter(Boolean).join(' / ');
-    return `<div class="${row}">
-      ${reps ? `<span class="${rCls}">${reps}</span>` : ''}
-      <span class="${nCls}">${mName}</span>
-      ${rx   ? `<span class="${rxCls}">${rx}</span>`  : ''}
-    </div>`;
-  }).join('');
-  container.style.display = '';
+function closeWb() {
+  document.getElementById('wod-whiteboard').style.display = 'none';
+  document.getElementById('wb-reopen-btn').style.display  = '';
+  _wbOpen = false;
 }
-
-// Populate both the active whiteboard AND the config screen preview
-function populateWhiteboard(w) {
-  if (!w) return;
-
-  const name  = w.title || w.name || 'Workout';
-  const fmt   = w.format || '';
-  // Benchmarks use w.movements[]{name,reps,tip,rx_men,rx_women}
-  // Daily 20 WODs use w.rows[]{movement,reps,tip} — normalise to a common shape
-  const moves = (w.movements && w.movements.length)
-    ? w.movements
-    : (w.rows || []).map(r => ({ name: r.movement || r.name || '', reps: r.reps || '', tip: r.tip || '' }));
-
-  // ── Active screen whiteboard ──────────────────────────────────────────────
-  document.getElementById('wb-name').textContent = name;
-  document.getElementById('wb-format-badge').textContent = fmt;
-
-  const movesEl = document.getElementById('wb-movements');
-  if (moves.length) {
-    renderMoveRows(moves, movesEl, 'wb');
-  } else {
-    movesEl.innerHTML = '<div class="wb-movement"><span class="wb-move" style="color:var(--mu);font-size:0.9rem">No movement data</span></div>';
-  }
-
+function openWb() {
   document.getElementById('wod-whiteboard').style.display = '';
-  document.getElementById('s-active').classList.add('has-wb');
-
-  // ── Config screen preview ─────────────────────────────────────────────────
-  const cfgMoves = document.getElementById('cfg-movements');
-  if (cfgMoves && moves.length) {
-    renderMoveRows(moves, cfgMoves, 'cfg');
-  }
-
+  document.getElementById('wb-reopen-btn').style.display  = 'none';
+  document.getElementById('wb-body').style.display        = '';
+  document.getElementById('wb-chevron').textContent        = '▼';
+  _wbOpen = true;
 }
 
-// Whiteboard collapse/expand toggle
-document.getElementById('wb-header').addEventListener('click', () => {
-  const body    = document.getElementById('wb-body');
-  const chevron = document.getElementById('wb-chevron');
-  const hidden  = body.classList.toggle('hidden');
-  chevron.classList.toggle('collapsed', hidden);
+// ── Sound toggle ─────────────────────────────────────────────────────────
+function toggleMute() {
+  T.soundEnabled = !T.soundEnabled;
+  document.getElementById('btn-mute').classList.toggle('is-muted', !T.soundEnabled);
+  document.getElementById('mute-icon').innerHTML = T.soundEnabled
+    ? `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+       <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+       <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>`
+    : `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+       <line x1="23" y1="9" x2="17" y2="15"/>
+       <line x1="17" y1="9" x2="23" y2="15"/>`;
+}
+
+// ── Fullscreen ───────────────────────────────────────────────────────────
+document.getElementById('btn-fullscreen').addEventListener('click', () => {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+  else document.exitFullscreen();
+});
+document.addEventListener('fullscreenchange', () => {
+  document.getElementById('fs-icon').innerHTML = document.fullscreenElement
+    ? `<path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>`
+    : `<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>`;
 });
 
-// ── Load WOD from URL params ──────────────────────────────────────────────────
-// Called on page load when timer.html is opened from a workout page.
-// Expected params: ?wod_slug=fran  OR  ?wod_id=xxx
-// Optional:        &mode=amrap&duration=20&name=Fran
-let _wodLoaded = false;
-
-async function loadWodFromUrl() {
-  const params   = new URLSearchParams(window.location.search);
-  const wodSlug  = params.get('wod_slug');
-  const wodId    = params.get('wod_id');
-  const ref      = params.get('ref'); // e.g. 'daily-wod' — no DB record, but launched from a page
-  if (!wodSlug && !wodId && !ref) return; // standalone timer — show mode select as normal
-
-  // URL-supplied hints (may be overridden by fetched WOD data)
-  const urlMode     = params.get('mode');
-  const urlDuration = parseInt(params.get('duration')) || 20;
-  const urlName     = params.get('name') ? decodeURIComponent(params.get('name')) : '';
-
-  // Pre-fill config from URL params immediately (before fetch completes)
-  const mode = (['amrap','fortime','emom','tabata'].includes(urlMode)) ? urlMode : 'fortime';
-  T.cfg.duration = Math.max(1, Math.min(99, urlDuration));
-
-  // Show config banner with workout name
-  if (urlName) {
-    document.getElementById('cfg-wod-title').textContent = urlName;
-    document.getElementById('cfg-wod-banner').style.display = '';
-  }
-
-  // Open config screen directly (skip mode select)
-  openConfig(mode);
-
-  // Show Log Result button immediately — don't wait for the Supabase fetch.
-  const logBtn = document.getElementById('btn-log-result');
-  if (logBtn) {
-    if (wodSlug) {
-      logBtn.href = `/workouts/${wodSlug}`;
-    } else if (ref === 'daily-wod') {
-      logBtn.href = '/daily-wod';
-    } else {
-      // wod_id or unknown ref — use history to return to the originating page
-      logBtn.href = '#';
-      logBtn.addEventListener('click', (e) => { e.preventDefault(); history.back(); }, { once: true });
-    }
-    logBtn.style.display = 'block';
-  }
-
-  // Also pre-set wb-name so whiteboard shows name even before full fetch
-  if (urlName) document.getElementById('wb-name').textContent = urlName;
-
-  // Fetch full workout for whiteboard data
-  // Daily 20 WODs are generated client-side — read from sessionStorage instead of DB
-  if (ref === 'daily-wod') {
-    try {
-      const stored = sessionStorage.getItem('dailyWodForTimer');
-      if (stored) {
-        const wod = JSON.parse(stored);
-        populateWhiteboard(wod);
-      }
-    } catch(e) { console.warn('[Timer] Could not load daily WOD from sessionStorage:', e); }
-    return;
-  }
-
+// ── URL param parsing (launched from workout.html or generator.html) ─────
+// ?mode=fortime&wod=Fran&format=For+Time&time=20&moves=21:Thrusters,21:Pull-ups
+(function parseParams() {
   try {
-    // Ensure Supabase is ready
-    if (typeof db !== 'undefined' && CONFIG.isConfigured()) {
-      let workout = null;
-      if (wodSlug) {
-        workout = await db.getBenchmarkBySlug(wodSlug);
-      } else if (wodId) {
-        workout = await db.getWorkoutById(wodId);
-      }
-      if (workout) {
-        _wodLoaded = true;
-
-        // Refine mode/duration from actual WOD data
-        const detectedMode = detectMode(workout.format);
-        const detectedDur  = parseDurationFromFormat(workout.format);
-        const finalMode    = detectedMode || mode;
-        if (detectedDur) T.cfg.duration = detectedDur;
-
-        // Update config banner
-        const wName = workout.title || workout.name || urlName;
-        const cfgMeta = workout.format
-          ? `${workout.format}${workout.duration_estimate ? ' · ' + workout.duration_estimate : ''}`
-          : '';
-        document.getElementById('cfg-wod-title').textContent = wName;
-        if (cfgMeta) document.getElementById('cfg-wod-meta').textContent = cfgMeta;
-        document.getElementById('cfg-wod-banner').style.display = '';
-
-        // Re-open config with correct mode if it changed
-        if (finalMode !== mode) openConfig(finalMode);
-        else syncCfgUI(); // just refresh duration display
-
-        // Pre-populate whiteboard (shown during active timer)
-        populateWhiteboard(workout);
-      }
+    const p = new URLSearchParams(window.location.search);
+    const wodName = p.get('wod');
+    if (!wodName) return;
+    T.wodName   = wodName;
+    T.wodFormat = p.get('format') || '';
+    const t = p.get('time');
+    if (t) T.durationSecs = parseInt(t) * 60;
+    const moves = p.get('moves');
+    if (moves) {
+      T.wodMoves = moves.split(',').map(m => {
+        const idx = m.indexOf(':');
+        return { reps: m.slice(0, idx), name: m.slice(idx+1) };
+      });
     }
-  } catch(e) {
-    console.warn('[Timer] Could not load WOD:', e);
-  }
-}
-
-// Init nav (no active page — timer is off-nav), then load WOD if needed.
-// Awaiting Nav.init() ensures Supabase is initialized before we try to fetch
-// workout data — Nav.init() calls ensureSupabase() internally.
-document.addEventListener('DOMContentLoaded', async () => {
-  if (window.Nav) await Nav.init('');
-  loadWodFromUrl();
-});
-
+    const modeRaw = (p.get('mode') || '').toLowerCase();
+    if (modeRaw.includes('amrap'))     T.mode = 'AMRAP';
+    else if (modeRaw.includes('emom')) T.mode = 'EMOM';
+    else                               T.mode = 'FOR TIME';
+  } catch(e) {}
 })();
 </script>
 

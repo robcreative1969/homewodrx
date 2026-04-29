@@ -1,148 +1,317 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+  <meta charset="UTF-8">
   <!-- Sentry Error Monitoring -->
   <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Athlete Profile — HomeWODrx</title>
-<meta name="description" content="View athlete profile, workout history, and results on HomeWODrx.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Athlete Profile — HomeWodRX</title>
+  <meta name="description" content="View your HomeWodRX athlete profile — training history, lift PRs, and workout activity.">
+  <meta name="robots" content="noindex, nofollow">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="HomeWodRX">
+  <meta property="og:title" content="Athlete Profile — HomeWodRX">
+  <meta property="og:description" content="View your HomeWodRX athlete profile — training history, lift PRs, and workout activity.">
+  <meta property="og:url" content="https://homewodrx.com/profile.html">
+  <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
+
+  <!-- Favicons -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Shared site styles -->
   <link rel="stylesheet" href="/css/style.css">
-<script src="/js/config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="/js/db.js"></script>
-<script src="/js/benchmarks.js"></script>
-<script src="/js/nav.js"></script>
-<style>
-.prof-page{max-width:1000px;margin:0 auto;padding:32px 20px 80px}
-.prof-header{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:24px 20px;display:flex;align-items:flex-start;gap:22px;margin-bottom:24px;flex-wrap:wrap}
-.prof-avatar{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;color:#fff;flex-shrink:0;box-shadow:0 0 0 3px var(--card),0 0 0 5px rgba(196,18,18,.4)}
-.prof-info h1{font-size:clamp(22px,4vw,30px);font-weight:900;margin-bottom:4px}
-.prof-info p{color:var(--mu);font-size:14px}
-.prof-info .joined{font-size:12px;color:var(--mu);margin-top:8px;display:flex;align-items:center;gap:5px}.prof-info .joined::before{content:'🏠';font-size:11px}
-/* Hero metrics strip */
-.prof-hero-strip{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:2px}
-.hero-metric{display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:12px 16px;flex:1;min-width:130px}
-.hero-metric-icon{width:32px;height:32px;border-radius:8px;background:rgba(196,18,18,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--or)}
-.hero-metric-body{display:flex;flex-direction:column;gap:1px}
-.hero-metric-val{font-size:16px;font-weight:900;color:var(--tx);line-height:1.2}
-.hero-metric-lbl{font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.7px}
-.stats-bar{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:28px}
-.stat-card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px 14px;text-align:center;cursor:pointer;transition:border-color .15s,transform .1s,box-shadow .15s}
-.stat-card:hover{border-color:var(--or);box-shadow:0 4px 14px rgba(196,18,18,.12);transform:translateY(-1px)}
-.stat-card.active{border-color:var(--or);background:rgba(196,18,18,.06);box-shadow:0 2px 10px rgba(196,18,18,.1)}
-.stat-card .val{font-size:28px;font-weight:900;color:var(--or)}
-.stat-card .lbl{font-size:10px;color:var(--mu);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-top:6px}
-.section-title{font-size:13px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--bd);display:flex;align-items:center;gap:7px}
-.prof-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:32px}
-.prof-card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:20px;transition:border-color .15s}
-.prof-card:hover{border-color:var(--or)}
-.prof-card-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-.prof-card h3{font-size:16px;font-weight:800;margin-bottom:4px}
-.prof-card .date{color:var(--mu);font-size:12px}
-.badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;display:inline-block}
-.badge-or{background:rgba(196,18,18,.15);color:var(--orl);border:1px solid rgba(196,18,18,.3)}
-.badge-mu{background:rgba(136,136,153,.15);color:var(--mu);border:1px solid rgba(136,136,153,.3)}
-.badge-gr{background:rgba(39,174,96,.15);color:#27ae60;border:1px solid rgba(39,174,96,.3)}
-.results-table{width:100%;border-collapse:collapse;font-size:13px}
-.results-table th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--bd);background:var(--dk2)}
-.results-table td{padding:10px 14px;border-bottom:1px solid var(--bd)}
-.results-table tr:hover td{background:rgba(255,255,255,.02)}
-.score-val{font-weight:800;color:var(--orl);font-size:14px}
-.rx-badge{background:rgba(39,174,96,.15);color:#27ae60;border:1px solid rgba(39,174,96,.3);font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px}
-.empty-state{text-align:center;padding:40px 20px;color:var(--mu)}
-.empty-state .icon{font-size:40px;margin-bottom:12px}
-.empty-state h3{font-size:18px;font-weight:800;color:var(--tx);margin-bottom:8px}
-.empty-state p{font-size:14px}
-.tab-bar{display:flex;gap:0;border:1px solid var(--bd);border-radius:8px;overflow:hidden;margin-bottom:20px;width:fit-content}
-.tab-btn{padding:9px 18px;font-size:13px;font-weight:700;color:var(--mu);cursor:pointer;background:var(--dk3);border:none;transition:all .15s}
-.tab-btn.active{background:var(--or);color:#fff}
-.tab-content{display:none}
-.tab-content.active{display:block}
-.edit-bio{background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:9px 16px;color:var(--mu);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;margin-top:8px;min-height:36px}
-.edit-bio:hover{border-color:var(--or);color:var(--or)}
-.wod-overlay{position:fixed;top:60px;left:0;right:0;bottom:0;z-index:900;background:var(--bg);overflow-y:auto;display:none}
-.wod-overlay.open{display:block}
-.wod-overlay .inner{max-width:800px;margin:0 auto;padding:32px 20px 80px}
-.back-btn{background:none;border:none;color:var(--or);font-size:14px;font-weight:700;cursor:pointer;padding:8px 0;margin-bottom:20px}
-.back-btn:hover{text-decoration:underline}
-.wod-detail-title{font-size:28px;font-weight:900;margin-bottom:8px}
-.wod-detail-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
-.wod-section{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:20px;margin-bottom:16px}
-.wod-section h3{font-size:13px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
-.wod-section pre{white-space:pre-wrap;font-family:inherit;font-size:14px;line-height:1.7;color:var(--tx)}
-.prof-card-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-.pca-btn{padding:7px 13px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .15s}
-.pca-btn.pri{background:var(--or);color:#fff}.pca-btn.pri:hover{background:var(--orl)}
-.pca-btn.sec{background:var(--dk3);color:var(--mu);border:1px solid var(--bd)}.pca-btn.sec:hover{color:var(--tx);border-color:var(--mu)}
-.pca-btn.del{background:transparent;color:var(--danger);border:1px solid var(--danger);opacity:.7}.pca-btn.del:hover{opacity:1}
-.modal-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:20px}
-.modal-overlay.open{display:flex}
-.modal{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:28px;max-width:420px;width:100%;position:relative}
-.modal-close{position:absolute;top:12px;right:16px;background:none;border:none;color:var(--mu);font-size:20px;cursor:pointer}
-.modal h2{font-size:20px;font-weight:900;margin-bottom:6px}
-.modal .msub{color:var(--mu);font-size:13px;margin-bottom:20px}
-.modal label{display:block;font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
-.modal input,.modal select,.modal textarea{width:100%;background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:10px;color:var(--tx);font-size:14px;outline:none;font-family:inherit;margin-bottom:14px}
-.modal input:focus,.modal select:focus,.modal textarea:focus{border-color:var(--or)}
-.msg{padding:10px 14px;border-radius:7px;font-size:13px;font-weight:600;margin-bottom:14px;display:none}
-.msg.vis{display:block}
-.msg.err{background:rgba(239,68,68,.12);color:var(--danger);border:1px solid rgba(239,68,68,.3)}
-.msg.ok{background:rgba(34,197,94,.12);color:var(--success);border:1px solid rgba(34,197,94,.3)}
-.gen-cta{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:var(--or);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;transition:background .15s;margin-bottom:20px}
-.gen-cta:hover{background:var(--orl);color:#fff}
-.athlete-stats{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}
-.athlete-chip{font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px;background:var(--dk3);border:1px solid var(--bd);color:var(--mu);display:inline-flex;align-items:center;gap:4px}
-.unit-seg{display:inline-flex;background:var(--dk3);border:1px solid var(--bd);border-radius:6px;overflow:hidden;flex-shrink:0}
-.unit-seg-btn{padding:4px 10px;font-size:10px;font-weight:700;background:transparent;border:none;color:var(--mu);cursor:pointer;transition:all .15s;letter-spacing:.5px;white-space:nowrap}
-.unit-seg-btn.active{background:var(--or);color:#fff}
-.prof-edit-form{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:20px}
-.pef-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.pef-field{margin-bottom:14px}
-.pef-field label{display:block;font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
-.pef-field input,.pef-field select,.pef-field textarea{width:100%;background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:10px;color:var(--tx);font-size:14px;outline:none;font-family:inherit}
-.pef-field input:focus,.pef-field select:focus,.pef-field textarea:focus{border-color:var(--or)}
-.pef-field select option{background:var(--dk2)}
-.prof-avatar-wrap{position:relative;flex-shrink:0}
-.prof-avatar-wrap.uploadable{cursor:pointer}
-.prof-avatar-wrap.uploadable:hover .avatar-edit-badge{opacity:1}
-.avatar-edit-badge{position:absolute;bottom:-2px;right:-2px;width:22px;height:22px;border-radius:50%;background:var(--or);border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:11px;opacity:0;transition:opacity .2s;pointer-events:none}
-.avatar-uploading{opacity:.45;pointer-events:none}
-.prof-location{font-size:13px;color:var(--mu);margin-top:2px}
-/* Lift PR board */
-.lifts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:28px}
-.lift-pr-card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 10px;text-align:center;transition:border-color .15s}
-.lift-pr-card.editable{cursor:pointer}
-.lift-pr-card.editable:hover{border-color:var(--or)}
-.lift-inline-input{width:72%;background:transparent;border:none;border-bottom:2px solid var(--or);color:var(--or);font-size:20px;font-weight:900;text-align:center;outline:none;padding:2px 0;margin:4px 0;display:block;margin-left:auto;margin-right:auto}
-.lift-nm{font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
-.lift-val{font-size:22px;font-weight:900;color:var(--or);line-height:1}
-.lift-val.empty{color:var(--bd);font-size:18px}
-.lift-unit{font-size:11px;color:var(--mu);margin-top:3px}
-.lifts-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--bd)}
-.lifts-hdr-title{font-size:13px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:7px}
-.edit-prs-btn{background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;color:var(--mu);transition:all .15s;min-height:36px}
-.edit-prs-btn:hover{border-color:var(--or);color:var(--or)}
-/* Tablet + landscape phone — collapse form rows, 3-col lifts */
-@media(max-width:768px){
-  .pef-row{grid-template-columns:1fr}
-  .lifts-grid{grid-template-columns:repeat(3,1fr)}
-  .edit-prs-btn{padding:9px 16px}
-  .edit-bio{padding:9px 16px;min-height:36px}
+
+  <!-- Page-specific styles -->
+  <style>
+/* ── Page wrap ── */
+.page-wrap { max-width: 1200px; margin: 0 auto; padding: 28px 32px 80px; }
+@media (max-width: 640px) { .page-wrap { padding: 16px 16px 60px; } }
+
+/* ── Profile header card ── */
+.prof-header {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 28px 32px 24px;
 }
-/* Mobile portrait — stack header, 1-col grids, 2-col lifts */
-@media(max-width:600px){
-  .prof-header{flex-direction:column;text-align:center}
-  .prof-grid{grid-template-columns:1fr}
-  .stats-bar{grid-template-columns:repeat(2,1fr)}
-  .lifts-grid{grid-template-columns:repeat(2,1fr)}
-  .lift-pr-card:last-child:nth-child(odd){grid-column:1 / -1}
+.prof-header-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; gap: 28px; align-items: flex-start;
 }
-</style>
-  <!-- Google tag (gtag.js) -->
+@media (max-width: 600px) {
+  .prof-header { padding: 22px 20px 20px; }
+  .prof-header-inner { flex-direction: column; align-items: center; text-align: center; gap: 18px; }
+}
+.prof-avatar-area { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.prof-avatar {
+  width: 96px; height: 96px; border-radius: 50%; background: var(--or); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-head); font-size: 2.8rem; letter-spacing: .03em;
+  box-shadow: 0 0 0 4px rgba(196,18,18,.08), 0 0 0 7px rgba(196,18,18,.14);
+  flex-shrink: 0; transition: box-shadow .2s;
+}
+.prof-avatar.can-upload { cursor: pointer; }
+.prof-avatar.can-upload:hover { box-shadow: 0 0 0 4px rgba(196,18,18,.12), 0 0 0 7px rgba(196,18,18,.30); }
+.avatar-hint { font-size: .68rem; color: var(--muted2); text-align: center; line-height: 1.5; }
+.prof-body { flex: 1; min-width: 0; }
+.prof-realname {
+  font-family: var(--font-head); font-size: clamp(2rem, 5vw, 3rem);
+  letter-spacing: .04em; line-height: 1; margin-bottom: 3px; color: var(--text);
+}
+.prof-handle { font-size: .8rem; font-weight: 700; color: var(--muted2); letter-spacing: .02em; margin-bottom: 10px; }
+.prof-location {
+  font-size: .82rem; color: var(--muted); margin-bottom: 8px;
+  display: flex; align-items: center; gap: 5px;
+}
+@media (max-width: 600px) { .prof-location { justify-content: center; } }
+.prof-bio { font-size: .9rem; color: var(--text); line-height: 1.6; margin-bottom: 12px; }
+.prof-bio.empty { color: var(--muted2); font-style: italic; }
+.prof-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+@media (max-width: 600px) { .prof-chips { justify-content: center; } }
+.prof-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 11px; border-radius: 6px; font-size: .72rem; font-weight: 600;
+  background: #f0f0f0; color: #555; border: 1px solid #e0e0e0; cursor: default; user-select: none;
+}
+.prof-joined {
+  font-size: .75rem; color: var(--muted2); display: flex; align-items: center; gap: 6px; margin-bottom: 16px;
+}
+@media (max-width: 600px) { .prof-joined { justify-content: center; } }
+.prof-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+@media (max-width: 600px) { .prof-actions { justify-content: center; } }
+.btn-edit-prof {
+  padding: 8px 20px; border-radius: var(--radius); font-size: .82rem; font-weight: 700;
+  background: none; border: 1.5px solid var(--border2); color: var(--muted);
+  cursor: pointer; transition: all .15s; font-family: var(--font-body);
+}
+.btn-edit-prof:hover { border-color: var(--or); color: var(--or); background: rgba(196,18,18,.06); }
+.btn-edit-prof.active { border-color: var(--or); color: var(--or); background: rgba(196,18,18,.06); }
+
+/* ── Edit profile panel ── */
+.edit-panel {
+  display: none; background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: 24px 28px; margin-bottom: 16px;
+}
+.edit-panel.open { display: block; }
+.edit-panel-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
+  flex-wrap: wrap; gap: 10px;
+}
+.edit-panel-title { font-family: var(--font-head); font-size: 1.3rem; letter-spacing: .06em; color: var(--text); }
+.unit-seg { display: inline-flex; background: var(--bg); border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; }
+.unit-seg-btn {
+  padding: 6px 14px; font-size: .75rem; font-weight: 700; background: transparent;
+  border: none; color: var(--muted); cursor: pointer; transition: all .15s; font-family: var(--font-body);
+}
+.unit-seg-btn.active { background: var(--or); color: #fff; }
+.edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 580px) { .edit-grid { grid-template-columns: 1fr; } }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field.full { grid-column: 1 / -1; }
+.field label { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.field input, .field select, .field textarea {
+  width: 100%; background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 9px 12px; color: var(--text);
+  font-size: .875rem; outline: none; font-family: var(--font-body); transition: border-color .15s;
+}
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--or); }
+.height-row { display: flex; gap: 8px; }
+.height-row select { flex: 1; }
+.edit-foot { display: flex; gap: 8px; margin-top: 6px; }
+.btn-save {
+  padding: 10px 24px; background: var(--or); color: #fff; border: none;
+  border-radius: var(--radius); font-size: .875rem; font-weight: 700;
+  cursor: pointer; transition: background .15s; font-family: var(--font-body);
+}
+.btn-save:hover { background: var(--or-dark); }
+.btn-cancel {
+  padding: 10px 18px; background: none; border: 1.5px solid var(--border);
+  border-radius: var(--radius); font-size: .875rem; font-weight: 700;
+  color: var(--muted); cursor: pointer; transition: all .15s; font-family: var(--font-body);
+}
+.btn-cancel:hover { border-color: var(--border2); color: var(--text); }
+
+/* ── Metrics strip ── */
+.metrics-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+@media (max-width: 700px) { .metrics-strip { grid-template-columns: repeat(2, 1fr); } }
+.metric-card {
+  background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius);
+  padding: 16px 18px; display: flex; align-items: center; gap: 14px;
+}
+.metric-icon {
+  width: 38px; height: 38px; border-radius: 9px; background: rgba(196,18,18,.08);
+  display: flex; align-items: center; justify-content: center; color: var(--or); flex-shrink: 0;
+}
+.metric-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.metric-val {
+  font-family: var(--font-head); font-size: 1.4rem; letter-spacing: .04em;
+  color: var(--text); line-height: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.metric-lbl { font-size: .63rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted2); }
+
+/* ── Section chrome ── */
+.section-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 10px; }
+.section-title-row { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--or); display: flex; align-items: center; gap: 7px; }
+.btn-edit-sec {
+  padding: 7px 16px; border-radius: var(--radius); font-size: .78rem; font-weight: 700;
+  background: none; border: 1.5px solid var(--border); color: var(--muted);
+  cursor: pointer; transition: all .15s; font-family: var(--font-body);
+}
+.btn-edit-sec:hover { border-color: var(--or); color: var(--or); }
+
+/* ── Lift PRs ── */
+.lifts-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 28px; }
+@media (max-width: 860px) { .lifts-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 480px) { .lifts-grid { grid-template-columns: repeat(2, 1fr); } }
+.lift-card {
+  background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius);
+  padding: 16px 12px; text-align: center; transition: border-color .15s;
+}
+.lift-card.editable { cursor: pointer; }
+.lift-card.editable:hover { border-color: var(--or); }
+.lift-name { font-size: .63rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted2); margin-bottom: 10px; }
+.lift-val  { font-family: var(--font-head); font-size: 1.8rem; letter-spacing: .03em; color: var(--or); line-height: 1; }
+.lift-val.empty { color: var(--border2); font-size: 1.5rem; }
+.lift-unit { font-size: .7rem; color: var(--muted2); margin-top: 3px; }
+.lift-edit-hint { font-size: .63rem; color: var(--muted2); margin-top: 7px; opacity: .7; }
+.lift-inline-input {
+  width: 80%; background: transparent; border: none; border-bottom: 2px solid var(--or);
+  color: var(--or); font-family: var(--font-head); font-size: 1.8rem; letter-spacing: .03em;
+  text-align: center; outline: none; padding: 2px 0;
+  display: block; margin: 4px auto; line-height: 1;
+}
+
+/* ── Activity section ── */
+.activity-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
+.activity-title { font-family: var(--font-head); font-size: 1.6rem; letter-spacing: .04em; color: var(--text); }
+.btn-gen-wod {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 18px; background: var(--or); color: #fff; border: none;
+  border-radius: var(--radius); font-size: .82rem; font-weight: 700;
+  cursor: pointer; transition: background .15s; font-family: var(--font-body); text-decoration: none;
+}
+.btn-gen-wod:hover { background: var(--or-dark); }
+.stats-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+.stat-card {
+  background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius);
+  padding: 18px; cursor: pointer; transition: border-color .15s, box-shadow .15s; text-align: center;
+  text-decoration: none; display: block;
+}
+.stat-card:hover  { border-color: var(--or); box-shadow: var(--shadow); }
+.stat-card.active { border-color: var(--or); background: rgba(196,18,18,.06); box-shadow: var(--shadow); }
+.stat-val { font-family: var(--font-head); font-size: 2.2rem; letter-spacing: .04em; color: var(--or); line-height: 1; margin-bottom: 4px; }
+.stat-lbl { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+
+/* ── WOD cards (activity preview) ── */
+.wod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+@media (max-width: 480px) { .wod-grid { grid-template-columns: 1fr; } }
+.wod-card {
+  background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius-lg);
+  overflow: hidden; transition: border-color .2s, box-shadow .2s;
+  display: flex; flex-direction: column;
+}
+.wod-card:hover { border-color: var(--or); box-shadow: var(--shadow-md); }
+.wod-card-body { padding: 18px 20px 14px; flex: 1; }
+.wod-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.chip {
+  display: inline-block; padding: 3px 10px; border-radius: 20px;
+  font-size: .68rem; font-weight: 700; letter-spacing: .02em;
+}
+.chip-red   { background: rgba(196,18,18,.08); color: var(--or); border: 1px solid rgba(196,18,18,.2); }
+.chip-grey  { background: #f0f0f0; color: #555; border: 1px solid #ddd; }
+.chip-green { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+.wod-name {
+  font-family: var(--font-head); font-size: 1.4rem; letter-spacing: .04em;
+  color: var(--text); line-height: 1.1; margin-bottom: 6px; transition: color .15s;
+}
+.wod-card:hover .wod-name { color: var(--or); }
+.wod-date { font-size: .72rem; color: var(--muted2); }
+.wod-movements {
+  display: flex; flex-direction: column; gap: 0; margin: 10px 0 4px;
+  border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+}
+.wod-mov-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: .8rem; padding: 7px 10px; background: var(--white);
+}
+.wod-mov-row + .wod-mov-row { border-top: 1px solid var(--border); }
+.wod-mov-link {
+  color: var(--text); font-weight: 500; text-decoration: none;
+  border-bottom: 1px dashed var(--border2); transition: color .15s, border-color .15s;
+}
+.wod-mov-link:hover { color: var(--or); border-bottom-color: var(--or); }
+.wod-mov-detail { font-weight: 700; color: var(--or); font-size: .78rem; }
+.see-all-link {
+  font-size: .82rem; font-weight: 700; color: var(--or); text-decoration: none;
+  display: flex; align-items: center; gap: 4px; transition: opacity .15s;
+}
+.see-all-link:hover { opacity: .75; }
+
+/* ── Empty state ── */
+.empty-state { text-align: center; padding: 56px 24px; }
+.empty-title { font-family: var(--font-head); font-size: 2rem; letter-spacing: .04em; color: var(--text); margin-bottom: 8px; }
+.empty-sub { font-size: .9rem; color: var(--muted); max-width: 360px; margin: 0 auto; line-height: 1.6; }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 7px; margin-top: 20px;
+  padding: 12px 24px; background: var(--or); color: #fff; border: none;
+  border-radius: var(--radius); font-size: .9rem; font-weight: 700;
+  cursor: pointer; transition: background .15s; font-family: var(--font-body); text-decoration: none;
+}
+.btn-primary:hover { background: var(--or-dark); }
+
+/* ── Modals ── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,.42);
+  display: none; align-items: center; justify-content: center; padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius-lg);
+  padding: 28px; max-width: 460px; width: 100%; position: relative;
+  max-height: 90vh; overflow-y: auto;
+}
+.modal-close {
+  position: absolute; top: 14px; right: 16px; background: none; border: none;
+  color: var(--muted); font-size: 20px; cursor: pointer; transition: color .15s; line-height: 1;
+}
+.modal-close:hover { color: var(--text); }
+.modal-title { font-family: var(--font-head); font-size: 1.6rem; letter-spacing: .04em; margin-bottom: 4px; }
+.modal-sub { font-size: .82rem; color: var(--muted); margin-bottom: 22px; }
+.modal-field { margin-bottom: 16px; }
+.modal-field label { display: block; font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 6px; }
+.modal-field input, .modal-field textarea, .modal-field select {
+  width: 100%; background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 9px 12px; color: var(--text);
+  font-size: .875rem; outline: none; font-family: var(--font-body); transition: border-color .15s;
+}
+.modal-field input:focus, .modal-field textarea:focus, .modal-field select:focus { border-color: var(--or); }
+.modal-foot { display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px; }
+.modal-foot-spread { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 6px; }
+.btn-modal-save { padding: 10px 22px; background: var(--or); color: #fff; border: none; border-radius: var(--radius); font-size: .875rem; font-weight: 700; cursor: pointer; transition: background .15s; font-family: var(--font-body); }
+.btn-modal-save:hover { background: var(--or-dark); }
+.btn-modal-cancel { padding: 10px 16px; background: none; border: 1.5px solid var(--border); border-radius: var(--radius); font-size: .875rem; font-weight: 700; color: var(--muted); cursor: pointer; transition: all .15s; font-family: var(--font-body); }
+.btn-modal-cancel:hover { border-color: var(--border2); color: var(--text); }
+.btn-modal-danger { padding: 10px 16px; background: none; border: 1.5px solid #dc2626; border-radius: var(--radius); font-size: .875rem; font-weight: 700; color: #dc2626; cursor: pointer; transition: all .15s; font-family: var(--font-body); opacity: .85; }
+.btn-modal-danger:hover { opacity: 1; background: #fef2f2; }
+
+/* ── Utilities ── */
+.mb-16 { margin-bottom: 16px; }
+.mb-20 { margin-bottom: 20px; }
+.mb-28 { margin-bottom: 28px; }
+.hidden { display: none !important; }
+  </style>
+
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -150,1252 +319,662 @@
     gtag('js', new Date());
     gtag('config', 'G-HZM475VDN3');
   </script>
+  <!-- Vercel Analytics -->
   <script defer src="/_vercel/insights/script.js"></script>
 </head>
-<body>
 
-<main>
-<div class="prof-page">
+<body data-nav-init="true" data-active-page="">
 
-  <!-- Loading -->
-  <div id="prof-loading" style="text-align:center;padding:60px 20px;color:var(--mu)">
-    <p>Loading profile...</p>
-  </div>
-
-  <!-- Not Found -->
-  <div id="prof-notfound" style="display:none">
-    <div class="empty-state">
-      <div class="icon">🤷</div>
-      <h3>Profile not found</h3>
-      <p>This athlete profile doesn't exist or couldn't be loaded.</p>
+<!-- PROFILE HEADER -->
+<div class="prof-header">
+  <div class="prof-header-inner">
+    <div class="prof-avatar-area">
+      <div class="prof-avatar" id="prof-avatar">?</div>
+      <div class="avatar-hint hidden" id="avatar-hint">Tap to change<br>JPG · PNG · Max 5 MB</div>
     </div>
-  </div>
-
-  <!-- Profile Content -->
-  <div id="prof-content" style="display:none">
-
-    <!-- Header -->
-    <div class="prof-header">
-      <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
-        <div class="prof-avatar-wrap" id="prof-avatar-wrap" onclick="avatarClick()">
-          <div class="prof-avatar" id="prof-avatar">?</div>
-          <div class="avatar-edit-badge">📷</div>
-          <input type="file" id="avatar-file-input" accept="image/*" style="display:none" onchange="handleAvatarUpload(this.files[0]);this.value=''">
-        </div>
-        <span id="avatar-hint" style="display:none;text-align:center;cursor:pointer" onclick="avatarClick()">
-          <span style="display:block;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.6px">Tap to change</span>
-          <span style="display:block;font-size:10px;color:var(--mu);margin-top:2px">JPG · PNG · WebP · Max 5 MB</span>
-          <span style="display:block;font-size:10px;color:var(--mu)">Displayed at 300 × 300 px</span>
-        </span>
+    <div class="prof-body">
+      <div class="prof-realname" id="prof-realname">Loading…</div>
+      <div class="prof-handle" id="prof-handle"></div>
+      <div class="prof-location hidden" id="prof-location">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span id="prof-location-text"></span>
       </div>
-      <div class="prof-info">
-        <h1 id="prof-username">—</h1>
-        <p id="prof-location" class="prof-location" style="display:none"></p>
-        <p id="prof-bio"></p>
-        <div id="prof-athlete-stats" class="athlete-stats"></div>
-        <div class="joined" id="prof-joined"></div>
-        <div id="birthday-msg" style="display:none;font-size:13px;font-weight:700;color:var(--or);margin-top:6px">🎂 Happy Birthday!</div>
-        <button class="edit-bio" id="edit-bio-btn" style="display:none" onclick="toggleProfileEdit()">Edit Profile</button>
+      <p class="prof-bio" id="prof-bio"></p>
+      <div class="prof-chips" id="prof-chips"></div>
+      <div class="prof-joined" id="prof-joined">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span id="prof-joined-text"></span>
+      </div>
+      <div class="prof-actions">
+        <button class="btn-edit-prof hidden" id="edit-prof-btn" onclick="toggleEditPanel()">Edit Profile</button>
       </div>
     </div>
-
-    <!-- Hero Metrics Strip -->
-    <div id="prof-hero-strip" style="display:none;margin-bottom:24px">
-      <div class="prof-hero-strip"></div>
-    </div>
-
-    <!-- Profile Edit (own profile only) -->
-    <div id="profile-edit-section" style="display:none;margin-bottom:24px">
-      <div class="prof-edit-form">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-          <span style="font-size:13px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:1px">Edit Profile</span>
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:11px;color:var(--mu)">Units:</span>
-            <div class="unit-seg">
-              <button class="unit-seg-btn" id="unit-seg-imperial" onclick="setUnit('imperial')">Imperial</button>
-              <button class="unit-seg-btn" id="unit-seg-metric" onclick="setUnit('metric')">Metric</button>
-            </div>
-          </div>
-        </div>
-        <div class="pef-field">
-          <label>Bio</label>
-          <textarea id="bio-input" rows="3" placeholder="Tell us about yourself..."></textarea>
-        </div>
-        <div class="pef-row">
-          <div class="pef-field">
-            <label>Gender</label>
-            <select id="pef-gender">
-              <option value="">— Select —</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="non-binary">Non-binary</option>
-              <option value="prefer_not_to_say">Prefer not to say</option>
-            </select>
-          </div>
-          <div class="pef-field">
-            <label>Birthday</label>
-            <input type="date" id="pef-birthday">
-          </div>
-        </div>
-        <div class="pef-row">
-          <div class="pef-field" id="pef-height-field">
-            <label id="pef-height-label">Height</label>
-            <div id="pef-height-imperial" style="display:flex;gap:8px">
-              <select id="pef-height-ft" style="flex:1;background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:10px;color:var(--tx);font-size:14px;outline:none">
-                <option value="">ft</option>
-                <option value="4">4 ft</option><option value="5">5 ft</option><option value="6">6 ft</option><option value="7">7 ft</option>
-              </select>
-              <select id="pef-height-in" style="flex:1;background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:10px;color:var(--tx);font-size:14px;outline:none">
-                <option value="">in</option>
-                <option value="0">0"</option><option value="1">1"</option><option value="2">2"</option><option value="3">3"</option>
-                <option value="4">4"</option><option value="5">5"</option><option value="6">6"</option><option value="7">7"</option>
-                <option value="8">8"</option><option value="9">9"</option><option value="10">10"</option><option value="11">11"</option>
-              </select>
-            </div>
-            <input type="number" id="pef-height-cm" min="100" max="250" placeholder="cm" style="display:none;width:100%;background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:10px;color:var(--tx);font-size:14px;outline:none">
-          </div>
-          <div class="pef-field">
-            <label id="pef-weight-label">Weight</label>
-            <input type="number" id="pef-weight" min="50" max="700" placeholder="lbs">
-          </div>
-        </div>
-        <div class="pef-row">
-          <div class="pef-field">
-            <label>Experience Level</label>
-            <select id="pef-level">
-              <option value="">— Select —</option>
-              <option value="beginner">Beginner</option>
-              <option value="intermediate">Intermediate</option>
-              <option value="advanced">Advanced</option>
-              <option value="elite">Elite</option>
-            </select>
-          </div>
-        </div>
-        <div class="pef-row">
-          <div class="pef-field">
-            <label>Training Frequency</label>
-            <select id="pef-frequency">
-              <option value="">— Select —</option>
-              <option value="1-2">1–2 days/week</option>
-              <option value="3-4">3–4 days/week</option>
-              <option value="5-6">5–6 days/week</option>
-              <option value="daily">Every day</option>
-            </select>
-          </div>
-          <div class="pef-field">
-            <label>Fitness Journey</label>
-            <select id="pef-journey">
-              <option value="">— Select —</option>
-              <option value="lt1">Less than 1 year</option>
-              <option value="1-2">1–2 years</option>
-              <option value="3-5">3–5 years</option>
-              <option value="6-10">6–10 years</option>
-              <option value="10+">10+ years</option>
-            </select>
-          </div>
-        </div>
-        <div class="pef-row">
-          <div class="pef-field">
-            <label>Goat Movement 🐐</label>
-            <input type="text" id="pef-goat" maxlength="60" placeholder="e.g. Double-unders">
-          </div>
-          <div class="pef-field">
-            <label>Favorite WOD ❤️</label>
-            <input type="text" id="pef-favwod" maxlength="60" placeholder="e.g. Murph">
-          </div>
-        </div>
-        <div class="pef-field">
-          <label>Country</label>
-          <select id="pef-country" onchange="onCountryChange()"><option value="">— Select Country —</option></select>
-        </div>
-        <div class="pef-row" id="pef-location-fields" style="display:none">
-          <div class="pef-field">
-            <label>City</label>
-            <input type="text" id="pef-city" maxlength="60">
-          </div>
-          <div class="pef-field" id="pef-state-wrap">
-            <label>State</label>
-            <select id="pef-state"><option value="">— Select —</option></select>
-          </div>
-          <div class="pef-field" id="pef-province-wrap" style="display:none">
-            <label>Province / Region</label>
-            <input type="text" id="pef-province" placeholder="Optional" maxlength="80">
-          </div>
-        </div>
-        <div style="display:flex;gap:8px;margin-top:4px">
-          <button onclick="saveProfile()" style="padding:8px 16px;background:var(--or);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer">Save</button>
-          <button onclick="toggleProfileEdit()" style="padding:8px 16px;background:var(--dk3);color:var(--mu);border:1px solid var(--bd);border-radius:7px;font-size:13px;font-weight:700;cursor:pointer">Cancel</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Key Lift PRs (personal info — grouped with profile) -->
-    <div id="prof-lifts-section" style="display:none;margin-bottom:28px">
-      <div class="lifts-hdr">
-        <span class="lifts-hdr-title">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 6.5h11M6.5 12h11M6.5 17.5h7"/><circle cx="3" cy="6.5" r="1.5"/><circle cx="3" cy="12" r="1.5"/><circle cx="3" cy="17.5" r="1.5"/></svg>
-          Key Lift PRs
-        </span>
-        <button id="edit-lifts-btn" class="edit-prs-btn" onclick="openLiftModal()" style="display:none">Edit PRs</button>
-      </div>
-      <div class="lifts-grid" id="lifts-grid"></div>
-    </div>
-
-    <!-- Workout Activity Section -->
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px">
-      <span class="section-title" style="margin-bottom:0;padding-bottom:0;border-bottom:none">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Workout Activity
-      </span>
-      <a href="/generator" id="prof-gen-cta" class="gen-cta" style="display:none;margin-bottom:0">+ Generate New WOD</a>
-    </div>
-
-    <!-- Stats (clickable — act as tab selectors) -->
-    <div class="stats-bar" id="prof-stats">
-      <div class="stat-card active" id="stat-card-workouts" onclick="switchTab('workouts')"><div class="val" id="stat-workouts">0</div><div class="lbl">Workouts</div></div>
-      <div class="stat-card" id="stat-card-results" onclick="switchTab('results')"><div class="val" id="stat-results">0</div><div class="lbl">Results Logged</div></div>
-      <div class="stat-card" id="stat-card-public" onclick="switchTab('workouts')"><div class="val" id="stat-public">0</div><div class="lbl">Public WODs</div></div>
-    </div>
-
-    <!-- Tab: Workouts -->
-    <div class="tab-content active" id="tab-workouts">
-      <div class="prof-grid" id="prof-workouts-grid"></div>
-      <div id="prof-workouts-empty" class="empty-state" style="display:none">
-        <div class="icon">💪</div>
-        <h3>No workouts yet</h3>
-        <p>This athlete hasn't created any public workouts.</p>
-      </div>
-    </div>
-
-    <!-- Tab: Results -->
-    <div class="tab-content" id="tab-results">
-      <div style="overflow-x:auto">
-        <table class="results-table" id="prof-results-table" style="display:none">
-          <thead>
-            <tr>
-              <th>Workout</th>
-              <th>Score</th>
-              <th>Rx</th>
-              <th>Date</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="prof-results-body"></tbody>
-        </table>
-      </div>
-      <div id="prof-results-empty" class="empty-state" style="display:none">
-        <div class="icon">📊</div>
-        <h3>No results yet</h3>
-        <p>This athlete hasn't logged any results.</p>
-      </div>
-    </div>
-
   </div>
 </div>
+
+<!-- MAIN -->
+<main>
+<div class="page-wrap">
+
+  <!-- EDIT PROFILE PANEL (own profile only) -->
+  <div class="edit-panel hidden" id="edit-panel">
+    <div class="edit-panel-hdr">
+      <span class="edit-panel-title">Edit Profile</span>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:.72rem;color:var(--muted);font-weight:600">Units:</span>
+        <div class="unit-seg">
+          <button class="unit-seg-btn active" id="unit-imp" onclick="setUnit('imperial')">Imperial</button>
+          <button class="unit-seg-btn" id="unit-met" onclick="setUnit('metric')">Metric</button>
+        </div>
+      </div>
+    </div>
+    <div class="edit-grid">
+      <div class="field">
+        <label>First Name</label>
+        <input type="text" id="edit-first-name" placeholder="First name">
+      </div>
+      <div class="field">
+        <label>Last Name</label>
+        <input type="text" id="edit-last-name" placeholder="Last name">
+      </div>
+      <div class="field full">
+        <label>Bio</label>
+        <textarea rows="3" id="edit-bio" placeholder="Tell us about yourself…"></textarea>
+      </div>
+      <div class="field">
+        <label>Gender</label>
+        <select id="edit-gender">
+          <option value="">— Select —</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="nonbinary">Non-binary</option>
+          <option value="prefer-not">Prefer not to say</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Birthday</label>
+        <input type="date" id="edit-birthday">
+      </div>
+      <div class="field">
+        <label>Height</label>
+        <div class="height-row" id="height-imperial">
+          <select id="edit-height-ft">
+            <option>4 ft</option><option>5 ft</option><option selected>5 ft</option>
+            <option>6 ft</option><option>7 ft</option>
+          </select>
+          <select id="edit-height-in">
+            <option>0"</option><option>1"</option><option>2"</option><option>3"</option>
+            <option>4"</option><option>5"</option><option>6"</option><option>7"</option>
+            <option>8"</option><option>9"</option><option>10"</option><option selected>11"</option>
+          </select>
+        </div>
+        <input type="number" id="height-metric" placeholder="cm" style="display:none">
+      </div>
+      <div class="field">
+        <label id="weight-lbl">Weight (lbs)</label>
+        <input type="number" id="weight-input" placeholder="lbs">
+      </div>
+      <div class="field">
+        <label>Experience Level</label>
+        <select id="edit-experience">
+          <option value="">— Select —</option>
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="advanced">Advanced</option>
+          <option value="elite">Elite</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Training Frequency</label>
+        <select id="edit-frequency">
+          <option value="">— Select —</option>
+          <option value="1-2">1–2 days/week</option>
+          <option value="3-4">3–4 days/week</option>
+          <option value="5-6">5–6 days/week</option>
+          <option value="daily">Every day</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Fitness Journey</label>
+        <select id="edit-journey">
+          <option value="">— Select —</option>
+          <option value="lt1">Less than 1 year</option>
+          <option value="1-2">1–2 years</option>
+          <option value="3-5">3–5 years</option>
+          <option value="6-10">6–10 years</option>
+          <option value="10plus">10+ years</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Country</label>
+        <input type="text" id="edit-country" placeholder="e.g. United States">
+      </div>
+      <div class="field">
+        <label>City / State</label>
+        <input type="text" id="edit-city" placeholder="e.g. Denver, CO">
+      </div>
+      <div class="field">
+        <label>Goat Movement 🐐</label>
+        <input type="text" id="edit-goat" placeholder="e.g. Double-unders">
+      </div>
+      <div class="field">
+        <label>Favorite WOD ❤️</label>
+        <input type="text" id="edit-fav-wod" placeholder="e.g. Murph">
+      </div>
+    </div>
+    <div class="edit-foot">
+      <button class="btn-save" onclick="saveProfile()">Save Changes</button>
+      <button class="btn-cancel" onclick="toggleEditPanel()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- METRICS STRIP -->
+  <div class="metrics-strip mb-20" id="metrics-strip">
+    <div class="metric-card">
+      <div class="metric-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </div>
+      <div class="metric-body">
+        <div class="metric-val" id="metric-since">—</div>
+        <div class="metric-lbl">Member Since</div>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <div class="metric-body">
+        <div class="metric-val" id="metric-wods">0</div>
+        <div class="metric-lbl">WODs Created</div>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+      </div>
+      <div class="metric-body">
+        <div class="metric-val" id="metric-results">0</div>
+        <div class="metric-lbl">Results Logged</div>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <div class="metric-body">
+        <div class="metric-val" id="metric-level">—</div>
+        <div class="metric-lbl">Level</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIFT PRs -->
+  <div class="mb-28" id="lifts-section">
+    <div class="section-hdr">
+      <span class="section-title-row">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11M6.5 12h11M6.5 17.5h7"/><circle cx="3" cy="6.5" r="1.5"/><circle cx="3" cy="12" r="1.5"/><circle cx="3" cy="17.5" r="1.5"/></svg>
+        Key Lift PRs
+      </span>
+      <button class="btn-edit-sec hidden" id="edit-prs-btn" onclick="openLiftModal()">Edit PRs</button>
+    </div>
+    <div class="lifts-grid" id="lifts-grid"></div>
+  </div>
+
+  <!-- RECENT ACTIVITY -->
+  <div class="mb-28" id="activity-section">
+    <div class="activity-hdr">
+      <span class="activity-title">Recent Activity</span>
+      <a href="/myworkouts.html" class="see-all-link" id="see-all-link">See full history →</a>
+    </div>
+
+    <div class="stats-strip mb-20">
+      <a href="/myworkouts.html" class="stat-card">
+        <div class="stat-val" id="val-workouts">0</div>
+        <div class="stat-lbl">Workouts</div>
+      </a>
+      <a href="/myworkouts.html" class="stat-card">
+        <div class="stat-val" id="val-results">0</div>
+        <div class="stat-lbl">Results Logged</div>
+      </a>
+      <div class="stat-card">
+        <div class="stat-val" id="val-public">0</div>
+        <div class="stat-lbl">Public WODs</div>
+      </div>
+    </div>
+
+    <div class="wod-grid" id="wod-grid"></div>
+    <div class="empty-state hidden" id="empty-workouts">
+      <div class="empty-title">No workouts yet</div>
+      <p class="empty-sub" id="empty-workouts-sub">You haven't created any workouts yet.</p>
+    </div>
+  </div>
+
+</div><!-- .page-wrap -->
 </main>
 
-<!-- Edit Result Modal -->
-<div id="prof-edit-modal" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.7);align-items:center;justify-content:center;padding:20px">
-  <div style="background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:28px;max-width:420px;width:100%;position:relative">
-    <button onclick="closeEditResult()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:var(--mu);font-size:20px;cursor:pointer">✕</button>
-    <h2 style="font-size:18px;font-weight:900;margin-bottom:4px">Edit Result</h2>
-    <div id="prof-edit-error" style="display:none;background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);color:#E74C3C;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;margin-top:12px"></div>
-    <input type="hidden" id="prof-edit-id">
-    <div style="margin-top:16px">
-      <label style="display:block;font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Score</label>
-      <input type="text" id="prof-edit-score" style="width:100%;background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:10px;color:var(--tx);font-size:14px;outline:none;font-family:inherit;margin-bottom:14px" placeholder="e.g. 8:32 or 12 + 7">
+<!-- LIFT PR MODAL -->
+<div class="modal-overlay" id="lift-modal">
+  <div class="modal" style="max-width:480px">
+    <button class="modal-close" onclick="closeModal('lift-modal')">✕</button>
+    <div class="modal-title">Key Lift PRs</div>
+    <p class="modal-sub">Enter your best lifts. Leave blank to clear a PR.</p>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+      <span style="font-size:.72rem;color:var(--muted);font-weight:600">Units:</span>
+      <div class="unit-seg">
+        <button class="unit-seg-btn active" id="lift-unit-imp" onclick="setLiftUnit('imperial')">Imperial (lbs)</button>
+        <button class="unit-seg-btn" id="lift-unit-met" onclick="setLiftUnit('metric')">Metric (kg)</button>
+      </div>
     </div>
-    <div style="margin-bottom:14px">
-      <label style="display:block;font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Notes (Optional)</label>
-      <textarea id="prof-edit-notes" rows="2" style="width:100%;background:var(--dk3);border:1px solid var(--bd);border-radius:7px;padding:10px;color:var(--tx);font-size:14px;outline:none;font-family:inherit;resize:vertical" placeholder="How did it go?"></textarea>
+    <div id="lift-modal-fields"></div>
+    <div class="modal-foot">
+      <button class="btn-modal-cancel" onclick="closeModal('lift-modal')">Cancel</button>
+      <button class="btn-modal-save" onclick="saveLiftModal()">Save PRs</button>
     </div>
-    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:20px">
-      <input type="checkbox" id="prof-edit-rx" style="width:16px;height:16px">
-      <span style="font-size:14px">Completed RX</span>
-    </label>
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <button onclick="deleteEditResult()" style="padding:10px 16px;background:transparent;color:#E74C3C;border:1px solid #E74C3C;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;opacity:.8" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.8">Delete</button>
+  </div>
+</div>
+
+<!-- EDIT RESULT MODAL -->
+<div class="modal-overlay" id="result-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('result-modal')">✕</button>
+    <div class="modal-title">Edit Result</div>
+    <p class="modal-sub" id="result-modal-wod"></p>
+    <div class="modal-field">
+      <label>Score / Time</label>
+      <input type="text" id="result-score" placeholder="e.g. 42:17 or 225 reps">
+    </div>
+    <div class="modal-field">
+      <label>Rx?</label>
+      <select id="result-rx">
+        <option value="true">Yes — Rx</option>
+        <option value="false">Scaled</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>Notes (optional)</label>
+      <textarea rows="2" id="result-notes" placeholder="How did it feel?"></textarea>
+    </div>
+    <div class="modal-foot-spread">
+      <button class="btn-modal-danger" onclick="closeModal('result-modal')">Delete</button>
       <div style="display:flex;gap:8px">
-        <button onclick="closeEditResult()" style="padding:10px 16px;background:var(--dk3);border:1px solid var(--bd);border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;color:var(--mu)">Cancel</button>
-        <button onclick="saveEditResult()" style="padding:10px 16px;background:var(--or);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">Save</button>
+        <button class="btn-modal-cancel" onclick="closeModal('result-modal')">Cancel</button>
+        <button class="btn-modal-save" onclick="closeModal('result-modal')">Save</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- WOD Detail Overlay -->
-<div class="wod-overlay" id="wod-detail-overlay">
-  <div class="inner">
-    <button class="back-btn" onclick="closeWodDetail()">← Back to Profile</button>
-    <div id="wod-detail-content"></div>
-  </div>
-</div>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/js/config.js"></script>
+<script src="/js/db.js"></script>
 <script>
-let currentUser = null;
-let profileData = null;
-let profileWorkouts = [];
-let isOwnProfile = false;
+/* ── Constants ── */
+var LIFT_NAMES = ['Back Squat', 'Deadlift', 'Clean & Jerk', 'Snatch', 'Overhead Press'];
+var liftData   = {};
+var isOwnProfile = false;
 
-function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
-function formatDate(d) {
-  if (!d) return '';
-  const dt = new Date(d);
-  return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
+/* ── Init ── */
+document.addEventListener('DOMContentLoaded', async function() {
+  // Determine whose profile to show
+  var params   = new URLSearchParams(window.location.search);
+  var urlUser  = params.get('u'); // ?u=username to view another user
 
-function getAvatarColor(userId) {
-  const colors = ['#C41212', '#E03030', '#FF8C42', '#FFA500', '#FFB84D'];
-  const hash = (userId || '').split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  return colors[hash % colors.length];
-}
-
-// ── WOD Detail ──
-async function openWodDetail(workoutId) {
-  const w = profileWorkouts.find(x => x.id === workoutId) || await db.getWorkoutById(workoutId);
-  if (!w) return;
-
-  let movementsHtml = '';
-  if (w.movements) {
-    const moves = Array.isArray(w.movements) ? w.movements : (typeof w.movements === 'string' ? w.movements.split(',') : []);
-    movementsHtml = moves.map(m => typeof m === 'object' ? `${m.name || m.movement || ''}${m.reps ? ' \u00d7 ' + m.reps : ''}` : m.trim()).filter(Boolean).join('\n');
-  }
-
-  document.getElementById('wod-detail-content').innerHTML = `
-    <h1 class="wod-detail-title">${escHtml(w.title)}</h1>
-    <div class="wod-detail-meta">
-      <span class="badge badge-or">${escHtml(w.format || 'AMRAP')}</span>
-      <span class="badge badge-mu">${cap(w.level || 'intermediate')}</span>
-      ${w.duration ? `<span class="badge badge-mu">${escHtml(String(w.duration))} min</span>` : ''}
-      ${w.equipment ? `<span class="badge badge-mu">${escHtml(w.equipment)}</span>` : ''}
-    </div>
-    ${w.description ? `<div class="wod-section"><h3>Description</h3><pre>${escHtml(w.description)}</pre></div>` : ''}
-    ${movementsHtml ? `<div class="wod-section"><h3>Movements</h3><pre>${escHtml(movementsHtml)}</pre></div>` : ''}
-    ${w.scoring ? `<div class="wod-section"><h3>Scoring</h3><pre>${escHtml(w.scoring)}</pre></div>` : ''}
-    ${isOwnProfile ? `<div style="display:flex;gap:10px;margin-top:20px">
-      <button class="pca-btn pri" onclick="closeWodDetail();openResultModal('${escHtml(w.id)}','${escHtml(w.title)}')">Log Result</button>
-      <button class="pca-btn del" onclick="closeWodDetail();openDeleteModal('${escHtml(w.id)}')">Delete Workout</button>
-    </div>` : ''}`;
-
-  document.getElementById('wod-detail-overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeWodDetail() {
-  document.getElementById('wod-detail-overlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-// ── Modals (owner only) ──
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
-function openResultModal(workoutId, title) {
-  document.getElementById('result-workout-id').value = workoutId;
-  document.getElementById('result-modal-wod').textContent = title;
-  document.getElementById('result-score').value = '';
-  document.getElementById('result-notes').value = '';
-  document.getElementById('result-error').classList.remove('vis');
-  document.getElementById('result-success').classList.remove('vis');
-  openModal('result-modal');
-}
-
-async function submitResult() {
-  const workoutId = document.getElementById('result-workout-id').value;
-  const score     = document.getElementById('result-score').value.trim();
-  const isRx      = document.getElementById('result-rx').value === 'true';
-  const notes     = document.getElementById('result-notes').value.trim();
-  const errEl     = document.getElementById('result-error');
-  const okEl      = document.getElementById('result-success');
-  errEl.classList.remove('vis'); okEl.classList.remove('vis');
-  if (!score) { errEl.textContent = 'Please enter a score or time.'; errEl.classList.add('vis'); return; }
+  var session  = null;
+  var currentUser = null;
   try {
-    await db.saveResult({
-      workout_id: workoutId,
-      user_id: currentUser.id,
-      username: currentUser.email?.split('@')[0] || 'athlete',
-      score_display: score,
-      is_rx: isRx,
-      notes,
-      date: new Date().toISOString().split('T')[0]
-    });
-    okEl.textContent = 'Result saved!';
-    okEl.classList.add('vis');
-    setTimeout(() => { closeModal('result-modal'); loadProfile(); }, 1200);
-  } catch (e) {
-    errEl.textContent = e.message || 'Failed to save result.';
-    errEl.classList.add('vis');
-  }
-}
+    var { data: { session: s } } = await supabase.auth.getSession();
+    session = s;
+    currentUser = session ? session.user : null;
+  } catch(e) { /* Supabase not ready */ }
 
-function openDeleteModal(workoutId) {
-  document.getElementById('delete-workout-id').value = workoutId;
-  openModal('delete-modal');
-}
-
-async function confirmDelete() {
-  const workoutId = document.getElementById('delete-workout-id').value;
-  try {
-    await db.deleteWorkout(workoutId);
-    closeModal('delete-modal');
-    loadProfile();
-  } catch (e) {
-    alert('Failed to delete: ' + (e.message || 'Unknown error'));
-  }
-}
-
-// ── Tab Switching ──
-function switchTab(tab) {
-  // Update tab content
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  document.getElementById(`tab-${tab}`).classList.add('active');
-  // Sync stat card highlight — workouts tab activates both Workouts and Public WODs cards
-  document.getElementById('stat-card-workouts').classList.toggle('active', tab === 'workouts');
-  document.getElementById('stat-card-results').classList.toggle('active', tab === 'results');
-  document.getElementById('stat-card-public').classList.toggle('active', tab === 'workouts');
-}
-
-// ── Location dropdowns ──
-(function() {
-  const states = [
-    ['AL','Alabama'],['AK','Alaska'],['AZ','Arizona'],['AR','Arkansas'],
-    ['CA','California'],['CO','Colorado'],['CT','Connecticut'],['DE','Delaware'],
-    ['FL','Florida'],['GA','Georgia'],['HI','Hawaii'],['ID','Idaho'],
-    ['IL','Illinois'],['IN','Indiana'],['IA','Iowa'],['KS','Kansas'],
-    ['KY','Kentucky'],['LA','Louisiana'],['ME','Maine'],['MD','Maryland'],
-    ['MA','Massachusetts'],['MI','Michigan'],['MN','Minnesota'],['MS','Mississippi'],
-    ['MO','Missouri'],['MT','Montana'],['NE','Nebraska'],['NV','Nevada'],
-    ['NH','New Hampshire'],['NJ','New Jersey'],['NM','New Mexico'],['NY','New York'],
-    ['NC','North Carolina'],['ND','North Dakota'],['OH','Ohio'],['OK','Oklahoma'],
-    ['OR','Oregon'],['PA','Pennsylvania'],['RI','Rhode Island'],['SC','South Carolina'],
-    ['SD','South Dakota'],['TN','Tennessee'],['TX','Texas'],['UT','Utah'],
-    ['VT','Vermont'],['VA','Virginia'],['WA','Washington'],['WV','West Virginia'],
-    ['WI','Wisconsin'],['WY','Wyoming'],['DC','Washington D.C.']
-  ];
-  const countries = [
-    'United States','Argentina','Australia','Austria','Belgium','Brazil',
-    'Canada','Chile','Colombia','Croatia','Czech Republic','Denmark',
-    'Finland','France','Germany','Greece','Hungary','Iceland','India',
-    'Ireland','Israel','Italy','Japan','Mexico','Netherlands','New Zealand',
-    'Norway','Poland','Portugal','Romania','South Africa','South Korea',
-    'Spain','Sweden','Switzerland','Turkey','Ukraine','United Kingdom','Other'
-  ];
-  document.addEventListener('DOMContentLoaded', () => {
-    const stateSel = document.getElementById('pef-state');
-    if (stateSel) states.forEach(([v,l]) => { const o = document.createElement('option'); o.value = v; o.textContent = l; stateSel.appendChild(o); });
-    const countrySel = document.getElementById('pef-country');
-    if (countrySel) countries.forEach(name => { const o = document.createElement('option'); o.value = name; o.textContent = name; countrySel.appendChild(o); });
-  });
-})();
-
-// ── Avatar ──
-function avatarClick() {
-  if (isOwnProfile) document.getElementById('avatar-file-input').click();
-}
-
-function renderAvatar(url) {
-  const el = document.getElementById('prof-avatar');
-  if (url) {
-    const src = url.includes('?t=') ? url : url + '?t=' + Date.now();
-    el.style.backgroundImage = `url('${src}')`;
-    el.style.backgroundSize = 'cover';
-    el.style.backgroundPosition = 'center';
-    el.style.fontSize = '0';
-    el.textContent = '';
-  } else {
-    el.style.backgroundImage = '';
-    el.style.fontSize = '28px';
-    el.textContent = (profileData?.username || 'A').charAt(0).toUpperCase();
-  }
-}
-
-function resizeImage(file, maxPx) {
-  return new Promise(resolve => {
-    const reader = new FileReader();
-    reader.onload = e => {
-      const img = new Image();
-      img.onload = () => {
-        let w = img.width, h = img.height;
-        if (w > h) { h = Math.round(h * maxPx / w); w = maxPx; }
-        else { w = Math.round(w * maxPx / h); h = maxPx; }
-        const canvas = document.createElement('canvas');
-        canvas.width = w; canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        canvas.toBlob(resolve, 'image/jpeg', 0.85);
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-async function handleAvatarUpload(file) {
-  if (!file || !currentUser) return;
-  if (!file.type.startsWith('image/')) { alert('Please select an image file.'); return; }
-  if (file.size > 5 * 1024 * 1024) { alert('Image must be under 5 MB.'); return; }
-  const wrap = document.getElementById('prof-avatar-wrap');
-  wrap.classList.add('avatar-uploading');
-  try {
-    const blob = await resizeImage(file, 300);
-    const path = currentUser.id + '/avatar.jpg';
-    const { error: upErr } = await supabaseClient.storage
-      .from('avatars').upload(path, blob, { contentType: 'image/jpeg', upsert: true });
-    if (upErr) throw upErr;
-    const { data: { publicUrl } } = supabaseClient.storage.from('avatars').getPublicUrl(path);
-    const { error: dbErr } = await supabaseClient.from('profiles')
-      .update({ avatar_url: publicUrl }).eq('id', currentUser.id);
-    if (dbErr) throw dbErr;
-    profileData.avatar_url = publicUrl;
-    renderAvatar(publicUrl);
-  } catch(e) {
-    alert('Upload failed: ' + (e.message || 'Unknown error'));
-  } finally {
-    wrap.classList.remove('avatar-uploading');
-  }
-}
-
-// ── Units ──
-let useImperial = localStorage.getItem('hwrx_units') !== 'metric';
-
-function setUnit(u) {
-  useImperial = u === 'imperial';
-  localStorage.setItem('hwrx_units', useImperial ? 'imperial' : 'metric');
-  // Sync segmented control in edit form
-  const btnImp = document.getElementById('unit-seg-imperial');
-  const btnMet = document.getElementById('unit-seg-metric');
-  if (btnImp) btnImp.classList.toggle('active', useImperial);
-  if (btnMet) btnMet.classList.toggle('active', !useImperial);
-  // Swap height/weight inputs
-  document.getElementById('pef-height-imperial').style.display = useImperial ? 'flex' : 'none';
-  document.getElementById('pef-height-cm').style.display = useImperial ? 'none' : 'block';
-  document.getElementById('pef-weight-label').textContent = useImperial ? 'Weight (lbs)' : 'Weight (kg)';
-  document.getElementById('pef-height-label').textContent = useImperial ? 'Height' : 'Height (cm)';
-  document.getElementById('pef-weight').placeholder = useImperial ? 'lbs' : 'kg';
-  // Re-populate height/weight with converted values
-  if (profileData) populateEditFields();
-  // Re-render chips (also refreshes the toggle in the stats row)
-  renderAthleteStats();
-  // Re-render lift PRs with new unit
-  renderLiftPRs();
-}
-function toggleUnits() { setUnit(useImperial ? 'metric' : 'imperial'); }
-
-function cmToFtIn(cm) {
-  if (!cm) return null;
-  const totalIn = Math.round(cm / 2.54);
-  return { ft: Math.floor(totalIn / 12), inches: totalIn % 12 };
-}
-
-function ftInToCm(ft, inches) {
-  return Math.round((parseInt(ft || 0) * 12 + parseInt(inches || 0)) * 2.54);
-}
-
-function kgToLbs(kg) { return kg ? Math.round(kg * 2.205) : null; }
-function lbsToKg(lbs) { return lbs ? Math.round(lbs / 2.205 * 10) / 10 : null; }
-
-function formatHeightDisplay(height_cm) {
-  if (!height_cm) return null;
-  if (useImperial) {
-    const { ft, inches } = cmToFtIn(height_cm);
-    return `${ft}'${inches}"`;
-  }
-  return `${height_cm} cm`;
-}
-
-function formatWeightDisplay(weight_kg) {
-  if (!weight_kg) return null;
-  if (useImperial) return `${kgToLbs(weight_kg)} lbs`;
-  return `${weight_kg} kg`;
-}
-
-function calculateAge(birthday) {
-  if (!birthday) return null;
-  const today = new Date();
-  const dob = new Date(birthday);
-  let age = today.getFullYear() - dob.getFullYear();
-  if (today.getMonth() < dob.getMonth() || (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())) age--;
-  return age > 0 ? age : null;
-}
-
-function isBirthday(birthday) {
-  if (!birthday) return false;
-  const today = new Date();
-  const dob = new Date(birthday);
-  return today.getMonth() === dob.getMonth() && today.getDate() === dob.getDate();
-}
-
-function renderAthleteStats() {
-  if (!profileData) return;
-  const el = document.getElementById('prof-athlete-stats');
-  const chips = [];
-  if (profileData.gender && profileData.gender !== 'prefer_not_to_say') {
-    const gMap = { male: 'Male', female: 'Female', 'non-binary': 'Non-binary' };
-    chips.push(gMap[profileData.gender] || profileData.gender);
-  }
-  const age = calculateAge(profileData.birthday);
-  if (age) chips.push(`${age} yrs`);
-  const h = formatHeightDisplay(profileData.height_cm);
-  if (h) chips.push(h);
-  const w = formatWeightDisplay(profileData.weight_kg);
-  if (w) chips.push(w);
-  if (profileData.experience_level) {
-    const lvlMap = { beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced', elite: 'Elite' };
-    chips.push(lvlMap[profileData.experience_level] || profileData.experience_level);
-  }
-  if (profileData.training_frequency) {
-    const freqMap = { '1-2': '1–2x/week', '3-4': '3–4x/week', '5-6': '5–6x/week', 'daily': 'Daily' };
-    chips.push(freqMap[profileData.training_frequency] || profileData.training_frequency);
-  }
-  if (profileData.fitness_journey) {
-    const jMap = { 'lt1': '< 1 yr', '1-2': '1–2 yrs', '3-5': '3–5 yrs', '6-10': '6–10 yrs', '10+': '10+ yrs' };
-    chips.push('⏱ ' + (jMap[profileData.fitness_journey] || profileData.fitness_journey));
-  }
-  if (profileData.goat) chips.push('🐐 ' + profileData.goat);
-  if (profileData.favorite_wod) chips.push('❤️ ' + profileData.favorite_wod);
-  if (chips.length === 0) { el.innerHTML = ''; return; }
-  const hasUnits = !!(profileData.height_cm || profileData.weight_kg);
-  const unitSeg = hasUnits ? `<div class="unit-seg"><button class="unit-seg-btn${useImperial?' active':''}" onclick="setUnit('imperial')">Imperial</button><button class="unit-seg-btn${useImperial?'':' active'}" onclick="setUnit('metric')">Metric</button></div>` : '';
-  el.innerHTML = chips.map(c => `<span class="athlete-chip">${escHtml(c)}</span>`).join('') + unitSeg;
-}
-
-// ── Hero Metrics Strip ──
-function renderHeroStrip(profile, wodCount, resultCount) {
-  const stripWrap = document.getElementById('prof-hero-strip');
-  const strip = stripWrap?.querySelector('.prof-hero-strip');
-  if (!strip) return;
-  const metrics = [];
-  // Member since
-  if (profile.created_at) {
-    const d = new Date(profile.created_at);
-    const label = d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-    metrics.push({
-      icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
-      val: label, lbl: 'Member Since'
-    });
-  }
-  // WODs created
-  metrics.push({
-    icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,
-    val: wodCount.toString(), lbl: 'WODs Created'
-  });
-  // Results logged (only if > 0)
-  if (resultCount > 0) {
-    metrics.push({
-      icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>`,
-      val: resultCount.toString(), lbl: 'Results Logged'
-    });
-  }
-  // Experience level (if set)
-  if (profile.experience_level) {
-    const lvlMap = { beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced', elite: 'Elite' };
-    metrics.push({
-      icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
-      val: lvlMap[profile.experience_level] || profile.experience_level, lbl: 'Level'
-    });
-  }
-  strip.innerHTML = metrics.map(m => `
-    <div class="hero-metric">
-      <div class="hero-metric-icon">${m.icon}</div>
-      <div class="hero-metric-body">
-        <div class="hero-metric-val">${escHtml(m.val)}</div>
-        <div class="hero-metric-lbl">${escHtml(m.lbl)}</div>
-      </div>
-    </div>`).join('');
-  stripWrap.style.display = 'block';
-}
-
-// ── Profile Edit ──
-function onCountryChange() {
-  const country = document.getElementById('pef-country').value;
-  const locFields = document.getElementById('pef-location-fields');
-  const stateWrap = document.getElementById('pef-state-wrap');
-  const provWrap = document.getElementById('pef-province-wrap');
-  const cityInput = document.getElementById('pef-city');
-  if (!country) { locFields.style.display = 'none'; return; }
-  locFields.style.display = '';
-  const isUS = country === 'United States';
-  stateWrap.style.display = isUS ? '' : 'none';
-  provWrap.style.display = isUS ? 'none' : '';
-  cityInput.placeholder = isUS ? 'e.g. Denver' : 'e.g. London';
-}
-
-function populateEditFields() {
-  const p = profileData;
-  document.getElementById('bio-input').value = p.bio || '';
-  document.getElementById('pef-gender').value = p.gender || '';
-  document.getElementById('pef-birthday').value = p.birthday || '';
-  // Cap date picker at today so future dates can't be entered
-  document.getElementById('pef-birthday').max = new Date().toISOString().split('T')[0];
-  document.getElementById('pef-level').value = p.experience_level || '';
-  document.getElementById('pef-frequency').value = p.training_frequency || '';
-  document.getElementById('pef-journey').value = p.fitness_journey || '';
-  document.getElementById('pef-goat').value = p.goat || '';
-  document.getElementById('pef-favwod').value = p.favorite_wod || '';
-  document.getElementById('pef-country').value = p.country || '';
-  onCountryChange();
-  document.getElementById('pef-city').value = p.city || '';
-  if (p.country === 'United States') {
-    document.getElementById('pef-state').value = p.state || '';
-  } else if (p.state) {
-    document.getElementById('pef-province').value = p.state;
-  }
-  // Height
-  if (useImperial && p.height_cm) {
-    const { ft, inches } = cmToFtIn(p.height_cm);
-    document.getElementById('pef-height-ft').value = ft;
-    document.getElementById('pef-height-in').value = inches;
-  } else if (!useImperial && p.height_cm) {
-    document.getElementById('pef-height-cm').value = p.height_cm;
-  }
-  // Weight
-  if (useImperial && p.weight_kg) {
-    document.getElementById('pef-weight').value = kgToLbs(p.weight_kg);
-  } else if (!useImperial && p.weight_kg) {
-    document.getElementById('pef-weight').value = p.weight_kg;
-  } else {
-    document.getElementById('pef-weight').value = '';
-  }
-}
-
-function toggleProfileEdit() {
-  const section = document.getElementById('profile-edit-section');
-  const visible = section.style.display !== 'none';
-  section.style.display = visible ? 'none' : 'block';
-  if (!visible) {
-    // Sync unit segmented control
-    const btnImp = document.getElementById('unit-seg-imperial');
-    const btnMet = document.getElementById('unit-seg-metric');
-    if (btnImp) btnImp.classList.toggle('active', useImperial);
-    if (btnMet) btnMet.classList.toggle('active', !useImperial);
-    document.getElementById('pef-height-imperial').style.display = useImperial ? 'flex' : 'none';
-    document.getElementById('pef-height-cm').style.display = useImperial ? 'none' : 'block';
-    document.getElementById('pef-weight-label').textContent = useImperial ? 'Weight (lbs)' : 'Weight (kg)';
-    document.getElementById('pef-height-label').textContent = useImperial ? 'Height' : 'Height (cm)';
-    document.getElementById('pef-weight').placeholder = useImperial ? 'lbs' : 'kg';
-    populateEditFields();
-  }
-}
-
-async function saveProfile() {
-  const bio = document.getElementById('bio-input').value.trim();
-  const gender = document.getElementById('pef-gender').value || null;
-  const birthday = document.getElementById('pef-birthday').value || null;
-  const experience_level = document.getElementById('pef-level').value || null;
-  const training_frequency = document.getElementById('pef-frequency').value || null;
-  const fitness_journey = document.getElementById('pef-journey').value || null;
-  const goat = document.getElementById('pef-goat').value.trim() || null;
-  const favorite_wod = document.getElementById('pef-favwod').value.trim() || null;
-  // Height → always store in cm
-  let height_cm = null;
-  if (useImperial) {
-    const ft = document.getElementById('pef-height-ft').value;
-    const inches = document.getElementById('pef-height-in').value;
-    if (ft !== '' || inches !== '') height_cm = ftInToCm(ft, inches) || null;
-  } else {
-    const val = parseInt(document.getElementById('pef-height-cm').value);
-    if (val) height_cm = val;
-  }
-  // Weight → always store in kg
-  let weight_kg = null;
-  const wVal = parseFloat(document.getElementById('pef-weight').value);
-  if (wVal) weight_kg = useImperial ? lbsToKg(wVal) : wVal;
-
-  const country = document.getElementById('pef-country').value || null;
-  const city = document.getElementById('pef-city').value.trim() || null;
-  const state = country === 'United States'
-    ? (document.getElementById('pef-state').value || null)
-    : (document.getElementById('pef-province').value.trim() || null);
-
-  try {
-    if (typeof supabaseClient !== 'undefined' && supabaseClient) {
-      const { error } = await supabaseClient
-        .from('profiles')
-        .update({ bio, gender, birthday, height_cm, weight_kg, experience_level, training_frequency, fitness_journey, goat, favorite_wod, city, state, country })
-        .eq('id', currentUser.id);
-      if (error) throw error;
-    }
-    // Update local state
-    Object.assign(profileData, { bio, gender, birthday, height_cm, weight_kg, experience_level, training_frequency, fitness_journey, goat, favorite_wod, city, state, country });
-    // Refresh birthday greeting after save
-    const bdayMsg = document.getElementById('birthday-msg');
-    if (isBirthday(birthday)) {
-      bdayMsg.textContent = '🎂 Happy Birthday! Hope you crush your WOD today!';
-      bdayMsg.style.display = 'block';
-    } else { bdayMsg.style.display = 'none'; }
-    document.getElementById('prof-bio').textContent = bio;
-    const loc = [city, state, country].filter(Boolean).join(', ');
-    const locEl = document.getElementById('prof-location');
-    locEl.textContent = loc; locEl.style.display = loc ? 'block' : 'none';
-    renderAthleteStats();
-    document.getElementById('profile-edit-section').style.display = 'none';
-  } catch (e) {
-    alert('Failed to save profile: ' + (e.message || 'Unknown error'));
-  }
-}
-
-// ── Load Profile ──
-async function loadProfile() {
-  const params = new URLSearchParams(window.location.search);
-  // Support both ?user=name and /u/name URL patterns
-  let username = params.get('user');
-  if (!username) {
-    const pathMatch = window.location.pathname.match(/^\/u\/([^/]+)/);
-    if (pathMatch) username = decodeURIComponent(pathMatch[1]);
-  }
-
-  currentUser = await db.getUser();
-
-  if (!username && !currentUser) {
-    document.getElementById('prof-loading').style.display = 'none';
-    document.getElementById('prof-notfound').style.display = 'block';
+  if (!urlUser && !currentUser) {
+    // Not logged in and no target user — redirect to login
+    window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.pathname);
     return;
   }
 
-  // Determine which profile to load
-  let profile = null;
-  let profileUserId = null;
-
-  if (username) {
-    // Try loading by username
-    profile = await db.getProfileByUsername(username);
-    if (profile) {
-      profileUserId = profile.id;
-    }
+  // Determine isOwnProfile
+  var targetUsername = urlUser || null;
+  if (currentUser && !targetUsername) {
+    isOwnProfile = true;
   }
 
-  // If no profile found by username, and we have a current user, check if it's their own profile
-  if (!profile && currentUser) {
-    const currentUsername = currentUser.email?.split('@')[0] || '';
-    if (!username || username === currentUsername || username === 'me') {
-      profile = await db.getProfile(currentUser.id);
-      profileUserId = currentUser.id;
-    }
-  }
-
-  if (!profile) {
-    document.getElementById('prof-loading').style.display = 'none';
-    document.getElementById('prof-notfound').style.display = 'block';
-    return;
-  }
-
-  profileData = profile;
-  isOwnProfile = currentUser && (profileUserId === currentUser.id);
-
-  // Update page title
-  document.title = `${profile.username || 'Athlete'} — HomeWODrx`;
-
-  // Render header
-  const avatarColor = profile.avatar_color || getAvatarColor(profileUserId);
-  const initial = (profile.username || 'A').charAt(0).toUpperCase();
-  const avatarEl = document.getElementById('prof-avatar');
-  avatarEl.style.backgroundColor = avatarColor;
-  avatarEl.textContent = initial;
-  renderAvatar(profile.avatar_url);
-  document.getElementById('prof-username').textContent = profile.username || 'Athlete';
-  const loc = [profile.city, profile.state, profile.country].filter(Boolean).join(', ');
-  const locEl = document.getElementById('prof-location');
-  locEl.textContent = loc; locEl.style.display = loc ? 'block' : 'none';
-  document.getElementById('prof-bio').textContent = profile.bio || '';
-  document.getElementById('prof-joined').textContent = profile.created_at ? `HomeWODrx member since ${formatDate(profile.created_at)}` : '';
-  renderAthleteStats();
-
-  // Birthday greeting
-  const bdayMsg = document.getElementById('birthday-msg');
-  if (isBirthday(profile.birthday)) {
-    bdayMsg.textContent = isOwnProfile ? '🎂 Happy Birthday! Hope you crush your WOD today!' : `🎂 It\'s ${escHtml(profile.username || 'their')} birthday today!`;
-    bdayMsg.style.display = 'block';
-  } else {
-    bdayMsg.style.display = 'none';
-  }
-
-  if (isOwnProfile) {
-    document.getElementById('edit-bio-btn').style.display = 'inline-block';
-    document.getElementById('prof-avatar-wrap').classList.add('uploadable');
-    document.getElementById('avatar-hint').style.display = 'block';
-    document.getElementById('edit-lifts-btn').style.display = 'inline-block';
-    const genCta = document.getElementById('prof-gen-cta');
-    if (genCta) genCta.style.display = 'inline-flex';
-  }
-
-  // Load lift PRs
-  await loadLiftPRs(profileUserId);
-
-  // Load workouts for this user
-  // For own profile: show all workouts (public + private)
-  // For other profiles: show only public workouts
-  let workouts = await db.getWorkouts({ userId: profileUserId });
-  if (!isOwnProfile) {
-    workouts = workouts.filter(w => w.is_public || w.isPublic);
-  }
-
-  // Load results
-  const results = await db.getResults({ userId: profileUserId });
-
-  // Stats
-  document.getElementById('stat-workouts').textContent = workouts.length;
-  document.getElementById('stat-results').textContent = results.length;
-  document.getElementById('stat-public').textContent = workouts.filter(w => w.is_public || w.isPublic).length;
-
-  // Hero metrics strip
-  renderHeroStrip(profile, workouts.length, results.length);
-
-  // Render workouts
-  const grid = document.getElementById('prof-workouts-grid');
-  const workoutsEmpty = document.getElementById('prof-workouts-empty');
-
-  if (workouts.length === 0) {
-    grid.innerHTML = '';
-    workoutsEmpty.style.display = 'block';
-  } else {
-    workoutsEmpty.style.display = 'none';
-    // Store workouts for detail view
-    profileWorkouts = workouts;
-
-    grid.innerHTML = workouts.map(w => `
-      <div class="prof-card" onclick="openWodDetail('${escHtml(w.id)}')" style="cursor:pointer">
-        <div class="prof-card-meta">
-          <span class="badge badge-or">${escHtml(w.format || 'AMRAP')}</span>
-          <span class="badge badge-mu">${cap(w.level || 'intermediate')}</span>
-          ${w.is_public || w.isPublic ? '<span class="badge badge-gr">🌍 Public</span>' : '<span class="badge badge-mu">🔒 Private</span>'}
-        </div>
-        <h3>${escHtml(w.title)}</h3>
-        <div class="date">${formatDate(w.created_at || w.createdAt)}</div>
-        ${isOwnProfile ? `<div class="prof-card-actions">
-          <button class="pca-btn pri" onclick="event.stopPropagation();openResultModal('${escHtml(w.id)}','${escHtml(w.title)}')">Log Result</button>
-          <button class="pca-btn del" onclick="event.stopPropagation();openDeleteModal('${escHtml(w.id)}')">Delete</button>
-        </div>` : ''}
-      </div>`).join('');
-  }
-
-  // Render results
-  const resultsTable = document.getElementById('prof-results-table');
-  const resultsBody = document.getElementById('prof-results-body');
-  const resultsEmpty = document.getElementById('prof-results-empty');
-
-  if (results.length === 0) {
-    resultsTable.style.display = 'none';
-    resultsEmpty.style.display = 'block';
-  } else {
-    resultsEmpty.style.display = 'none';
-    resultsTable.style.display = 'table';
-    // Group by WOD to find PRs
-    const prMap = {};
-    results.forEach(r => {
-      const key = r.benchmark_slug || r.workout_id;
-      if (!key) return;
-      if (!prMap[key] || new Date(r.date) > new Date(prMap[key].date)) prMap[key] = r;
-    });
-
-    resultsBody.innerHTML = results.map(r => {
-      const key = r.benchmark_slug || r.workout_id;
-      const isPR = key && prMap[key] && prMap[key].id === r.id;
-      const slug = r.benchmark_slug;
-      const wodName = slug ? slug.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase()) : (r.workout_id ? 'Custom WOD' : '—');
-      const wodLink = slug ? `<a href="/workouts/${slug}" style="font-weight:700;color:var(--tx);text-decoration:none" onmouseover="this.style.color='var(--or)'" onmouseout="this.style.color='var(--tx)'">${escHtml(wodName)}</a>` : `<span style="font-weight:700">${escHtml(wodName)}</span>`;
-      return `<tr>
-        <td>${wodLink}</td>
-        <td class="score-val">${escHtml(r.score_display || '—')}${isPR ? ' <span style="font-size:10px;background:rgba(196,18,18,.15);color:var(--orl);border:1px solid rgba(196,18,18,.3);padding:2px 6px;border-radius:4px;font-weight:700;vertical-align:middle;margin-left:4px">PR</span>' : ''}</td>
-        <td>${r.is_rx ? '<span class="rx-badge">Rx</span>' : '<span style="color:var(--mu);font-size:12px">Scaled</span>'}</td>
-        <td style="color:var(--mu)">${formatDate(r.date || r.created_at)}</td>
-        <td>${isOwnProfile ? `<button onclick="openEditResult('${r.id}','${escHtml(r.score_display||'')}',${!!r.is_rx},'${escHtml(r.notes||'')}')" style="padding:4px 10px;background:var(--dk3);border:1px solid var(--bd);border-radius:6px;color:var(--mu);font-size:11px;font-weight:700;cursor:pointer" onmouseover="this.style.borderColor='var(--or)';this.style.color='var(--or)'" onmouseout="this.style.borderColor='var(--bd)';this.style.color='var(--mu)'">Edit</button>` : ''}</td>
-      </tr>`;
-    }).join('');
-  }
-
-  // Show content
-  document.getElementById('prof-loading').style.display = 'none';
-  document.getElementById('prof-content').style.display = 'block';
-}
-
-// ── Edit Result ──
-function openEditResult(id, score, isRx, notes) {
-  document.getElementById('prof-edit-id').value = id;
-  document.getElementById('prof-edit-score').value = score;
-  document.getElementById('prof-edit-rx').checked = isRx;
-  document.getElementById('prof-edit-notes').value = notes;
-  document.getElementById('prof-edit-error').style.display = 'none';
-  const modal = document.getElementById('prof-edit-modal');
-  modal.style.display = 'flex';
-}
-
-function closeEditResult() {
-  document.getElementById('prof-edit-modal').style.display = 'none';
-}
-
-async function saveEditResult() {
-  const id = document.getElementById('prof-edit-id').value;
-  const score = document.getElementById('prof-edit-score').value.trim();
-  const isRx  = document.getElementById('prof-edit-rx').checked;
-  const notes = document.getElementById('prof-edit-notes').value.trim();
-  const errEl = document.getElementById('prof-edit-error');
-  errEl.style.display = 'none';
-  if (!score) { errEl.textContent = 'Please enter a score.'; errEl.style.display='block'; return; }
+  // Load profile data
+  var profileData = null;
   try {
-    const { error } = await supabaseClient.from('results').update({ score_display: score, is_rx: isRx, notes }).eq('id', id);
-    if (error) throw error;
-    closeEditResult();
-    loadProfile();
-  } catch(e) {
-    errEl.textContent = 'Failed to save. Please try again.';
-    errEl.style.display = 'block';
-  }
-}
-
-async function deleteEditResult() {
-  const id = document.getElementById('prof-edit-id').value;
-  if (!confirm('Delete this result? This cannot be undone.')) return;
-  try {
-    const { error } = await supabaseClient.from('results').delete().eq('id', id);
-    if (error) throw error;
-    closeEditResult();
-    loadProfile();
-  } catch(e) {
-    const errEl = document.getElementById('prof-edit-error');
-    errEl.textContent = 'Failed to delete. Please try again.';
-    errEl.style.display = 'block';
-  }
-}
-
-// ── Lift PRs ──
-const LIFT_NAMES = ['Back Squat', 'Deadlift', 'Clean & Jerk', 'Snatch', 'Overhead Press'];
-let liftPRData = {}; // lift_name → weight_kg
-let liftModalUnit = 'imperial'; // tracks the modal's active unit
-
-function liftInputId(name) {
-  return 'lift-input-' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-$/, '');
-}
-
-async function loadLiftPRs(userId) {
-  liftPRData = {};
-  const { data, error } = await supabaseClient
-    .from('lift_prs')
-    .select('lift_name, weight_kg')
-    .eq('user_id', userId);
-  if (!error && data) {
-    data.forEach(r => { liftPRData[r.lift_name] = parseFloat(r.weight_kg); });
-  }
-  renderLiftPRs();
-}
-
-function renderLiftPRs() {
-  const section = document.getElementById('prof-lifts-section');
-  const grid = document.getElementById('lifts-grid');
-  if (!section || !grid) return;
-  const hasAny = LIFT_NAMES.some(n => liftPRData[n] != null);
-  // Show section if owner or if there are PRs to display
-  if (!hasAny && !isOwnProfile) { section.style.display = 'none'; return; }
-  section.style.display = 'block';
-  grid.innerHTML = LIFT_NAMES.map(name => {
-    const kg = liftPRData[name];
-    let valHtml;
-    if (kg != null) {
-      const display = useImperial ? Math.round(kg * 2.205) : +kg.toFixed(1);
-      const unit = useImperial ? 'lbs' : 'kg';
-      valHtml = `<div class="lift-val">${display}</div><div class="lift-unit">${unit}</div>`;
+    var query = supabase.from('profiles').select('*');
+    if (targetUsername) {
+      query = query.eq('username', targetUsername);
     } else {
-      valHtml = `<div class="lift-val empty">—</div>`;
+      query = query.eq('id', currentUser.id);
     }
-    const editClass = isOwnProfile ? ' editable' : '';
-    const editAttr  = isOwnProfile ? `onclick="editLiftInline('${escHtml(name)}',this)"` : '';
-    return `<div class="lift-pr-card${editClass}" ${editAttr}><div class="lift-nm">${escHtml(name)}</div>${valHtml}</div>`;
+    var { data: rows } = await query.single();
+    profileData = rows;
+
+    // Check if viewing own profile by comparing IDs
+    if (currentUser && profileData && profileData.id === currentUser.id) {
+      isOwnProfile = true;
+    } else if (!targetUsername) {
+      isOwnProfile = true;
+    }
+  } catch(e) { /* Profile not found */ }
+
+  renderProfile(profileData, isOwnProfile);
+  loadLiftPRs(profileData, isOwnProfile);
+  loadActivity(profileData, isOwnProfile);
+});
+
+/* ── Render profile header ── */
+function renderProfile(data, isOwn) {
+  var name    = (data && (data.first_name || data.display_name)) ? (data.first_name ? (data.first_name + (data.last_name ? ' ' + data.last_name : '')) : data.display_name) : 'Athlete';
+  var handle  = data && data.username ? '@' + data.username : '';
+  var location= data && (data.city || data.country) ? [data.city, data.country].filter(Boolean).join(', ') : '';
+  var bio     = data && data.bio ? data.bio : '';
+  var initial = name.charAt(0).toUpperCase();
+
+  document.getElementById('prof-avatar').textContent  = initial;
+  document.getElementById('prof-realname').textContent = name;
+  document.getElementById('prof-handle').textContent  = handle;
+
+  if (location) {
+    document.getElementById('prof-location-text').textContent = location;
+    document.getElementById('prof-location').classList.remove('hidden');
+  }
+
+  if (bio) {
+    document.getElementById('prof-bio').textContent = bio;
+    document.getElementById('prof-bio').classList.remove('empty');
+  } else if (isOwn) {
+    document.getElementById('prof-bio').textContent = 'No bio yet. Click Edit Profile to add one.';
+    document.getElementById('prof-bio').classList.add('empty');
+  }
+
+  // Build chips
+  var chips = [];
+  if (data) {
+    if (data.gender)     chips.push(capitalise(data.gender));
+    if (data.experience) chips.push(capitalise(data.experience));
+    if (data.frequency)  chips.push(data.frequency.replace('-',' ') + ' days/week');
+    if (data.journey)    chips.push(data.journey + ' yrs experience');
+    if (data.goat)       chips.push('Goat: ' + data.goat);
+    if (data.fav_wod)    chips.push('Fav WOD: ' + data.fav_wod);
+  }
+  document.getElementById('prof-chips').innerHTML = chips.map(function(c) {
+    return '<span class="prof-chip">' + c + '</span>';
+  }).join('');
+
+  // Joined date
+  if (data && data.created_at) {
+    var d = new Date(data.created_at);
+    document.getElementById('prof-joined-text').textContent =
+      'HomeWodRX member since ' + d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  }
+
+  // Metrics
+  if (data && data.created_at) {
+    var d2 = new Date(data.created_at);
+    document.getElementById('metric-since').textContent =
+      d2.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  }
+  if (data && data.experience) {
+    document.getElementById('metric-level').textContent = capitalise(data.experience);
+  }
+
+  // Own profile controls
+  if (isOwn) {
+    document.getElementById('edit-prof-btn').classList.remove('hidden');
+    document.getElementById('avatar-hint').classList.remove('hidden');
+    document.getElementById('prof-avatar').classList.add('can-upload');
+    document.getElementById('edit-prs-btn').classList.remove('hidden');
+    // Pre-fill edit form
+    if (data) {
+      document.getElementById('edit-first-name').value = data.first_name || '';
+      document.getElementById('edit-last-name').value  = data.last_name  || '';
+      document.getElementById('edit-bio').value        = data.bio        || '';
+      document.getElementById('edit-goat').value       = data.goat       || '';
+      document.getElementById('edit-fav-wod').value    = data.fav_wod    || '';
+      document.getElementById('edit-country').value    = data.country    || '';
+      document.getElementById('edit-city').value       = data.city       || '';
+    }
+  }
+}
+
+/* ── Lift PRs ── */
+function loadLiftPRs(profileData, isOwn) {
+  if (!profileData) { renderLifts(isOwn); return; }
+  supabase.from('lift_prs')
+    .select('*')
+    .eq('user_id', profileData.id)
+    .then(function(res) {
+      if (res.data) {
+        res.data.forEach(function(row) {
+          if (row.lift_name) liftData[row.lift_name] = row.weight_lbs || null;
+        });
+      }
+      renderLifts(isOwn);
+    });
+}
+
+function renderLifts(editable) {
+  var grid = document.getElementById('lifts-grid');
+  grid.innerHTML = LIFT_NAMES.map(function(name) {
+    var lbs = liftData[name];
+    var hasVal = lbs != null;
+    var editClass = editable ? ' editable' : '';
+    var editAttr  = editable ? 'onclick="editLiftInline(\'' + name + '\',this)"' : '';
+    var hintHtml  = editable ? '<div class="lift-edit-hint">click to edit</div>' : '';
+    return '<div class="lift-card' + editClass + '" ' + editAttr + '>' +
+      '<div class="lift-name">' + name + '</div>' +
+      (hasVal
+        ? '<div class="lift-val">' + lbs + '</div><div class="lift-unit">lbs</div>'
+        : '<div class="lift-val empty">—</div>') +
+      hintHtml +
+      '</div>';
   }).join('');
 }
 
-function editLiftInline(name, cardEl) {
-  if (!isOwnProfile) return;
-  cardEl.onclick = null; // prevent re-triggering while the input is active
-  const kg = liftPRData[name];
-  const unit = useImperial ? 'lbs' : 'kg';
-  const currentVal = kg != null ? (useImperial ? Math.round(kg * 2.205) : +kg.toFixed(1)) : '';
-
-  cardEl.innerHTML = `
-    <div class="lift-nm">${escHtml(name)}</div>
-    <input type="number" class="lift-inline-input"
-      value="${currentVal}" placeholder="${unit}"
-      min="1" max="2000" step="1"
-      onclick="event.stopPropagation()">
-    <div class="lift-unit">${unit}</div>`;
-
-  const input = cardEl.querySelector('.lift-inline-input');
-  input.focus();
-  if (currentVal) input.select();
-
-  let done = false;
-
-  async function commit() {
-    if (done) return;
-    done = true;
-    const raw = parseFloat(input.value);
-    const newKg = (!isNaN(raw) && raw > 0)
-      ? (useImperial ? +(raw / 2.205).toFixed(2) : raw)
-      : null;
-    try {
-      if (newKg !== null) {
-        const { error } = await supabaseClient.from('lift_prs')
-          .upsert({ user_id: currentUser.id, lift_name: name, weight_kg: newKg, updated_at: new Date().toISOString() },
-                  { onConflict: 'user_id,lift_name' });
-        if (!error) liftPRData[name] = newKg;
-      } else if (kg != null) {
-        // Field cleared — delete the existing PR
-        const { error } = await supabaseClient.from('lift_prs').delete()
-          .eq('user_id', currentUser.id).eq('lift_name', name);
-        if (!error) delete liftPRData[name];
-      }
-    } catch(e) { /* silent — card will re-render with previous value */ }
-    renderLiftPRs();
+function editLiftInline(name, card) {
+  var lbs = liftData[name] || '';
+  card.onclick = null;
+  card.innerHTML =
+    '<div class="lift-name">' + name + '</div>' +
+    '<input type="number" class="lift-inline-input" value="' + lbs + '" placeholder="lbs"' +
+    ' min="1" max="2000" onclick="event.stopPropagation()">' +
+    '<div class="lift-unit">lbs</div>';
+  var inp = card.querySelector('.lift-inline-input');
+  inp.focus();
+  if (lbs) inp.select();
+  var done = false;
+  function commit() {
+    if (done) return; done = true;
+    var v = parseFloat(inp.value);
+    if (!isNaN(v) && v > 0) liftData[name] = Math.round(v);
+    else if (inp.value === '') delete liftData[name];
+    saveLiftPR(name, liftData[name]);
+    renderLifts(true);
   }
+  function cancel() { if (done) return; done = true; renderLifts(true); }
+  inp.addEventListener('blur', commit);
+  inp.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter')  { e.preventDefault(); inp.blur(); }
+    if (e.key === 'Escape') { inp.removeEventListener('blur', commit); cancel(); }
+  });
+}
 
-  function cancel() {
-    if (done) return;
-    done = true;
-    renderLiftPRs(); // restores the card to its pre-edit state
-  }
-
-  input.addEventListener('blur', commit);
-  input.addEventListener('keydown', e => {
-    if (e.key === 'Enter')  { e.preventDefault(); input.blur(); }
-    if (e.key === 'Escape') { input.removeEventListener('blur', commit); cancel(); }
+function saveLiftPR(name, value) {
+  supabase.auth.getUser().then(function(res) {
+    var user = res.data && res.data.user;
+    if (!user) return;
+    if (value) {
+      supabase.from('lift_prs').upsert({ user_id: user.id, lift_name: name, weight_lbs: value }, { onConflict: 'user_id,lift_name' });
+    } else {
+      supabase.from('lift_prs').delete().eq('user_id', user.id).eq('lift_name', name);
+    }
   });
 }
 
 function openLiftModal() {
-  liftModalUnit = useImperial ? 'imperial' : 'metric';
-  // Build input fields dynamically
-  const fieldsEl = document.getElementById('lift-modal-fields');
-  fieldsEl.innerHTML = LIFT_NAMES.map(name => {
-    const kg = liftPRData[name];
-    const displayVal = kg != null
-      ? (liftModalUnit === 'imperial' ? Math.round(kg * 2.205) : +kg.toFixed(1))
-      : '';
-    const placeholder = liftModalUnit === 'imperial' ? 'lbs' : 'kg';
-    const inputId = liftInputId(name);
-    return `<div class="pef-field" style="margin-bottom:12px">
-      <label>${escHtml(name)}</label>
-      <input type="number" id="${inputId}" min="1" max="2000" step="0.5" placeholder="${placeholder}" value="${displayVal}">
-    </div>`;
+  document.getElementById('lift-modal-fields').innerHTML = LIFT_NAMES.map(function(name) {
+    return '<div class="modal-field">' +
+      '<label>' + name + '</label>' +
+      '<input type="number" placeholder="lbs" value="' + (liftData[name] || '') + '"' +
+      ' min="1" max="2000" data-lift="' + name + '">' +
+      '</div>';
   }).join('');
-  // Sync unit buttons
-  document.getElementById('lift-unit-imperial').classList.toggle('active', liftModalUnit === 'imperial');
-  document.getElementById('lift-unit-metric').classList.toggle('active', liftModalUnit === 'metric');
-  document.getElementById('lift-modal-error').classList.remove('vis');
   openModal('lift-modal');
 }
 
-function setLiftModalUnit(unit) {
-  if (unit === liftModalUnit) return;
-  const ph = unit === 'imperial' ? 'lbs' : 'kg';
-  LIFT_NAMES.forEach(name => {
-    const input = document.getElementById(liftInputId(name));
-    if (!input) return;
-    input.placeholder = ph;                          // always update placeholder
-    const val = parseFloat(input.value);
-    if (!val || isNaN(val)) return;                  // skip conversion if empty
-    input.value = unit === 'imperial'
-      ? Math.round(val * 2.205)
-      : +(val / 2.205).toFixed(1);
+function saveLiftModal() {
+  document.querySelectorAll('#lift-modal-fields input').forEach(function(inp) {
+    var name = inp.dataset.lift;
+    var v = parseFloat(inp.value);
+    if (!isNaN(v) && v > 0) liftData[name] = Math.round(v);
+    else if (inp.value === '') delete liftData[name];
+    saveLiftPR(name, liftData[name]);
   });
-  liftModalUnit = unit;
-  document.getElementById('lift-unit-imperial').classList.toggle('active', unit === 'imperial');
-  document.getElementById('lift-unit-metric').classList.toggle('active', unit === 'metric');
+  renderLifts(true);
+  closeModal('lift-modal');
 }
 
-async function saveLiftPRs() {
-  const errEl = document.getElementById('lift-modal-error');
-  errEl.classList.remove('vis');
-  const upserts = [];
-  const toDelete = [];
-  for (const name of LIFT_NAMES) {
-    const input = document.getElementById(liftInputId(name));
-    const raw = input ? parseFloat(input.value) : NaN;
-    if (!isNaN(raw) && raw > 0) {
-      const kg = liftModalUnit === 'imperial' ? +(raw / 2.205).toFixed(2) : raw;
-      upserts.push({ user_id: currentUser.id, lift_name: name, weight_kg: kg, updated_at: new Date().toISOString() });
-    } else if (input && input.value === '') {
-      toDelete.push(name);
-    }
-  }
-  try {
-    if (upserts.length > 0) {
-      const { error } = await supabaseClient.from('lift_prs')
-        .upsert(upserts, { onConflict: 'user_id,lift_name' });
-      if (error) throw error;
-    }
-    for (const liftName of toDelete) {
-      await supabaseClient.from('lift_prs')
-        .delete().eq('user_id', currentUser.id).eq('lift_name', liftName);
-    }
-    // Sync local cache
-    upserts.forEach(r => { liftPRData[r.lift_name] = r.weight_kg; });
-    toDelete.forEach(n => { delete liftPRData[n]; });
-    renderLiftPRs();
-    closeModal('lift-modal');
-  } catch (e) {
-    errEl.textContent = 'Failed to save: ' + (e.message || 'Unknown error');
-    errEl.classList.add('vis');
-  }
+function setLiftUnit(u) {
+  document.getElementById('lift-unit-imp').classList.toggle('active', u === 'imperial');
+  document.getElementById('lift-unit-met').classList.toggle('active', u === 'metric');
 }
 
-// ── Init ──
-document.addEventListener('DOMContentLoaded', async () => {
-  await Nav.init('profile');
-  loadProfile();
+/* ── Activity (recent WODs preview) ── */
+function loadActivity(profileData, isOwn) {
+  var grid  = document.getElementById('wod-grid');
+  var empty = document.getElementById('empty-workouts');
+
+  document.getElementById('val-workouts').textContent = '—';
+  document.getElementById('val-results').textContent  = '—';
+  document.getElementById('val-public').textContent   = '—';
+  document.getElementById('metric-wods').textContent    = '—';
+  document.getElementById('metric-results').textContent = '—';
+
+  if (!profileData) {
+    empty.classList.remove('hidden');
+    grid.innerHTML = '';
+    return;
+  }
+
+  // Show generate button only for own profile
+  if (isOwn) {
+    var actHdr = document.querySelector('.activity-hdr');
+    var genBtn = document.createElement('a');
+    genBtn.href = '/generator.html';
+    genBtn.className = 'btn-gen-wod';
+    genBtn.innerHTML = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Generate WOD';
+    actHdr.appendChild(genBtn);
+  }
+
+  // Load results count
+  supabase.from('results').select('id', { count: 'exact', head: true })
+    .eq('user_id', profileData.id)
+    .then(function(res) {
+      var count = res.count || 0;
+      document.getElementById('val-results').textContent    = count;
+      document.getElementById('metric-results').textContent = count;
+    });
+
+  // Load recent WODs
+  supabase.from('user_workouts').select('*')
+    .eq('user_id', profileData.id)
+    .order('created_at', { ascending: false })
+    .limit(3)
+    .then(function(res) {
+      var workouts = res.data || [];
+      var pubCount = workouts.filter(function(w) { return w.is_public; }).length;
+      document.getElementById('val-workouts').textContent  = workouts.length;
+      document.getElementById('metric-wods').textContent   = workouts.length;
+      document.getElementById('val-public').textContent    = pubCount;
+
+      if (workouts.length === 0) {
+        grid.innerHTML = '';
+        empty.classList.remove('hidden');
+        document.getElementById('empty-workouts-sub').textContent = isOwn
+          ? "You haven't logged any workouts yet. Use the WOD Generator to build your first one."
+          : "No public workouts to show.";
+      } else {
+        empty.classList.add('hidden');
+        grid.innerHTML = workouts.map(function(w) {
+          return '<div class="wod-card">' +
+            '<div class="wod-card-body">' +
+            '<div class="wod-chips"><span class="chip chip-red">' + (w.format_label || 'Custom') + '</span>' +
+            (w.is_public ? '<span class="chip chip-green">Public</span>' : '<span class="chip chip-grey">Private</span>') +
+            '</div>' +
+            '<div class="wod-name">' + (w.name || 'Untitled WOD') + '</div>' +
+            '<div class="wod-date">' + formatDate(w.created_at) + '</div>' +
+            '</div></div>';
+        }).join('');
+      }
+    });
+}
+
+/* ── Edit profile ── */
+function toggleEditPanel() {
+  var panel = document.getElementById('edit-panel');
+  var btn   = document.getElementById('edit-prof-btn');
+  var open  = panel.classList.toggle('open');
+  btn.classList.toggle('active', open);
+  btn.textContent = open ? 'Cancel' : 'Edit Profile';
+  if (open) panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+async function saveProfile() {
+  var { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  var updates = {
+    first_name: document.getElementById('edit-first-name').value.trim(),
+    last_name:  document.getElementById('edit-last-name').value.trim(),
+    bio:        document.getElementById('edit-bio').value.trim(),
+    goat:       document.getElementById('edit-goat').value.trim(),
+    fav_wod:    document.getElementById('edit-fav-wod').value.trim(),
+    country:    document.getElementById('edit-country').value.trim(),
+    city:       document.getElementById('edit-city').value.trim(),
+    experience: document.getElementById('edit-experience').value,
+    frequency:  document.getElementById('edit-frequency').value,
+    journey:    document.getElementById('edit-journey').value,
+    updated_at: new Date().toISOString(),
+  };
+  await supabase.from('profiles').update(updates).eq('id', user.id);
+  toggleEditPanel();
+  window.location.reload();
+}
+
+function setUnit(u) {
+  document.getElementById('unit-imp').classList.toggle('active', u === 'imperial');
+  document.getElementById('unit-met').classList.toggle('active', u === 'metric');
+  document.getElementById('height-imperial').style.display = u === 'imperial' ? 'flex' : 'none';
+  document.getElementById('height-metric').style.display   = u === 'imperial' ? 'none' : 'block';
+  document.getElementById('weight-lbl').textContent = u === 'imperial' ? 'Weight (lbs)' : 'Weight (kg)';
+  document.getElementById('weight-input').placeholder = u === 'imperial' ? 'lbs' : 'kg';
+}
+
+/* ── Modals ── */
+function openModal(id)  { document.getElementById(id).classList.add('open');    }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function openResultModal(wod, score, isRx) {
+  document.getElementById('result-modal-wod').textContent = wod;
+  document.getElementById('result-score').value = score;
+  document.getElementById('result-rx').value = isRx ? 'true' : 'false';
+  document.getElementById('result-notes').value = '';
+  openModal('result-modal');
+}
+document.querySelectorAll('.modal-overlay').forEach(function(m) {
+  m.addEventListener('click', function(e) { if (e.target === m) m.classList.remove('open'); });
 });
+
+/* ── Helpers ── */
+function capitalise(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+function formatDate(iso) {
+  if (!iso) return '';
+  var d = new Date(iso);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
 </script>
 
-<!-- Lift PR Modal -->
-<div class="modal-overlay" id="lift-modal">
-  <div class="modal" style="max-width:480px;max-height:90vh;overflow-y:auto">
-    <button class="modal-close" onclick="closeModal('lift-modal')">✕</button>
-    <h2>Key Lift PRs</h2>
-    <p class="msub">Enter your best lifts. Leave blank to clear a PR.</p>
-    <div style="margin-bottom:16px;display:flex;align-items:center;gap:10px">
-      <span style="font-size:11px;color:var(--mu)">Units:</span>
-      <div class="unit-seg">
-        <button class="unit-seg-btn" id="lift-unit-imperial" onclick="setLiftModalUnit('imperial')">Imperial (lbs)</button>
-        <button class="unit-seg-btn" id="lift-unit-metric" onclick="setLiftModalUnit('metric')">Metric (kg)</button>
-      </div>
-    </div>
-    <div id="lift-modal-fields"></div>
-    <div id="lift-modal-error" class="msg err"></div>
-    <button class="pca-btn pri" style="width:100%;padding:12px;font-size:14px;border-radius:8px;margin-top:4px" onclick="saveLiftPRs()">Save PRs</button>
-  </div>
-</div>
-
-<!-- Log Result Modal -->
-<div class="modal-overlay" id="result-modal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('result-modal')">✕</button>
-    <h2>Log Result</h2>
-    <p class="msub" id="result-modal-wod">—</p>
-    <div class="msg err" id="result-error"></div>
-    <div class="msg ok" id="result-success"></div>
-    <input type="hidden" id="result-workout-id">
-    <label>Score / Time</label>
-    <input type="text" id="result-score" placeholder="e.g. 12:34 or 225 reps">
-    <label>Rx?</label>
-    <select id="result-rx"><option value="true">Yes — Rx</option><option value="false">Scaled</option></select>
-    <label>Notes (optional)</label>
-    <textarea id="result-notes" rows="2" placeholder="How did it feel?"></textarea>
-    <button class="pca-btn pri" style="width:100%;padding:12px;font-size:14px;border-radius:8px;margin-top:4px" onclick="submitResult()">Save Result</button>
-  </div>
-</div>
-
-<!-- Delete Workout Modal -->
-<div class="modal-overlay" id="delete-modal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('delete-modal')">✕</button>
-    <h2>Delete Workout?</h2>
-    <p class="msub">This cannot be undone. The workout and all its logged results will be permanently removed.</p>
-    <input type="hidden" id="delete-workout-id">
-    <div style="display:flex;gap:10px;margin-top:16px">
-      <button class="pca-btn del" style="flex:1;padding:12px;font-size:14px;border-radius:8px;opacity:1" onclick="confirmDelete()">Delete</button>
-      <button class="pca-btn sec" style="flex:1;padding:12px;font-size:14px;border-radius:8px" onclick="closeModal('delete-modal')">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<!-- FOOTER -->
+<script src="/js/nav.js"></script>
 <script src="/js/footer.js"></script>
 </body>
 </html>

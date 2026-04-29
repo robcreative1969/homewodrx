@@ -2,108 +2,166 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <!-- Sentry Error Monitoring -->
-  <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CrossFit Movement Library - HomeWODrx</title>
-  <meta name="description" content="Browse 200+ CrossFit and fitness movements with coaching cues, muscle groups, and scaling options. Find every workout that includes each movement.">
-  <meta property="og:title" content="CrossFit Movement Library - HomeWODrx">
-  <meta property="og:description" content="Learn CrossFit and fitness movements with coaching tips and find every workout that includes them.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://homewodrx.com/movements">
-  <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="CrossFit Movement Library — HomeWODrx">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://homewodrx.com/images/og-default.png">
-  <link rel="canonical" href="https://homewodrx.com/movements">
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "name": "CrossFit Movement Library — HomeWODrx",
-    "description": "Browse 200+ CrossFit and fitness movements with coaching cues, muscle groups, and the workouts that use them. Gymnastics, barbell, kettlebell, and bodyweight movements.",
-    "url": "https://homewodrx.com/movements",
-    "isPartOf": { "@type": "WebSite", "name": "HomeWODrx", "url": "https://homewodrx.com" },
-    "breadcrumb": {
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home",             "item": "https://homewodrx.com/" },
-        { "@type": "ListItem", "position": 2, "name": "Movement Library", "item": "https://homewodrx.com/movements" }
-      ]
-    }
-  }
-  </script>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <title>Movement Library — HomeWodRX</title>
+  <meta name="description" content="Browse every functional fitness movement — bodyweight, barbell, kettlebell, pull-up bar, cardio and more. Coaching cues, benchmark WOD counts, and demo links.">
+
+  <!-- Sentry -->
+  <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Shared styles -->
   <link rel="stylesheet" href="/css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="/js/config.js"></script>
-  <script src="/js/db.js"></script>
-  <script src="/js/benchmarks.js"></script>
-  <script src="/js/nav.js"></script>
+
+  <!-- Page-specific overrides & additions -->
   <style>
-    .movement-card {
-      display: block;
-      text-decoration: none;
-      color: inherit;
-      background: var(--dark-card);
-      border: 1px solid var(--dark-border);
-      border-radius: var(--border-radius-lg);
-      padding: var(--spacing-lg);
-      transition: border-color 0.2s, transform 0.15s;
-    }
-    .movement-card:hover {
-      border-color: var(--orange, #f97316);
-      transform: translateY(-2px);
-    }
-    .movement-card h3 {
-      margin: 0 0 0.4rem;
-      font-size: 1.05rem;
-    }
-    .movement-card .muscles {
-      font-size: 0.82rem;
-      color: var(--text-muted, #888);
-      margin-bottom: 0.6rem;
+    /* Fix ham-panel: style.css uses position:absolute (relative to sticky nav),
+       which puts it off-screen when page is scrolled. Override to fixed. */
+    .ham-panel { position: fixed !important; top: var(--nav-h); }
+
+    /* page-header has padding in style.css; this page manages its own inner padding */
+    .page-header { padding: 0; }
+
+    /* style.css .chip is display-only — override to full interactive chip */
+    .chip {
+      cursor: pointer;
+      display: inline-block;
+      font-family: var(--font-body);
+      font-size: .875rem;
+      font-weight: 500;
+      padding: .28rem .7rem;
+      border-radius: 20px;
       line-height: 1.4;
+      border: 1px solid var(--border);
+      background: var(--white);
+      color: var(--text);
+      transition: all 150ms;
+      white-space: nowrap;
     }
-    .movement-card .workout-count {
-      font-size: 0.8rem;
-      color: var(--orange, #f97316);
-      font-weight: 600;
+    .chip:hover { border-color: var(--or); color: var(--or); }
+    .chip.active { background: var(--or); border-color: var(--or); color: #fff; }
+
+    /* ── Page header ── */
+    .page-header { background: var(--white); border-bottom: 1px solid var(--border); }
+    .page-header-inner { max-width: 1200px; margin: 0 auto; padding: 32px 28px 24px; }
+    .page-title-row { display: flex; align-items: flex-end; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+    .page-title { font-family: var(--font-head); font-size: 3rem; letter-spacing: .04em; line-height: 1; }
+    .page-subtitle { font-size: .9rem; color: var(--muted); padding-bottom: 4px; }
+    .page-subtitle strong { color: var(--text); font-weight: 700; }
+
+    /* filter sections */
+    .filter-section { display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px; }
+    .filter-section + .filter-section { padding-top: 18px; }
+    .filter-divider { height: 1px; background: var(--border); }
+    .filter-label {
+      font-size: .72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .07em; color: var(--muted);
     }
-    .category-heading {
-      margin: 2.5rem 0 1rem;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted, #888);
-      border-bottom: 1px solid var(--dark-border, #333);
-      padding-bottom: 0.5rem;
+    .chip-row { display: flex; flex-wrap: wrap; gap: 7px; }
+
+    /* search */
+    .search-wrap { position: relative; }
+    .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+    .search-input {
+      width: 100%; padding: 11px 14px 11px 42px; border: 1.5px solid var(--border); border-radius: 9px;
+      font-family: var(--font-body); font-size: .92rem; color: var(--text); background: var(--bg);
+      outline: none; transition: border-color .15s, background .15s;
     }
-    .movements-loading {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: var(--text-muted, #888);
+    .search-input::placeholder { color: var(--muted); }
+    .search-input:focus { border-color: var(--or); background: var(--white); }
+
+    /* ── Main content ── */
+    .main { max-width: 1200px; margin: 0 auto; padding: 32px 28px 80px; }
+
+    /* ── Category sections ── */
+    .cat-section { margin-bottom: 44px; }
+    .cat-heading { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+    .cat-heading-bar { width: 4px; height: 28px; background: var(--or); border-radius: 2px; flex-shrink: 0; }
+    .cat-heading-text { font-family: var(--font-head); font-size: 1.6rem; letter-spacing: .04em; color: var(--text); line-height: 1; }
+    .cat-heading-count { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-left: 2px; }
+
+    /* ── Movement grid & cards ── */
+    .mv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+
+    .mv-card {
+      display: flex; flex-direction: column;
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.07);
+      transition: transform .15s, box-shadow .15s, border-color .15s;
+      overflow: hidden; text-decoration: none; color: var(--text);
     }
-    .video-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      background: rgba(239, 68, 68, 0.12);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      color: #ef4444;
-      border-radius: 4px;
-      padding: 0.12rem 0.4rem;
-      font-size: 0.73rem;
-      font-weight: 600;
-      margin-left: 0.4rem;
-      vertical-align: middle;
+    .mv-card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,.11); border-color: var(--border2, #d0d0d0); }
+
+    .mv-card-head { padding: 16px 18px 0; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .mv-name { font-family: var(--font-head); font-size: 1.55rem; letter-spacing: .04em; line-height: 1; flex: 1; }
+    .mv-badge {
+      font-size: .66rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .07em; padding: 3px 9px; border-radius: 20px;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .mv-badge.bodyweight      { background: #dcfce7; color: #15803d; }
+    .mv-badge.barbell         { background: #fef3c7; color: #92400e; }
+    .mv-badge.kettlebell      { background: #fce7f3; color: #be185d; }
+    .mv-badge.dumbbell        { background: #e0f2f1; color: #00695c; }
+    .mv-badge.pullupbar       { background: #e8f0fe; color: #1565c0; }
+    .mv-badge.jumprope        { background: #f3e8ff; color: #7b1fa2; }
+    .mv-badge.resistancebands { background: #e0e7ff; color: #4338ca; }
+    .mv-badge.cardio          { background: #dbeafe; color: #1d4ed8; }
+
+    .mv-card-body { padding: 10px 18px 14px; flex: 1; }
+    .mv-tip { font-size: .83rem; color: var(--muted); line-height: 1.55; }
+
+    .mv-card-footer {
+      padding: 10px 18px 14px; border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    .mv-count { font-size: .78rem; font-weight: 700; color: var(--or); }
+    .mv-count.zero { color: var(--muted); font-weight: 600; }
+    .mv-arrow { color: var(--muted); transition: color .15s, transform .15s; }
+    .mv-card:hover .mv-arrow { color: var(--or); transform: translateX(3px); }
+
+    /* ── Empty state ── */
+    .empty-state { text-align: center; padding: 80px 24px; display: none; }
+    .empty-state.visible { display: block; }
+    .empty-icon { font-size: 3rem; margin-bottom: 16px; opacity: .4; }
+    .empty-title { font-family: var(--font-head); font-size: 1.8rem; letter-spacing: .04em; margin-bottom: 8px; }
+    .empty-sub { font-size: .9rem; color: var(--muted); }
+    .empty-clear {
+      margin-top: 20px; padding: 10px 24px; border-radius: 8px; background: var(--or); color: #fff;
+      font-weight: 700; font-size: .88rem; cursor: pointer; border: none; font-family: var(--font-body);
+      transition: background .15s;
+    }
+    .empty-clear:hover { background: var(--or-dark); }
+
+    /* ── Footer ── */
+    .site-footer {
+      background: #111; color: #aaa; margin-top: 4rem;
+      border-top: 3px solid var(--or); padding: 48px 24px 24px; font-size: .875rem;
+    }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 32px 40px; margin-bottom: 40px; }
+    @media (max-width: 800px) { .footer-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 480px) { .footer-grid { grid-template-columns: 1fr; } }
+    .footer-col h4 { font-family: var(--font-head); font-size: 1rem; letter-spacing: .06em; color: #fff; margin-bottom: 12px; }
+    .footer-col a { display: block; color: #aaa; text-decoration: none; margin-bottom: 8px; transition: color .15s; }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom { border-top: 1px solid #333; padding-top: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-bottom p { font-size: .75rem; color: #666; }
+
+    /* ── Responsive ── */
+    @media (max-width: 700px) {
+      .page-header-inner { padding: 20px 16px 16px; }
+      .main { padding: 20px 16px 48px; }
+      .page-title { font-size: 2.2rem; }
+      .mv-grid { grid-template-columns: 1fr; }
     }
   </style>
-  <!-- Google tag (gtag.js) -->
+
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -111,300 +169,303 @@
     gtag('js', new Date());
     gtag('config', 'G-HZM475VDN3');
   </script>
+  <!-- Vercel Analytics -->
   <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body data-nav-init="true" data-active-page="movements">
-<main class="container">
-  <section style="margin-bottom: 2rem; padding: 2rem 0;">
-    <h1>Movement Library</h1>
-    <p class="text-muted">200+ fitness movements — coaching cues, muscle groups, and the workouts that use them.</p>
-  </section>
+<!-- ── PAGE HEADER ── -->
+<div class="page-header">
+  <div class="page-header-inner">
 
-  <!-- FILTER BAR -->
-  <div class="filter-bar">
+    <div class="page-title-row">
+      <h1 class="page-title">MOVEMENTS</h1>
+      <p class="page-subtitle">
+        <strong id="total-count">—</strong> functional fitness movements — coaching cues and the WODs that use them
+      </p>
+    </div>
+
+    <!-- Category filter -->
     <div class="filter-section">
-      <label class="filter-label">Category</label>
-      <div class="filter-chips" id="category-chips">
+      <span class="filter-label">Category</span>
+      <div class="chip-row" id="cat-chips">
         <button class="chip active" data-cat="all">All</button>
-        <button class="chip" data-cat="gymnastics">Gymnastics</button>
-        <button class="chip" data-cat="push">Push</button>
-        <button class="chip" data-cat="lower">Lower Body</button>
-        <button class="chip" data-cat="core">Core</button>
-        <button class="chip" data-cat="fullbody">Full Body</button>
+        <button class="chip" data-cat="bodyweight">Bodyweight</button>
         <button class="chip" data-cat="barbell">Barbell</button>
-        <button class="chip" data-cat="olympic">Olympic Lifts</button>
         <button class="chip" data-cat="kettlebell">Kettlebell</button>
         <button class="chip" data-cat="dumbbell">Dumbbell</button>
-        <button class="chip" data-cat="slamball">Slam Ball</button>
-        <button class="chip" data-cat="resistancebands">Bands</button>
-        <button class="chip" data-cat="cardio">Cardio</button>
+        <button class="chip" data-cat="pullupbar">Pull-up Bar</button>
+        <button class="chip" data-cat="jumprope">Jump Rope</button>
+        <button class="chip" data-cat="resistancebands">Resistance Bands</button>
+        <button class="chip" data-cat="running">Running</button>
+        <button class="chip" data-cat="rower">Rower</button>
+        <button class="chip" data-cat="assaultbike">Assault Bike</button>
+        <button class="chip" data-cat="skierg">Ski Erg</button>
       </div>
     </div>
-    <div class="filter-section">
-      <label class="filter-label">Search</label>
-      <input type="text" id="movement-search" placeholder="Search by name or muscle group...">
-    </div>
-  </div>
+    <div class="filter-divider"></div>
 
-  <div id="movements-root">
-    <div class="movements-loading"><div class="spinner"></div></div>
+    <!-- Search -->
+    <div class="filter-section">
+      <span class="filter-label">Search</span>
+      <div class="search-wrap">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input class="search-input" id="search" type="text" placeholder="Search by movement name or coaching cue…" autocomplete="off">
+      </div>
+    </div>
+
   </div>
-  <p id="movements-no-results" style="display:none; text-align:center; color:var(--text-muted,#888); padding:2rem 0;">No movements match your search.</p>
+</div>
+
+<!-- ── MAIN ── -->
+<main class="main">
+  <div id="sections-root"></div>
+  <div class="empty-state" id="empty-state">
+    <div class="empty-icon">🔍</div>
+    <p class="empty-title">NO MOVEMENTS FOUND</p>
+    <p class="empty-sub">Try a different search term or category.</p>
+    <button class="empty-clear" onclick="clearAllFilters()">Clear filters</button>
+  </div>
 </main>
 
-<script src="/js/footer.js"></script>
+<!-- ── FOOTER ── -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>Workouts</h4>
+        <a href="/workouts.html?cat=girl">The Girls</a>
+        <a href="/workouts.html?cat=hero">Hero WODs</a>
+        <a href="/workouts.html?cat=open">Open WODs</a>
+        <a href="/workouts.html?cat=benchmark">Benchmarks</a>
+        <a href="/workouts.html">All Workouts</a>
+      </div>
+      <div class="footer-col">
+        <h4>Train</h4>
+        <a href="/daily-wod.html">The Daily 20</a>
+        <a href="/generator.html">Smart WOD Builder</a>
+        <a href="/timer.html">WOD Timer</a>
+        <a href="/movements.html">Movement Library</a>
+      </div>
+      <div class="footer-col">
+        <h4>Stretch &amp; Mobility</h4>
+        <a href="/stretch.html">The Daily 10</a>
+        <a href="/stretches.html">Browse Stretches</a>
+        <a href="/stretch-routines.html">Stretch Routines</a>
+      </div>
+      <div class="footer-col">
+        <h4>More</h4>
+        <a href="/shop.html">Gear Shop</a>
+        <a href="/blog.html">Blog</a>
+        <a href="/search.html">Search</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <a href="/"><img src="/images/HomeWODRx-logo-white-red-black-strip-040626.png" alt="HomeWODrx" style="height:28px;display:block;"></a>
+      <p>© 2026 HomeWodRX. All rights reserved.</p>
+      <div style="display:flex;gap:16px;font-size:.75rem;">
+        <a href="/privacy.html" style="color:#666;text-decoration:none;">Privacy</a>
+        <a href="/terms.html" style="color:#666;text-decoration:none;">Terms</a>
+        <a href="/disclaimer.html" style="color:#666;text-decoration:none;">Disclaimer</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ── DATA & SCRIPTS ── -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/js/config.js"></script>
+<script src="/js/db.js"></script>
+<script src="/js/nav.js"></script>
+<script src="/js/benchmarks.js"></script>
+<script src="/js/movements.js"></script>
 
 <script>
-// ─── Category display config ──────────────────────────────────────────────────
+// ─────────────────────────────────────────
+// DATA HELPERS
+// ─────────────────────────────────────────
+function toSlug(name) {
+  return name.toLowerCase()
+    .replace(/['']/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+// Build a lookup: lowercase movement name → count of BENCHMARKS that include it
+function buildBenchmarkCounts() {
+  const counts = {};
+  if (typeof BENCHMARKS === 'undefined') return counts;
+  BENCHMARKS.forEach(b => {
+    (b.movements || []).forEach(m => {
+      const key = (m.name || '').toLowerCase().trim();
+      counts[key] = (counts[key] || 0) + 1;
+    });
+  });
+  return counts;
+}
+
+// Flatten MOVEMENT_DB into a list with cat + slug + benchmarkCount
+function buildMovementsData(benchmarkCounts) {
+  if (typeof MOVEMENT_DB === 'undefined') return [];
+  const list = [];
+  Object.keys(MOVEMENT_DB).forEach(cat => {
+    (MOVEMENT_DB[cat] || []).forEach(m => {
+      const count = benchmarkCounts[(m.name || '').toLowerCase().trim()] || 0;
+      list.push({
+        name:  m.name,
+        slug:  toSlug(m.name),
+        cat:   cat,
+        tip:   m.tip || '',
+        count: count,
+      });
+    });
+  });
+  return list;
+}
+
+// ─────────────────────────────────────────
+// CATEGORY CONFIG
+// ─────────────────────────────────────────
+// Badge CSS class: bodyweight/barbell/kettlebell/dumbbell/pullupbar/jumprope/resistancebands/cardio
 const CATEGORY_CONFIG = [
-  { key: 'gymnastics', label: 'Gymnastics &amp; Pull-Up Bar',       gridId: 'gymnastics-grid' },
-  { key: 'push',       label: 'Bodyweight — Push',                  gridId: 'push-grid' },
-  { key: 'lower',      label: 'Bodyweight — Lower Body',            gridId: 'lower-grid' },
-  { key: 'core',       label: 'Bodyweight — Core',                  gridId: 'core-grid' },
-  { key: 'fullbody',   label: 'Bodyweight — Full Body &amp; Cardio', gridId: 'fullbody-grid' },
-  { key: 'barbell',    label: 'Weightlifting &amp; Barbell',         gridId: 'barbell-grid' },
-  { key: 'olympic',   label: 'Olympic Weightlifting',               gridId: 'olympic-grid' },
-  { key: 'kettlebell', label: 'Kettlebell',                          gridId: 'kettlebell-grid' },
-  { key: 'dumbbell',   label: 'Dumbbell',                           gridId: 'dumbbell-grid' },
-  { key: 'slamball',  label: 'Slam Ball &amp; Medicine Ball',       gridId: 'slamball-grid' },
-  { key: 'resistancebands', label: 'Resistance Bands',              gridId: 'resistancebands-grid' },
-  { key: 'cardio',     label: 'Monostructural / Cardio',            gridId: 'cardio-grid' },
+  { key: 'bodyweight',      label: 'Bodyweight',        badgeCls: 'bodyweight',      badgeLabel: 'Bodyweight'   },
+  { key: 'barbell',         label: 'Barbell',           badgeCls: 'barbell',         badgeLabel: 'Barbell'      },
+  { key: 'kettlebell',      label: 'Kettlebell',        badgeCls: 'kettlebell',      badgeLabel: 'Kettlebell'   },
+  { key: 'dumbbell',        label: 'Dumbbell',          badgeCls: 'dumbbell',        badgeLabel: 'Dumbbell'     },
+  { key: 'pullupbar',       label: 'Pull-up Bar',       badgeCls: 'pullupbar',       badgeLabel: 'Pull-up Bar'  },
+  { key: 'jumprope',        label: 'Jump Rope',         badgeCls: 'jumprope',        badgeLabel: 'Jump Rope'    },
+  { key: 'resistancebands', label: 'Resistance Bands',  badgeCls: 'resistancebands', badgeLabel: 'Bands'        },
+  { key: 'running',         label: 'Running',           badgeCls: 'cardio',          badgeLabel: 'Running'      },
+  { key: 'rower',           label: 'Rowing Machine',    badgeCls: 'cardio',          badgeLabel: 'Rowing'       },
+  { key: 'assaultbike',     label: 'Assault Bike',      badgeCls: 'cardio',          badgeLabel: 'Assault Bike' },
+  { key: 'skierg',          label: 'Ski Erg',           badgeCls: 'cardio',          badgeLabel: 'Ski Erg'      },
 ];
+const CAT_MAP = Object.fromEntries(CATEGORY_CONFIG.map(c => [c.key, c]));
 
-// ─── Slugify helper (matches benchmark movement names to slugs) ───────────────
-function slugify(name) {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+// ─────────────────────────────────────────
+// FILTER STATE
+// ─────────────────────────────────────────
+let activeCategory = 'all';
+let searchQuery    = '';
+let ALL_MOVEMENTS  = [];
+
+function filteredMovements() {
+  let list = [...ALL_MOVEMENTS];
+  if (activeCategory !== 'all') list = list.filter(m => m.cat === activeCategory);
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    list = list.filter(m =>
+      m.name.toLowerCase().includes(q) ||
+      m.tip.toLowerCase().includes(q)
+    );
+  }
+  return list;
 }
 
-// ─── Cache of Supabase benchmarks for workout count lookups ──────────────────
-let _benchmarkCache = [];
+// ─────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────
+const ARROW_SVG = `<svg class="mv-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`;
 
-// ─── Count how many benchmarks use this movement slug ────────────────────────
-function getWorkoutCount(slug) {
-  return _benchmarkCache.filter(b =>
-    b.movements && b.movements.some(m => slugify(m.name || m.movement || '') === slug)
-  ).length;
+function buildCard(m) {
+  const cfg = CAT_MAP[m.cat] || { badgeCls: 'bodyweight', badgeLabel: m.cat };
+  const countLabel = m.count > 0
+    ? `${m.count} benchmark WOD${m.count === 1 ? '' : 's'}`
+    : 'Movement guide';
+  const countCls = m.count > 0 ? '' : ' zero';
+  return `
+    <a class="mv-card" href="/movements/${m.slug}">
+      <div class="mv-card-head">
+        <h3 class="mv-name">${m.name}</h3>
+        <span class="mv-badge ${cfg.badgeCls}">${cfg.badgeLabel}</span>
+      </div>
+      <div class="mv-card-body">
+        ${m.tip ? `<p class="mv-tip">${m.tip}</p>` : ''}
+      </div>
+      <div class="mv-card-footer">
+        <span class="mv-count${countCls}">${countLabel}</span>
+        ${ARROW_SVG}
+      </div>
+    </a>`;
 }
 
-// ─── Render a grid of movement cards ─────────────────────────────────────────
-function renderGrid(gridEl, movements) {
-  if (!movements.length) {
-    gridEl.innerHTML = '<p class="text-muted" style="font-size:0.85rem;">No movements in this category yet.</p>';
+function render() {
+  const list  = filteredMovements();
+  const root  = document.getElementById('sections-root');
+  const empty = document.getElementById('empty-state');
+
+  if (list.length === 0) {
+    root.innerHTML = '';
+    empty.classList.add('visible');
     return;
   }
-  gridEl.innerHTML = movements.map(m => {
-    const count = getWorkoutCount(m.slug);
-    const countLabel = count > 0 ? `${count} benchmark${count === 1 ? '' : 's'}` : 'Movement guide';
-    const videoBadge = m.youtube_url ? `<span class="video-badge">▶ Video</span>` : '';
-    return `<a href="/movements/${m.slug}" class="movement-card">
-      <h3>${m.name}${videoBadge}</h3>
-      <p class="muscles">${m.muscles || ''}</p>
-      <span class="workout-count">${countLabel} →</span>
-    </a>`;
+  empty.classList.remove('visible');
+
+  // Group by category, preserving CATEGORY_CONFIG order
+  const bycat = {};
+  list.forEach(m => {
+    if (!bycat[m.cat]) bycat[m.cat] = [];
+    bycat[m.cat].push(m);
+  });
+
+  const catsToShow = activeCategory === 'all'
+    ? CATEGORY_CONFIG.filter(c => bycat[c.key])
+    : CATEGORY_CONFIG.filter(c => c.key === activeCategory && bycat[c.key]);
+
+  root.innerHTML = catsToShow.map(cfg => {
+    const movements = bycat[cfg.key] || [];
+    return `
+      <section class="cat-section">
+        <div class="cat-heading">
+          <div class="cat-heading-bar"></div>
+          <span class="cat-heading-text">${cfg.label}</span>
+          <span class="cat-heading-count">(${movements.length})</span>
+        </div>
+        <div class="mv-grid">${movements.map(buildCard).join('')}</div>
+      </section>`;
   }).join('');
 }
 
-// ─── Build the full page scaffold then populate grids ─────────────────────────
-function buildScaffold() {
-  const root = document.getElementById('movements-root');
-  root.innerHTML = CATEGORY_CONFIG.map(c => `
-    <div class="category-section" data-key="${c.key}">
-      <h2 class="category-heading">${c.label}</h2>
-      <div class="grid grid-cols-3" id="${c.gridId}"></div>
-    </div>
-  `).join('') + `
-    <div class="category-section" data-key="community" id="community-section" style="display:none;">
-      <h2 class="category-heading">Community Movements</h2>
-      <div class="grid grid-cols-3" id="community-grid"></div>
-    </div>
-  `;
+function clearAllFilters() {
+  activeCategory = 'all';
+  searchQuery = '';
+  document.getElementById('search').value = '';
+  document.querySelectorAll('[data-cat]').forEach(c =>
+    c.classList.toggle('active', c.dataset.cat === 'all'));
+  render();
 }
 
-// ─── Main: load from Supabase, fall back gracefully ──────────────────────────
-async function loadMovements() {
-  buildScaffold();
+// ─────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const benchmarkCounts = buildBenchmarkCounts();
+  ALL_MOVEMENTS = buildMovementsData(benchmarkCounts);
+  document.getElementById('total-count').textContent = ALL_MOVEMENTS.length;
 
-  try {
-    // Fetch movements and benchmarks in parallel
-    const [{ data: movements, error }, benchmarks] = await Promise.all([
-      supabaseClient
-        .from('movements')
-        .select('slug, name, muscles, category, youtube_url')
-        .order('category')
-        .order('name'),
-      db.getAllBenchmarks().catch(() => [])
-    ]);
-
-    if (error) throw error;
-    _benchmarkCache = benchmarks || [];
-
-    // Group by category
-    const byCategory = {};
-    for (const m of movements) {
-      if (!byCategory[m.category]) byCategory[m.category] = [];
-      byCategory[m.category].push(m);
-    }
-
-    // Render each configured category
-    for (const cfg of CATEGORY_CONFIG) {
-      const gridEl = document.getElementById(cfg.gridId);
-      if (gridEl) renderGrid(gridEl, byCategory[cfg.key] || []);
-    }
-
-    // Update chip count badges now that we have data
-    updateChipCounts(byCategory);
-
-    // Build set of known slugs to detect community-only movements
-    const knownSlugs = new Set(movements.map(m => m.slug));
-
-    // Load community movements from user workouts
-    await loadCommunityMovements(knownSlugs);
-
-  } catch (err) {
-    console.error('Failed to load movements from Supabase:', err);
-    document.getElementById('movements-root').innerHTML = `
-      <div class="empty-state">
-        <p>Unable to load movements. Please try again shortly.</p>
-      </div>`;
-  }
-}
-
-// ─── Community movements from user workouts ───────────────────────────────────
-async function loadCommunityMovements(knownSlugs) {
-  try {
-    const userWorkouts = await db.getWorkouts({ isPublic: true, limit: 1000 });
-    const communityMap = {};
-    for (const w of userWorkouts) {
-      if (!w.movements) continue;
-      for (const m of w.movements) {
-        const rawName = m.movement || m.name || '';
-        if (!rawName) continue;
-        const slug = slugify(rawName);
-        if (knownSlugs && knownSlugs.has(slug)) continue;
-        if (!communityMap[slug]) communityMap[slug] = { name: rawName, count: 0 };
-        communityMap[slug].count++;
-      }
-    }
-
-    const communityMovements = Object.entries(communityMap)
-      .sort((a, b) => b[1].count - a[1].count);
-
-    if (!communityMovements.length) return;
-
-    _communityHasContent = true;
-    document.getElementById('community-section').style.display = '';
-    document.getElementById('community-grid').innerHTML = communityMovements.map(([slug, info]) => {
-      const label = `${info.count} community WOD${info.count === 1 ? '' : 's'}`;
-      return `<a href="/movements/${slug}" class="movement-card">
-        <h3 style="text-transform:capitalize">${info.name}</h3>
-        <p class="muscles">Community-submitted movement</p>
-        <span class="workout-count">${label} →</span>
-      </a>`;
-    }).join('');
-  } catch (e) {
-    // Community section is bonus — silent fail is fine
-  }
-}
-
-// ─── Filter state ─────────────────────────────────────────────────────────────
-let _currentCat    = 'all';
-let _currentSearch = '';
-let _communityHasContent = false;
-
-function applyFilters() {
-  const cat  = _currentCat;
-  const term = _currentSearch.toLowerCase().trim();
-  let totalVisible = 0;
-
-  // Process configured category sections
-  document.querySelectorAll('.category-section[data-key]').forEach(section => {
-    const key = section.dataset.key;
-    if (key === 'community') return; // handled below
-
-    const catMatch = cat === 'all' || cat === key;
-    if (!catMatch) {
-      section.style.display = 'none';
-      return;
-    }
-
-    if (term) {
-      let sectionVisible = 0;
-      section.querySelectorAll('.movement-card').forEach(card => {
-        const name    = (card.querySelector('h3')?.textContent  || '').toLowerCase();
-        const muscles = (card.querySelector('.muscles')?.textContent || '').toLowerCase();
-        const show    = name.includes(term) || muscles.includes(term);
-        card.style.display = show ? '' : 'none';
-        if (show) sectionVisible++;
-      });
-      section.style.display = sectionVisible > 0 ? '' : 'none';
-      totalVisible += sectionVisible;
-    } else {
-      section.style.display = '';
-      section.querySelectorAll('.movement-card').forEach(c => c.style.display = '');
-      totalVisible += section.querySelectorAll('.movement-card').length;
-    }
+  // Category chips
+  document.getElementById('cat-chips').addEventListener('click', e => {
+    const chip = e.target.closest('[data-cat]');
+    if (!chip) return;
+    activeCategory = chip.dataset.cat;
+    document.querySelectorAll('[data-cat]').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    render();
   });
 
-  // Community section: only visible when showing "all" categories
-  const communitySection = document.getElementById('community-section');
-  if (communitySection && _communityHasContent) {
-    if (cat !== 'all') {
-      communitySection.style.display = 'none';
-    } else if (term) {
-      let comVisible = 0;
-      communitySection.querySelectorAll('.movement-card').forEach(card => {
-        const name    = (card.querySelector('h3')?.textContent  || '').toLowerCase();
-        const muscles = (card.querySelector('.muscles')?.textContent || '').toLowerCase();
-        const show    = name.includes(term) || muscles.includes(term);
-        card.style.display = show ? '' : 'none';
-        if (show) comVisible++;
-      });
-      communitySection.style.display = comVisible > 0 ? '' : 'none';
-      totalVisible += comVisible;
-    } else {
-      communitySection.style.display = '';
-      totalVisible += communitySection.querySelectorAll('.movement-card').length;
-    }
-  }
-
-  document.getElementById('movements-no-results').style.display = totalVisible === 0 ? '' : 'none';
-}
-
-// ─── Update chip count badges after data loads ────────────────────────────────
-function updateChipCounts(byCategory) {
-  document.querySelectorAll('#category-chips .chip[data-cat]').forEach(chip => {
-    const key = chip.dataset.cat;
-    if (key === 'all') return;
-    const count = (byCategory[key] || []).length;
-    if (count) chip.textContent = `${chip.textContent} (${count})`;
-  });
-}
-
-// ─── Wire up filter bar interactions ─────────────────────────────────────────
-function setupFilters() {
-  document.querySelectorAll('#category-chips .chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      document.querySelectorAll('#category-chips .chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      _currentCat = chip.dataset.cat;
-      applyFilters();
-    });
+  // Search
+  let searchTimer;
+  document.getElementById('search').addEventListener('input', e => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => { searchQuery = e.target.value.trim(); render(); }, 180);
   });
 
-  const searchInput = document.getElementById('movement-search');
-  if (searchInput) {
-    searchInput.addEventListener('input', () => {
-      _currentSearch = searchInput.value;
-      applyFilters();
-    });
-  }
-}
-
-document.addEventListener('DOMContentLoaded', async () => {
-  setupFilters();
-  await initSupabase();
-  loadMovements();
+  render();
+  initAuth();
 });
 </script>
+<script src="/js/footer.js"></script>
 </body>
 </html>

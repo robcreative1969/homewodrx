@@ -5,31 +5,105 @@
   <!-- Sentry Error Monitoring -->
   <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cookie Notice | HomeWODrx</title>
-  <meta name="description" content="HomeWODrx Cookie Notice — how we use cookies and how to manage them.">
-  <link rel="canonical" href="https://homewodrx.com/cookies">
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+  <title>Cookie Policy — HomeWodRX</title>
+  <meta name="description" content="HomeWodRX Cookie Policy — what cookies we use, why we use them, and how to control them.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://homewodrx.com/cookies.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="HomeWodRX">
+  <meta property="og:title" content="Cookie Policy — HomeWodRX">
+  <meta property="og:description" content="HomeWodRX Cookie Policy — what cookies we use, why we use them, and how to control them.">
+  <meta property="og:url" content="https://homewodrx.com/cookies.html">
+  <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Shared site styles -->
   <link rel="stylesheet" href="/css/style.css">
-  <script src="/js/nav.js"></script>
+
+  <!-- Page-specific styles -->
   <style>
-    .legal-page { max-width: 760px; margin: 0 auto; padding: 48px 20px 80px; }
-    .legal-page h1 { font-size: 32px; font-weight: 900; margin-bottom: 8px; }
-    .legal-page .last-updated { font-size: 13px; color: var(--mu); margin-bottom: 40px; }
-    .legal-page h2 { font-size: 18px; font-weight: 800; margin: 36px 0 12px; color: var(--tx); border-bottom: 1px solid var(--bd); padding-bottom: 8px; }
-    .legal-page p, .legal-page li { font-size: 14px; line-height: 1.8; color: var(--mu); margin-bottom: 12px; }
-    .legal-page ul { padding-left: 20px; margin-bottom: 12px; }
-    .legal-page a { color: var(--or); text-decoration: none; }
-    .legal-page a:hover { text-decoration: underline; }
-    .legal-page .contact-box { background: var(--card); border: 1px solid var(--bd); border-radius: 12px; padding: 20px 24px; margin-top: 32px; }
-    .legal-page .contact-box p { margin: 0; }
-    .cookie-table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; font-size: 13px; }
-    .cookie-table th { text-align: left; padding: 10px 12px; background: var(--card); border: 1px solid var(--bd); color: var(--tx); font-weight: 700; }
-    .cookie-table td { padding: 10px 12px; border: 1px solid var(--bd); color: var(--mu); vertical-align: top; line-height: 1.6; }
-    .cookie-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+.page-meta { font-size: .82rem; color: var(--muted2); margin-top: 4px; }
+
+.legal-wrap {
+  max-width: 1200px; margin: 0 auto;
+  padding: 32px 32px 80px;
+  display: grid; grid-template-columns: 200px 1fr; gap: 32px; align-items: start;
+}
+@media (max-width: 720px) {
+  .legal-wrap { grid-template-columns: 1fr; padding: 20px 16px 60px; }
+  .legal-toc  { display: none; }
+}
+.legal-toc {
+  position: sticky; top: calc(var(--nav-h) + 20px);
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: 18px 16px;
+}
+.toc-label {
+  font-size: .68rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--muted2); margin-bottom: 10px;
+}
+.toc-links { display: flex; flex-direction: column; gap: 2px; }
+.toc-link {
+  display: block; font-size: .8rem; font-weight: 500; color: var(--muted);
+  padding: 5px 8px; border-radius: 6px; transition: background .12s, color .12s;
+  text-decoration: none;
+}
+.toc-link:hover { background: var(--or-xlight); color: var(--or); }
+.toc-divider { height: 1px; background: var(--border); margin: 10px 0; }
+.toc-other-label {
+  font-size: .65rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .07em; color: var(--muted2); margin-bottom: 6px; padding: 0 8px;
+}
+.toc-other-link {
+  display: block; font-size: .78rem; color: var(--muted); padding: 4px 8px;
+  border-radius: 6px; transition: color .12s; text-decoration: none;
+}
+.toc-other-link:hover { color: var(--or); }
+.legal-content {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: 36px 40px;
+}
+@media (max-width: 600px) { .legal-content { padding: 24px 20px; } }
+.legal-section { margin-bottom: 36px; }
+.legal-section:last-child { margin-bottom: 0; }
+.legal-section h2 {
+  font-family: var(--font-head); font-size: 1.4rem; letter-spacing: .04em;
+  color: var(--text); border-top: 2px solid var(--or-xlight);
+  padding-top: 18px; margin-bottom: 12px;
+}
+.legal-section:first-child h2 { border-top: none; padding-top: 0; }
+.legal-section p { font-size: .9rem; color: #333; line-height: 1.8; margin-bottom: 12px; }
+.legal-section p:last-child { margin-bottom: 0; }
+.legal-section ul { margin: 8px 0 12px 20px; display: flex; flex-direction: column; gap: 6px; }
+.legal-section ul li { font-size: .9rem; color: #333; line-height: 1.7; }
+.legal-highlight {
+  background: var(--or-xlight); border: 1px solid rgba(196,18,18,.2);
+  border-radius: 8px; padding: 14px 16px; margin-bottom: 16px;
+  font-size: .875rem; color: var(--text); line-height: 1.7;
+}
+.legal-contact-box {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 18px; margin-top: 16px;
+  font-size: .875rem; color: var(--muted); line-height: 1.7;
+}
+.legal-contact-box a { color: var(--or); text-decoration: underline; }
+.legal-contact-box a:hover { color: var(--or-dark); }
   </style>
-  <!-- Google tag (gtag.js) -->
+
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -37,94 +111,75 @@
     gtag('js', new Date());
     gtag('config', 'G-HZM475VDN3');
   </script>
+  <!-- Vercel Analytics -->
   <script defer src="/_vercel/insights/script.js"></script>
 </head>
-<body>
-<div class="legal-page">
-  <h1>Cookie Notice</h1>
-  <p class="last-updated">Last updated: April 5, 2026</p>
 
-  <p>This Cookie Notice explains what cookies are, which cookies HomeWODrx uses, and how you can manage your cookie preferences. By using HomeWODrx at <a href="https://homewodrx.com">homewodrx.com</a>, you consent to our use of cookies as described below.</p>
+<body data-nav-init="true" data-active-page="">
 
-  <h2>What Are Cookies?</h2>
-  <p>Cookies are small text files placed on your device when you visit a website. They help websites recognize your device, remember your preferences, and understand how you interact with the site. Cookies can be "session cookies" (deleted when you close your browser) or "persistent cookies" (stored until they expire or you delete them).</p>
-
-  <h2>Cookies We Use</h2>
-  <p>HomeWODrx uses the following categories of cookies:</p>
-
-  <table class="cookie-table">
-    <thead>
-      <tr>
-        <th>Category</th>
-        <th>Cookie / Service</th>
-        <th>Purpose</th>
-        <th>Duration</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>Essential</strong></td>
-        <td>Supabase auth token</td>
-        <td>Keeps you logged in to your HomeWODrx account. Required for account features to work.</td>
-        <td>Session / persistent (based on "Remember me" setting)</td>
-      </tr>
-      <tr>
-        <td><strong>Analytics</strong></td>
-        <td>Google Analytics 4 (<code>_ga</code>, <code>_ga_*</code>)</td>
-        <td>Tracks anonymized usage data — pages visited, time on site, device type, geographic region. Helps us understand how visitors use the site so we can improve it.</td>
-        <td>Up to 2 years</td>
-      </tr>
-      <tr>
-        <td><strong>Analytics</strong></td>
-        <td>Google Analytics 4 (<code>_gid</code>)</td>
-        <td>Distinguishes users during a single session for analytics reporting.</td>
-        <td>24 hours</td>
-      </tr>
-      <tr>
-        <td><strong>Third-party</strong></td>
-        <td>Amazon Associates</td>
-        <td>Set by Amazon when you click an affiliate link. Tracks referral attribution so Amazon can credit purchases to our affiliate account. Governed by Amazon's own cookie policy.</td>
-        <td>24–90 days (Amazon controlled)</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <h2>Essential Cookies</h2>
-  <p>Essential cookies are required for the Site to function. They enable core features like account authentication. These cookies cannot be disabled without breaking site functionality. No personally identifiable information is stored in these cookies.</p>
-
-  <h2>Analytics Cookies (Google Analytics)</h2>
-  <p>We use Google Analytics 4 to understand how visitors interact with HomeWODrx. Google Analytics places cookies on your device to collect information such as which pages you visit, how long you spend on the site, and what country you're visiting from. This data is aggregated and anonymous — we cannot use it to identify you personally.</p>
-  <p>Google may process this data on its servers in accordance with <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>.</p>
-
-  <h2>Third-Party Cookies (Amazon)</h2>
-  <p>When you click an Amazon affiliate link on HomeWODrx, Amazon may place cookies on your device to track your visit and any subsequent purchase within Amazon's cookie window. We have no control over Amazon's cookies. You can manage Amazon cookies through your browser settings or Amazon's own cookie preferences.</p>
-
-  <h2>How to Manage Cookies</h2>
-  <p>You have several options for controlling cookies:</p>
-  <ul>
-    <li><strong>Browser settings</strong> — Most browsers allow you to view, delete, and block cookies. See your browser's help documentation for instructions. Note: blocking essential cookies will prevent you from logging in to your account.</li>
-    <li><strong>Google Analytics opt-out</strong> — Install the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Google Analytics Opt-Out Browser Add-on</a> to prevent your data from being sent to Google Analytics.</li>
-    <li><strong>Google's ad settings</strong> — Visit <a href="https://adssettings.google.com" target="_blank" rel="noopener">Google's Ad Settings</a> to control how Google uses information from cookies.</li>
-  </ul>
-  <p>Commonly used browser cookie settings:</p>
-  <ul>
-    <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener">Google Chrome</a></li>
-    <li><a href="https://support.mozilla.org/en-US/kb/enhanced-tracking-protection-firefox-desktop" target="_blank" rel="noopener">Mozilla Firefox</a></li>
-    <li><a href="https://support.apple.com/guide/safari/manage-cookies-sfri11471/mac" target="_blank" rel="noopener">Apple Safari</a></li>
-    <li><a href="https://support.microsoft.com/en-us/windows/delete-and-manage-cookies-168dab11-0753-043d-7c16-ede5947fc64d" target="_blank" rel="noopener">Microsoft Edge</a></li>
-  </ul>
-
-  <h2>Changes to This Notice</h2>
-  <p>We may update this Cookie Notice from time to time as we change the technologies we use. Changes will be reflected in the "Last updated" date at the top of this page.</p>
-
-  <h2>More Information</h2>
-  <p>For more information on how we handle your data overall, see our <a href="/privacy">Privacy Policy</a>.</p>
-
-  <h2>Contact</h2>
-  <div class="contact-box">
-    <p>Questions about our use of cookies? Contact us at <a href="mailto:privacy@homewodrx.com">privacy@homewodrx.com</a>.</p>
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="page-eyebrow">Legal</div>
+    <h1 class="page-title">Cookie Policy</h1>
+    <p class="page-meta">Last updated: April 27, 2026</p>
   </div>
 </div>
+
+<!-- LEGAL BODY -->
+<div class="legal-wrap">
+
+  <!-- Sticky TOC -->
+  <aside class="legal-toc">
+    <div class="toc-label">On this page</div>
+    <div class="toc-links">
+      <a class="toc-link" href="#what">What Are Cookies</a>
+      <a class="toc-link" href="#types">Cookies We Use</a>
+      <a class="toc-link" href="#control">Controlling Cookies</a>
+      <a class="toc-link" href="#updates">Updates to This Policy</a>
+    </div>
+    <div class="toc-divider"></div>
+    <div class="toc-other-label">Also</div>
+    <a class="toc-other-link" href="/privacy.html">Privacy Policy</a>
+    <a class="toc-other-link" href="/terms.html">Terms of Service</a>
+    <a class="toc-other-link" href="/disclaimer.html">Disclaimer</a>
+  </aside>
+
+  <!-- Content -->
+  <article class="legal-content">
+
+    <div class="legal-section" id="what">
+      <h2>What Are Cookies</h2>
+      <p>Cookies are small text files stored on your device when you visit a website. They allow the site to remember information about your visit — like whether you're logged in — across page loads and sessions.</p>
+    </div>
+
+    <div class="legal-section" id="types">
+      <h2>Cookies We Use</h2>
+      <p>HomeWodRX uses the following categories of cookies:</p>
+      <ul>
+        <li><strong>Essential cookies</strong> — required for the site to function. These handle your login session via Supabase. Without these, you cannot stay logged in.</li>
+        <li><strong>Analytics cookies</strong> — Google Analytics and Vercel Analytics use cookies to collect anonymous data about how visitors use the site (pages visited, time on page, referral source). This helps us improve the site. No personally identifiable information is collected.</li>
+      </ul>
+      <div class="legal-highlight">We do not use advertising cookies or sell data to ad networks.</div>
+    </div>
+
+    <div class="legal-section" id="control">
+      <h2>Controlling Cookies</h2>
+      <p>You can control and delete cookies through your browser settings. Note that disabling essential cookies will prevent you from staying logged in to your account.</p>
+      <p>To opt out of Google Analytics tracking across all websites, you can install the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener" style="color:var(--or)">Google Analytics Opt-out Browser Add-on</a>.</p>
+    </div>
+
+    <div class="legal-section" id="updates">
+      <h2>Updates to This Policy</h2>
+      <p>We may update this Cookie Policy as the site evolves and new technologies are introduced. The date at the top of this page reflects the most recent revision.</p>
+      <div class="legal-contact-box">Questions? <a href="/contact.html">Contact us</a></div>
+    </div>
+
+  </article>
+
+</div>
+
+<script src="/js/nav.js"></script>
 <script src="/js/footer.js"></script>
 </body>
 </html>

@@ -22,13 +22,15 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="/js/config.js"></script>
   <script src="/js/db.js"></script>
   <script src="/js/benchmarks.js"></script>
   <script src="/js/movements.js"></script>
   <script src="/js/daily-wod.js"></script>
-  <script src="/js/nav.js"></script>
   <style>
     .dwod-badge {
       display: inline-flex;
@@ -38,14 +40,14 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
-      color: var(--orange, #f97316);
+      color: var(--or);
       margin-bottom: 6px;
     }
     .dwod-badge-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: var(--orange, #f97316);
+      background: var(--or);
       animation: pulse 2s infinite;
     }
     @keyframes pulse {
@@ -53,15 +55,15 @@
       50% { opacity: 0.4; }
     }
     .movement-link {
-      color: var(--orange, #f97316);
+      color: var(--or);
       text-decoration: none;
       font-weight: 600;
     }
     .movement-link:hover { text-decoration: underline; }
     .equipment-chip {
       display: inline-block;
-      background: var(--dark-surface, #1e1e1e);
-      border: 1px solid var(--dark-border, #333);
+      background: var(--bg);
+      border: 1px solid var(--border);
       border-radius: 8px;
       padding: 8px 16px;
       margin: 4px 6px 4px 0;
@@ -72,13 +74,13 @@
       transition: border-color 0.2s;
     }
     .equipment-chip:hover {
-      border-color: var(--orange, #f97316);
-      color: var(--orange, #f97316);
+      border-color: var(--or);
+      color: var(--or);
     }
     .equipment-section {
       margin-top: 1.5rem;
       padding-top: 1.5rem;
-      border-top: 1px solid var(--dark-border, #333);
+      border-top: 1px solid var(--border);
     }
     /* ── WOD Metadata Strip ─────────────────────────────────────────────── */
     .wod-meta-strip {
@@ -97,11 +99,11 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      color: var(--text-muted, #888);
+      color: var(--muted);
     }
     .wod-meta-value {
       font-size: 0.92rem;
-      color: var(--text, #e5e5e5);
+      color: var(--text);
       font-weight: 500;
     }
   </style>
@@ -157,6 +159,7 @@
 </main>
 
 <!-- FOOTER -->
+<script src="/js/nav.js"></script>
 <script src="/js/footer.js"></script>
 
 <!-- RESULT MODAL -->
@@ -254,11 +257,11 @@
     const headerEl = document.getElementById('wod-header');
     headerEl.classList.remove('loading');
     headerEl.innerHTML = `
-      <div style="padding: 2rem 0; margin-bottom: 2rem; border-bottom: 1px solid var(--dark-border);">
+      <div style="padding: 2rem 0; margin-bottom: 2rem; border-bottom: 1px solid var(--border);">
         <div class="dwod-badge">
           <span class="dwod-badge-dot"></span>
           Daily 20 &mdash; ${formatted}
-          ${wod.isManual ? '<span style="color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0"> &bull; Curated</span>' : ''}
+          ${wod.isManual ? '<span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0"> &bull; Curated</span>' : ''}
         </div>
         <h1>${escHtml(wod.title || 'Daily Workout')}</h1>
         <div class="wod-meta-strip">
@@ -522,22 +525,22 @@
 <style>
   #workout-auth-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:900;align-items:center;justify-content:center;padding:20px}
   #workout-auth-modal.active{display:flex}
-  #workout-auth-modal .wam{background:var(--dark-card,#1E1E2C);border:1px solid var(--dark-border,#2E2E42);border-radius:14px;padding:28px 28px 24px;width:100%;max-width:380px;position:relative}
-  #workout-auth-modal .wam-close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--text-muted,#888899);font-size:20px;cursor:pointer;line-height:1}
-  #workout-auth-modal .wam-close:hover{color:var(--text-primary,#EAEAF0)}
+  #workout-auth-modal .wam{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:28px 28px 24px;width:100%;max-width:380px;position:relative}
+  #workout-auth-modal .wam-close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1}
+  #workout-auth-modal .wam-close:hover{color:var(--text)}
   #workout-auth-modal h2{font-size:20px;font-weight:900;margin-bottom:4px}
-  #workout-auth-modal .wamsub{color:var(--text-muted,#888899);font-size:13px;margin-bottom:18px}
+  #workout-auth-modal .wamsub{color:var(--muted);font-size:13px;margin-bottom:18px}
   #workout-auth-modal .wamfield{margin-bottom:14px}
-  #workout-auth-modal .wamfield label{display:block;font-size:11px;font-weight:700;color:var(--text-muted,#888899);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
-  #workout-auth-modal .wamfield input{width:100%;background:#16161F;border:1px solid var(--dark-border,#2E2E42);border-radius:8px;padding:10px 12px;color:var(--text-primary,#EAEAF0);font-size:14px;outline:none;font-family:inherit;box-sizing:border-box}
-  #workout-auth-modal .wamfield input:focus{border-color:var(--orange,#C41212)}
-  #workout-auth-modal .wambtn{width:100%;padding:13px;background:var(--orange,#C41212);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;margin-top:4px}
+  #workout-auth-modal .wamfield label{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+  #workout-auth-modal .wamfield input{width:100%;background:#16161F;border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:14px;outline:none;font-family:inherit;box-sizing:border-box}
+  #workout-auth-modal .wamfield input:focus{border-color:var(--or)}
+  #workout-auth-modal .wambtn{width:100%;padding:13px;background:var(--or);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;margin-top:4px}
   #workout-auth-modal .wambtn:hover{background:#E03030}
-  #workout-auth-modal .wamlink{text-align:center;margin-top:12px;font-size:13px;color:var(--text-muted,#888899)}
-  #workout-auth-modal .wamlink a{color:var(--orange,#C41212);cursor:pointer;text-decoration:none}
+  #workout-auth-modal .wamlink{text-align:center;margin-top:12px;font-size:13px;color:var(--muted)}
+  #workout-auth-modal .wamlink a{color:var(--or);cursor:pointer;text-decoration:none}
   #workout-auth-modal .wam-recovery{display:flex;justify-content:center;gap:16px;margin-top:10px;font-size:12px}
-  #workout-auth-modal .wam-recovery a{color:var(--text-muted,#888899);text-decoration:none}
-  #workout-auth-modal .wam-recovery a:hover{color:var(--orange,#C41212);text-decoration:underline}
+  #workout-auth-modal .wam-recovery a{color:var(--muted);text-decoration:none}
+  #workout-auth-modal .wam-recovery a:hover{color:var(--or);text-decoration:underline}
   #workout-auth-modal .wamerr{background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);color:#E74C3C;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
   @keyframes slideInToast{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
 /* print-area: hidden on screen, only visible when printing */

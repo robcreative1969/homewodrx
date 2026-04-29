@@ -2,79 +2,204 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <!-- Sentry Error Monitoring -->
-  <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Browse Workouts - HomeWODrx</title>
-  <meta name="description" content="Browse and filter all CrossFit benchmarks and user-generated workouts.">
-  <meta property="og:title" content="Browse CrossFit Workouts — HomeWODrx">
-  <meta property="og:description" content="Browse Girl WODs, Hero WODs, Open WODs, Games WODs, and benchmark workouts. Filter by type and format.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://homewodrx.com/workouts">
-  <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Browse CrossFit Workouts — HomeWODrx">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://homewodrx.com/images/og-default.png">
-  <link rel="canonical" href="https://homewodrx.com/workouts">
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "name": "Browse CrossFit Workouts — HomeWODrx",
-    "description": "Browse and filter all CrossFit benchmark workouts, Girl WODs, Hero WODs, Open WODs, Games WODs, Partner WODs, and user-generated WODs.",
-    "url": "https://homewodrx.com/workouts",
-    "isPartOf": { "@type": "WebSite", "name": "HomeWODrx", "url": "https://homewodrx.com" },
-    "breadcrumb": {
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home",     "item": "https://homewodrx.com/" },
-        { "@type": "ListItem", "position": 2, "name": "Workouts", "item": "https://homewodrx.com/workouts" }
-      ]
-    }
-  }
-  </script>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <title>Benchmark Workouts — HomeWodRX</title>
+  <meta name="description" content="Browse 107 benchmark CrossFit workouts — Hero WODs, Girl WODs, Open workouts, Games WODs, Partner WODs, and more. Filter by equipment, format, and category.">
+
+  <!-- Sentry -->
+  <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Shared styles -->
   <link rel="stylesheet" href="/css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="/js/config.js"></script>
-  <script src="/js/db.js"></script>
-  <script src="/js/benchmarks.js"></script>
-  <script src="/js/movements.js"></script>
-  <script src="/js/daily-wod.js"></script>
-  <script src="/js/nav.js"></script>
+
+  <!-- Page-specific overrides & additions -->
   <style>
-    .movement-filter-banner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--dark-surface, #1e1e1e);
-      border: 1px solid var(--orange, #f97316);
-      border-radius: 8px;
-      padding: 0.75rem 1.25rem;
-      margin-bottom: 1.5rem;
-    }
-    .movement-filter-banner strong {
-      color: var(--orange, #f97316);
-    }
-    .movement-filter-banner .clear-btn {
-      background: none;
-      border: 1px solid var(--dark-border, #333);
-      border-radius: 4px;
-      padding: 0.25rem 0.6rem;
-      font-size: 0.85rem;
+    /* Fix ham-panel: style.css uses position:absolute (relative to sticky nav),
+       which puts it off-screen when page is scrolled. Override to fixed. */
+    .ham-panel { position: fixed !important; top: var(--nav-h); }
+
+    /* page-header has padding in style.css; this page manages its own inner padding */
+    .page-header { padding: 0; }
+
+    /* style.css .chip is display-only — override to full interactive chip */
+    .chip {
       cursor: pointer;
-      color: inherit;
+      display: inline-block;
+      font-family: var(--font-body);
+      font-size: .875rem;
+      font-weight: 500;
+      padding: .28rem .7rem;
+      border-radius: 20px;
+      line-height: 1.4;
+      border: 1px solid var(--border);
+      background: var(--white);
+      color: var(--text);
+      transition: all 150ms;
+      white-space: nowrap;
     }
-    .movement-filter-banner .clear-btn:hover {
-      border-color: var(--orange, #f97316);
-      color: var(--orange, #f97316);
+    .chip:hover { border-color: var(--or); color: var(--or); }
+    .chip.active { background: var(--or); border-color: var(--or); color: #fff; }
+
+    /* ── Page header ── */
+    .page-header { background: var(--white); border-bottom: 1px solid var(--border); }
+    .page-header-inner { max-width: 1200px; margin: 0 auto; padding: 32px 28px 0; }
+    .page-title-row { display: flex; align-items: flex-end; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+    .page-title { font-family: var(--font-head); font-size: 3rem; letter-spacing: .04em; line-height: 1; }
+    .page-subtitle { font-size: .9rem; color: var(--muted); padding-bottom: 4px; }
+    .page-subtitle strong { color: var(--text); font-weight: 700; }
+
+    /* filter sections */
+    .filter-section { display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px; }
+    .filter-section + .filter-section { padding-top: 18px; }
+    .filter-divider { height: 1px; background: var(--border); }
+    .filter-label {
+      font-size: .72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .07em; color: var(--muted);
+    }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 7px; }
+
+    /* search in header */
+    .search-wrap { position: relative; }
+    .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+    .search-input {
+      width: 100%; padding: 11px 14px 11px 42px; border: 1.5px solid var(--border); border-radius: 9px;
+      font-family: var(--font-body); font-size: .92rem; color: var(--text); background: var(--bg);
+      outline: none; transition: border-color .15s, background .15s;
+    }
+    .search-input::placeholder { color: var(--muted); }
+    .search-input:focus { border-color: var(--or); background: var(--white); }
+
+    /* ── Category tabs ── */
+    .cat-tabs { display: flex; gap: 0; margin-top: 20px; overflow-x: auto; scrollbar-width: none; }
+    .cat-tabs::-webkit-scrollbar { display: none; }
+    .cat-tab {
+      padding: 12px 20px; font-size: .88rem; font-weight: 700; color: var(--muted);
+      border-bottom: 3px solid transparent; cursor: pointer; white-space: nowrap;
+      transition: all .15s; font-family: var(--font-body); flex-shrink: 0;
+      display: flex; align-items: center; gap: 7px;
+      background: none; border-top: none; border-left: none; border-right: none;
+    }
+    .cat-tab:hover { color: var(--text); }
+    .cat-tab.active { color: var(--or); border-bottom-color: var(--or); }
+    .cat-tab .tab-count {
+      font-size: .72rem; font-weight: 700; padding: 2px 7px; border-radius: 20px;
+      background: var(--bg); color: var(--muted);
+    }
+    .cat-tab.active .tab-count { background: var(--or-light); color: var(--or); }
+
+    /* ── Main content ── */
+    .main { max-width: 1200px; margin: 0 auto; padding: 28px 28px 60px; }
+    .results-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+    .results-count { font-size: .88rem; color: var(--muted); }
+    .results-count strong { color: var(--text); font-weight: 700; }
+    .sort-wrap { display: flex; align-items: center; gap: 8px; }
+    .sort-label { font-size: .82rem; color: var(--muted); font-weight: 600; }
+    .sort-select {
+      padding: 6px 28px 6px 10px; border-radius: 8px; border: 1.5px solid var(--border);
+      font-family: var(--font-body); font-size: .82rem; color: var(--text); background: var(--white);
+      cursor: pointer; outline: none; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 8px center; transition: border-color .15s;
+    }
+    .sort-select:focus { border-color: var(--or); }
+
+    /* ── WOD Grid & Card ── */
+    .wod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .wod-card {
+      background: var(--white); border-radius: 14px; border: 1.5px solid var(--border);
+      box-shadow: 0 2px 12px rgba(0,0,0,.07); transition: transform .15s, box-shadow .15s, border-color .15s;
+      overflow: hidden; display: flex; flex-direction: column;
+      text-decoration: none; color: var(--text);
+    }
+    .wod-card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,.11); }
+    .card-head { padding: 16px 18px 0; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .card-name { font-family: var(--font-head); font-size: 1.75rem; letter-spacing: .04em; line-height: 1; flex: 1; }
+    .card-badges { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+    .cat-badge {
+      font-size: .68rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .08em; padding: 3px 9px; border-radius: 20px;
+    }
+    .cat-badge.hero      { background: #fde8e8; color: #c41212; }
+    .cat-badge.girl      { background: #f3e8ff; color: #7b1fa2; }
+    .cat-badge.open      { background: #e8f0fe; color: #1565c0; }
+    .cat-badge.games     { background: #fff3e0; color: #e65100; }
+    .cat-badge.partner   { background: #e8f5e9; color: #2e7d32; }
+    .cat-badge.benchmark { background: #eceff1; color: #37474f; }
+    .wod-type-badge {
+      font-size: .66rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+      padding: 2px 8px; border-radius: 20px; background: var(--bg); color: var(--muted);
+    }
+    .card-body { padding: 10px 18px 14px; flex: 1; display: flex; flex-direction: column; }
+    .card-movements { font-size: .84rem; color: var(--text); display: flex; flex-direction: column; }
+    .card-movements .mov-line { padding: 5px 0; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; gap: 8px; }
+    .card-movements .mov-line:last-child { border-bottom: none; }
+    .card-movements .mov-reps { font-family: var(--font-head); font-size: 1rem; color: var(--or); flex-shrink: 0; line-height: 1; }
+    .card-movements .mov-name { color: var(--text); flex: 1; }
+    .card-movements .mov-more { color: var(--muted); font-size: .78rem; font-style: italic; }
+    .card-footer {
+      padding: 10px 18px 14px; border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
+    }
+    .card-stat { display: flex; align-items: center; gap: 5px; font-size: .78rem; color: var(--muted); font-weight: 600; }
+    .equip-chips { display: flex; gap: 5px; flex-wrap: wrap; }
+    .equip-chip {
+      font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+      padding: 3px 8px; border-radius: 5px; background: var(--bg); color: var(--muted);
+    }
+    .equip-chip.barbell    { background: #fde8e8; color: #c41212; }
+    .equip-chip.bodyweight { background: #e8f5e9; color: #2e7d32; }
+    .equip-chip.pullUpBar  { background: #e8f0fe; color: #1565c0; }
+    .equip-chip.dumbbell   { background: #e0f2f1; color: #00695c; }
+    .equip-chip.kettlebell { background: #fce4ec; color: #c2185b; }
+    .equip-chip.jumpRope   { background: #f3e8ff; color: #7b1fa2; }
+    .equip-chip.rings      { background: #fff8e1; color: #f57f17; }
+    .card-arrow { color: var(--muted); transition: color .15s; flex-shrink: 0; }
+    .wod-card:hover .card-arrow { color: var(--or); }
+
+    /* ── Empty state ── */
+    .empty-state { text-align: center; padding: 80px 24px; display: none; }
+    .empty-state.visible { display: block; }
+    .empty-icon { font-size: 3rem; margin-bottom: 16px; opacity: .4; }
+    .empty-title { font-family: var(--font-head); font-size: 1.8rem; letter-spacing: .04em; margin-bottom: 8px; }
+    .empty-sub { font-size: .9rem; color: var(--muted); }
+    .empty-clear {
+      margin-top: 20px; padding: 10px 24px; border-radius: 8px; background: var(--or); color: #fff;
+      font-weight: 700; font-size: .88rem; cursor: pointer; border: none; font-family: var(--font-body);
+      transition: background .15s;
+    }
+    .empty-clear:hover { background: var(--or-dark); }
+
+    /* ── Footer ── */
+    .site-footer {
+      background: #111; color: #aaa; margin-top: 4rem;
+      border-top: 3px solid var(--or); padding: 48px 24px 24px; font-size: .875rem;
+    }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 32px 40px; margin-bottom: 40px; }
+    @media (max-width: 800px) { .footer-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 480px) { .footer-grid { grid-template-columns: 1fr; } }
+    .footer-col h4 { font-family: var(--font-head); font-size: 1rem; letter-spacing: .06em; color: #fff; margin-bottom: 12px; }
+    .footer-col a { display: block; color: #aaa; text-decoration: none; margin-bottom: 8px; transition: color .15s; }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom { border-top: 1px solid #333; padding-top: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-bottom p { font-size: .75rem; color: #666; }
+
+    /* ── Responsive ── */
+    @media (max-width: 700px) {
+      .page-header-inner { padding: 20px 16px 0; }
+      .main { padding: 20px 16px 48px; }
+      .page-title { font-size: 2.2rem; }
+      .cat-tab { padding: 11px 14px; font-size: .82rem; }
+      .wod-grid { grid-template-columns: 1fr; }
     }
   </style>
-  <!-- Google tag (gtag.js) -->
+
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -82,363 +207,388 @@
     gtag('js', new Date());
     gtag('config', 'G-HZM475VDN3');
   </script>
+  <!-- Vercel Analytics -->
   <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body data-nav-init="true" data-active-page="workouts">
-<main class="container">
+<!-- ── PAGE HEADER ── -->
+<div class="page-header">
+  <div class="page-header-inner">
 
-  <section style="margin-bottom: 2rem; padding: 2rem 0;">
-    <h1>Browse Workouts</h1>
-    <p class="text-muted">Filter and search from our complete library of benchmarks and user-generated WODs.</p>
-  </section>
+    <div class="page-title-row">
+      <h1 class="page-title">WORKOUTS</h1>
+      <p class="page-subtitle">
+        <strong id="total-count">107</strong> benchmark WODs — Hero, Girl, Open, Games, Partner &amp; more
+      </p>
+    </div>
 
-  <!-- MOVEMENT FILTER BANNER (shown when ?movement= param is active) -->
-  <div id="movement-filter-banner" style="display: none;" class="movement-filter-banner">
-    <span>Filtering by movement: <strong id="movement-filter-label"></strong></span>
-    <button class="clear-btn" onclick="clearMovementFilter()">× Clear filter</button>
-  </div>
-
-  <!-- FILTER BAR -->
-  <div class="filter-bar">
+    <!-- Equipment filter -->
     <div class="filter-section">
-      <label class="filter-label">Type</label>
-      <div class="filter-chips" id="type-filters">
+      <span class="filter-label">Equipment</span>
+      <div class="chip-row" id="equip-chips">
+        <button class="chip active" data-equip="all">All</button>
+        <button class="chip" data-equip="bodyweight">Bodyweight</button>
+        <button class="chip" data-equip="barbell">Barbell</button>
+        <button class="chip" data-equip="pullUpBar">Pull-up Bar</button>
+        <button class="chip" data-equip="run">Running</button>
+        <button class="chip" data-equip="dumbbell">Dumbbells</button>
+        <button class="chip" data-equip="kettlebell">Kettlebell</button>
+      </div>
+    </div>
+    <div class="filter-divider"></div>
+
+    <!-- WOD type filter -->
+    <div class="filter-section">
+      <span class="filter-label">WOD Type</span>
+      <div class="chip-row" id="type-chips">
         <button class="chip active" data-type="all">All</button>
-        <button class="chip" data-type="girl">The Girls</button>
-        <button class="chip" data-type="hero">Heroes</button>
-        <button class="chip" data-type="open">Open WODs</button>
-        <button class="chip" data-type="games">Games WODs</button>
-        <button class="chip" data-type="partner">Partner WODs</button>
-        <button class="chip" data-type="benchmark">Benchmarks</button>
-        <button class="chip" data-type="user">User-Generated</button>
-        <button class="chip" data-type="daily">Daily 20</button>
+        <button class="chip" data-type="For Time">For Time</button>
+        <button class="chip" data-type="AMRAP">AMRAP</button>
+        <button class="chip" data-type="EMOM">EMOM</button>
+        <button class="chip" data-type="Circuit">Circuit</button>
+        <button class="chip" data-type="Chipper">Chipper</button>
+        <button class="chip" data-type="Tabata">Tabata</button>
       </div>
     </div>
+    <div class="filter-divider"></div>
+
+    <!-- Search -->
     <div class="filter-section">
-      <label class="filter-label">Format</label>
-      <div class="filter-chips" id="format-filters">
-        <button class="chip active" data-format="all">All</button>
-        <button class="chip" data-format="amrap">AMRAP</button>
-        <button class="chip" data-format="emom">EMOM</button>
-        <button class="chip" data-format="fortime">For Time</button>
-        <button class="chip" data-format="circuit">Circuit</button>
+      <span class="filter-label">Search</span>
+      <div class="search-wrap">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input class="search-input" id="search" type="text" placeholder="Search by name or movement…" autocomplete="off">
       </div>
     </div>
-    <div class="filter-section">
-      <label class="filter-label">Search</label>
-      <input type="text" id="search-input" placeholder="Search by workout name...">
+
+    <!-- Category tabs -->
+    <div class="cat-tabs" id="cat-tabs">
+      <button class="cat-tab active" data-cat="all">All <span class="tab-count" id="cnt-all">107</span></button>
+      <button class="cat-tab" data-cat="hero">Hero <span class="tab-count" id="cnt-hero">0</span></button>
+      <button class="cat-tab" data-cat="girl">Girl <span class="tab-count" id="cnt-girl">0</span></button>
+      <button class="cat-tab" data-cat="open">Open <span class="tab-count" id="cnt-open">0</span></button>
+      <button class="cat-tab" data-cat="games">Games <span class="tab-count" id="cnt-games">0</span></button>
+      <button class="cat-tab" data-cat="partner">Partner <span class="tab-count" id="cnt-partner">0</span></button>
+      <button class="cat-tab" data-cat="benchmark">Benchmark <span class="tab-count" id="cnt-benchmark">0</span></button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<main class="main">
+  <div class="results-meta">
+    <p class="results-count">Showing <strong id="shown-count">107</strong> workouts</p>
+    <div class="sort-wrap">
+      <span class="sort-label">Sort:</span>
+      <select class="sort-select" id="sort-select">
+        <option value="name">Name (A–Z)</option>
+        <option value="name-desc">Name (Z–A)</option>
+        <option value="cat">Category</option>
+        <option value="type">WOD Type</option>
+        <option value="time-asc">Shortest first</option>
+        <option value="time-desc">Longest first</option>
+      </select>
     </div>
   </div>
 
-  <!-- WORKOUTS GRID -->
-  <div id="workouts-container" class="grid grid-cols-3">
-    <div class="loading">
-      <div class="spinner"></div>
-    </div>
+  <div class="wod-grid" id="wod-grid"></div>
+  <div class="empty-state" id="empty-state">
+    <div class="empty-icon">🔍</div>
+    <p class="empty-title">NO WORKOUTS FOUND</p>
+    <p class="empty-sub">Try a different search term, category, or equipment filter.</p>
+    <button class="empty-clear" onclick="clearAllFilters()">Clear all filters</button>
   </div>
-
-  <!-- LOAD MORE -->
-  <div style="text-align: center; margin-top: 2rem;">
-    <button id="load-more-btn" class="btn btn-secondary" style="display: none;">Load More</button>
-  </div>
-
 </main>
 
-<!-- FOOTER -->
-<script src="/js/footer.js"></script>
+<!-- ── FOOTER ── -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>Workouts</h4>
+        <a href="/workouts.html?cat=girl">The Girls</a>
+        <a href="/workouts.html?cat=hero">Hero WODs</a>
+        <a href="/workouts.html?cat=open">Open WODs</a>
+        <a href="/workouts.html?cat=benchmark">Benchmarks</a>
+        <a href="/workouts.html">All Workouts</a>
+      </div>
+      <div class="footer-col">
+        <h4>Train</h4>
+        <a href="/daily-wod.html">The Daily 20</a>
+        <a href="/generator.html">Smart WOD Builder</a>
+        <a href="/timer.html">WOD Timer</a>
+        <a href="/movements.html">Movement Library</a>
+      </div>
+      <div class="footer-col">
+        <h4>Stretch &amp; Mobility</h4>
+        <a href="/stretch.html">The Daily 10</a>
+        <a href="/stretches.html">Browse Stretches</a>
+        <a href="/stretch-routines.html">Stretch Routines</a>
+      </div>
+      <div class="footer-col">
+        <h4>More</h4>
+        <a href="/shop.html">Gear Shop</a>
+        <a href="/blog.html">Blog</a>
+        <a href="/search.html">Search</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <a href="/"><img src="/images/HomeWODRx-logo-white-red-black-strip-040626.png" alt="HomeWODrx" style="height:28px;display:block;"></a>
+      <p>© 2026 HomeWodRX. All rights reserved.</p>
+      <div style="display:flex;gap:16px;font-size:.75rem;">
+        <a href="/privacy.html" style="color:#666;text-decoration:none;">Privacy</a>
+        <a href="/terms.html" style="color:#666;text-decoration:none;">Terms</a>
+        <a href="/disclaimer.html" style="color:#666;text-decoration:none;">Disclaimer</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ── DATA & SCRIPTS ── -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/js/config.js"></script>
+<script src="/js/db.js"></script>
+<script src="/js/nav.js"></script>
+<script src="/js/benchmarks.js"></script>
 
 <script>
-  let allWorkouts = [];
-  let filteredWorkouts = [];
-  let pageUser = null;
-  const ADMIN_EMAILS = ['rob@carlbloom.com'];
-  function canDeleteWorkout(w) {
-    if (!pageUser || !w || w.category !== 'user') return false;
-    if (ADMIN_EMAILS.includes(pageUser.email)) return true;
-    return w.user_id && w.user_id === pageUser.id;
+// ─────────────────────────────────────────
+// DATA & FILTER STATE
+// ─────────────────────────────────────────
+const CAT_ORDER  = ['hero','girl','open','games','partner','benchmark'];
+const CAT_LABELS = { hero:'Hero', girl:'Girl', open:'Open', games:'Games', partner:'Partner', benchmark:'Benchmark' };
+const EQUIP_LABELS = {
+  pullUpBar:'Pull-up Bar', bodyweight:'Bodyweight', barbell:'Barbell',
+  dumbbell:'Dumbbells', kettlebell:'Kettlebell', jumpRope:'Jump Rope',
+  rings:'Rings', rowingMachine:'Rower', assaultBike:'Air Bike', box:'Box', medBall:'Med Ball',
+};
+
+let activeCategory = 'all';
+let activeEquip    = 'all';
+let activeType     = 'all';
+let searchQuery    = '';
+let sortBy         = 'name';
+let WODS           = [];
+
+function parseDurMin(s) {
+  if (!s) return 0;
+  const nums = String(s).match(/\d+/g);
+  return nums ? Math.max(...nums.map(Number)) : 0;
+}
+
+function hasRunning(movements) {
+  if (!movements || !movements.length) return false;
+  return movements.some(m => /\b(run|sprint|mile|400m|800m|1[,.]?6(00)?m)\b/i.test(m.name || ''));
+}
+
+function buildWorkoutsData() {
+  if (typeof BENCHMARKS === 'undefined') return [];
+  return BENCHMARKS.map(b => ({
+    name:      b.name,
+    slug:      b.slug,
+    cat:       b.category || 'benchmark',
+    type:      b.format || '',
+    minutes:   parseDurMin(b.duration_estimate),
+    dur:       b.duration_estimate || '',
+    equip:     b.equipment || [],
+    movements: b.movements || [],
+    hasRun:    hasRunning(b.movements),
+    diff:      b.difficulty || '',
+  }));
+}
+
+// ─────────────────────────────────────────
+// FILTERING & SORTING
+// ─────────────────────────────────────────
+function matchesEquip(w) {
+  if (activeEquip === 'all')  return true;
+  if (activeEquip === 'run')  return w.hasRun;
+  return w.equip.includes(activeEquip);
+}
+
+function filteredWods() {
+  let list = [...WODS];
+  if (activeCategory !== 'all') list = list.filter(w => w.cat === activeCategory);
+  if (activeEquip    !== 'all') list = list.filter(matchesEquip);
+  if (activeType     !== 'all') list = list.filter(w => w.type === activeType);
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    list = list.filter(w =>
+      w.name.toLowerCase().includes(q) ||
+      w.movements.some(m => (m.name || '').toLowerCase().includes(q)) ||
+      w.type.toLowerCase().includes(q)
+    );
   }
-  async function deleteWorkoutCard(id, event) {
-    event.preventDefault(); event.stopPropagation();
-    if (!confirm('Delete this workout? This cannot be undone.')) return;
-    try {
-      await db.deleteWorkout(id);
-      allWorkouts = allWorkouts.filter(w => w.id !== id);
-      applyFilters();
-    } catch(e) { alert('Error deleting workout.'); }
-  }
-  let currentFilters = {
-    type: 'all',
-    format: 'all',
-    search: '',
-    movement: null
-  };
-  let displayCount = 12;
-
-  function slugify(name) {
-    return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  }
-
-  function titleCase(slug) {
-    return slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-  }
-
-  function checkMovementParam() {
-    const params = new URLSearchParams(window.location.search);
-    const movement = params.get('movement');
-    if (movement) {
-      currentFilters.movement = movement;
-      const label = titleCase(movement);
-      document.getElementById('movement-filter-label').textContent = label;
-      document.getElementById('movement-filter-banner').style.display = 'flex';
-      document.title = `${label} Workouts - HomeWODrx`;
-      document.querySelector('meta[name="description"]').setAttribute(
-        'content',
-        `Browse all CrossFit workouts that include ${label} on HomeWODrx.`
-      );
-    }
-    const type = params.get('type');
-    if (type) {
-      currentFilters.type = type;
-      document.querySelectorAll('#type-filters .chip').forEach(c => {
-        c.classList.toggle('active', c.dataset.type === type);
-      });
-    }
-  }
-
-  function clearMovementFilter() {
-    currentFilters.movement = null;
-    document.getElementById('movement-filter-banner').style.display = 'none';
-    document.getElementById('movement-filter-label').textContent = '';
-    document.title = 'Browse Workouts - HomeWODrx';
-    const url = new URL(window.location.href);
-    url.searchParams.delete('movement');
-    history.replaceState({}, '', url);
-    applyFilters();
-  }
-
-  async function loadWorkouts() {
-    const container = document.getElementById('workouts-container');
-    container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-
-    try {
-      // Load benchmarks from Supabase (falls back to BENCHMARKS JS array if Supabase unavailable)
-      allWorkouts = await db.getAllBenchmarks();
-
-      const userWorkouts = await db.getWorkouts({ isPublic: true, limit: 1000 });
-      if (userWorkouts && userWorkouts.length > 0) {
-        allWorkouts = allWorkouts.concat(userWorkouts.map(w => ({
-          ...w,
-          name: w.title || w.name || 'Untitled Workout',
-          difficulty: w.difficulty || w.level || 'intermediate',
-          category: 'user',
-          slug: w.id,
-          movements: (w.movements || []).map(m => ({ ...m, name: m.name || m.movement || '' }))
-        })));
-      }
-
-      // Add the last 90 daily WODs so site content grows automatically each day
-      const dailyWods = await generateRecentDailyWods(90);
-      if (dailyWods.length > 0) {
-        allWorkouts = allWorkouts.concat(dailyWods);
-      }
-
-      // Update type filter chips with live counts — runs after all sources are loaded
-      const categoryCounts = {};
-      for (const w of allWorkouts) {
-        if (w.category) categoryCounts[w.category] = (categoryCounts[w.category] || 0) + 1;
-      }
-      document.querySelectorAll('#type-filters .chip[data-type]').forEach(chip => {
-        const type = chip.dataset.type;
-        if (type && type !== 'all' && categoryCounts[type]) {
-          chip.textContent = `${chip.textContent.trim()} (${categoryCounts[type]})`;
-        }
-      });
-
-      applyFilters();
-    } catch (error) {
-      console.error('Error loading workouts:', error);
-      container.innerHTML = '<p class="text-muted">Error loading workouts. Please try again.</p>';
-    }
-  }
-
-  // Generate workout entries for the last N days from DailyWOD engine
-  async function generateRecentDailyWods(days) {
-    if (typeof DailyWOD === 'undefined') return [];
-    const wods = [];
-    const today = new Date();
-    // Fetch config and movements once to avoid repeated Supabase calls in the loop
-    const [config, movementDB] = await Promise.all([
-      DailyWOD.getConfig().catch(() => DailyWOD.defaultConfig),
-      DailyWOD._loadMovements().catch(() => ({}))
-    ]);
-    for (let i = 0; i < days; i++) {
-      const d = new Date(today);
-      d.setDate(today.getDate() - i);
-      const dateStr = d.toISOString().split('T')[0];
-      try {
-        const dayOfWeek = new Date(dateStr + 'T12:00:00').getDay();
-        const seed = DailyWOD.getSeedForDate(dateStr);
-        const rng = DailyWOD.seededRng(seed);
-        const difficulty = config.difficultyByDay[dayOfWeek] || 'intermediate';
-        const bodyFocus  = config.bodyFocusByDay[dayOfWeek]  || 'full-body';
-        const format     = config.formatByDay[dayOfWeek]     || 'amrap';
-        const durRange   = config.durationByDay[dayOfWeek]   || [20, 30];
-        const duration   = durRange[0] + Math.floor(rng() * (durRange[1] - durRange[0] + 1));
-        const equipment  = config.equipment || ['bodyweight'];
-        // Pass pre-loaded movementDB so this loop makes zero extra Supabase calls
-        const pool = DailyWOD._buildPool(equipment, difficulty, bodyFocus, rng, movementDB);
-        let wod;
-        if (format === 'amrap')        wod = DailyWOD._genAMRAP(pool, difficulty, duration, bodyFocus, rng);
-        else if (format === 'emom')    wod = DailyWOD._genEMOM(pool, difficulty, duration, bodyFocus, rng);
-        else if (format === 'fortime') wod = DailyWOD._genForTime(pool, difficulty, rng);
-        else                           wod = DailyWOD._genCircuit(pool, difficulty, duration, bodyFocus, rng);
-        if (wod) {
-          const dateLabel = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-          wods.push({
-            name: `Daily 20 \u2014 ${dateLabel}`,
-            category: 'daily',
-            format: ({'amrap':'AMRAP','emom':'EMOM','fortime':'For Time','circuit':'Circuit'})[wod.format] || wod.format,
-            difficulty: difficulty,
-            body_focus: bodyFocus,
-            movements: (wod.rows || []).map(r => ({ name: r.movement })),
-            _date: dateStr,
-            _title: wod.title
-          });
-        }
-      } catch (e) { /* skip this date */ }
-    }
-    return wods;
-  }
-
-  function applyFilters() {
-    filteredWorkouts = allWorkouts.filter(w => {
-      if (currentFilters.type !== 'all' && w.category !== currentFilters.type) return false;
-      if (currentFilters.format !== 'all' && !w.format.toLowerCase().includes(currentFilters.format.toLowerCase())) return false;
-      if (currentFilters.search && !(w.name || w.title || '').toLowerCase().includes(currentFilters.search.toLowerCase())) return false;
-
-      if (currentFilters.movement) {
-        if (!w.movements || w.movements.length === 0) return false;
-        const hasMovement = w.movements.some(m => slugify(m.name) === currentFilters.movement);
-        if (!hasMovement) return false;
-      }
-
-      return true;
-    });
-
-    // Default order: by category, daily WODs newest first within their group
-    const catOrder = { 'girl': 0, 'hero': 1, 'open': 2, 'games': 3, 'partner': 4, 'benchmark': 5, 'user': 6, 'daily': 7 };
-    filteredWorkouts.sort((a, b) => {
-      const ao = catOrder[a.category] ?? 3;
-      const bo = catOrder[b.category] ?? 3;
-      if (ao !== bo) return ao - bo;
-      if (a.category === 'daily' && b.category === 'daily') {
-        return (b._date || '').localeCompare(a._date || '');
-      }
-      return 0;
-    });
-
-    renderWorkouts();
-  }
-
-  function renderWorkouts() {
-    const container = document.getElementById('workouts-container');
-    const displayed = filteredWorkouts.slice(0, displayCount);
-
-    if (displayed.length === 0) {
-      const emptyMsg = currentFilters.movement
-        ? `No workouts found that include <strong>${titleCase(currentFilters.movement)}</strong>. <a href="/movements/${currentFilters.movement}" style="color:var(--orange);">View movement guide →</a>`
-        : 'No workouts found. Try adjusting your filters.';
-      container.innerHTML = `<div style="grid-column: 1/-1;"><p class="text-muted">${emptyMsg}</p></div>`;
-      document.getElementById('load-more-btn').style.display = 'none';
-      return;
-    }
-
-    container.innerHTML = displayed.map(w => {
-      const isUser    = w.category === 'user';
-      const isDaily   = w.category === 'daily';
-      const href = isDaily
-        ? `/daily-wod.html?date=${w._date}`
-        : (isUser ? `/workout.html?id=${w.id}` : `/workout.html?slug=${w.slug}`);
-      const categoryBadge = (() => {
-        switch (w.category) {
-          case 'girl':      return '<span class="badge badge-girl">Girl WOD</span>';
-          case 'hero':      return '<span class="badge badge-hero">Hero WOD</span>';
-          case 'open':      return '<span class="badge badge-open">Open WOD</span>';
-          case 'games':     return '<span class="badge badge-games">Games WOD</span>';
-          case 'partner':   return '<span class="badge badge-partner">Partner WOD</span>';
-          case 'benchmark': return '<span class="badge badge-benchmark">Benchmark</span>';
-          case 'user':      return '<span class="badge badge-success">Community</span>';
-          case 'daily':     return '<span class="badge badge-orange">Daily 20</span>';
-          default:          return '';
-        }
-      })();
-      return `
-        <a href="${href}" style="text-decoration: none;">
-          <div class="card">
-            <h4>${w.name}</h4>
-            <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 0.4rem;">
-              ${formatWodMeta(w)}
-            </p>
-            <p style="font-size: 0.85rem; color: var(--mu, #888); margin-bottom: 0.75rem;">
-              ${summarizeMovements(w)}
-            </p>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
-              ${categoryBadge}
-              ${w.youtube_url ? '<span class="badge badge-video">▶ Video</span>' : ''}
-              ${isUser && canDeleteWorkout(w) ? `<button onclick="deleteWorkoutCard('${w.id}',event)" style="margin-left:auto;background:rgba(231,76,60,0.12);border:1px solid rgba(231,76,60,0.35);color:#E74C3C;border-radius:6px;padding:3px 10px;font-size:0.75rem;cursor:pointer;font-weight:600;">🗑</button>` : ''}
-            </div>
-          </div>
-        </a>
-      `;
-    }).join('');
-
-    const loadMoreBtn = document.getElementById('load-more-btn');
-    if (filteredWorkouts.length > displayCount) {
-      loadMoreBtn.style.display = 'inline-block';
-    } else {
-      loadMoreBtn.style.display = 'none';
-    }
-  }
-
-  function setupFilterListeners() {
-    document.querySelectorAll('#type-filters .chip').forEach(chip => {
-      chip.addEventListener('click', (e) => {
-        document.querySelectorAll('#type-filters .chip').forEach(c => c.classList.remove('active'));
-        e.target.classList.add('active');
-        currentFilters.type = e.target.dataset.type;
-        displayCount = 12;
-        applyFilters();
-      });
-    });
-
-    document.querySelectorAll('#format-filters .chip').forEach(chip => {
-      chip.addEventListener('click', (e) => {
-        document.querySelectorAll('#format-filters .chip').forEach(c => c.classList.remove('active'));
-        e.target.classList.add('active');
-        currentFilters.format = e.target.dataset.format;
-        displayCount = 12;
-        applyFilters();
-      });
-    });
-
-    document.getElementById('search-input').addEventListener('input', (e) => {
-      currentFilters.search = e.target.value;
-      displayCount = 12;
-      applyFilters();
-    });
-
-    document.getElementById('load-more-btn').addEventListener('click', () => {
-      displayCount += 12;
-      renderWorkouts();
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', async () => {
-    pageUser = await db.getUser().catch(() => null);
-    checkMovementParam();
-    setupFilterListeners();
-    loadWorkouts();
+  list.sort((a, b) => {
+    if (sortBy === 'name')      return a.name.localeCompare(b.name);
+    if (sortBy === 'name-desc') return b.name.localeCompare(a.name);
+    if (sortBy === 'cat')       return CAT_ORDER.indexOf(a.cat) - CAT_ORDER.indexOf(b.cat);
+    if (sortBy === 'type')      return a.type.localeCompare(b.type);
+    if (sortBy === 'time-asc')  return a.minutes - b.minutes;
+    if (sortBy === 'time-desc') return b.minutes - a.minutes;
+    return 0;
   });
+  return list;
+}
+
+// ─────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────
+const CLOCK_SVG = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
+const ARROW_SVG = `<svg class="card-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`;
+
+function buildMovHtml(movements) {
+  if (!movements || !movements.length) return '';
+  const shown = movements.slice(0, 4);
+  let html = shown.map(m => {
+    const reps = m.reps ? `<span class="mov-reps">${m.reps}</span>` : '';
+    return `<div class="mov-line">${reps}<span class="mov-name">${m.name}</span></div>`;
+  }).join('');
+  if (movements.length > 4)
+    html += `<div class="mov-line mov-more">+${movements.length - 4} more</div>`;
+  return html;
+}
+
+function buildEquipHtml(equip) {
+  return equip.filter(e => EQUIP_LABELS[e]).slice(0, 3)
+    .map(e => `<span class="equip-chip ${e}">${EQUIP_LABELS[e]}</span>`).join('');
+}
+
+function buildCard(w) {
+  const catLabel = CAT_LABELS[w.cat] || w.cat;
+  return `
+    <a class="wod-card" href="/workouts/${w.slug}">
+      <div class="card-head">
+        <h2 class="card-name">${w.name}</h2>
+        <div class="card-badges">
+          <span class="cat-badge ${w.cat}">${catLabel}</span>
+          ${w.type ? `<span class="wod-type-badge">${w.type}</span>` : ''}
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-movements">${buildMovHtml(w.movements)}</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-stat">${CLOCK_SVG} ${w.dur}</div>
+        <div class="equip-chips">${buildEquipHtml(w.equip)}</div>
+        ${ARROW_SVG}
+      </div>
+    </a>`;
+}
+
+function updateTabCounts() {
+  const base = WODS.filter(w => {
+    if (!matchesEquip(w)) return false;
+    if (activeType !== 'all' && w.type !== activeType) return false;
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      return w.name.toLowerCase().includes(q) ||
+             w.movements.some(m => (m.name || '').toLowerCase().includes(q));
+    }
+    return true;
+  });
+  document.getElementById('cnt-all').textContent = base.length;
+  CAT_ORDER.forEach(c => {
+    const el = document.getElementById('cnt-' + c);
+    if (el) el.textContent = base.filter(w => w.cat === c).length;
+  });
+}
+
+function render() {
+  const list  = filteredWods();
+  const grid  = document.getElementById('wod-grid');
+  const empty = document.getElementById('empty-state');
+  updateTabCounts();
+  document.getElementById('shown-count').textContent = list.length;
+  if (list.length === 0) {
+    grid.innerHTML = '';
+    empty.classList.add('visible');
+  } else {
+    empty.classList.remove('visible');
+    grid.innerHTML = list.map(buildCard).join('');
+  }
+}
+
+function clearAllFilters() {
+  activeCategory = 'all'; activeEquip = 'all'; activeType = 'all';
+  searchQuery = ''; sortBy = 'name';
+  document.getElementById('search').value = '';
+  document.getElementById('sort-select').value = 'name';
+  document.querySelectorAll('[data-cat]').forEach(t => t.classList.toggle('active', t.dataset.cat === 'all'));
+  document.querySelectorAll('[data-equip]').forEach(p => p.classList.toggle('active', p.dataset.equip === 'all'));
+  document.querySelectorAll('[data-type]').forEach(p => p.classList.toggle('active', p.dataset.type === 'all'));
+  history.replaceState(null, '', location.pathname);
+  render();
+}
+
+// ─────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  WODS = buildWorkoutsData();
+  document.getElementById('total-count').textContent = WODS.length;
+
+  // ?cat= URL param — used by nav dropdown links e.g. /workouts.html?cat=hero
+  const params   = new URLSearchParams(location.search);
+  const catParam = params.get('cat');
+  if (catParam && CAT_ORDER.includes(catParam)) {
+    activeCategory = catParam;
+    document.querySelectorAll('[data-cat]').forEach(t =>
+      t.classList.toggle('active', t.dataset.cat === catParam));
+  }
+
+  // Category tabs
+  document.getElementById('cat-tabs').addEventListener('click', e => {
+    const tab = e.target.closest('[data-cat]');
+    if (!tab) return;
+    activeCategory = tab.dataset.cat;
+    document.querySelectorAll('[data-cat]').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const url = new URL(location.href);
+    if (activeCategory === 'all') url.searchParams.delete('cat');
+    else url.searchParams.set('cat', activeCategory);
+    history.replaceState(null, '', url);
+    render();
+  });
+
+  // Equipment chips
+  document.getElementById('equip-chips').addEventListener('click', e => {
+    const chip = e.target.closest('[data-equip]');
+    if (!chip) return;
+    activeEquip = chip.dataset.equip;
+    document.querySelectorAll('[data-equip]').forEach(p => p.classList.remove('active'));
+    chip.classList.add('active');
+    render();
+  });
+
+  // WOD type chips
+  document.getElementById('type-chips').addEventListener('click', e => {
+    const chip = e.target.closest('[data-type]');
+    if (!chip) return;
+    activeType = chip.dataset.type;
+    document.querySelectorAll('[data-type]').forEach(p => p.classList.remove('active'));
+    chip.classList.add('active');
+    render();
+  });
+
+  // Search
+  let searchTimer;
+  document.getElementById('search').addEventListener('input', e => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => { searchQuery = e.target.value.trim(); render(); }, 180);
+  });
+
+  // Sort
+  document.getElementById('sort-select').addEventListener('change', e => { sortBy = e.target.value; render(); });
+
+  render();
+  initAuth();
+});
 </script>
+<script src="/js/footer.js"></script>
 </body>
 </html>

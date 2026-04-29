@@ -2,311 +2,386 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <!-- Sentry Error Monitoring -->
-  <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Search Workouts - HomeWODrx</title>
-  <meta name="description" content="Search all CrossFit benchmarks and community WODs by name, movement, equipment, format, and more.">
-  <meta property="og:title" content="Search Workouts - HomeWODrx">
-  <meta property="og:description" content="Find the perfect WOD with powerful search and advanced filters.">
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="stylesheet" href="/css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="/js/config.js"></script>
-  <script src="/js/db.js"></script>
-  <script src="/js/benchmarks.js"></script>
-  <script src="/js/daily-wod.js"></script>
-  <script src="/js/nav.js"></script>
-  <style>
-    /* ── Search hero ── */
-    .search-hero {
-      padding: 2.5rem 0 2rem;
-      text-align: center;
-    }
-    .search-hero h1 {
-      font-size: 2.4rem;
-      margin-bottom: 0.5rem;
-    }
-    .search-hero p {
-      color: var(--text-muted);
-      margin-bottom: 1.75rem;
-      font-size: 1.05rem;
-    }
+  <title>Search — HomeWodRX</title>
+  <meta name="description" content="Search workouts, movements, stretches, gear, and blog posts on HomeWodRX.">
 
-    .search-input-wrap {
-      position: relative;
+  <!-- Sentry -->
+  <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Shared styles -->
+  <link rel="stylesheet" href="/css/style.css">
+
+  <!-- Page-specific overrides & additions -->
+  <style>
+    /* Fix ham-panel: style.css uses position:absolute (relative to sticky nav),
+       which puts it off-screen when page is scrolled. Override to fixed. */
+    .ham-panel { position: fixed !important; top: var(--nav-h); }
+
+    /* page-header has padding in style.css; search uses its own inner padding */
+    .page-header { padding: 0; }
+
+    /* style.css .chip is a display-only label — override to full interactive chip */
+    .chip {
+      cursor: pointer;
+      display: inline-block;
+      font-family: var(--font-body);
+      font-size: .875rem;
+      font-weight: 500;
+      padding: .28rem .7rem;
+      border-radius: 20px;
+      line-height: 1.4;
+      border: 1px solid var(--border);
+      background: var(--white);
+      color: var(--text);
+      transition: all 150ms;
+      white-space: nowrap;
+    }
+    .chip:hover { border-color: var(--or); color: var(--or); }
+    .chip.active { background: var(--or); border-color: var(--or); color: #fff; }
+
+    /* Badge variants not in style.css */
+    .badge-daily        { background: var(--or); color: #fff; }
+    .badge-community    { background: #e7f5e7; color: #166534; }
+    .badge-beginner     { background: #dcfce7; color: #166534; }
+    .badge-intermediate { background: #fef9c3; color: #854d0e; }
+    .badge-advanced     { background: #fee2e2; color: #991b1b; }
+
+    /* Search highlight */
+    mark { background: rgba(196,18,18,.14); color: inherit; border-radius: 2px; padding: 0 1px; }
+
+    /* ── Page header ── */
+    .page-header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+    }
+    .page-header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 0;
+    }
+    .search-hero {
       max-width: 680px;
       margin: 0 auto;
+      text-align: center;
+      padding-bottom: 1.75rem;
     }
-    .search-input-wrap input {
+    .search-hero h1 {
+      font-family: var(--font-head);
+      font-size: 3.2rem;
+      letter-spacing: .03em;
+      line-height: 1;
+      margin-bottom: .2rem;
+    }
+    .search-hero .subtitle {
+      font-size: .9rem;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+    }
+    .search-wrap { position: relative; }
+    .search-wrap input {
       width: 100%;
-      padding: 1rem 3rem 1rem 1.25rem;
-      font-size: 1.1rem;
-      background: var(--dark-card);
-      border: 2px solid var(--dark-border);
-      border-radius: 12px;
-      color: var(--text-primary);
-      transition: border-color 200ms ease, box-shadow 200ms ease;
+      padding: .9rem 2.8rem .9rem 1.1rem;
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      transition: border-color 200ms, box-shadow 200ms, background 200ms;
     }
-    .search-input-wrap input::placeholder { color: var(--text-muted); }
-    .search-input-wrap input:focus {
+    .search-wrap input::placeholder { color: var(--muted); }
+    .search-wrap input:focus {
       outline: none;
-      border-color: var(--orange);
-      box-shadow: 0 0 0 3px rgba(196,18,18,0.15);
-    }
-    .search-icon {
-      position: absolute;
-      right: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 1.2rem;
-      pointer-events: none;
-      opacity: 0.5;
+      border-color: var(--or);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(196,18,18,.1);
     }
     .search-clear {
       position: absolute;
-      right: 1rem;
+      right: .85rem;
       top: 50%;
       transform: translateY(-50%);
       background: none;
       border: none;
-      color: var(--text-muted);
-      font-size: 1.4rem;
+      color: var(--muted);
+      font-size: 1.3rem;
       cursor: pointer;
       line-height: 1;
-      padding: 0;
+      padding: 2px 5px;
+      border-radius: 4px;
       display: none;
     }
-    .search-clear:hover { color: var(--text-primary); }
+    .search-clear:hover { color: var(--text); background: var(--bg); }
 
-    /* ── Advanced toggle ── */
-    .advanced-toggle-btn {
+    /* ── Type tabs ── */
+    .type-tabs-wrap {
+      padding: 0 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+    .type-tabs {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      gap: 0;
+      justify-content: center;
+    }
+    .type-tab {
+      padding: .7rem 1.2rem;
+      font-family: var(--font-body);
+      font-size: .9rem;
+      font-weight: 600;
+      color: var(--muted);
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1px;
+      cursor: pointer;
+      transition: color 150ms, border-color 150ms;
+      white-space: nowrap;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      background: none;
-      border: 1px solid var(--dark-border);
-      border-radius: 8px;
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      margin: 0 auto 1rem;
-      transition: all 200ms ease;
+      gap: .35rem;
+      min-width: 80px;
+      justify-content: center;
     }
-    .advanced-toggle-btn:hover {
-      border-color: var(--orange);
-      color: var(--orange);
-    }
-    .advanced-toggle-btn .arrow {
-      font-size: 0.75rem;
-      transition: transform 200ms ease;
-    }
-    .advanced-toggle-btn.open .arrow { transform: rotate(180deg); }
-
-    .filter-count-badge {
-      background: var(--orange);
-      color: #fff;
-      border-radius: 10px;
-      padding: 0 6px;
-      font-size: 0.75rem;
+    .type-tab:hover { color: var(--text); }
+    .type-tab.active { color: var(--or); border-bottom-color: var(--or); }
+    .tab-count {
+      font-size: .7rem;
       font-weight: 700;
+      background: var(--bg);
+      color: var(--muted);
+      border-radius: 10px;
+      padding: 1px 6px;
+      min-width: 20px;
+      text-align: center;
+    }
+    .tab-count:empty { display: none; }
+    .type-tab.active .tab-count { background: var(--or-light); color: var(--or); }
+
+    /* ── Filter strip ── */
+    .filter-strip {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: .65rem 0;
       display: none;
+    }
+    .filter-strip.visible { display: block; }
+    .filter-strip-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .filter-group-inline { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+    .filter-label {
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .filter-divider-v { width: 1px; height: 18px; background: var(--border); flex-shrink: 0; }
+    .more-filters-btn {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-size: .875rem;
+      font-weight: 600;
+      color: var(--muted);
+      padding: .32rem .8rem;
+      cursor: pointer;
+      transition: all 150ms;
+      white-space: nowrap;
+    }
+    .more-filters-btn:hover { border-color: var(--or); color: var(--or); }
+    .more-filters-btn.open { border-color: var(--or); color: var(--or); background: var(--or-light); }
+    .more-filters-btn .arrow { font-size: .65rem; }
+    .filter-count-badge {
+      background: var(--or); color: #fff; border-radius: 10px;
+      padding: 0 5px; font-size: .68rem; font-weight: 700; display: none;
     }
     .filter-count-badge.visible { display: inline-block; }
 
-    /* ── Advanced panel ── */
+    /* ── Advanced filter panel ── */
     .advanced-panel {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 1.25rem 0;
       display: none;
-      margin-bottom: 1.5rem;
     }
     .advanced-panel.open { display: block; }
+    .advanced-panel-inner { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+    .adv-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.1rem 2.5rem; }
+    @media (max-width: 800px) { .adv-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 500px) { .adv-grid { grid-template-columns: 1fr; } }
+    .adv-group label {
+      display: block; font-size: .72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--muted); margin-bottom: .5rem;
+    }
+    .chip-row { display: flex; flex-wrap: wrap; gap: .35rem; }
+    .adv-full { grid-column: 1 / -1; }
+    .adv-divider { grid-column: 1 / -1; border: none; border-top: 1px solid var(--border); margin: .1rem 0; }
+    .adv-reset-row { grid-column: 1 / -1; display: flex; justify-content: flex-end; padding-top: .5rem; }
+    .reset-btn {
+      background: none; border: 1px solid var(--border); border-radius: 6px;
+      font-family: var(--font-body); font-size: .875rem; color: var(--muted);
+      padding: .3rem .8rem; cursor: pointer; transition: all 150ms;
+    }
+    .reset-btn:hover { border-color: var(--or); color: var(--or); }
 
-    .filter-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.25rem 2rem;
-    }
-    @media (max-width: 640px) { .filter-grid { grid-template-columns: 1fr; } }
-
-    .filter-group label {
-      display: block;
-      font-weight: 600;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--text-muted);
-      margin-bottom: 0.6rem;
-    }
-
-    .eq-chips { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-    .eq-chip {
-      padding: 0.3rem 0.75rem;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--dark-border);
-      border-radius: 20px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      color: var(--text-muted);
-      transition: all 200ms ease;
-    }
-    .eq-chip:hover { border-color: var(--orange); color: var(--orange); }
-    .eq-chip.active {
-      background: rgba(196,18,18,0.15);
-      border-color: var(--orange);
-      color: var(--orange);
-    }
-
-    .duration-row {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-    .dur-chip {
-      padding: 0.3rem 0.75rem;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--dark-border);
-      border-radius: 20px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      color: var(--text-muted);
-      transition: all 200ms ease;
-    }
-    .dur-chip:hover { border-color: var(--orange); color: var(--orange); }
-    .dur-chip.active {
-      background: rgba(196,18,18,0.15);
-      border-color: var(--orange);
-      color: var(--orange);
-    }
-
-    .filter-reset-row {
-      margin-top: 1.25rem;
-      padding-top: 1.25rem;
-      border-top: 1px solid var(--dark-border);
-      text-align: right;
-    }
-    .filter-reset-btn {
-      background: none;
-      border: 1px solid var(--dark-border);
-      border-radius: 6px;
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      padding: 0.4rem 0.9rem;
-      cursor: pointer;
-      transition: all 200ms ease;
-    }
-    .filter-reset-btn:hover { border-color: var(--danger); color: var(--danger); }
-
-    /* ── Active filter pills ── */
-    .active-filters {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      margin-bottom: 1.25rem;
-      min-height: 0;
-    }
+    /* ── Content area ── */
+    .page-wrap { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
+    .active-pills { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.25rem; }
     .active-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      background: rgba(196,18,18,0.12);
-      border: 1px solid rgba(196,18,18,0.4);
-      border-radius: 20px;
-      color: var(--orange);
-      font-size: 0.8rem;
-      padding: 0.25rem 0.7rem;
-      cursor: pointer;
-      transition: all 200ms ease;
+      display: inline-flex; align-items: center; gap: .3rem;
+      background: var(--or-light); border: 1px solid rgba(196,18,18,.25);
+      border-radius: 20px; color: var(--or); font-size: .78rem; font-weight: 600;
+      padding: .22rem .6rem; cursor: pointer; transition: background 150ms;
     }
-    .active-pill:hover { background: rgba(196,18,18,0.25); }
-    .active-pill .pill-x { font-size: 0.9rem; opacity: 0.7; }
-
-    /* ── Results header ── */
+    .active-pill:hover { background: rgba(196,18,18,.14); }
+    .pill-x { opacity: .65; font-size: .78rem; }
     .results-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1.25rem;
-      flex-wrap: wrap;
-      gap: 0.75rem;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.25rem; flex-wrap: wrap; gap: .75rem;
     }
-    .results-count {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-    }
-    .results-count strong { color: var(--text-primary); }
+    .results-count { font-size: .875rem; color: var(--muted); }
+    .results-count strong { color: var(--text); }
 
-    .sort-wrap select {
-      background: var(--dark-card);
-      border: 1px solid var(--dark-border);
-      border-radius: 6px;
-      color: var(--text-primary);
-      font-size: 0.9rem;
-      padding: 0.4rem 0.75rem;
-      cursor: pointer;
+    /* ── Section headers ── */
+    .result-section { margin-bottom: 2.5rem; }
+    .section-head {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: 1rem; padding-bottom: .6rem; border-bottom: 2px solid var(--border);
     }
-    .sort-wrap select:focus { outline: none; border-color: var(--orange); }
+    .section-head h2 { font-family: var(--font-head); font-size: 1.6rem; letter-spacing: .04em; }
+    .section-count { font-size: .875rem; color: var(--muted); font-weight: 400; margin-left: .5rem; }
+    .section-see-all { font-size: .875rem; font-weight: 700; color: var(--or); text-decoration: none; }
+    .section-see-all:hover { text-decoration: underline; }
 
-    /* ── Result card extras ── */
-    .result-card {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
-    .result-card h4 {
-      font-size: 1rem;
-      margin-bottom: 0.35rem;
-    }
-    .result-meta {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 0.5rem;
-      display: flex;
-      gap: 0.6rem;
-      flex-wrap: wrap;
-    }
-    .result-meta span {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.2rem;
-    }
-    .result-movements {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      margin-bottom: 0.75rem;
-      flex: 1;
-      line-height: 1.5;
-    }
-    .result-footer {
-      display: flex;
-      gap: 0.4rem;
-      flex-wrap: wrap;
-      margin-top: auto;
-    }
+    /* ── Card grids ── */
+    .card-grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+    .card-grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; }
+    .card-grid-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 1rem; }
+    @media (max-width: 960px) { .card-grid-3 { grid-template-columns: repeat(2,1fr); } .card-grid-4 { grid-template-columns: repeat(3,1fr); } }
+    @media (max-width: 680px) { .card-grid-3, .card-grid-4, .card-grid-2 { grid-template-columns: 1fr; } }
 
-    /* highlight matched query text */
-    mark {
-      background: rgba(196,18,18,0.3);
-      color: inherit;
-      border-radius: 2px;
-      padding: 0 1px;
+    /* ── Base card ── */
+    .card {
+      background: var(--white); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.1rem; display: flex; flex-direction: column;
+      text-decoration: none; color: var(--text); transition: box-shadow 150ms, transform 150ms;
     }
+    .card:hover { box-shadow: 0 4px 18px rgba(0,0,0,.08); transform: translateY(-1px); }
+    .wod-name { font-family: var(--font-head); font-size: 1.3rem; letter-spacing: .03em; margin-bottom: .35rem; line-height: 1.1; }
+    .card-meta { display: flex; flex-wrap: wrap; gap: .4rem; font-size: .875rem; color: var(--muted); margin-bottom: .6rem; }
+    .card-meta span { display: flex; align-items: center; gap: .2rem; }
+    .card-movements { font-size: .875rem; color: var(--muted); line-height: 1.5; flex: 1; margin-bottom: .75rem; }
+    .card-footer { display: flex; gap: .35rem; flex-wrap: wrap; margin-top: auto; }
+
+    /* ── Movement mini card ── */
+    .mv-mini {
+      background: var(--white); border: 1px solid var(--border); border-radius: 10px;
+      padding: .9rem 1rem; text-decoration: none; color: var(--text);
+      display: flex; flex-direction: column; gap: .4rem; transition: box-shadow 150ms, transform 150ms;
+    }
+    .mv-mini:hover { box-shadow: 0 4px 12px rgba(0,0,0,.08); transform: translateY(-1px); }
+    .mv-mini-name { font-family: var(--font-head); font-size: 1.3rem; letter-spacing: .03em; }
+    .mv-mini-tags { display: flex; gap: .3rem; flex-wrap: wrap; }
+    .mv-tag { font-size: .68rem; font-weight: 700; padding: .15rem .5rem; border-radius: 4px; text-transform: capitalize; }
+    .mv-tag-gymnastics { background: #ede9fe; color: #5b21b6; }
+    .mv-tag-barbell    { background: #fef3c7; color: #92400e; }
+    .mv-tag-bodyweight { background: #dcfce7; color: #166534; }
+    .mv-tag-kettlebell { background: #fff7ed; color: #9a3412; }
+    .mv-tag-dumbbell   { background: #e0f2fe; color: #075985; }
+    .mv-tag-cardio     { background: #fce7f3; color: #9d174d; }
+    .mv-tag-muscle     { background: var(--bg); color: var(--muted); }
+
+    /* ── Gear mini card ── */
+    .gear-mini {
+      background: var(--white); border: 1px solid var(--border); border-radius: 10px;
+      padding: 1rem; text-decoration: none; color: var(--text);
+      display: flex; flex-direction: column; gap: .35rem; transition: box-shadow 150ms, transform 150ms;
+    }
+    .gear-mini:hover { box-shadow: 0 4px 12px rgba(0,0,0,.08); transform: translateY(-1px); }
+    .gear-mini-name { font-family: var(--font-head); font-size: 1.3rem; letter-spacing: .03em; line-height: 1.2; flex: 1; }
+    .gear-mini-cat  { font-size: .875rem; color: var(--muted); }
+    .gear-mini-link { font-size: .875rem; font-weight: 700; color: var(--or); margin-top: .35rem; }
+
+    /* ── Blog card ── */
+    .blog-card-date    { font-size: .75rem; color: var(--muted); margin-bottom: .3rem; }
+    .blog-card-title   { font-weight: 700; font-size: 1rem; line-height: 1.4; margin-bottom: .4rem; }
+    .blog-card-excerpt { font-size: .875rem; color: var(--muted); line-height: 1.55; flex: 1; margin-bottom: .75rem; }
+    .blog-read-more    { font-size: .875rem; font-weight: 700; color: var(--or); margin-top: auto; }
+
+    /* ── Stretch mini card ── */
+    .stretch-mini {
+      background: var(--white); border: 1px solid var(--border); border-radius: 10px;
+      padding: .9rem 1rem; text-decoration: none; color: var(--text);
+      display: flex; flex-direction: column; gap: .4rem; transition: box-shadow 150ms, transform 150ms;
+    }
+    .stretch-mini:hover { box-shadow: 0 4px 12px rgba(0,0,0,.08); transform: translateY(-1px); }
+    .stretch-mini-name { font-family: var(--font-head); font-size: 1.3rem; letter-spacing: .03em; }
+    .stretch-mini-tags { display: flex; gap: .3rem; flex-wrap: wrap; }
+    .stretch-tag { font-size: .68rem; font-weight: 700; padding: .15rem .5rem; border-radius: 4px; text-transform: capitalize; }
+    .stretch-tag-movement { background: #e0f2fe; color: #075985; }
+    .stretch-tag-routine  { background: #f0fdf4; color: #166534; }
+    .stretch-tag-area     { background: var(--bg); color: var(--muted); }
 
     /* ── Empty state ── */
-    .empty-state {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 3rem 1rem;
+    .empty-state { text-align: center; padding: 4rem 1rem; }
+    .empty-state h3 { font-family: var(--font-head); font-size: 1.8rem; letter-spacing: .03em; margin-bottom: .5rem; }
+    .empty-state p  { color: var(--muted); font-size: .9rem; }
+    .empty-suggestions { margin-top: 1.5rem; display: flex; gap: .5rem; flex-wrap: wrap; justify-content: center; }
+    .suggest-chip {
+      padding: .35rem .85rem; background: var(--white); border: 1px solid var(--border);
+      border-radius: 20px; font-size: .875rem; cursor: pointer;
+      color: var(--or); font-weight: 600; transition: all 150ms;
     }
-    .empty-state .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
-    .empty-state p { color: var(--text-muted); margin-top: 0.5rem; }
+    .suggest-chip:hover { background: var(--or); color: #fff; border-color: var(--or); }
 
-    /* ── Load more ── */
-    .load-more-wrap { text-align: center; margin-top: 2rem; }
+    /* ── Footer ── */
+    .site-footer {
+      background: #111; color: #aaa; margin-top: 4rem;
+      border-top: 3px solid var(--or);
+      padding: 48px 24px 24px;
+      font-size: .875rem;
+    }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-grid {
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 32px 40px; margin-bottom: 40px;
+    }
+    @media (max-width: 800px) { .footer-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 480px) { .footer-grid { grid-template-columns: 1fr; } }
+    .footer-col h4 { font-family: var(--font-head); font-size: 1rem; letter-spacing: .06em; color: #fff; margin-bottom: 12px; }
+    .footer-col a { display: block; color: #aaa; text-decoration: none; margin-bottom: 8px; transition: color .15s; }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom {
+      border-top: 1px solid #333; padding-top: 20px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .footer-logo { font-family: var(--font-head); font-size: 1.2rem; color: #fff; letter-spacing: .04em; }
+    .footer-logo span { color: var(--or); }
+    .footer-bottom p { font-size: .75rem; color: #666; }
   </style>
-  <!-- Google tag (gtag.js) -->
+
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -314,848 +389,304 @@
     gtag('js', new Date());
     gtag('config', 'G-HZM475VDN3');
   </script>
+  <!-- Vercel Analytics -->
   <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body data-nav-init="true" data-active-page="search">
-<main class="container">
-
-  <!-- SEARCH HERO -->
-  <section class="search-hero">
-    <h1>Find Your WOD</h1>
-    <p>Search benchmarks, hero WODs, and community workouts by name, movement, or equipment.</p>
-    <div class="search-input-wrap">
-      <input type="text" id="main-search" placeholder="Try &quot;Fran&quot;, &quot;pull-ups&quot;, &quot;AMRAP&quot;…" autocomplete="off" spellcheck="false">
-      <button class="search-clear" id="search-clear" title="Clear search" aria-label="Clear search">×</button>
+<!-- ── PAGE HEADER ── -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="search-hero">
+      <h1>Search</h1>
+      <p class="subtitle">Workouts, movements, stretches, gear, and more</p>
+      <div class="search-wrap">
+        <input type="text" id="search-input" placeholder='Try "Murph", "pull-up", "kettlebell"…' autocomplete="off" spellcheck="false">
+        <button class="search-clear" id="search-clear" aria-label="Clear">×</button>
+      </div>
     </div>
-  </section>
+  </div>
+  <div class="type-tabs-wrap">
+    <div class="type-tabs" id="type-tabs">
+      <button class="type-tab active" data-tab="all">All</button>
+      <button class="type-tab" data-tab="workouts">Workouts <span class="tab-count" id="cnt-workouts"></span></button>
+      <button class="type-tab" data-tab="movements">Movements <span class="tab-count" id="cnt-movements"></span></button>
+      <button class="type-tab" data-tab="stretches">Stretches <span class="tab-count" id="cnt-stretches"></span></button>
+      <button class="type-tab" data-tab="gear">Gear <span class="tab-count" id="cnt-gear"></span></button>
+      <button class="type-tab" data-tab="blog">Blog <span class="tab-count" id="cnt-blog"></span></button>
+    </div>
+  </div>
+</div>
 
-  <!-- ADVANCED TOGGLE -->
-  <div style="text-align:center;">
-    <button class="advanced-toggle-btn" id="advanced-toggle">
-      Advanced Filters
+<!-- ── WORKOUT FILTER STRIP ── -->
+<div class="filter-strip" id="filter-strip">
+  <div class="filter-strip-inner">
+    <div class="filter-group-inline">
+      <span class="filter-label">Format</span>
+      <div id="format-chips">
+        <button class="chip active" data-format="all">All</button>
+        <button class="chip" data-format="For Time">For Time</button>
+        <button class="chip" data-format="AMRAP">AMRAP</button>
+        <button class="chip" data-format="EMOM">EMOM</button>
+        <button class="chip" data-format="Circuit">Circuit</button>
+      </div>
+    </div>
+    <div class="filter-divider-v"></div>
+    <div class="filter-group-inline">
+      <span class="filter-label">Difficulty</span>
+      <div id="difficulty-chips">
+        <button class="chip active" data-diff="all">All</button>
+        <button class="chip" data-diff="beginner">Beginner</button>
+        <button class="chip" data-diff="intermediate">Intermediate</button>
+        <button class="chip" data-diff="advanced">Advanced</button>
+      </div>
+    </div>
+    <button class="more-filters-btn" id="more-filters-btn">
+      More Filters
       <span class="filter-count-badge" id="filter-count-badge"></span>
       <span class="arrow">▼</span>
     </button>
   </div>
+</div>
 
-  <!-- ADVANCED FILTERS PANEL -->
-  <div class="advanced-panel filter-bar" id="advanced-panel">
-    <div class="filter-grid">
+<!-- ── MOVEMENT FILTER STRIP ── -->
+<div class="filter-strip" id="filter-strip-movements">
+  <div class="filter-strip-inner">
+    <div class="filter-group-inline">
+      <span class="filter-label">Category</span>
+      <div id="mv-cat-chips">
+        <button class="chip active" data-mvcat="all">All</button>
+        <button class="chip" data-mvcat="barbell">Barbell</button>
+        <button class="chip" data-mvcat="gymnastics">Gymnastics</button>
+        <button class="chip" data-mvcat="bodyweight">Bodyweight</button>
+        <button class="chip" data-mvcat="kettlebell">Kettlebell</button>
+        <button class="chip" data-mvcat="dumbbell">Dumbbell</button>
+        <button class="chip" data-mvcat="cardio">Cardio</button>
+      </div>
+    </div>
+    <div class="filter-divider-v"></div>
+    <div class="filter-group-inline">
+      <span class="filter-label">Muscle Group</span>
+      <div id="mv-muscle-chips">
+        <button class="chip active" data-mvmuscle="all">All</button>
+        <button class="chip" data-mvmuscle="upper">Upper Body</button>
+        <button class="chip" data-mvmuscle="lower">Lower Body</button>
+        <button class="chip" data-mvmuscle="core">Core</button>
+        <button class="chip" data-mvmuscle="full-body">Full Body</button>
+        <button class="chip" data-mvmuscle="posterior">Posterior Chain</button>
+        <button class="chip" data-mvmuscle="conditioning">Conditioning</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-      <!-- Format -->
-      <div class="filter-group">
-        <label>Format</label>
-        <div class="filter-chips" id="format-filters">
-          <button class="chip active" data-format="all">All</button>
-          <button class="chip" data-format="For Time">For Time</button>
-          <button class="chip" data-format="AMRAP">AMRAP</button>
-          <button class="chip" data-format="EMOM">EMOM</button>
-          <button class="chip" data-format="Circuit">Circuit</button>
+<!-- ── STRETCH FILTER STRIP ── -->
+<div class="filter-strip" id="filter-strip-stretches">
+  <div class="filter-strip-inner">
+    <div class="filter-group-inline">
+      <span class="filter-label">Body Area</span>
+      <div id="stretch-area-chips">
+        <button class="chip active" data-stretcharea="all">All</button>
+        <button class="chip" data-stretcharea="hips">Hips</button>
+        <button class="chip" data-stretcharea="hamstrings">Hamstrings</button>
+        <button class="chip" data-stretcharea="shoulders">Shoulders</button>
+        <button class="chip" data-stretcharea="thoracic">Thoracic</button>
+        <button class="chip" data-stretcharea="ankles">Ankles</button>
+        <button class="chip" data-stretcharea="full-body">Full Body</button>
+      </div>
+    </div>
+    <div class="filter-divider-v"></div>
+    <div class="filter-group-inline">
+      <span class="filter-label">Type</span>
+      <div id="stretch-type-chips">
+        <button class="chip active" data-stretchtype="all">All</button>
+        <button class="chip" data-stretchtype="movement">Single Stretch</button>
+        <button class="chip" data-stretchtype="routine">Routine</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── GEAR FILTER STRIP ── -->
+<div class="filter-strip" id="filter-strip-gear">
+  <div class="filter-strip-inner">
+    <div class="filter-group-inline">
+      <span class="filter-label">Category</span>
+      <div id="gear-cat-chips">
+        <button class="chip active" data-gearcat="all">All</button>
+        <button class="chip" data-gearcat="Barbells & Plates">Barbells &amp; Plates</button>
+        <button class="chip" data-gearcat="Kettlebells">Kettlebells</button>
+        <button class="chip" data-gearcat="Pull-Up Bars">Pull-Up Bars</button>
+        <button class="chip" data-gearcat="Jump Ropes">Jump Ropes</button>
+        <button class="chip" data-gearcat="Cardio Machines">Cardio Machines</button>
+        <button class="chip" data-gearcat="Boxes & Platforms">Boxes &amp; Platforms</button>
+        <button class="chip" data-gearcat="Accessories">Accessories</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── BLOG FILTER STRIP ── -->
+<div class="filter-strip" id="filter-strip-blog">
+  <div class="filter-strip-inner">
+    <div class="filter-group-inline">
+      <span class="filter-label">Topic</span>
+      <div id="blog-topic-chips">
+        <button class="chip active" data-blogtopic="all">All</button>
+        <button class="chip" data-blogtopic="training">Training</button>
+        <button class="chip" data-blogtopic="recovery">Recovery</button>
+        <button class="chip" data-blogtopic="gear">Gear</button>
+        <button class="chip" data-blogtopic="nutrition">Nutrition</button>
+        <button class="chip" data-blogtopic="competition">Competition</button>
+      </div>
+    </div>
+    <div class="filter-divider-v"></div>
+    <div class="filter-group-inline">
+      <span class="filter-label">Type</span>
+      <div id="blog-type-chips">
+        <button class="chip active" data-blogtype="all">All</button>
+        <button class="chip" data-blogtype="guide">Guide</button>
+        <button class="chip" data-blogtype="how-to">How-To</button>
+        <button class="chip" data-blogtype="review">Review</button>
+        <button class="chip" data-blogtype="deep-dive">Deep Dive</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADVANCED FILTER PANEL ── -->
+<div class="advanced-panel" id="advanced-panel">
+  <div class="advanced-panel-inner">
+    <div class="adv-grid">
+      <div class="adv-group">
+        <label>Duration</label>
+        <div class="chip-row" id="duration-chips">
+          <button class="chip active" data-dur="all">Any</button>
+          <button class="chip" data-dur="0-10">&lt; 10 min</button>
+          <button class="chip" data-dur="10-20">10–20 min</button>
+          <button class="chip" data-dur="20-30">20–30 min</button>
+          <button class="chip" data-dur="30+">30+ min</button>
         </div>
       </div>
-
-      <!-- Difficulty -->
-      <div class="filter-group">
-        <label>Difficulty</label>
-        <div class="filter-chips" id="difficulty-filters">
-          <button class="chip active" data-difficulty="all">All</button>
-          <button class="chip" data-difficulty="beginner">Beginner</button>
-          <button class="chip" data-difficulty="intermediate">Intermediate</button>
-          <button class="chip" data-difficulty="advanced">Advanced</button>
-        </div>
-      </div>
-
-      <!-- Body Focus -->
-      <div class="filter-group">
+      <div class="adv-group">
         <label>Body Focus</label>
-        <div class="filter-chips" id="focus-filters">
+        <div class="chip-row" id="focus-chips">
           <button class="chip active" data-focus="all">All</button>
           <button class="chip" data-focus="full-body">Full Body</button>
-          <button class="chip" data-focus="upper-body">Upper Body</button>
-          <button class="chip" data-focus="lower-body">Lower Body</button>
+          <button class="chip" data-focus="upper-body">Upper</button>
+          <button class="chip" data-focus="lower-body">Lower</button>
           <button class="chip" data-focus="core">Core</button>
           <button class="chip" data-focus="conditioning">Conditioning</button>
         </div>
       </div>
-
-      <!-- Scoring Type -->
-      <div class="filter-group">
+      <div class="adv-group">
         <label>Scoring</label>
-        <div class="filter-chips" id="scoring-filters">
+        <div class="chip-row" id="scoring-chips">
           <button class="chip active" data-scoring="all">All</button>
           <button class="chip" data-scoring="time">For Time</button>
           <button class="chip" data-scoring="rounds_reps">Rounds + Reps</button>
           <button class="chip" data-scoring="weight">Max Weight</button>
-          <button class="chip" data-scoring="calories">Calories</button>
         </div>
       </div>
-
-      <!-- Duration -->
-      <div class="filter-group">
-        <label>Duration</label>
-        <div class="duration-row" id="duration-filters">
-          <button class="dur-chip active" data-duration="all">Any</button>
-          <button class="dur-chip" data-duration="0-10">&lt; 10 min</button>
-          <button class="dur-chip" data-duration="10-20">10–20 min</button>
-          <button class="dur-chip" data-duration="20-30">20–30 min</button>
-          <button class="dur-chip" data-duration="30+">30+ min</button>
+      <hr class="adv-divider">
+      <div class="adv-group adv-full">
+        <label>Modality (multi-select)</label>
+        <div class="chip-row" id="modality-chips">
+          <button class="chip" data-mod="run">Running</button>
+          <button class="chip" data-mod="row">Rowing</button>
+          <button class="chip" data-mod="bike">Biking</button>
+          <button class="chip" data-mod="ski">Skiing</button>
+          <button class="chip" data-mod="jumprope">Jump Rope</button>
+          <button class="chip" data-mod="gymnastics">Gymnastics</button>
+          <button class="chip" data-mod="olympic">Olympic Lifting</button>
+          <button class="chip" data-mod="carries">Carries</button>
+          <button class="chip" data-mod="burpees">Burpees</button>
         </div>
       </div>
-
-      <!-- Modality -->
-      <div class="filter-group" style="grid-column: 1 / -1;">
-        <label>Modality (select multiple)</label>
-        <div class="eq-chips" id="modality-filters">
-          <button class="eq-chip" data-mod="run">🏃 Running</button>
-          <button class="eq-chip" data-mod="row">🚣 Rowing</button>
-          <button class="eq-chip" data-mod="bike">🚴 Biking</button>
-          <button class="eq-chip" data-mod="ski">⛷️ Skiing</button>
-          <button class="eq-chip" data-mod="jumprope">🪢 Jump Rope</button>
-          <button class="eq-chip" data-mod="gymnastics">🤸 Gymnastics</button>
-          <button class="eq-chip" data-mod="olympic">🏋️ Olympic Lifting</button>
-          <button class="eq-chip" data-mod="carries">🧱 Carries</button>
-          <button class="eq-chip" data-mod="burpees">💀 Burpees</button>
+      <div class="adv-group adv-full">
+        <label>Equipment (multi-select)</label>
+        <div class="chip-row" id="equipment-chips">
+          <button class="chip" data-eq="bodyweight">Bodyweight</button>
+          <button class="chip" data-eq="barbell">Barbell</button>
+          <button class="chip" data-eq="dumbbell">Dumbbell</button>
+          <button class="chip" data-eq="kettlebell">Kettlebell</button>
+          <button class="chip" data-eq="pullUpBar">Pull-Up Bar</button>
+          <button class="chip" data-eq="jumpRope">Jump Rope</button>
+          <button class="chip" data-eq="rings">Rings</button>
+          <button class="chip" data-eq="rowingMachine">Rower</button>
+          <button class="chip" data-eq="assaultBike">Air Bike</button>
+          <button class="chip" data-eq="box">Box</button>
+          <button class="chip" data-eq="medBall">Med Ball</button>
         </div>
       </div>
-
-      <!-- Equipment -->
-      <div class="filter-group" style="grid-column: 1 / -1;">
-        <label>Equipment (select multiple)</label>
-        <div class="eq-chips" id="equipment-filters">
-          <button class="eq-chip" data-eq="bodyweight">Bodyweight</button>
-          <button class="eq-chip" data-eq="barbell">Barbell</button>
-          <button class="eq-chip" data-eq="dumbbell">Dumbbell</button>
-          <button class="eq-chip" data-eq="kettlebell">Kettlebell</button>
-          <button class="eq-chip" data-eq="pullUpBar">Pull-Up Bar</button>
-          <button class="eq-chip" data-eq="jumpRope">Jump Rope</button>
-          <button class="eq-chip" data-eq="rings">Rings</button>
-          <button class="eq-chip" data-eq="rowingMachine">Rower</button>
-          <button class="eq-chip" data-eq="assaultBike">Air Bike</button>
-          <button class="eq-chip" data-eq="box">Box</button>
-          <button class="eq-chip" data-eq="medBall">Med Ball</button>
-          <button class="eq-chip" data-eq="resistanceBands">Resistance Bands</button>
-        </div>
+      <div class="adv-reset-row">
+        <button class="reset-btn" id="reset-filters">Reset all filters</button>
       </div>
-
-    </div>
-
-    <div class="filter-reset-row">
-      <button class="filter-reset-btn" id="reset-filters">Reset all filters</button>
     </div>
   </div>
+</div>
 
-  <!-- ACTIVE FILTER PILLS -->
-  <div class="active-filters" id="active-filters"></div>
-
-  <!-- RESULTS HEADER -->
-  <div class="results-header">
+<!-- ── CONTENT ── -->
+<div class="page-wrap">
+  <div class="active-pills" id="active-pills"></div>
+  <div class="results-header" id="results-header" style="display:none;">
     <span class="results-count" id="results-count"></span>
-    <div class="sort-wrap">
-      <select id="sort-select">
-        <option value="relevance">Best Match</option>
-        <option value="newest">Newest First</option>
-        <option value="popular">Most Popular</option>
-        <option value="az">A → Z</option>
-        <option value="duration-asc">Shortest First</option>
-        <option value="duration-desc">Longest First</option>
-      </select>
+  </div>
+  <div id="results-area"></div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>Workouts</h4>
+        <a href="/workouts.html?cat=girl">The Girls</a>
+        <a href="/workouts.html?cat=hero">Hero WODs</a>
+        <a href="/workouts.html?cat=open">Open WODs</a>
+        <a href="/workouts.html?cat=benchmark">Benchmarks</a>
+        <a href="/workouts.html">All Workouts</a>
+      </div>
+      <div class="footer-col">
+        <h4>Train</h4>
+        <a href="/daily-wod.html">The Daily 20</a>
+        <a href="/generator.html">Smart WOD Builder</a>
+        <a href="/timer.html">WOD Timer</a>
+        <a href="/movements.html">Movement Library</a>
+      </div>
+      <div class="footer-col">
+        <h4>Stretch &amp; Mobility</h4>
+        <a href="/stretch.html">The Daily 10</a>
+        <a href="/stretches.html">Browse Stretches</a>
+        <a href="/stretch-routines.html">Stretch Routines</a>
+      </div>
+      <div class="footer-col">
+        <h4>More</h4>
+        <a href="/shop.html">Gear Shop</a>
+        <a href="/blog.html">Blog</a>
+        <a href="/search.html">Search</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-logo">Home<span>WOD</span>rx</div>
+      <p>© 2026 HomeWodRX. All rights reserved.</p>
+      <div style="display:flex;gap:16px;font-size:.75rem;">
+        <a href="/privacy.html" style="color:#666;text-decoration:none;">Privacy</a>
+        <a href="/terms.html" style="color:#666;text-decoration:none;">Terms</a>
+        <a href="/disclaimer.html" style="color:#666;text-decoration:none;">Disclaimer</a>
+      </div>
     </div>
   </div>
+</footer>
 
-  <!-- RESULTS GRID -->
-  <div id="results-container" class="grid grid-cols-3">
-    <div class="loading"><div class="spinner"></div></div>
-  </div>
-
-  <!-- LOAD MORE -->
-  <div class="load-more-wrap">
-    <button id="load-more-btn" class="btn btn-secondary" style="display:none;">Load More</button>
-  </div>
-
-</main>
-
-<!-- FOOTER -->
-<script src="/js/footer.js"></script>
+<!-- ── DATA & SCRIPTS ── -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/js/config.js"></script>
+<script src="/js/db.js"></script>
+<script src="/js/nav.js"></script>
+<script src="/js/benchmarks.js"></script>
+<script src="/js/movement-db.js"></script>
+<script src="/js/stretch-db.js"></script>
+<script src="/js/stretch-routines-db.js"></script>
 
 <script>
-// ─────────────────────────────────────────────
-//  STATE
-// ─────────────────────────────────────────────
-let allWorkouts = [];
-let filteredWorkouts = [];
-let displayCount = 12;
-const PAGE_SIZE = 12;
-
-let filters = {
-  query:      '',
-  format:     'all',
-  difficulty: 'all',
-  focus:      'all',
-  scoring:    'all',
-  duration:   'all',
-  equipment:  new Set(),
-  modality:   new Set()
-};
-
-// ─────────────────────────────────────────────
-//  EQUIPMENT KEY → LABEL MAP
-// ─────────────────────────────────────────────
-const EQ_LABEL = {
-  bodyweight:      'Bodyweight',
-  barbell:         'Barbell',
-  dumbbell:        'Dumbbell',
-  kettlebell:      'Kettlebell',
-  pullUpBar:       'Pull-Up Bar',
-  jumpRope:        'Jump Rope',
-  rings:           'Rings',
-  rowingMachine:   'Rower',
-  assaultBike:     'Air Bike',
-  box:             'Box',
-  medBall:         'Med Ball',
-  resistanceBands: 'Resistance Bands'
-};
-
-// ─────────────────────────────────────────────
-//  DAILY WOD GENERATOR (last N days)
-// ─────────────────────────────────────────────
-async function generateRecentDailyWods(days) {
-  if (typeof DailyWOD === 'undefined') return [];
-  const wods = [];
-  const today = new Date();
-  const [config, movementDB] = await Promise.all([
-    DailyWOD.getConfig().catch(() => DailyWOD.defaultConfig),
-    DailyWOD._loadMovements().catch(() => ({}))
-  ]);
-  for (let i = 0; i < days; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() - i);
-    const dateStr = d.toISOString().split('T')[0];
-    try {
-      const dayOfWeek = new Date(dateStr + 'T12:00:00').getDay();
-      const seed       = DailyWOD.getSeedForDate(dateStr);
-      const rng        = DailyWOD.seededRng(seed);
-      const difficulty = config.difficultyByDay[dayOfWeek] || 'intermediate';
-      const bodyFocus  = config.bodyFocusByDay[dayOfWeek]  || 'full-body';
-      const format     = config.formatByDay[dayOfWeek]     || 'amrap';
-      const durRange   = config.durationByDay[dayOfWeek]   || [20, 30];
-      const duration   = durRange[0] + Math.floor(rng() * (durRange[1] - durRange[0] + 1));
-      const equipment  = config.equipment || ['bodyweight'];
-      const pool = DailyWOD._buildPool(equipment, difficulty, bodyFocus, rng, movementDB);
-      let wod;
-      if (format === 'amrap')        wod = DailyWOD._genAMRAP(pool, difficulty, duration, bodyFocus, rng);
-      else if (format === 'emom')    wod = DailyWOD._genEMOM(pool, difficulty, duration, bodyFocus, rng);
-      else if (format === 'fortime') wod = DailyWOD._genForTime(pool, difficulty, rng);
-      else                           wod = DailyWOD._genCircuit(pool, difficulty, duration, bodyFocus, rng);
-      if (wod) {
-        const dateLabel = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        wods.push({
-          id:         dateStr,
-          slug:       dateStr,
-          title:      `Daily 20 — ${dateLabel}`,
-          category:   'daily',
-          format:     wod.format,
-          difficulty: difficulty,
-          body_focus: bodyFocus,
-          duration:   duration,
-          movements:  (wod.rows || []).map(r => ({ movement: r.movement, reps: r.reps || '' })),
-          description: (wod.rows || []).map(r => `${r.reps ? r.reps + ' ' : ''}${r.movement}`).join(', '),
-          _date:      dateStr
-        });
-      }
-    } catch (e) { /* skip this date */ }
-  }
-  return wods;
-}
-
-// ─────────────────────────────────────────────
-//  LOAD DATA
-// ─────────────────────────────────────────────
-async function loadAllWorkouts() {
-  // Start with benchmarks (live from Supabase so youtube_url etc. are included)
-  try {
-    const liveBenchmarks = await db.getAllBenchmarks();
-    allWorkouts = (liveBenchmarks || []).map(b => ({
-      ...b,
-      id: b.slug,
-      category: b.category || 'benchmark',
-      title: b.name,
-      movements: (b.movements || []).map(m => ({
-        movement: m.name || m.movement || '',
-        reps: m.reps || '',
-        tip: m.tip || ''
-      }))
-    }));
-  } catch (e) {
-    // Fall back to static array if Supabase is unavailable
-    allWorkouts = BENCHMARKS.map(b => ({
-      ...b,
-      id: b.slug,
-      category: b.category || 'benchmark',
-      title: b.name,
-      movements: (b.movements || []).map(m => ({
-        movement: m.name || m.movement || '',
-        reps: m.reps || '',
-        tip: m.tip || ''
-      }))
-    }));
-  }
-
-  // Add user-generated public workouts from Supabase
-  try {
-    const userWorkouts = await db.getWorkouts({ isPublic: true, limit: 1000 });
-    if (userWorkouts && userWorkouts.length > 0) {
-      allWorkouts = allWorkouts.concat(userWorkouts.map(w => ({
-        ...w,
-        title: w.title || w.name,
-        category: 'user',
-        slug: w.id,
-        difficulty: w.level,
-        duration_estimate: w.duration ? `${w.duration} min` : null,
-        movements: (w.movements || []).map(m => ({
-          movement: m.movement || m.name || '',
-          reps: m.reps || '',
-          tip: m.tip || ''
-        }))
-      })));
-    }
-  } catch (e) {
-    console.warn('Could not load user workouts:', e);
-  }
-
-  // Add last 365 days of daily WODs for searchable content
-  try {
-    const dailyWods = await generateRecentDailyWods(365);
-    if (dailyWods.length > 0) {
-      allWorkouts = allWorkouts.concat(dailyWods);
-    }
-  } catch (e) {
-    console.warn('Could not generate daily WODs:', e);
-  }
-
-  runSearch();
-}
-
-// ─────────────────────────────────────────────
-//  SEARCH + FILTER ENGINE
-// ─────────────────────────────────────────────
-function scoreWorkout(w, query) {
-  if (!query) return 1;
-  const q = query.toLowerCase();
-  const terms = q.split(/\s+/).filter(Boolean);
-  let score = 0;
-
-  const title  = (w.title || w.name || '').toLowerCase();
-  const desc   = (w.description || '').toLowerCase();
-  const mvs    = (w.movements || []).map(m => (m.movement || '').toLowerCase()).join(' ');
-  const format = (w.format || '').toLowerCase();
-  const eq     = (w.equipment || []).join(' ').toLowerCase();
-  const cat    = (w.category || '').toLowerCase();
-
-  for (const t of terms) {
-    if (title.includes(t))  score += 10;
-    if (title === t)        score += 20;   // exact title match
-    if (mvs.includes(t))    score += 6;
-    if (format.includes(t)) score += 4;
-    if (desc.includes(t))   score += 2;
-    if (eq.includes(t))     score += 2;
-    if (cat.includes(t))    score += 1;
-  }
-  return score;
-}
-
-function matchesDuration(w) {
-  if (filters.duration === 'all') return true;
-  // Try numeric duration first (user workouts have `duration` in minutes)
-  // Benchmarks have `duration_estimate` like "8–15 min"
-  let mins = null;
-  if (typeof w.duration === 'number') {
-    mins = w.duration;
-  } else if (w.duration_estimate) {
-    const m = w.duration_estimate.match(/(\d+)/);
-    if (m) mins = parseInt(m[1]);
-  }
-  if (mins === null) return true; // unknown → include
-
-  if (filters.duration === '0-10')  return mins < 10;
-  if (filters.duration === '10-20') return mins >= 10 && mins <= 20;
-  if (filters.duration === '20-30') return mins > 20 && mins <= 30;
-  if (filters.duration === '30+')   return mins > 30;
-  return true;
-}
-
-// Maps chip keys to all possible stored equivalents (data is inconsistent across benchmarks/generator/user workouts)
-const EQ_ALIASES = {
-  dumbbell:        ['dumbbell', 'dumbbells'],
-  rowingMachine:   ['rowingmachine', 'rower'],
-  medBall:         ['medball', 'wallball', 'wall ball', 'med ball', 'medicineball', 'medicine ball'],
-  resistanceBands: ['resistancebands', 'resistance bands', 'resistance band', 'bands'],
-  assaultBike:     ['assaultbike', 'assault bike', 'echo bike', 'bike erg', 'airbike', 'air bike', 'airdyne', 'fan bike']
-};
-
-function matchesEquipment(w) {
-  if (filters.equipment.size === 0) return true;
-  const weq = (w.equipment || []).map(e => e.toLowerCase());
-  for (const eq of filters.equipment) {
-    const aliases = EQ_ALIASES[eq] || [eq.toLowerCase()];
-    const found = aliases.some(alias => weq.includes(alias));
-    if (!found) return false;
-  }
-  return true;
-}
-
-const MODALITY_KEYWORDS = {
-  run:        ['run'],
-  row:        ['row'],
-  bike:       ['bike', 'assault'],
-  ski:        ['ski'],
-  jumprope:   ['double-under', 'double under', 'jump rope', 'single under'],
-  gymnastics: ['pull-up', 'pull up', 'muscle-up', 'muscle up', 'handstand',
-               'ring dip', 'rope climb', 'toes-to-bar', 'toes to bar',
-               'chest-to-bar', 'bar dip'],
-  olympic:    ['clean', 'snatch', 'jerk', 'thruster'],
-  carries:    ['carry', 'farmer', 'sandbag', 'yoke', 'suitcase'],
-  burpees:    ['burpee']
-};
-
-function matchesModality(w) {
-  if (filters.modality.size === 0) return true;
-  // Search both movement names and description for modality keywords
-  const mvText = (w.movements || []).map(m => (m.movement || '').toLowerCase()).join(' ');
-  const searchText = mvText + ' ' + (w.description || '').toLowerCase();
-  for (const mod of filters.modality) {
-    const keywords = MODALITY_KEYWORDS[mod] || [mod];
-    const found = keywords.some(kw => searchText.includes(kw));
-    if (!found) return false;
-  }
-  return true;
-}
-
-function runSearch() {
-  const q = filters.query.trim();
-
-  filteredWorkouts = allWorkouts.filter(w => {
-    // Full-text query
-    if (q) {
-      const score = scoreWorkout(w, q);
-      if (score === 0) return false;
-      w._score = score;
-    } else {
-      w._score = 0;
-    }
-
-    // Chip filters
-    if (filters.format !== 'all' && (w.format || '').toLowerCase() !== filters.format.toLowerCase()) return false;
-    if (filters.difficulty !== 'all' && (w.difficulty || '') !== filters.difficulty) return false;
-    if (filters.focus !== 'all') {
-      const wFocus = (w.body_focus || '');
-      if (wFocus !== filters.focus) return false;
-    }
-    if (filters.scoring !== 'all' && (w.scoring_type || '') !== filters.scoring) return false;
-    if (!matchesDuration(w)) return false;
-    if (!matchesEquipment(w)) return false;
-    if (!matchesModality(w)) return false;
-
-    return true;
-  });
-
-  // Sort
-  const sort = document.getElementById('sort-select').value;
-  filteredWorkouts.sort((a, b) => {
-    if (sort === 'relevance') {
-      return (b._score || 0) - (a._score || 0);
-    } else if (sort === 'popular') {
-      return (b.view_count || 0) - (a.view_count || 0);
-    } else if (sort === 'az') {
-      return (a.title || a.name || '').localeCompare(b.title || b.name || '');
-    } else if (sort === 'duration-asc') {
-      return getDurationMins(a) - getDurationMins(b);
-    } else if (sort === 'duration-desc') {
-      return getDurationMins(b) - getDurationMins(a);
-    } else {
-      // newest: user workouts first, then benchmarks
-      const aIsUser = a.category === 'user' ? 1 : 0;
-      const bIsUser = b.category === 'user' ? 1 : 0;
-      if (bIsUser !== aIsUser) return bIsUser - aIsUser;
-      if (a.created_at && b.created_at) return new Date(b.created_at) - new Date(a.created_at);
-      return 0;
-    }
-  });
-
-  displayCount = PAGE_SIZE;
-  renderResults();
-  renderActiveFilters();
-  updateFilterBadge();
-}
-
-function getDurationMins(w) {
-  if (typeof w.duration === 'number') return w.duration;
-  if (w.duration_estimate) {
-    const m = w.duration_estimate.match(/(\d+)/);
-    if (m) return parseInt(m[1]);
-  }
-  return 999;
-}
-
-// ─────────────────────────────────────────────
-//  RENDER RESULTS
-// ─────────────────────────────────────────────
-function hl(text, query) {
-  if (!query || !text) return escHtml(text || '');
-  const terms = query.trim().split(/\s+/).filter(Boolean);
-  let result = escHtml(text);
-  for (const t of terms) {
-    const re = new RegExp(`(${escRe(t)})`, 'gi');
-    result = result.replace(re, '<mark>$1</mark>');
-  }
-  return result;
-}
-
-function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function escRe(s) {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-function difficultyBadge(d) {
-  if (!d) return '';
-  const cls = d === 'beginner' ? 'badge-success' : d === 'advanced' ? 'badge-danger' : 'badge-warning';
-  return `<span class="badge ${cls}">${d.charAt(0).toUpperCase() + d.slice(1)}</span>`;
-}
-
-function categoryBadge(cat) {
-  if (cat === 'girl')      return '<span class="badge badge-girl">Girl WOD</span>';
-  if (cat === 'hero')      return '<span class="badge badge-hero">Hero WOD</span>';
-  if (cat === 'open')      return '<span class="badge badge-open">Open WOD</span>';
-  if (cat === 'games')     return '<span class="badge badge-games">Games WOD</span>';
-  if (cat === 'partner')   return '<span class="badge badge-partner">Partner WOD</span>';
-  if (cat === 'benchmark') return '<span class="badge badge-benchmark">Benchmark</span>';
-  if (cat === 'user')      return '<span class="badge badge-success">Community</span>';
-  if (cat === 'daily')     return '<span class="badge badge-orange">Daily 20</span>';
-  return '';
-}
-
-function renderResults() {
-  const container = document.getElementById('results-container');
-  const q = filters.query.trim();
-  const displayed = filteredWorkouts.slice(0, displayCount);
-
-  // Update count
-  const total = filteredWorkouts.length;
-  const countEl = document.getElementById('results-count');
-  if (q || hasActiveFilters()) {
-    countEl.innerHTML = `<strong>${total}</strong> result${total !== 1 ? 's' : ''}`;
-  } else {
-    countEl.innerHTML = `<strong>${total}</strong> workouts`;
-  }
-
-  if (displayed.length === 0) {
-    container.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">🔍</div>
-        <h3>No workouts found</h3>
-        <p>Try a different search term or adjust your filters.</p>
-      </div>`;
-    document.getElementById('load-more-btn').style.display = 'none';
-    return;
-  }
-
-  container.innerHTML = displayed.map(w => {
-    const isUser  = w.category === 'user';
-    const isDaily = w.category === 'daily';
-    const href = isDaily  ? `/daily-wod?date=${w._date}`
-               : isUser   ? `/workout.html?id=${w.id}`
-               :             `/workout.html?slug=${w.slug}`;
-    const title  = w.title || w.name || '';
-    const mvNames = (w.movements || []).slice(0, 4).map(m => m.movement).filter(Boolean);
-    const mvText  = mvNames.length > 0
-      ? hl(mvNames.join(', '), q) + (w.movements.length > 4 ? ` +${w.movements.length - 4} more` : '')
-      : '<em style="opacity:.5">No movements listed</em>';
-
-    const dur = w.duration ? `${w.duration} min` : (w.duration_estimate || '');
-
-    return `
-      <a href="${href}" style="text-decoration:none;display:flex;flex-direction:column;">
-        <div class="card result-card">
-          <h4>${hl(title, q)}</h4>
-          <div class="result-meta">
-            ${w.format ? `<span>📋 ${escHtml(w.format)}</span>` : ''}
-            ${dur       ? `<span>⏱ ${escHtml(dur)}</span>` : ''}
-            ${w.body_focus ? `<span>🎯 ${escHtml(w.body_focus.replace(/-/g,' '))}</span>` : ''}
-          </div>
-          <div class="result-movements">${mvText}</div>
-          <div class="result-footer">
-            ${categoryBadge(w.category)}
-            ${difficultyBadge(w.difficulty)}
-            ${w.youtube_url ? '<span class="badge badge-video">▶ Video</span>' : ''}
-          </div>
-        </div>
-      </a>`;
-  }).join('');
-
-  const btn = document.getElementById('load-more-btn');
-  btn.style.display = filteredWorkouts.length > displayCount ? 'inline-block' : 'none';
-}
-
-// ─────────────────────────────────────────────
-//  ACTIVE FILTER PILLS
-// ─────────────────────────────────────────────
-function hasActiveFilters() {
-  return filters.format !== 'all' ||
-    filters.difficulty !== 'all' ||
-    filters.focus !== 'all' ||
-    filters.scoring !== 'all' ||
-    filters.duration !== 'all' ||
-    filters.equipment.size > 0 ||
-    filters.modality.size > 0;
-}
-
-function renderActiveFilters() {
-  const wrap = document.getElementById('active-filters');
-  const pills = [];
-
-  if (filters.format !== 'all')
-    pills.push({ label: `Format: ${filters.format}`, key: 'format' });
-  if (filters.difficulty !== 'all')
-    pills.push({ label: `Level: ${filters.difficulty}`, key: 'difficulty' });
-  if (filters.focus !== 'all')
-    pills.push({ label: `Focus: ${filters.focus.replace(/-/g,' ')}`, key: 'focus' });
-  if (filters.scoring !== 'all')
-    pills.push({ label: `Scoring: ${filters.scoring.replace(/_/g,' ')}`, key: 'scoring' });
-  if (filters.duration !== 'all')
-    pills.push({ label: `Duration: ${filters.duration === '0-10' ? '< 10 min' : filters.duration === '30+' ? '30+ min' : filters.duration + ' min'}`, key: 'duration' });
-  for (const eq of filters.equipment)
-    pills.push({ label: `Eq: ${EQ_LABEL[eq] || eq}`, key: 'eq:' + eq });
-
-  const MOD_LABEL = {
-    run: 'Running', row: 'Rowing', bike: 'Biking', ski: 'Skiing',
-    jumprope: 'Jump Rope', gymnastics: 'Gymnastics',
-    olympic: 'Olympic Lifting', carries: 'Carries', burpees: 'Burpees'
-  };
-  for (const mod of filters.modality)
-    pills.push({ label: `Modality: ${MOD_LABEL[mod] || mod}`, key: 'mod:' + mod });
-
-  wrap.innerHTML = pills.map(p =>
-    `<button class="active-pill" data-clear="${escHtml(p.key)}">${escHtml(p.label)} <span class="pill-x">×</span></button>`
-  ).join('');
-}
-
-function updateFilterBadge() {
-  const count = [
-    filters.format !== 'all',
-    filters.difficulty !== 'all',
-    filters.focus !== 'all',
-    filters.scoring !== 'all',
-    filters.duration !== 'all',
-    ...Array.from(filters.equipment).map(() => true),
-    ...Array.from(filters.modality).map(() => true)
-  ].filter(Boolean).length;
-
-  const badge = document.getElementById('filter-count-badge');
-  if (count > 0) {
-    badge.textContent = count;
-    badge.classList.add('visible');
-  } else {
-    badge.classList.remove('visible');
-  }
-}
-
-function clearFilter(key) {
-  if (key === 'format')     { filters.format = 'all'; setChipActive('format-filters', 'all', 'format'); }
-  else if (key === 'difficulty') { filters.difficulty = 'all'; setChipActive('difficulty-filters', 'all', 'difficulty'); }
-  else if (key === 'focus')      { filters.focus = 'all'; setChipActive('focus-filters', 'all', 'focus'); }
-  else if (key === 'scoring')    { filters.scoring = 'all'; setChipActive('scoring-filters', 'all', 'scoring'); }
-  else if (key === 'duration')   { filters.duration = 'all'; setDurChipActive('all'); }
-  else if (key.startsWith('eq:')) {
-    const eq = key.slice(3);
-    filters.equipment.delete(eq);
-    const chip = document.querySelector(`[data-eq="${eq}"]`);
-    if (chip) chip.classList.remove('active');
-  }
-  else if (key.startsWith('mod:')) {
-    const mod = key.slice(4);
-    filters.modality.delete(mod);
-    const chip = document.querySelector(`[data-mod="${mod}"]`);
-    if (chip) chip.classList.remove('active');
-  }
-  runSearch();
-}
-
-function resetAllFilters() {
-  filters.format     = 'all';
-  filters.difficulty = 'all';
-  filters.focus      = 'all';
-  filters.scoring    = 'all';
-  filters.duration   = 'all';
-  filters.equipment  = new Set();
-  filters.modality   = new Set();
-
-  setChipActive('format-filters', 'all', 'format');
-  setChipActive('difficulty-filters', 'all', 'difficulty');
-  setChipActive('focus-filters', 'all', 'focus');
-  setChipActive('scoring-filters', 'all', 'scoring');
-  setDurChipActive('all');
-  document.querySelectorAll('.eq-chip').forEach(c => c.classList.remove('active'));
-  runSearch();
-}
-
-// ─────────────────────────────────────────────
-//  CHIP HELPERS
-// ─────────────────────────────────────────────
-function setChipActive(groupId, value, attr) {
-  document.querySelectorAll(`#${groupId} .chip`).forEach(c => {
-    c.classList.toggle('active', c.dataset[attr] === value);
-  });
-}
-
-function setDurChipActive(value) {
-  document.querySelectorAll('#duration-filters .dur-chip').forEach(c => {
-    c.classList.toggle('active', c.dataset.duration === value);
-  });
-}
-
-// ─────────────────────────────────────────────
-//  EVENT LISTENERS
-// ─────────────────────────────────────────────
-function setupListeners() {
-  // Main search input with debounce
-  let debounceTimer;
-  const searchInput = document.getElementById('main-search');
-  const clearBtn    = document.getElementById('search-clear');
-
-  searchInput.addEventListener('input', () => {
-    filters.query = searchInput.value;
-    clearBtn.style.display = filters.query ? 'block' : 'none';
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(runSearch, 280);
-  });
-
-  clearBtn.addEventListener('click', () => {
-    searchInput.value = '';
-    filters.query = '';
-    clearBtn.style.display = 'none';
-    runSearch();
-    searchInput.focus();
-  });
-
-  // Pre-fill query from ?q= URL param
-  const qParam = new URLSearchParams(window.location.search).get('q');
-  if (qParam) {
-    searchInput.value = qParam;
-    filters.query = qParam;
-    clearBtn.style.display = 'block';
-  }
-
-  // Advanced toggle
-  document.getElementById('advanced-toggle').addEventListener('click', () => {
-    const btn   = document.getElementById('advanced-toggle');
-    const panel = document.getElementById('advanced-panel');
-    btn.classList.toggle('open');
-    panel.classList.toggle('open');
-  });
-
-  // Format chips
-  document.querySelectorAll('#format-filters .chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      filters.format = chip.dataset.format;
-      setChipActive('format-filters', filters.format, 'format');
-      runSearch();
-    });
-  });
-
-  // Difficulty chips
-  document.querySelectorAll('#difficulty-filters .chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      filters.difficulty = chip.dataset.difficulty;
-      setChipActive('difficulty-filters', filters.difficulty, 'difficulty');
-      runSearch();
-    });
-  });
-
-  // Focus chips
-  document.querySelectorAll('#focus-filters .chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      filters.focus = chip.dataset.focus;
-      setChipActive('focus-filters', filters.focus, 'focus');
-      runSearch();
-    });
-  });
-
-  // Scoring chips
-  document.querySelectorAll('#scoring-filters .chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      filters.scoring = chip.dataset.scoring;
-      setChipActive('scoring-filters', filters.scoring, 'scoring');
-      runSearch();
-    });
-  });
-
-  // Duration chips
-  document.querySelectorAll('#duration-filters .dur-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      filters.duration = chip.dataset.duration;
-      setDurChipActive(filters.duration);
-      runSearch();
-    });
-  });
-
-  // Equipment chips (multi-select toggle)
-  document.querySelectorAll('#equipment-filters .eq-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      const eq = chip.dataset.eq;
-      if (filters.equipment.has(eq)) {
-        filters.equipment.delete(eq);
-        chip.classList.remove('active');
-      } else {
-        filters.equipment.add(eq);
-        chip.classList.add('active');
-      }
-      runSearch();
-    });
-  });
-
-  // Modality chips (multi-select toggle)
-  document.querySelectorAll('#modality-filters .eq-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      const mod = chip.dataset.mod;
-      if (filters.modality.has(mod)) {
-        filters.modality.delete(mod);
-        chip.classList.remove('active');
-      } else {
-        filters.modality.add(mod);
-        chip.classList.add('active');
-      }
-      runSearch();
-    });
-  });
-
-  // Active filter pill clear
-  document.getElementById('active-filters').addEventListener('click', e => {
-    const pill = e.target.closest('.active-pill');
-    if (pill) clearFilter(pill.dataset.clear);
-  });
-
-  // Reset all
-  document.getElementById('reset-filters').addEventListener('click', resetAllFilters);
-
-  // Sort
-  document.getElementById('sort-select').addEventListener('change', runSearch);
-
-  // Load more
-  document.getElementById('load-more-btn').addEventListener('click', () => {
-    displayCount += PAGE_SIZE;
-    renderResults();
-  });
-}
-
-// ─────────────────────────────────────────────
-//  INIT
-// ─────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  setupListeners();
-  loadAllWorkouts();
-});
-</script>
-</body>
-</html>

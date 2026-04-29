@@ -1,712 +1,1219 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <!-- Sentry Error Monitoring -->
-  <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Movement Guide - HomeWODrx</title>
-  <meta name="description" content="Learn this CrossFit movement and find every workout that includes it.">
-  <meta property="og:title" content="Movement Guide - HomeWODrx">
-  <meta property="og:description" content="Learn this CrossFit movement and find every workout that includes it.">
-  <meta property="og:type" content="article">
-  <meta property="og:url" content="https://homewodrx.com/movements/" id="og-url">
-  <meta property="og:image" content="https://homewodrx.com/images/og-default.png" id="og-image">
-  <meta property="og:image:width" content="1200" id="og-image-width">
-  <meta property="og:image:height" content="630" id="og-image-height">
-  <meta property="og:image:alt" content="CrossFit Movement Guide — HomeWODrx" id="og-image-alt">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://homewodrx.com/images/og-default.png" id="twitter-image">
-  <link rel="canonical" href="https://homewodrx.com/movements/" id="canonical-url">
-  <!-- SEO: set canonical/title/description from URL slug before JS loads so Google sees correct tags on first HTML pass -->
-  <script>
-    (function() {
-      var parts = window.location.pathname.split('/').filter(Boolean);
-      var slug = (parts[parts.length - 1] || '').replace(/\.html$/, '');
-      if (slug && slug !== 'movements') {
-        var name = slug.replace(/-/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
-        document.title = name + ' - CrossFit Movement Guide - HomeWODrx';
-        document.querySelector('meta[name="description"]').setAttribute('content',
-          'How to perform ' + name + ': technique cues, scaling options, and every CrossFit workout that includes this movement on HomeWODrx.');
-        document.querySelector('meta[property="og:title"]').setAttribute('content', name + ' - CrossFit Movement Guide - HomeWODrx');
-        document.querySelector('meta[property="og:description"]').setAttribute('content',
-          'How to perform ' + name + ': technique cues, scaling options, and every CrossFit workout that includes this movement on HomeWODrx.');
-        var url = 'https://homewodrx.com/movements/' + slug;
-        document.getElementById('canonical-url').setAttribute('href', url);
-        document.getElementById('og-url').setAttribute('content', url);
-      }
-    })();
-  </script>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="stylesheet" href="/css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="/js/config.js"></script>
-  <script src="/js/db.js"></script>
-  <script src="/js/benchmarks.js"></script>
-  <script src="/js/movement-db.js"></script>
-  <script src="/js/daily-wod.js"></script>
-  <script src="/js/nav.js"></script>
-  <style>
-    .movement-hero {
-      padding: 2.5rem 0 2rem;
-      border-bottom: 1px solid var(--dark-border, #333);
-      margin-bottom: 2rem;
-    }
-    .movement-hero h1 {
-      margin-bottom: 0.5rem;
-      text-transform: capitalize;
-    }
-    .movement-hero .breadcrumb {
-      font-size: 0.9rem;
-      color: var(--text-muted, #888);
-      margin-bottom: 1rem;
-    }
-    .movement-hero .breadcrumb a {
-      color: var(--orange, #f97316);
-      text-decoration: none;
-    }
-    .movement-hero .breadcrumb a:hover { text-decoration: underline; }
-
-    .movement-tips {
-      background: var(--dark-surface, #1e1e1e);
-      border: 1px solid var(--dark-border, #333);
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin: 1.5rem 0;
-    }
-    .movement-tips h3 { margin-bottom: 0.75rem; }
-    .movement-tips ul { margin-left: 1.5rem; }
-    .movement-tips li { margin-bottom: 0.4rem; }
-
-    .workout-count-badge {
-      display: inline-block;
-      background: var(--orange, #f97316);
-      color: #fff;
-      border-radius: 20px;
-      padding: 0.15rem 0.6rem;
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin-left: 0.5rem;
-    }
-    .section-title-row {
-      display: flex;
-      align-items: center;
-      margin-bottom: 1.5rem;
-    }
-    .empty-state {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: var(--text-muted, #888);
-    }
-    /* ── YouTube embed ───────────────────────────────────────────────── */
-    .video-container {
-      position: relative;
-      padding-bottom: 56.25%; /* 16:9 */
-      height: 0;
-      overflow: hidden;
-      border-radius: 8px;
-      margin: 1.5rem 0;
-      background: #000;
-    }
-    .video-container iframe {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      border: 0;
-    }
-    .video-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      background: rgba(239, 68, 68, 0.12);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      color: #ef4444;
-      border-radius: 4px;
-      padding: 0.12rem 0.4rem;
-      font-size: 0.73rem;
-      font-weight: 600;
-      margin-left: 0.4rem;
-      vertical-align: middle;
-    }
-    .equipment-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      background: var(--dark-surface, #1e1e1e);
-      border: 1px solid var(--dark-border, #444);
-      border-radius: 6px;
-      padding: 0.4rem 0.8rem;
-      font-size: 0.85rem;
-      font-weight: 500;
-      text-decoration: none;
-      color: var(--text, #e5e5e5);
-      transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
-      cursor: pointer;
-    }
-    .equipment-chip::after {
-      content: ' →';
-      font-size: 0.75rem;
-      opacity: 0.5;
-      transition: opacity 0.15s, transform 0.15s;
-    }
-    .equipment-chip:hover {
-      background: rgba(249, 115, 22, 0.1);
-      border-color: var(--orange, #f97316);
-      color: var(--orange, #f97316);
-      transform: translateY(-1px);
-    }
-    .equipment-chip:hover::after {
-      opacity: 1;
-      transform: translateX(2px);
-    }
-    .equipment-section {
-      margin-top: 1.5rem;
-      padding: 1.25rem 1.5rem;
-      border: 1px solid var(--dark-border, #333);
-      border-radius: 8px;
-      background: var(--dark-surface, #1a1a1a);
-    }
-    /* ── Social share bar ─────────────────────────────────────────────── */
-    .share-bar {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-top: 1.25rem;
-      flex-wrap: wrap;
-    }
-    .share-bar-label {
-      font-size: 0.8rem;
-      color: var(--text-muted, #888);
-      margin-right: 0.15rem;
-    }
-    .share-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      padding: 0.35rem 0.8rem;
-      border-radius: 6px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      text-decoration: none;
-      border: 1px solid var(--dark-border, #444);
-      background: var(--dark-surface, #1e1e1e);
-      color: var(--text, #e5e5e5);
-      cursor: pointer;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
-      font-family: inherit;
-    }
-    .share-btn:hover { background: rgba(255,255,255,0.07); border-color: #666; }
-    .share-btn.copied { color: #22c55e; border-color: rgba(34,197,94,0.4); }
-  </style>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-HZM475VDN3');
-  </script>
-  <script defer src="/_vercel/insights/script.js"></script>
-</head>
-<body data-nav-init="true" data-active-page="movements">
-<main class="container">
-
-  <div id="movement-header" class="loading">
-    <div class="spinner"></div>
-  </div>
-
-  <div id="movement-content" style="display:none;margin-top:2.5rem;">
-    <section class="section">
-      <div class="section-title-row">
-        <h2>Workouts with this Movement <span class="workout-count-badge" id="workout-count">0</span></h2>
-      </div>
-      <div id="workouts-grid" class="grid grid-cols-3"></div>
-    </section>
-  </div>
-
-</main>
-
-<script src="/js/footer.js"></script>
-
+<meta charset="UTF-8"/>
+<!-- Sentry Error Monitoring -->
+<script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Movement Guide | HomeWodRX</title>
+<meta name="description" content="Learn this functional fitness movement: technique cues, scaling options, common faults, and every workout that includes it."/>
+<meta property="og:title" content="Movement Guide | HomeWodRX"/>
+<meta property="og:description" content="Learn this functional fitness movement: technique cues, scaling options, and every workout that includes it."/>
+<meta property="og:type" content="article"/>
+<meta property="og:url" content="https://homewodrx.com/movements/" id="og-url"/>
+<meta property="og:image" content="https://homewodrx.com/images/og-default.png" id="og-image"/>
+<meta property="og:image:width" content="1200" id="og-image-width"/>
+<meta property="og:image:height" content="630" id="og-image-height"/>
+<meta property="og:image:alt" content="Movement Guide — HomeWodRX" id="og-image-alt"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://homewodrx.com/images/og-default.png" id="twitter-image"/>
+<link rel="canonical" href="https://homewodrx.com/movements/" id="canonical-url"/>
+<!-- SEO: set canonical/title/description from slug before JS loads -->
 <script>
-  // ── Affiliate gear ───────────────────────────────────────────────────────────
-  const AFFILIATE_TAG = 'homewodrx0f-20';
-
-  const EQUIPMENT_LINKS = {
-    'barbell':           `https://www.amazon.com/s?k=barbell&tag=${AFFILIATE_TAG}`,
-    'bumper plates':     `https://www.amazon.com/s?k=bumper+plates&tag=${AFFILIATE_TAG}`,
-    'plates':            `https://www.amazon.com/s?k=weight+plates&tag=${AFFILIATE_TAG}`,
-    'bench':             `https://www.amazon.com/s?k=weight+bench&tag=${AFFILIATE_TAG}`,
-    'dumbbells':         `https://www.amazon.com/s?k=dumbbells+set&tag=${AFFILIATE_TAG}`,
-    'dumbbell':          `https://www.amazon.com/s?k=dumbbells+set&tag=${AFFILIATE_TAG}`,
-    'kettlebell':        `https://www.amazon.com/s?k=kettlebell&tag=${AFFILIATE_TAG}`,
-    'sandbag':           `https://www.amazon.com/s?k=crossfit+sandbag&tag=${AFFILIATE_TAG}`,
-    'pull-up bar':       `https://www.amazon.com/s?k=pull-up+bar&tag=${AFFILIATE_TAG}`,
-    'pull up bar':       `https://www.amazon.com/s?k=pull-up+bar&tag=${AFFILIATE_TAG}`,
-    'pullupbar':         `https://www.amazon.com/s?k=pull-up+bar&tag=${AFFILIATE_TAG}`,
-    'gymnastics rings':  `https://www.amazon.com/s?k=gymnastics+rings&tag=${AFFILIATE_TAG}`,
-    'gymnastic rings':   `https://www.amazon.com/s?k=gymnastics+rings&tag=${AFFILIATE_TAG}`,
-    'rings':             `https://www.amazon.com/s?k=gymnastics+rings&tag=${AFFILIATE_TAG}`,
-    'parallettes':       `https://www.amazon.com/s?k=parallettes&tag=${AFFILIATE_TAG}`,
-    'parallel bars':     `https://www.amazon.com/s?k=parallel+bars+gymnastics&tag=${AFFILIATE_TAG}`,
-    'climbing rope':     `https://www.amazon.com/s?k=climbing+rope+crossfit&tag=${AFFILIATE_TAG}`,
-    'rope':              `https://www.amazon.com/s?k=climbing+rope+crossfit&tag=${AFFILIATE_TAG}`,
-    'rower':             `https://www.amazon.com/s?k=rowing+machine&tag=${AFFILIATE_TAG}`,
-    'assault bike':      `https://www.amazon.com/s?k=assault+bike&tag=${AFFILIATE_TAG}`,
-    'echo bike':         `https://www.amazon.com/s?k=echo+bike&tag=${AFFILIATE_TAG}`,
-    'bike erg':          `https://www.amazon.com/s?k=bike+erg+assault&tag=${AFFILIATE_TAG}`,
-    'ski erg':           `https://www.amazon.com/s?k=ski+erg&tag=${AFFILIATE_TAG}`,
-    'sled':              `https://www.amazon.com/s?k=weight+sled+crossfit&tag=${AFFILIATE_TAG}`,
-    'battle ropes':      `https://www.amazon.com/s?k=battle+ropes&tag=${AFFILIATE_TAG}`,
-    'box':               `https://www.amazon.com/s?k=plyo+box&tag=${AFFILIATE_TAG}`,
-    'medicine ball':     `https://www.amazon.com/s?k=medicine+ball&tag=${AFFILIATE_TAG}`,
-    'slam ball':         `https://www.amazon.com/s?k=slam+ball&tag=${AFFILIATE_TAG}`,
-    'slamball':          `https://www.amazon.com/s?k=slam+ball&tag=${AFFILIATE_TAG}`,
-    'wall ball':         `https://www.amazon.com/s?k=wall+ball&tag=${AFFILIATE_TAG}`,
-    'jump rope':         `https://www.amazon.com/s?k=crossfit+jump+rope&tag=${AFFILIATE_TAG}`,
-    'weight vest':       `https://www.amazon.com/s?k=weight+vest&tag=${AFFILIATE_TAG}`,
-    'ab wheel':          `https://www.amazon.com/s?k=ab+wheel&tag=${AFFILIATE_TAG}`,
-    'ghd machine':       `https://www.amazon.com/s?k=GHD+machine+crossfit&tag=${AFFILIATE_TAG}`,
-    'ghd':               `https://www.amazon.com/s?k=GHD+machine+crossfit&tag=${AFFILIATE_TAG}`,
-    'resistance bands':  `https://www.amazon.com/s?k=resistance+bands+set&tag=${AFFILIATE_TAG}`,
-  };
-
-  // Category-level links for bodyweight movements.
-  // Broad enough that users self-select what they want — no bad guesses.
-  const POPULAR_GEAR = [
-    { name: 'Training Shoes',          url: `https://www.amazon.com/s?k=cross+training+shoes&tag=${AFFILIATE_TAG}` },
-    { name: 'Fitness Apparel',         url: `https://www.amazon.com/s?k=fitness+workout+clothing&tag=${AFFILIATE_TAG}` },
-    { name: 'Gymnastics & Bars',       url: `https://www.amazon.com/s?k=gymnastics+pull+up+bars+rings&tag=${AFFILIATE_TAG}` },
-    { name: 'Kettlebells & Dumbbells', url: `https://www.amazon.com/s?k=kettlebells+dumbbells&tag=${AFFILIATE_TAG}` },
-    { name: 'Cardio Equipment',        url: `https://www.amazon.com/s?k=home+gym+cardio+equipment&tag=${AFFILIATE_TAG}` },
-    { name: 'Knee & Joint Support',    url: `https://www.amazon.com/s?k=knee+sleeves+joint+support&tag=${AFFILIATE_TAG}` },
-    { name: 'Lifting Accessories',     url: `https://www.amazon.com/s?k=gym+lifting+accessories&tag=${AFFILIATE_TAG}` },
-    { name: 'Recovery Gear',           url: `https://www.amazon.com/s?k=fitness+recovery+foam+roller+massage+gun&tag=${AFFILIATE_TAG}` },
-  ];
-
-  const SKIP_EQUIPMENT = new Set(['bodyweight', 'running', 'none', '']);
-
-  function equipmentDisplayName(e) {
-    return e
-      .replace(/([A-Z])/g, ' $1')
-      .replace(/[-_]/g, ' ')
-      .trim()
-      .replace(/\b\w/g, c => c.toUpperCase());
+(function() {
+  var parts = window.location.pathname.split('/').filter(Boolean);
+  var slug = (parts[parts.length - 1] || '').replace(/\.html$/, '');
+  if (slug && slug !== 'movements') {
+    var name = slug.replace(/-/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+    document.title = name + ' — Movement Guide | HomeWodRX';
+    document.querySelector('meta[name="description"]').setAttribute('content',
+      'How to perform ' + name + ': technique cues, scaling options, common faults, and every functional fitness workout that includes this movement on HomeWodRX.');
+    document.querySelector('meta[property="og:title"]').setAttribute('content', name + ' — Movement Guide | HomeWodRX');
+    document.querySelector('meta[property="og:description"]').setAttribute('content',
+      'How to perform ' + name + ': technique cues, scaling options, common faults, and every functional fitness workout that includes this movement on HomeWodRX.');
+    var url = 'https://homewodrx.com/movements/' + slug;
+    document.getElementById('canonical-url').setAttribute('href', url);
+    document.getElementById('og-url').setAttribute('content', url);
   }
+})();
+</script>
+<link rel="icon" type="image/x-icon" href="/favicon.ico"/>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/css/style.css"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/js/config.js"></script>
+<script src="/js/db.js"></script>
+<script src="/js/nav.js"></script>
+<script src="/js/benchmarks.js"></script>
+<script src="/js/movement-db.js"></script>
+<script src="/js/daily-wod.js"></script>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HZM475VDN3');
+</script>
+<!-- Vercel Analytics -->
+<script defer src="/_vercel/insights/script.js"></script>
 
-  function getEquipmentLink(equipment) {
-    const key = equipment.toLowerCase().trim();
-    return EQUIPMENT_LINKS[key]
-      || EQUIPMENT_LINKS[key.replace(/\s+/g, '')]
-      || `https://www.amazon.com/s?k=${encodeURIComponent(equipmentDisplayName(equipment))}&tag=${AFFILIATE_TAG}`;
-  }
+<style>
+/* ══════════════════════════════════════════
+   PAGE-SPECIFIC LAYOUT
+══════════════════════════════════════════ */
+.page-header {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 24px 32px 28px;
+}
+.page-header-inner { max-width: 1200px; margin: 0 auto; }
+.page-wrap { max-width: 1200px; margin: 0 auto; padding: 28px 24px 100px; }
 
-  function renderEquipmentSection(equipment) {
-    const gearItems = (equipment || []).filter(e => !SKIP_EQUIPMENT.has(e.toLowerCase().trim()));
-    if (gearItems.length > 0) {
-      return `
-        <div class="equipment-section">
-          <h4 style="margin-bottom:0.3rem;">Equipment for This Movement</h4>
-          <p class="text-muted" style="font-size:0.85rem;margin-bottom:0.85rem;">Shop the gear you need on Amazon (affiliate links help support HomeWODrx at no extra cost to you).</p>
-          <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
-            ${gearItems.map(e => `<a href="${getEquipmentLink(e)}" class="equipment-chip" target="_blank" rel="noopener sponsored">${equipmentDisplayName(e)}</a>`).join('')}
-          </div>
-        </div>`;
-    }
-    // Bodyweight movement: show accessories, recovery gear, and books — relevant to any CrossFitter
-    return `
-      <div class="equipment-section">
-        <h4 style="margin-bottom:0.3rem;">Fitness Essentials</h4>
-        <p class="text-muted" style="font-size:0.85rem;margin-bottom:0.85rem;">No gear required for this movement — but great athletes invest in recovery, protection, and the right gear. Shop on Amazon (affiliate links help support HomeWODrx at no extra cost to you).</p>
-        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
-          ${POPULAR_GEAR.map(g => `<a href="${g.url}" class="equipment-chip" target="_blank" rel="noopener sponsored">${g.name}</a>`).join('')}
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 24px;
+  align-items: start;
+}
+.main-col { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.side-col  { display: flex; flex-direction: column; gap: 16px; }
+
+/* ══════════════════════════════════════════
+   PAGE HEADER HERO ELEMENTS
+══════════════════════════════════════════ */
+.hero-eyebrow {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 10px; flex-wrap: wrap;
+}
+.cat-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 12px; border-radius: 20px;
+  font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+  border: 1.5px solid;
+}
+.cat-badge.barbell      { background: #fef3c7; border-color: #d97706; color: #92400e; }
+.cat-badge.gymnastics   { background: #ede9fe; border-color: #7c3aed; color: #5b21b6; }
+.cat-badge.bodyweight   { background: #dcfce7; border-color: #16a34a; color: #15803d; }
+.cat-badge.cardio       { background: #dbeafe; border-color: #2563eb; color: #1d4ed8; }
+.cat-badge.weightlifting{ background: #fce7f3; border-color: #db2777; color: #be185d; }
+.cat-badge.kettlebell   { background: #fef3c7; border-color: #d97706; color: #92400e; }
+.cat-badge.dumbbell     { background: #f3f4f6; border-color: #6b7280; color: #374151; }
+.cat-badge.default      { background: #f3f4f6; border-color: #d1d5db; color: #374151; }
+
+.difficulty-dots { display: flex; align-items: center; gap: 4px; }
+.diff-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
+.diff-dot.filled.beginner    { background: #22c55e; }
+.diff-dot.filled.intermediate{ background: #f59e0b; }
+.diff-dot.filled.advanced    { background: var(--or); }
+.diff-dot.filled.elite       { background: #7c3aed; }
+.diff-label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-left: 4px; }
+
+.movement-title {
+  font-family: var(--font-head);
+  font-size: clamp(2.4rem, 5vw, 3.5rem);
+  letter-spacing: .04em;
+  line-height: 1;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+
+.hero-meta-row {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  font-size: .82rem; color: var(--muted); font-weight: 500;
+  padding-top: 14px; border-top: 1px solid var(--border);
+}
+.hero-meta-item { display: flex; align-items: center; gap: 5px; }
+.hero-meta-item svg { width: 14px; height: 14px; flex-shrink: 0; opacity: .7; }
+
+/* ══════════════════════════════════════════
+   VIDEO CARD
+══════════════════════════════════════════ */
+.video-card {
+  background: var(--white); border-radius: var(--radius);
+  border: 1px solid var(--border); overflow: hidden; box-shadow: var(--shadow);
+}
+.video-header {
+  padding: 14px 18px 0;
+  display: flex; align-items: center; gap: 8px;
+}
+.video-title { font-family: var(--font-head); font-size: 1rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.yt-badge { display: inline-flex; align-items: center; gap: 4px; background: #fee2e2; border: 1px solid #fca5a5; color: #dc2626; border-radius: 4px; padding: 2px 8px; font-size: .68rem; font-weight: 700; letter-spacing: .03em; }
+.yt-badge svg { width: 10px; height: 10px; }
+.video-wrap {
+  position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;
+  margin: 12px 0 0; background: #0f0f0f;
+}
+.video-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+
+/* ══════════════════════════════════════════
+   TABS CARD
+══════════════════════════════════════════ */
+.tabs-card {
+  background: var(--white); border-radius: var(--radius);
+  border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden;
+}
+.tabs-nav {
+  display: flex; border-bottom: 1px solid var(--border);
+  overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+}
+.tabs-nav::-webkit-scrollbar { display: none; }
+.tab-btn {
+  flex-shrink: 0; padding: 14px 20px;
+  font-family: var(--font-body); font-size: .875rem; font-weight: 700;
+  color: var(--muted); background: none; border: none; cursor: pointer;
+  border-bottom: 2.5px solid transparent; margin-bottom: -1px;
+  transition: color .15s, border-color .15s;
+  display: flex; align-items: center; gap: 7px; white-space: nowrap;
+}
+.tab-btn:hover { color: var(--or); }
+.tab-btn.active { color: var(--or); border-bottom-color: var(--or); }
+.tab-count {
+  background: var(--or-xlight); color: var(--or);
+  border-radius: 20px; font-size: .7rem; font-weight: 700;
+  padding: 1px 7px; min-width: 22px; text-align: center;
+}
+.tab-pane { display: none; padding: 24px; }
+.tab-pane.active { display: block; }
+
+/* Overview */
+.description-text { font-size: .95rem; line-height: 1.7; color: var(--text); }
+.description-text p { margin-bottom: 14px; }
+.description-text p:last-child { margin-bottom: 0; }
+
+.muscle-section { margin-top: 20px; }
+.muscle-section-title { font-family: var(--font-head); font-size: .9rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.muscle-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+.muscle-tag { display: inline-flex; align-items: center; gap: 4px; padding: 5px 12px; border-radius: 20px; font-size: .78rem; font-weight: 600; }
+.muscle-tag.primary   { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+.muscle-tag.secondary { background: #f3f4f6; color: #4b5563; border: 1px solid var(--border); }
+
+/* Coaching Cues */
+.cues-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.cue-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; background: #f9fafb; border-radius: 8px; border: 1px solid var(--border); }
+.cue-num { font-family: var(--font-head); font-size: 1.4rem; color: var(--or); letter-spacing: .04em; flex-shrink: 0; line-height: 1; min-width: 28px; }
+.cue-text { font-size: .88rem; line-height: 1.55; color: var(--text); padding-top: 3px; }
+.cue-text strong { font-weight: 700; display: block; margin-bottom: 2px; }
+
+/* Scaling */
+.scaling-table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+.scaling-table th { text-align: left; padding: 10px 14px; background: #f9fafb; font-family: var(--font-head); font-size: .85rem; letter-spacing: .05em; color: var(--muted); text-transform: uppercase; border-bottom: 2px solid var(--border); }
+.scaling-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.5; }
+.scaling-table tr:last-child td { border-bottom: 0; }
+.scaling-table tr:hover td { background: var(--or-xlight); }
+.scale-badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+.scale-badge.rx       { background: var(--or); color: white; }
+.scale-badge.scaled   { background: #dbeafe; color: #1d4ed8; border: 1px solid #93c5fd; }
+.scale-badge.beginner { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+
+/* Workouts tab */
+.wod-mini-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.wod-mini-card {
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 14px 16px; text-decoration: none; color: var(--text);
+  background: #f9fafb; transition: all .15s; display: block;
+}
+.wod-mini-card:hover { border-color: var(--or); background: var(--or-xlight); }
+.wod-mini-name { font-family: var(--font-head); font-size: 1.2rem; letter-spacing: .04em; color: var(--text); margin-bottom: 4px; }
+.wod-mini-card:hover .wod-mini-name { color: var(--or); }
+.wod-mini-meta { font-size: .72rem; color: var(--muted); font-weight: 600; }
+.wod-mini-type { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; margin-top: 6px; }
+.wod-mini-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; margin-top: 4px; margin-left: 4px; }
+.wod-mini-badge.girl      { background: #fce7f3; color: #be185d; border: 1px solid #fbcfe8; }
+.wod-mini-badge.hero      { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+.wod-mini-badge.open      { background: #dbeafe; color: #1d4ed8; border: 1px solid #93c5fd; }
+.wod-mini-badge.games     { background: #ede9fe; color: #5b21b6; border: 1px solid #c4b5fd; }
+.wod-mini-badge.partner   { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+.wod-mini-badge.benchmark { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+.wod-mini-badge.daily     { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+.wod-mini-badge.community { background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd; }
+
+/* Common Faults */
+.faults-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+.fault-item { border-radius: 10px; border: 1.5px solid #fca5a5; overflow: hidden; background: #fff; }
+.fault-mistake { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px 12px; background: #fff5f5; }
+.fault-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+.fault-text { font-size: .88rem; line-height: 1.5; color: var(--text); }
+.fault-text strong { display: block; font-weight: 700; margin-bottom: 3px; font-size: .9rem; color: #b91c1c; }
+.fault-fix { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px 14px; border-top: 1px solid #fca5a5; background: #f0fdf4; }
+.fault-fix-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+.fault-fix-text { font-size: .85rem; line-height: 1.5; color: #166534; }
+.fault-fix-text strong { font-weight: 700; display: block; margin-bottom: 2px; color: #15803d; font-size: .82rem; text-transform: uppercase; letter-spacing: .04em; }
+
+/* Empty state */
+.tab-empty { text-align: center; padding: 40px 20px; color: var(--muted); }
+.tab-empty svg { width: 36px; height: 36px; opacity: .3; margin: 0 auto 12px; display: block; }
+.tab-empty p { font-size: .9rem; line-height: 1.5; }
+
+/* ══════════════════════════════════════════
+   FAQ CARD
+══════════════════════════════════════════ */
+.faq-card {
+  background: var(--white); border-radius: var(--radius);
+  border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden;
+}
+.faq-card-head {
+  padding: 18px 24px 14px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.faq-card-head h2 { font-family: var(--font-head); font-size: 1.25rem; letter-spacing: .06em; color: var(--text); text-transform: uppercase; }
+.faq-count { background: var(--or-xlight); color: var(--or); border-radius: 20px; font-size: .7rem; font-weight: 700; padding: 2px 8px; }
+.faq-list { list-style: none; }
+.faq-item { border-bottom: 1px solid var(--border); }
+.faq-item:last-child { border-bottom: 0; }
+.faq-q {
+  width: 100%; background: none; border: none; cursor: pointer;
+  padding: 16px 24px; font-family: var(--font-body); font-size: .9rem;
+  font-weight: 700; color: var(--text); text-align: left;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  transition: color .15s, background .15s; line-height: 1.4;
+}
+.faq-q:hover  { color: var(--or); background: var(--or-xlight); }
+.faq-q.open   { color: var(--or); }
+.faq-chevron  { width: 16px; height: 16px; flex-shrink: 0; opacity: .5; transition: transform .2s; }
+.faq-q.open .faq-chevron { transform: rotate(180deg); opacity: 1; }
+.faq-a { display: none; padding: 0 24px 18px; font-size: .875rem; line-height: 1.7; color: #444; }
+.faq-a.open { display: block; }
+
+/* ══════════════════════════════════════════
+   SIDEBAR CARDS
+══════════════════════════════════════════ */
+.side-card { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden; }
+.side-card-head { padding: 14px 18px; border-bottom: 1px solid var(--border); font-family: var(--font-head); font-size: .9rem; letter-spacing: .06em; color: var(--muted); text-transform: uppercase; }
+.side-card-body { padding: 16px 18px; }
+
+.equip-chips  { display: flex; flex-wrap: wrap; gap: 7px; }
+.equip-chip   { display: inline-flex; align-items: center; gap: 5px; padding: 7px 12px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--white); font-size: .8rem; font-weight: 600; text-decoration: none; color: var(--text); transition: all .15s; }
+.equip-chip:hover { border-color: var(--or); color: var(--or); background: var(--or-xlight); }
+.equip-chip svg { width: 13px; height: 13px; opacity: .5; flex-shrink: 0; }
+.equip-chip:hover svg { opacity: 1; }
+.equip-note { font-size: .72rem; color: var(--muted); margin-top: 10px; line-height: 1.4; }
+
+.related-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+.rel-tag { display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 8px; background: #f5f5f5; border: 1px solid var(--border); font-size: .8rem; font-weight: 600; color: var(--text); text-decoration: none; transition: all .15s; }
+.rel-tag:hover { background: var(--or-xlight); border-color: var(--or); color: var(--or); }
+.rel-tag .arrow { opacity: .4; font-size: .72rem; transition: opacity .15s; }
+.rel-tag:hover .arrow { opacity: 1; }
+
+.cta-card { background: var(--or); border-radius: var(--radius); padding: 20px 18px; text-align: center; box-shadow: 0 4px 16px rgba(196,18,18,.25); }
+.cta-card h3 { font-family: var(--font-head); font-size: 1.4rem; color: white; letter-spacing: .06em; margin-bottom: 6px; }
+.cta-card p  { font-size: .78rem; color: rgba(255,255,255,.8); margin-bottom: 14px; line-height: 1.4; }
+.cta-btn { display: block; width: 100%; background: white; color: var(--or); font-family: var(--font-head); font-size: 1rem; letter-spacing: .06em; padding: 10px; border-radius: 7px; border: none; cursor: pointer; transition: background .15s; text-decoration: none; }
+.cta-btn:hover { background: #f5e5e5; }
+.cta-sub { font-size: .7rem; color: rgba(255,255,255,.6); margin-top: 8px; }
+
+.share-pill-body { padding: 14px 18px; display: flex; flex-direction: column; gap: 8px; }
+.share-pill { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-radius: 8px; border: 1.5px solid var(--border); background: none; font-family: var(--font-body); font-size: .82rem; font-weight: 600; color: var(--text); cursor: pointer; transition: border-color .15s, color .15s, background .15s; text-align: left; width: 100%; text-decoration: none; }
+.share-pill svg { width: 16px; height: 16px; flex-shrink: 0; }
+.share-x:hover    { border-color: #000; color: #000; background: #f5f5f5; }
+.share-fb:hover   { border-color: #1877f2; color: #1877f2; background: #f0f4ff; }
+.share-wa:hover   { border-color: #25d366; color: #25d366; background: #f0fdf4; }
+.share-copy:hover { border-color: var(--or); color: var(--or); background: var(--or-xlight); }
+.share-pill.copied { border-color: #16a34a; color: #16a34a; background: #f0fdf4; }
+
+/* ══════════════════════════════════════════
+   SKELETON / LOADING
+══════════════════════════════════════════ */
+.skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 6px; }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+.skeleton-h1  { height: 52px; width: 55%; margin-bottom: 14px; border-radius: 4px; }
+.skeleton-p   { height: 14px; border-radius: 3px; margin-bottom: 8px; }
+.skeleton-p:last-child { width: 40%; }
+
+/* ══════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .content-grid { grid-template-columns: 1fr; }
+  .side-col { order: -1; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .cta-card, .side-card.share-card { grid-column: span 2; }
+}
+@media (max-width: 600px) {
+  .page-header { padding: 16px 16px 20px; }
+  .page-wrap   { padding: 16px 14px 80px; }
+  .movement-title { font-size: 2.2rem; }
+  .content-grid { gap: 16px; }
+  .side-col { grid-template-columns: 1fr; }
+  .cta-card, .side-card.share-card { grid-column: span 1; }
+  .tab-pane { padding: 16px; }
+  .wod-mini-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body data-nav-init="true" data-active-page="movement">
+<!-- ══════════════ MOBILE TOP BAR ══════════════ -->
+<div class="mobile-top-bar">
+  <a href="/" class="nav-logo">
+    <img src="/images/HomeWODRx-logo-black-red-040626.png" alt="HomeWodRX" class="nav-logo-img" style="height:28px;width:auto;">
+  </a>
+  <a href="/login.html" class="nav-cta" style="font-size:.8rem;padding:6px 14px;text-decoration:none;">Sign Up</a>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE HEADER (white)
+══════════════════════════════════════════ -->
+<div class="page-header">
+  <div class="page-header-inner" id="page-header-inner">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" id="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span>›</span>
+      <a href="/movements.html">Movements</a>
+      <span>›</span>
+      <span id="bc-cat-wrap" style="display:none"><a href="#" id="bc-cat-link"></a><span>›</span></span>
+      <span id="bc-current">Loading…</span>
+    </nav>
+
+    <!-- Badge row + difficulty -->
+    <div class="hero-eyebrow">
+      <span class="cat-badge default" id="hero-badge" style="display:none"></span>
+      <div class="difficulty-dots" id="hero-diff" style="display:none"></div>
+    </div>
+
+    <!-- Movement title (skeleton until loaded) -->
+    <div id="title-skeleton" class="skeleton skeleton-h1"></div>
+    <h1 class="movement-title" id="movement-title" style="display:none"></h1>
+
+    <!-- Meta row -->
+    <div class="hero-meta-row" id="hero-meta" style="display:none">
+      <span class="hero-meta-item" id="meta-wods">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        <span id="meta-wods-text">Loading…</span>
+      </span>
+      <span class="hero-meta-item" id="meta-cat">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/></svg>
+        <span id="meta-cat-text"></span>
+      </span>
+      <span class="hero-meta-item" id="meta-muscles" style="display:none">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"/></svg>
+        <span id="meta-muscles-text"></span>
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE CONTENT (gray)
+══════════════════════════════════════════ -->
+<div class="page-wrap">
+  <div class="content-grid">
+
+    <!-- ═══════════ MAIN COLUMN ═══════════ -->
+    <div class="main-col">
+
+      <!-- Video (hidden until data loaded) -->
+      <div class="video-card" id="video-card" style="display:none">
+        <div class="video-header">
+          <span class="video-title">Movement Demo</span>
+          <span class="yt-badge">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.7-.8-2.1-.9C16.2 5 12 5 12 5s-4.2 0-6.9.1c-.4.1-1.3.1-2.1.9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.3.9C6.8 19 12 19 12 19s4.2 0 6.9-.2c.4-.1 1.3-.1 2.1-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8zM9.7 14.5V9.5l5.6 2.5-5.6 2.5z"/></svg>
+            YouTube
+          </span>
         </div>
-      </div>`;
-  }
-
-  // ── Helpers ─────────────────────────────────────────────────────────────────
-  function copyShareLink(btn) {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      btn.classList.add('copied');
-      btn.textContent = '✓ Copied!';
-      setTimeout(() => { btn.classList.remove('copied'); btn.textContent = '🔗 Copy Link'; }, 2000);
-    }).catch(() => { prompt('Copy this link:', window.location.href); });
-  }
-
-  function slugify(name) {
-    return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  }
-
-  function titleCase(slug) {
-    return slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-  }
-
-  // ── Generate the last N daily WODs algorithmically (same engine as workouts.html) ──
-  async function generateRecentDailyWods(days) {
-    if (typeof DailyWOD === 'undefined') return [];
-    const wods = [];
-    const today = new Date();
-    const [config, movementDB] = await Promise.all([
-      DailyWOD.getConfig().catch(() => DailyWOD.defaultConfig),
-      DailyWOD._loadMovements().catch(() => ({}))
-    ]);
-    for (let i = 0; i < days; i++) {
-      const d = new Date(today);
-      d.setDate(today.getDate() - i);
-      const dateStr = d.toISOString().split('T')[0];
-      try {
-        const dayOfWeek = new Date(dateStr + 'T12:00:00').getDay();
-        const seed      = DailyWOD.getSeedForDate(dateStr);
-        const rng       = DailyWOD.seededRng(seed);
-        const difficulty = config.difficultyByDay[dayOfWeek] || 'intermediate';
-        const bodyFocus  = config.bodyFocusByDay[dayOfWeek]  || 'full-body';
-        const format     = config.formatByDay[dayOfWeek]     || 'amrap';
-        const durRange   = config.durationByDay[dayOfWeek]   || [20, 30];
-        const duration   = durRange[0] + Math.floor(rng() * (durRange[1] - durRange[0] + 1));
-        const equipment  = config.equipment || ['bodyweight'];
-        const pool = DailyWOD._buildPool(equipment, difficulty, bodyFocus, rng, movementDB);
-        let wod;
-        if (format === 'amrap')        wod = DailyWOD._genAMRAP(pool, difficulty, duration, bodyFocus, rng);
-        else if (format === 'emom')    wod = DailyWOD._genEMOM(pool, difficulty, duration, bodyFocus, rng);
-        else if (format === 'fortime') wod = DailyWOD._genForTime(pool, difficulty, rng);
-        else                           wod = DailyWOD._genCircuit(pool, difficulty, duration, bodyFocus, rng);
-        if (wod) {
-          const dateLabel = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-          wods.push({
-            name: `Daily 20 \u2014 ${dateLabel}`,
-            category: 'daily',
-            format: wod.format,
-            difficulty,
-            body_focus: bodyFocus,
-            movements: (wod.rows || []).map(r => ({ name: r.movement, reps: r.reps })),
-            _date: dateStr,
-          });
-        }
-      } catch (e) { /* skip this date */ }
-    }
-    return wods;
-  }
-
-  // ── Movement family map: slug → variant slugs that count as the same movement
-  const MOVEMENT_FAMILIES = {
-    'running':    ['400m-run', '800m-run', '1-mile-run', '100m-sprint'],
-    'rowing':     ['1000m-row', 'row-for-calories'],
-    'cleans':     ['squat-cleans', 'hang-power-cleans', 'power-cleans', 'clean-and-jerks'],
-    'snatches':   ['squat-snatches', 'power-snatches'],
-    'deadlifts':  ['deadlift', 'sumo-deadlift-high-pulls'],
-    'deadlift':   ['deadlifts', 'sumo-deadlift-high-pulls'],
-    'pull-ups':   ['chest-to-bar-pull-ups', 'jumping-pull-ups', 'kipping-pull-ups'],
-    'muscle-ups': ['burpee-muscle-ups'],
-    'thrusters':  ['thruster'],
-    'thruster':   ['thrusters'],
-  };
-
-  // ── YouTube helpers ──────────────────────────────────────────────────────────
-  function extractYouTubeId(url) {
-    if (!url) return null;
-    // Handles: youtube.com/watch?v=ID, youtu.be/ID, youtube.com/embed/ID
-    const m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
-    return m ? m[1] : null;
-  }
-
-  function youtubeEmbed(url) {
-    const id = extractYouTubeId(url);
-    if (!id) return '';
-    return `
-      <div class="video-container">
-        <iframe
-          src="https://www.youtube-nocookie.com/embed/${id}"
-          title="Movement technique video"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          loading="lazy">
-        </iframe>
-      </div>`;
-  }
-
-  // ── Inject JSON-LD structured data into <head> ──────────────────────────────
-  function injectJsonLd(data) {
-    const existing = document.getElementById('structured-data');
-    if (existing) existing.remove();
-    const script = document.createElement('script');
-    script.id = 'structured-data';
-    script.type = 'application/ld+json';
-    script.textContent = JSON.stringify(data);
-    document.head.appendChild(script);
-  }
-
-  // ── Read slug from path (/movements/:slug) or query param (?slug=) ──────────
-  function getSlug() {
-    const pathMatch = window.location.pathname.match(/\/movements\/([^\/]+)/);
-    if (pathMatch) return decodeURIComponent(pathMatch[1]).replace(/\.html$/, '');
-    return new URLSearchParams(window.location.search).get('slug');
-  }
-
-  // ── Main page loader ─────────────────────────────────────────────────────────
-  async function loadMovementPage() {
-    const slug = getSlug();
-
-    if (!slug) {
-      document.getElementById('movement-header').innerHTML = '<p class="text-muted">No movement specified.</p>';
-      return;
-    }
-
-    const movementName = titleCase(slug);
-
-    // ── 1. Load movement from Supabase ────────────────────────────────────────
-    let info = null;
-    try {
-      const { data, error } = await supabaseClient
-        .from('movements')
-        .select('name, slug, muscles, description, tips, daily_wod_eligible, category, youtube_url, equipment')
-        .eq('slug', slug)
-        .maybeSingle();
-
-      if (!error && data) info = data;
-    } catch (e) {
-      console.warn('Supabase movement fetch failed:', e);
-    }
-
-    const displayName = info?.name || movementName;
-
-    // ── 2. Update SEO meta ────────────────────────────────────────────────────
-    document.title = `${displayName} - CrossFit Movement Guide | HomeWODrx`;
-    const metaDesc = info?.description
-      ? `Learn the ${displayName} CrossFit movement. ${info.description.substring(0, 120)}`
-      : `Find every CrossFit workout that includes ${displayName} on HomeWODrx.`;
-    document.querySelector('meta[name="description"]').setAttribute('content', metaDesc);
-    document.querySelector('meta[property="og:title"]').setAttribute('content', `${displayName} - CrossFit Movement Guide | HomeWODrx`);
-    document.querySelector('meta[property="og:description"]').setAttribute('content', metaDesc);
-
-    // Canonical + og:url — use pretty path if on that URL pattern, else query-param form
-    const canonicalPath = window.location.pathname.startsWith('/movements/')
-      ? `https://homewodrx.com/movements/${slug}`
-      : `https://homewodrx.com/movement?slug=${slug}`;
-    document.getElementById('canonical-url').href = canonicalPath;
-    document.querySelector('meta[property="og:url"]').setAttribute('content', canonicalPath);
-
-    // OG image — use YouTube thumbnail if video available, else branded default
-    const ytId = info?.youtube_url
-      ? (info.youtube_url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/) || [])[1]
-      : null;
-    const ogImg = ytId
-      ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg`
-      : 'https://homewodrx.com/images/og-default.png';
-    document.getElementById('og-image').setAttribute('content', ogImg);
-    document.getElementById('og-image-width').setAttribute('content', ytId ? '1280' : '1200');
-    document.getElementById('og-image-height').setAttribute('content', ytId ? '720' : '630');
-    document.getElementById('og-image-alt').setAttribute('content', `${displayName} CrossFit Movement Guide — HomeWODrx`);
-    document.getElementById('twitter-image').setAttribute('content', ogImg);
-
-    // ── 2b. Inject JSON-LD structured data ───────────────────────────────────
-    const tips = Array.isArray(info?.tips) ? info.tips : [];
-    const ldData = [
-      {
-        '@context': 'https://schema.org',
-        '@type': 'HowTo',
-        'name': `How to Do ${displayName} — CrossFit Technique Guide`,
-        'description': info?.description || `Step-by-step technique guide for ${displayName} in CrossFit.`,
-        'url': canonicalPath,
-        ...(tips.length ? {
-          'step': tips.map((tip, i) => ({
-            '@type': 'HowToStep',
-            'position': i + 1,
-            'text': tip,
-          }))
-        } : {}),
-        ...(info?.muscles ? {
-          'tool': [{ '@type': 'HowToTool', 'name': info.muscles }]
-        } : {}),
-      },
-      {
-        '@context': 'https://schema.org',
-        '@type': 'BreadcrumbList',
-        'itemListElement': [
-          { '@type': 'ListItem', 'position': 1, 'name': 'Home',             'item': 'https://homewodrx.com/' },
-          { '@type': 'ListItem', 'position': 2, 'name': 'Movement Library', 'item': 'https://homewodrx.com/movements' },
-          { '@type': 'ListItem', 'position': 3, 'name': displayName,        'item': canonicalPath },
-        ],
-      },
-    ];
-    injectJsonLd(ldData);
-
-    // ── 3. Render hero / coaching section ─────────────────────────────────────
-    const headerEl = document.getElementById('movement-header');
-    headerEl.classList.remove('loading');
-    headerEl.innerHTML = `
-      <div class="movement-hero">
-        <div class="breadcrumb">
-          <a href="/movements">Movement Library</a> ›
-          ${displayName}
-        </div>
-        <h1>${displayName}</h1>
-        ${info?.description
-          ? `<p class="text-muted" style="max-width: 680px; line-height: 1.6;">${info.description}</p>`
-          : `<p class="text-muted">Find every workout that includes ${displayName}.</p>`}
-        ${info?.muscles
-          ? `<p style="margin-top: 0.75rem;"><strong>Primary muscles:</strong> <span class="text-muted">${info.muscles}</span></p>`
-          : ''}
-        <div class="share-bar">
-          <span class="share-bar-label">Share:</span>
-          <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(displayName+' movement guide on HomeWODrx 💪')}&url=${encodeURIComponent(window.location.href)}" target="_blank" rel="noopener" class="share-btn">𝕏 Post</a>
-          <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}" target="_blank" rel="noopener" class="share-btn">f Share</a>
-          <button class="share-btn" onclick="copyShareLink(this)">🔗 Copy Link</button>
+        <div class="video-wrap">
+          <iframe id="yt-iframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="Movement technique demo"></iframe>
         </div>
       </div>
-      ${tips.length ? `
-        <div class="movement-tips">
-          <h3>Coaching Cues</h3>
-          <ul>
-            ${tips.map(tip => `<li>${tip}</li>`).join('')}
-          </ul>
+
+      <!-- Tabs Card -->
+      <div class="tabs-card">
+        <div class="tabs-nav">
+          <button class="tab-btn active" onclick="switchTab('overview',this)">Overview</button>
+          <button class="tab-btn" id="tab-btn-cues" onclick="switchTab('cues',this)">Coaching Cues</button>
+          <button class="tab-btn" id="tab-btn-scaling" onclick="switchTab('scaling',this)">Scaling</button>
+          <button class="tab-btn" onclick="switchTab('workouts',this)">
+            Workouts
+            <span class="tab-count" id="wod-count">…</span>
+          </button>
+          <button class="tab-btn" id="tab-btn-faults" onclick="switchTab('faults',this)">Common Faults</button>
         </div>
-      ` : ''}
-      ${info?.youtube_url ? youtubeEmbed(info.youtube_url) : ''}
-      ${renderEquipmentSection(info?.equipment)}
-    `;
 
-    // ── 4. Find matching workouts ─────────────────────────────────────────────
-    const family = MOVEMENT_FAMILIES[slug] || [];
+        <!-- OVERVIEW TAB -->
+        <div class="tab-pane active" id="tab-overview">
+          <div class="description-text" id="movement-description">
+            <div class="skeleton skeleton-p" style="width:90%"></div>
+            <div class="skeleton skeleton-p" style="width:80%"></div>
+            <div class="skeleton skeleton-p" style="width:70%"></div>
+          </div>
+          <div class="muscle-section" id="muscle-section" style="display:none">
+            <div class="muscle-section-title">Muscles Worked</div>
+            <div class="muscle-tags" id="muscle-tags"></div>
+          </div>
+        </div>
 
-    // Benchmarks — read from Supabase (all 107 WODs); fall back to JS array
-    let allBenchmarks = [];
+        <!-- COACHING CUES TAB -->
+        <div class="tab-pane" id="tab-cues">
+          <ol class="cues-list" id="cues-list"></ol>
+        </div>
+
+        <!-- SCALING TAB -->
+        <div class="tab-pane" id="tab-scaling">
+          <table class="scaling-table">
+            <thead>
+              <tr>
+                <th>Level</th>
+                <th>Movement</th>
+                <th>Load / Notes</th>
+              </tr>
+            </thead>
+            <tbody id="scaling-tbody"></tbody>
+          </table>
+          <p id="scaling-note" style="font-size:.8rem;color:var(--muted);margin-top:14px;line-height:1.5;display:none"></p>
+        </div>
+
+        <!-- WORKOUTS TAB -->
+        <div class="tab-pane" id="tab-workouts">
+          <div class="wod-mini-grid" id="wod-grid">
+            <div style="grid-column:1/-1;text-align:center;padding:24px 0;color:var(--muted);font-size:.9rem;">Loading workouts…</div>
+          </div>
+        </div>
+
+        <!-- COMMON FAULTS TAB -->
+        <div class="tab-pane" id="tab-faults">
+          <ol class="faults-list" id="faults-list"></ol>
+        </div>
+      </div><!-- /.tabs-card -->
+
+      <!-- FAQ CARD (hidden until data loaded) -->
+      <div class="faq-card" id="faq-card" style="display:none">
+        <div class="faq-card-head">
+          <h2>Frequently Asked Questions</h2>
+          <span class="faq-count" id="faq-count">0</span>
+        </div>
+        <ul class="faq-list" id="faq-list"></ul>
+      </div>
+
+    </div><!-- /.main-col -->
+
+    <!-- ═══════════ SIDE COLUMN ═══════════ -->
+    <div class="side-col">
+
+      <!-- CTA -->
+      <div class="cta-card">
+        <h3 id="cta-title">Track Your PRs</h3>
+        <p id="cta-text">Log your lifts, track your progress over time, and compare with athletes worldwide.</p>
+        <a href="/signup.html" class="cta-btn">Join Free →</a>
+        <div class="cta-sub">No credit card required</div>
+      </div>
+
+      <!-- Equipment -->
+      <div class="side-card" id="equip-card">
+        <div class="side-card-head">Equipment</div>
+        <div class="side-card-body">
+          <div class="equip-chips" id="equip-chips">
+            <div class="skeleton skeleton-p" style="width:80px;height:32px;border-radius:8px"></div>
+            <div class="skeleton skeleton-p" style="width:100px;height:32px;border-radius:8px"></div>
+          </div>
+          <p class="equip-note">Amazon affiliate links — helps support HomeWodRX at no extra cost.</p>
+        </div>
+      </div>
+
+      <!-- Related Movements (hidden until data loaded) -->
+      <div class="side-card" id="related-card" style="display:none">
+        <div class="side-card-head">Related Movements</div>
+        <div class="side-card-body">
+          <div class="related-tags" id="related-tags"></div>
+        </div>
+      </div>
+
+      <!-- Share -->
+      <div class="side-card share-card">
+        <div class="side-card-head">Share This Movement</div>
+        <div class="share-pill-body">
+          <button class="share-pill share-x" onclick="shareTwitter(event)">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            Share on X
+          </button>
+          <button class="share-pill share-fb" onclick="shareFacebook(event)">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Facebook
+          </button>
+          <button class="share-pill share-wa" onclick="shareWhatsApp(event)">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            WhatsApp
+          </button>
+          <button class="share-pill share-copy" id="copy-btn" onclick="copyLink()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            Copy Link
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /.side-col -->
+  </div><!-- /.content-grid -->
+</div><!-- /.page-wrap -->
+
+<!-- ══════════════ MOBILE BOTTOM TAB BAR ══════════════ -->
+<div class="mobile-tab-bar">
+  <div class="tab-items">
+    <a href="/daily-wod.html" class="tab-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Daily
+    </a>
+    <a href="/workouts.html" class="tab-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.5 6.5h11M6.5 12h11M6.5 17.5h11"/><circle cx="3" cy="6.5" r="1"/><circle cx="3" cy="12" r="1"/><circle cx="3" cy="17.5" r="1"/></svg>
+      WODs
+    </a>
+    <a href="/movements.html" class="tab-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a5 5 0 015 5v3a5 5 0 01-10 0V7a5 5 0 015-5z"/><path d="M17 14H7a5 5 0 00-5 5v1h20v-1a5 5 0 00-5-5z"/></svg>
+      Moves
+    </a>
+    <a href="/generator.html" class="tab-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      Builder
+    </a>
+    <a href="/profile.html" class="tab-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Profile
+    </a>
+  </div>
+</div>
+
+<!-- ══════════════ JAVASCRIPT ══════════════ -->
+<script>
+/* ── Tabs ── */
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+/* ── FAQ accordion ── */
+function toggleFaq(btn) {
+  const answer = btn.nextElementSibling;
+  const isOpen = btn.classList.contains('open');
+  document.querySelectorAll('.faq-q.open').forEach(b => {
+    b.classList.remove('open');
+    b.setAttribute('aria-expanded', 'false');
+    b.nextElementSibling.classList.remove('open');
+  });
+  if (!isOpen) {
+    btn.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
+    answer.classList.add('open');
+  }
+}
+
+/* ── Share ── */
+function shareWhatsApp(e) {
+  e.preventDefault();
+  window.open('https://wa.me/?text=' + encodeURIComponent(document.title + ' — ' + window.location.href), '_blank');
+}
+function shareFacebook(e) {
+  e.preventDefault();
+  window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.href), '_blank', 'width=600,height=400');
+}
+function shareTwitter(e) {
+  e.preventDefault();
+  const text = encodeURIComponent('Check out this movement guide: ' + document.title);
+  window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + encodeURIComponent(window.location.href), '_blank', 'width=600,height=400');
+}
+function copyLink() {
+  const btn = document.getElementById('copy-btn');
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    btn.classList.add('copied');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Copy Link';
+    }, 2000);
+  }).catch(() => prompt('Copy this link:', window.location.href));
+}
+
+/* ══════════════════════════════════════════
+   AFFILIATE DATA
+══════════════════════════════════════════ */
+const AFFILIATE_TAG = 'homewodrx0f-20';
+
+const EQUIPMENT_LINKS = {
+  'barbell':           `https://www.amazon.com/s?k=barbell&tag=${AFFILIATE_TAG}`,
+  'bumper plates':     `https://www.amazon.com/s?k=bumper+plates&tag=${AFFILIATE_TAG}`,
+  'plates':            `https://www.amazon.com/s?k=weight+plates&tag=${AFFILIATE_TAG}`,
+  'bench':             `https://www.amazon.com/s?k=weight+bench&tag=${AFFILIATE_TAG}`,
+  'dumbbells':         `https://www.amazon.com/s?k=dumbbells+set&tag=${AFFILIATE_TAG}`,
+  'dumbbell':          `https://www.amazon.com/s?k=dumbbells+set&tag=${AFFILIATE_TAG}`,
+  'kettlebell':        `https://www.amazon.com/s?k=kettlebell&tag=${AFFILIATE_TAG}`,
+  'kettlebells':       `https://www.amazon.com/s?k=kettlebell+set&tag=${AFFILIATE_TAG}`,
+  'sandbag':           `https://www.amazon.com/s?k=crossfit+sandbag&tag=${AFFILIATE_TAG}`,
+  'pull-up bar':       `https://www.amazon.com/s?k=pull-up+bar&tag=${AFFILIATE_TAG}`,
+  'pull up bar':       `https://www.amazon.com/s?k=pull-up+bar&tag=${AFFILIATE_TAG}`,
+  'pullupbar':         `https://www.amazon.com/s?k=pull-up+bar&tag=${AFFILIATE_TAG}`,
+  'gymnastics rings':  `https://www.amazon.com/s?k=gymnastics+rings&tag=${AFFILIATE_TAG}`,
+  'gymnastic rings':   `https://www.amazon.com/s?k=gymnastics+rings&tag=${AFFILIATE_TAG}`,
+  'rings':             `https://www.amazon.com/s?k=gymnastics+rings&tag=${AFFILIATE_TAG}`,
+  'parallettes':       `https://www.amazon.com/s?k=parallettes&tag=${AFFILIATE_TAG}`,
+  'parallel bars':     `https://www.amazon.com/s?k=parallel+bars+gymnastics&tag=${AFFILIATE_TAG}`,
+  'climbing rope':     `https://www.amazon.com/s?k=climbing+rope+crossfit&tag=${AFFILIATE_TAG}`,
+  'rope':              `https://www.amazon.com/s?k=climbing+rope+crossfit&tag=${AFFILIATE_TAG}`,
+  'rower':             `https://www.amazon.com/s?k=rowing+machine&tag=${AFFILIATE_TAG}`,
+  'assault bike':      `https://www.amazon.com/s?k=assault+bike&tag=${AFFILIATE_TAG}`,
+  'echo bike':         `https://www.amazon.com/s?k=echo+bike&tag=${AFFILIATE_TAG}`,
+  'bike erg':          `https://www.amazon.com/s?k=bike+erg+assault&tag=${AFFILIATE_TAG}`,
+  'ski erg':           `https://www.amazon.com/s?k=ski+erg&tag=${AFFILIATE_TAG}`,
+  'sled':              `https://www.amazon.com/s?k=weight+sled+crossfit&tag=${AFFILIATE_TAG}`,
+  'battle ropes':      `https://www.amazon.com/s?k=battle+ropes&tag=${AFFILIATE_TAG}`,
+  'box':               `https://www.amazon.com/s?k=plyo+box&tag=${AFFILIATE_TAG}`,
+  'plyo box':          `https://www.amazon.com/s?k=plyo+box&tag=${AFFILIATE_TAG}`,
+  'medicine ball':     `https://www.amazon.com/s?k=medicine+ball&tag=${AFFILIATE_TAG}`,
+  'slam ball':         `https://www.amazon.com/s?k=slam+ball&tag=${AFFILIATE_TAG}`,
+  'slamball':          `https://www.amazon.com/s?k=slam+ball&tag=${AFFILIATE_TAG}`,
+  'wall ball':         `https://www.amazon.com/s?k=wall+ball&tag=${AFFILIATE_TAG}`,
+  'jump rope':         `https://www.amazon.com/s?k=crossfit+jump+rope&tag=${AFFILIATE_TAG}`,
+  'speed rope':        `https://www.amazon.com/s?k=crossfit+jump+rope&tag=${AFFILIATE_TAG}`,
+  'weight vest':       `https://www.amazon.com/s?k=weight+vest&tag=${AFFILIATE_TAG}`,
+  'ab wheel':          `https://www.amazon.com/s?k=ab+wheel&tag=${AFFILIATE_TAG}`,
+  'ghd machine':       `https://www.amazon.com/s?k=GHD+machine+crossfit&tag=${AFFILIATE_TAG}`,
+  'ghd':               `https://www.amazon.com/s?k=GHD+machine+crossfit&tag=${AFFILIATE_TAG}`,
+  'resistance bands':  `https://www.amazon.com/s?k=resistance+bands+set&tag=${AFFILIATE_TAG}`,
+  'band':              `https://www.amazon.com/s?k=resistance+bands+set&tag=${AFFILIATE_TAG}`,
+  'bands':             `https://www.amazon.com/s?k=resistance+bands+set&tag=${AFFILIATE_TAG}`,
+  'weightlifting belt':`https://www.amazon.com/s?k=weightlifting+belt&tag=${AFFILIATE_TAG}`,
+  'lifting belt':      `https://www.amazon.com/s?k=weightlifting+belt&tag=${AFFILIATE_TAG}`,
+  'weightlifting shoes':`https://www.amazon.com/s?k=weightlifting+shoes&tag=${AFFILIATE_TAG}`,
+  'oly shoes':         `https://www.amazon.com/s?k=weightlifting+shoes&tag=${AFFILIATE_TAG}`,
+  'knee sleeves':      `https://www.amazon.com/s?k=knee+sleeves+crossfit&tag=${AFFILIATE_TAG}`,
+  'training shoes':    `https://www.amazon.com/s?k=cross+training+shoes&tag=${AFFILIATE_TAG}`,
+  'exercise mat':      `https://www.amazon.com/s?k=exercise+mat&tag=${AFFILIATE_TAG}`,
+  'mat':               `https://www.amazon.com/s?k=exercise+mat&tag=${AFFILIATE_TAG}`,
+  'gymnastics grips':  `https://www.amazon.com/s?k=gymnastics+hand+grips&tag=${AFFILIATE_TAG}`,
+  'hand grips':        `https://www.amazon.com/s?k=gymnastics+hand+grips&tag=${AFFILIATE_TAG}`,
+};
+
+const POPULAR_GEAR = [
+  { name: 'Training Shoes',          url: `https://www.amazon.com/s?k=cross+training+shoes&tag=${AFFILIATE_TAG}` },
+  { name: 'Fitness Apparel',         url: `https://www.amazon.com/s?k=fitness+workout+clothing&tag=${AFFILIATE_TAG}` },
+  { name: 'Gymnastics & Bars',       url: `https://www.amazon.com/s?k=gymnastics+pull+up+bars+rings&tag=${AFFILIATE_TAG}` },
+  { name: 'Kettlebells & Dumbbells', url: `https://www.amazon.com/s?k=kettlebells+dumbbells&tag=${AFFILIATE_TAG}` },
+  { name: 'Cardio Equipment',        url: `https://www.amazon.com/s?k=home+gym+cardio+equipment&tag=${AFFILIATE_TAG}` },
+  { name: 'Knee & Joint Support',    url: `https://www.amazon.com/s?k=knee+sleeves+joint+support&tag=${AFFILIATE_TAG}` },
+  { name: 'Lifting Accessories',     url: `https://www.amazon.com/s?k=gym+lifting+accessories&tag=${AFFILIATE_TAG}` },
+  { name: 'Recovery Gear',           url: `https://www.amazon.com/s?k=fitness+recovery+foam+roller+massage+gun&tag=${AFFILIATE_TAG}` },
+];
+
+const SKIP_EQUIPMENT = new Set(['bodyweight', 'running', 'none', '']);
+
+/* ══════════════════════════════════════════
+   MOVEMENT FAMILIES (slug → variant slugs)
+══════════════════════════════════════════ */
+const MOVEMENT_FAMILIES = {
+  'running':    ['400m-run', '800m-run', '1-mile-run', '100m-sprint'],
+  'rowing':     ['1000m-row', 'row-for-calories'],
+  'cleans':     ['squat-cleans', 'hang-power-cleans', 'power-cleans', 'clean-and-jerks'],
+  'snatches':   ['squat-snatches', 'power-snatches'],
+  'deadlifts':  ['deadlift', 'sumo-deadlift-high-pulls'],
+  'deadlift':   ['deadlifts', 'sumo-deadlift-high-pulls'],
+  'pull-ups':   ['chest-to-bar-pull-ups', 'jumping-pull-ups', 'kipping-pull-ups'],
+  'muscle-ups': ['burpee-muscle-ups'],
+  'thrusters':  ['thruster'],
+  'thruster':   ['thrusters'],
+};
+
+/* ══════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════ */
+function slugify(name) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+function titleCase(slug) {
+  return slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
+function equipmentDisplayName(e) {
+  return e.replace(/([A-Z])/g, ' $1').replace(/[-_]/g, ' ').trim().replace(/\b\w/g, c => c.toUpperCase());
+}
+function getEquipmentLink(equipment) {
+  const key = equipment.toLowerCase().trim();
+  return EQUIPMENT_LINKS[key]
+    || EQUIPMENT_LINKS[key.replace(/\s+/g, '')]
+    || `https://www.amazon.com/s?k=${encodeURIComponent(equipmentDisplayName(equipment))}&tag=${AFFILIATE_TAG}`;
+}
+function getSlug() {
+  const pathMatch = window.location.pathname.match(/\/movements\/([^\/]+)/);
+  if (pathMatch) return decodeURIComponent(pathMatch[1]).replace(/\.html$/, '');
+  return new URLSearchParams(window.location.search).get('slug');
+}
+
+/* ── Category → badge class ── */
+function catBadgeClass(cat) {
+  if (!cat) return 'default';
+  const c = cat.toLowerCase();
+  if (c.includes('barbell') || c.includes('olympic') || c.includes('weightlift')) return 'barbell';
+  if (c.includes('gymnastic') || c.includes('rings') || c.includes('bar')) return 'gymnastics';
+  if (c.includes('bodyweight') || c.includes('body weight')) return 'bodyweight';
+  if (c.includes('cardio') || c.includes('conditioning') || c.includes('run') || c.includes('row')) return 'cardio';
+  if (c.includes('kettlebell') || c.includes('kb')) return 'kettlebell';
+  if (c.includes('dumbbell') || c.includes('db')) return 'dumbbell';
+  return 'default';
+}
+
+/* ── Difficulty → dots + label ── */
+function difficultyHtml(diff) {
+  if (!diff) return '';
+  const d = diff.toLowerCase();
+  const LEVELS = { beginner: 1, intermediate: 2, advanced: 3, elite: 4, 'rx+': 5 };
+  const filled = LEVELS[d] || 0;
+  const total  = 5;
+  let html = '';
+  for (let i = 0; i < total; i++) {
+    html += `<div class="diff-dot${i < filled ? ' filled ' + d : ''}"></div>`;
+  }
+  html += `<span class="diff-label">${diff.charAt(0).toUpperCase() + diff.slice(1)}</span>`;
+  return html;
+}
+
+/* ── JSON-LD structured data ── */
+function injectJsonLd(data) {
+  const existing = document.getElementById('structured-data');
+  if (existing) existing.remove();
+  const s = document.createElement('script');
+  s.id = 'structured-data';
+  s.type = 'application/ld+json';
+  s.textContent = JSON.stringify(data);
+  document.head.appendChild(s);
+}
+
+/* ── Generate last N daily WODs ── */
+async function generateRecentDailyWods(days) {
+  if (typeof DailyWOD === 'undefined') return [];
+  const wods = [];
+  const today = new Date();
+  const [config, movementDB] = await Promise.all([
+    DailyWOD.getConfig().catch(() => DailyWOD.defaultConfig),
+    DailyWOD._loadMovements().catch(() => ({}))
+  ]);
+  for (let i = 0; i < days; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const dateStr = d.toISOString().split('T')[0];
     try {
-      allBenchmarks = await db.getAllBenchmarks();
-    } catch (e) {
-      allBenchmarks = (typeof BENCHMARKS !== 'undefined') ? BENCHMARKS : [];
-    }
+      const dayOfWeek = new Date(dateStr + 'T12:00:00').getDay();
+      const seed       = DailyWOD.getSeedForDate(dateStr);
+      const rng        = DailyWOD.seededRng(seed);
+      const difficulty = config.difficultyByDay[dayOfWeek] || 'intermediate';
+      const bodyFocus  = config.bodyFocusByDay[dayOfWeek]  || 'full-body';
+      const format     = config.formatByDay[dayOfWeek]     || 'amrap';
+      const durRange   = config.durationByDay[dayOfWeek]   || [20, 30];
+      const duration   = durRange[0] + Math.floor(rng() * (durRange[1] - durRange[0] + 1));
+      const equipment  = config.equipment || ['bodyweight'];
+      const pool = DailyWOD._buildPool(equipment, difficulty, bodyFocus, rng, movementDB);
+      let wod;
+      if (format === 'amrap')        wod = DailyWOD._genAMRAP(pool, difficulty, duration, bodyFocus, rng);
+      else if (format === 'emom')    wod = DailyWOD._genEMOM(pool, difficulty, duration, bodyFocus, rng);
+      else if (format === 'fortime') wod = DailyWOD._genForTime(pool, difficulty, rng);
+      else                           wod = DailyWOD._genCircuit(pool, difficulty, duration, bodyFocus, rng);
+      if (wod) {
+        const dateLabel = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        wods.push({
+          name: `Daily 20 — ${dateLabel}`,
+          category: 'daily',
+          format: wod.format,
+          difficulty,
+          body_focus: bodyFocus,
+          movements: (wod.rows || []).map(r => ({ name: r.movement, reps: r.reps })),
+          _date: dateStr,
+        });
+      }
+    } catch (e) { /* skip */ }
+  }
+  return wods;
+}
 
-    const matchingBenchmarks = allBenchmarks.filter(b =>
-      b.movements && b.movements.some(m => {
+/* ══════════════════════════════════════════
+   RENDER EQUIPMENT SIDEBAR
+══════════════════════════════════════════ */
+function renderEquipment(equipment) {
+  const gearItems = (equipment || []).filter(e => !SKIP_EQUIPMENT.has((e || '').toLowerCase().trim()));
+  const el = document.getElementById('equip-chips');
+  if (gearItems.length > 0) {
+    el.innerHTML = gearItems.map(e =>
+      `<a href="${getEquipmentLink(e)}" target="_blank" rel="noopener sponsored" class="equip-chip">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3z"/></svg>
+        ${equipmentDisplayName(e)} →
+      </a>`
+    ).join('');
+  } else {
+    el.innerHTML = POPULAR_GEAR.map(g =>
+      `<a href="${g.url}" target="_blank" rel="noopener sponsored" class="equip-chip">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3z"/></svg>
+        ${g.name} →
+      </a>`
+    ).join('');
+  }
+}
+
+/* ══════════════════════════════════════════
+   MAIN PAGE LOADER
+══════════════════════════════════════════ */
+async function loadMovementPage() {
+  const slug = getSlug();
+  if (!slug) {
+    document.getElementById('bc-current').textContent = 'Movement not found';
+    document.getElementById('title-skeleton').style.display = 'none';
+    const h1 = document.getElementById('movement-title');
+    h1.textContent = 'Movement not found';
+    h1.style.display = '';
+    document.getElementById('movement-description').innerHTML =
+      '<p>No movement was specified. <a href="/movements.html" style="color:var(--or)">Browse the movement library →</a></p>';
+    return;
+  }
+
+  const movementName = titleCase(slug);
+
+  /* ── 1. Fetch from Supabase ── */
+  let info = null;
+  try {
+    const { data, error } = await supabaseClient
+      .from('movements')
+      .select('name, slug, muscles, description, tips, daily_wod_eligible, category, youtube_url, equipment, difficulty, scaling, faults, faq, related_movements')
+      .eq('slug', slug)
+      .maybeSingle();
+    if (!error && data) info = data;
+  } catch (e) {
+    console.warn('Supabase movement fetch failed:', e);
+  }
+
+  const displayName = info?.name || movementName;
+  const category    = info?.category || '';
+  const difficulty  = info?.difficulty || '';
+  const muscles     = info?.muscles   || '';
+  const tips        = Array.isArray(info?.tips)   ? info.tips   : (info?.tips ? [info.tips] : []);
+  const equipment   = Array.isArray(info?.equipment) ? info.equipment : (info?.equipment ? [info.equipment] : []);
+  const scaling     = Array.isArray(info?.scaling)   ? info.scaling   : [];
+  const faults      = Array.isArray(info?.faults)    ? info.faults    : [];
+  const faq         = Array.isArray(info?.faq)       ? info.faq       : [];
+  const related     = Array.isArray(info?.related_movements) ? info.related_movements : [];
+
+  /* ── 2. Update SEO meta ── */
+  const metaDesc = info?.description
+    ? `Learn the ${displayName} movement. ${info.description.substring(0, 120)}`
+    : `Technique cues, scaling options, and every functional fitness workout that includes ${displayName} on HomeWodRX.`;
+  document.title = `${displayName} — Movement Guide | HomeWodRX`;
+  document.querySelector('meta[name="description"]').setAttribute('content', metaDesc);
+  document.querySelector('meta[property="og:title"]').setAttribute('content', `${displayName} — Movement Guide | HomeWodRX`);
+  document.querySelector('meta[property="og:description"]').setAttribute('content', metaDesc);
+
+  const canonicalPath = window.location.pathname.startsWith('/movements/')
+    ? `https://homewodrx.com/movements/${slug}`
+    : `https://homewodrx.com/movement?slug=${slug}`;
+  document.getElementById('canonical-url').setAttribute('href', canonicalPath);
+  document.getElementById('og-url').setAttribute('content', canonicalPath);
+
+  const ytIdMatch = (info?.youtube_url || '').match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  const ytId = ytIdMatch ? ytIdMatch[1] : null;
+  const ogImg = ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : 'https://homewodrx.com/images/og-default.png';
+  document.getElementById('og-image').setAttribute('content', ogImg);
+  document.getElementById('og-image-width').setAttribute('content',  ytId ? '1280' : '1200');
+  document.getElementById('og-image-height').setAttribute('content', ytId ? '720'  : '630');
+  document.getElementById('og-image-alt').setAttribute('content', `${displayName} Movement Guide — HomeWodRX`);
+  document.getElementById('twitter-image').setAttribute('content', ogImg);
+
+  /* ── 2b. JSON-LD structured data ── */
+  injectJsonLd([
+    {
+      '@context': 'https://schema.org',
+      '@type': 'HowTo',
+      'name': `How to Do ${displayName} — Functional Fitness Technique Guide`,
+      'description': info?.description || `Step-by-step technique guide for ${displayName}.`,
+      'url': canonicalPath,
+      ...(tips.length ? {
+        'step': tips.map((tip, i) => ({ '@type': 'HowToStep', 'position': i + 1, 'text': tip }))
+      } : {}),
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      'itemListElement': [
+        { '@type': 'ListItem', 'position': 1, 'name': 'Home',             'item': 'https://homewodrx.com/' },
+        { '@type': 'ListItem', 'position': 2, 'name': 'Movement Library', 'item': 'https://homewodrx.com/movements' },
+        { '@type': 'ListItem', 'position': 3, 'name': displayName,        'item': canonicalPath },
+      ],
+    },
+  ]);
+
+  /* ── 3. Render page header ── */
+  document.getElementById('bc-current').textContent = displayName;
+
+  // Category breadcrumb
+  if (category) {
+    const bcCatLink = document.getElementById('bc-cat-link');
+    const bcCatWrap = document.getElementById('bc-cat-wrap');
+    bcCatLink.textContent = category;
+    bcCatLink.href = `/movements.html?cat=${slugify(category)}`;
+    bcCatWrap.style.display = '';
+  }
+
+  // Badge
+  const badge = document.getElementById('hero-badge');
+  badge.className = 'cat-badge ' + catBadgeClass(category);
+  badge.textContent = category || 'Movement';
+  badge.style.display = '';
+
+  // Difficulty dots
+  if (difficulty) {
+    const diffEl = document.getElementById('hero-diff');
+    diffEl.innerHTML = difficultyHtml(difficulty);
+    diffEl.style.display = '';
+  }
+
+  // Title
+  document.getElementById('title-skeleton').style.display = 'none';
+  const titleEl = document.getElementById('movement-title');
+  titleEl.textContent = displayName;
+  titleEl.style.display = '';
+
+  // Meta row
+  document.getElementById('meta-wods-text').textContent = 'Loading workout count…';
+  document.getElementById('meta-cat-text').textContent = [category, difficulty].filter(Boolean).join(' · ');
+  if (muscles) {
+    const muscleStr = Array.isArray(muscles) ? muscles.join(', ') : muscles;
+    document.getElementById('meta-muscles-text').textContent = muscleStr;
+    document.getElementById('meta-muscles').style.display = '';
+  }
+  document.getElementById('hero-meta').style.display = '';
+
+  // CTA
+  document.getElementById('cta-title').textContent = `Track Your ${displayName} PR`;
+  document.getElementById('cta-text').textContent = `Log your ${displayName} results, track progress over time, and build toward your best performance.`;
+
+  /* ── 4. Video ── */
+  if (ytId) {
+    document.getElementById('yt-iframe').src = `https://www.youtube-nocookie.com/embed/${ytId}?rel=0&modestbranding=1`;
+    document.getElementById('video-card').style.display = '';
+  }
+
+  /* ── 5. Overview tab ── */
+  if (info?.description) {
+    document.getElementById('movement-description').innerHTML =
+      info.description.split(/\n\n+/).map(p => `<p>${p.trim()}</p>`).join('');
+  } else {
+    document.getElementById('movement-description').innerHTML =
+      `<p>Technique guide for ${displayName}. Find every functional fitness workout that includes this movement below.</p>`;
+  }
+
+  // Muscles
+  if (muscles) {
+    const muscleArr = Array.isArray(muscles) ? muscles : muscles.split(',').map(m => m.trim()).filter(Boolean);
+    if (muscleArr.length) {
+      document.getElementById('muscle-tags').innerHTML = muscleArr.map(m =>
+        `<span class="muscle-tag secondary">${m}</span>`
+      ).join('');
+      document.getElementById('muscle-section').style.display = '';
+    }
+  }
+
+  /* ── 6. Coaching Cues tab ── */
+  if (tips.length > 0) {
+    document.getElementById('cues-list').innerHTML = tips.map((tip, i) =>
+      `<li class="cue-item">
+        <span class="cue-num">${String(i + 1).padStart(2, '0')}</span>
+        <div class="cue-text">${tip}</div>
+      </li>`
+    ).join('');
+  } else {
+    document.getElementById('cues-list').innerHTML =
+      `<div class="tab-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg><p>Coaching cues not yet available for this movement.</p></div>`;
+    document.getElementById('tab-btn-cues').style.opacity = '.55';
+  }
+
+  /* ── 7. Scaling tab ── */
+  if (scaling.length > 0) {
+    document.getElementById('scaling-tbody').innerHTML = scaling.map(s => {
+      const lvl   = (s.level || 'scaled').toLowerCase();
+      const label = s.label || (lvl === 'rx' ? 'Rx' : lvl.charAt(0).toUpperCase() + lvl.slice(1));
+      return `<tr>
+        <td><span class="scale-badge ${lvl}">${label}</span></td>
+        <td>${s.movement || s.description || ''}</td>
+        <td>${s.notes || s.load || ''}</td>
+      </tr>`;
+    }).join('');
+    if (scaling.scalingNote) {
+      const noteEl = document.getElementById('scaling-note');
+      noteEl.textContent = scaling.scalingNote;
+      noteEl.style.display = '';
+    }
+  } else {
+    document.getElementById('scaling-tbody').innerHTML =
+      `<tr><td colspan="3"><div class="tab-empty" style="padding:24px 0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:28px;height:28px;opacity:.3;display:block;margin:0 auto 8px"><path d="M4 6h16M4 10h16M4 14h16M4 18h7"/></svg><p>Scaling options not yet available for this movement.</p></div></td></tr>`;
+    document.getElementById('tab-btn-scaling').style.opacity = '.55';
+  }
+
+  /* ── 8. Workouts tab — benchmarks + user WODs + daily WODs ── */
+  const family = MOVEMENT_FAMILIES[slug] || [];
+
+  let allBenchmarks = [];
+  try {
+    allBenchmarks = await db.getAllBenchmarks();
+  } catch (e) {
+    allBenchmarks = (typeof BENCHMARKS !== 'undefined') ? BENCHMARKS : [];
+  }
+
+  const matchingBenchmarks = allBenchmarks.filter(b =>
+    b.movements && b.movements.some(m => {
+      const ms = slugify(m.name || '');
+      return ms === slug || family.includes(ms);
+    })
+  );
+
+  let matchingUserWorkouts = [];
+  try {
+    const allUserWorkouts = await db.getWorkouts({ isPublic: true, limit: 1000 });
+    matchingUserWorkouts = allUserWorkouts.filter(w =>
+      w.movements && w.movements.some(m => slugify(m.movement || m.name || '') === slug)
+    );
+  } catch (e) { /* silent fail */ }
+
+  let matchingDailyWods = [];
+  try {
+    const recentDailyWods = await generateRecentDailyWods(60);
+    matchingDailyWods = recentDailyWods.filter(w =>
+      w.movements && w.movements.some(m => {
         const ms = slugify(m.name || '');
         return ms === slug || family.includes(ms);
       })
     );
+  } catch (e) { /* silent fail */ }
 
-    // Community (user-generated) workouts from Supabase
-    let matchingUserWorkouts = [];
-    try {
-      const allUserWorkouts = await db.getWorkouts({ isPublic: true, limit: 1000 });
-      matchingUserWorkouts = allUserWorkouts.filter(w =>
-        w.movements && w.movements.some(m => slugify(m.movement || m.name || '') === slug)
-      );
-    } catch (e) {
-      // silent fail
-    }
+  const totalCount = matchingBenchmarks.length + matchingUserWorkouts.length + matchingDailyWods.length;
+  document.getElementById('wod-count').textContent = totalCount;
+  document.getElementById('meta-wods-text').textContent = `Found in ${totalCount} workout${totalCount !== 1 ? 's' : ''}`;
 
-    // Daily WODs — generate last 60 days and filter for this movement
-    let matchingDailyWods = [];
-    try {
-      const recentDailyWods = await generateRecentDailyWods(60);
-      matchingDailyWods = recentDailyWods.filter(w =>
-        w.movements && w.movements.some(m => {
-          const ms = slugify(m.name || '');
-          return ms === slug || family.includes(ms);
-        })
-      );
-    } catch (e) {
-      // silent fail — daily WOD section is optional
-    }
+  const CATEGORY_LABELS = {
+    girl:      'girl',
+    hero:      'hero',
+    open:      'open',
+    games:     'games',
+    partner:   'partner',
+    benchmark: 'benchmark',
+  };
 
-    // ── 5. Render workout count + cards ──────────────────────────────────────
-    const totalCount = matchingBenchmarks.length + matchingUserWorkouts.length + matchingDailyWods.length;
-    document.getElementById('workout-count').textContent = totalCount;
+  if (totalCount === 0) {
+    document.getElementById('wod-grid').innerHTML =
+      `<div style="grid-column:1/-1" class="tab-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <p>No workouts found that include <strong>${displayName}</strong>.<br>
+        <a href="/workouts.html" style="color:var(--or)">Browse all workouts →</a></p>
+      </div>`;
+  } else {
+    const benchmarkCards = matchingBenchmarks.map(w => {
+      const catClass = CATEGORY_LABELS[w.category] || 'benchmark';
+      return `<a href="/workouts/${w.slug}" class="wod-mini-card">
+        <div class="wod-mini-name">${w.name}</div>
+        <div class="wod-mini-meta">${typeof formatWodMeta === 'function' ? formatWodMeta(w) : (w.format || '')}</div>
+        <span class="wod-mini-type">${w.format || 'WOD'}</span>
+        <span class="wod-mini-badge ${catClass}">${catClass.charAt(0).toUpperCase() + catClass.slice(1)} WOD</span>
+      </a>`;
+    }).join('');
 
-    if (totalCount === 0) {
-      document.getElementById('workouts-grid').innerHTML = `
-        <div class="empty-state" style="grid-column: 1/-1;">
-          <p>No workouts found for <strong>${displayName}</strong>.</p>
-          <p style="margin-top: 0.5rem;">
-            <a href="/workouts" style="color: var(--orange);">Browse all workouts &rarr;</a>
-          </p>
-        </div>
-      `;
-    } else {
-      const CATEGORY_LABELS = {
-        girl:      ['badge badge-girl', 'Girl WOD'],
-        hero:      ['badge badge-hero', 'Hero WOD'],
-        open:      ['badge badge-open', 'Open WOD'],
-        games:     ['badge badge-games', 'Games WOD'],
-        partner:   ['badge badge-partner', 'Partner WOD'],
-        benchmark: ['badge badge-benchmark', 'Benchmark'],
-      };
+    const userCards = matchingUserWorkouts.map(w =>
+      `<a href="/workout.html?id=${w.id}" class="wod-mini-card">
+        <div class="wod-mini-name">${w.title || w.name || 'Community WOD'}</div>
+        <div class="wod-mini-meta">${w.format || 'Custom'}${w.username ? ' · by ' + w.username : ''}</div>
+        <span class="wod-mini-type">${w.format || 'Custom'}</span>
+        <span class="wod-mini-badge community">Community</span>
+      </a>`
+    ).join('');
 
-      const benchmarkCards = matchingBenchmarks.map(w => {
-        const [badgeClass, badgeLabel] = CATEGORY_LABELS[w.category] || ['badge', w.category];
-        const videoBadge = w.youtube_url ? `<span class="video-badge">▶ Video</span>` : '';
-        return `
-        <a href="/workouts/${w.slug}" style="text-decoration: none;">
-          <div class="card">
-            <h4>${w.name}${videoBadge}</h4>
-            <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 0.4rem;">
-              ${formatWodMeta(w)}
-            </p>
-            <p style="font-size: 0.85rem; color: var(--text-muted, #888); margin-bottom: 0.75rem;">
-              ${summarizeMovements(w)}
-            </p>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
-              <span class="badge badge-orange">${w.difficulty}</span>
-              <span class="badge badge-orange">${w.body_focus}</span>
-              <span class="${badgeClass}">${badgeLabel}</span>
-            </div>
-          </div>
-        </a>
-      `}).join('');
+    const dailyCards = matchingDailyWods.map(w =>
+      `<a href="/daily-wod?date=${w._date}" class="wod-mini-card">
+        <div class="wod-mini-name">${w.name}</div>
+        <div class="wod-mini-meta">${typeof formatWodMeta === 'function' ? formatWodMeta(w) : (w.format || '')}</div>
+        <span class="wod-mini-type">${w.format || 'Daily'}</span>
+        <span class="wod-mini-badge daily">Daily 20</span>
+      </a>`
+    ).join('');
 
-      const userCards = matchingUserWorkouts.map(w => {
-        const normalizedW = {
-          ...w,
-          movements: (w.movements || []).map(m => ({ ...m, name: m.name || m.movement || '' }))
-        };
-        return `
-        <a href="/workout.html?id=${w.id}" style="text-decoration: none;">
-          <div class="card">
-            <h4>${w.title || w.name || 'Community WOD'}</h4>
-            <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 0.4rem;">
-              ${w.format || 'Custom'} ${w.username ? '&bull; by ' + w.username : ''}
-            </p>
-            <p style="font-size: 0.85rem; color: var(--mu, #888); margin-bottom: 0.75rem;">
-              ${summarizeMovements(normalizedW)}
-            </p>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <span class="badge badge-orange">${w.difficulty || w.level || 'intermediate'}</span>
-              <span class="badge badge-success">Community</span>
-            </div>
-          </div>
-        </a>
-      `;
-      }).join('');
-
-      const dailyWodCards = matchingDailyWods.map(w => `
-        <a href="/daily-wod?date=${w._date}" style="text-decoration: none;">
-          <div class="card">
-            <h4>${w.name}</h4>
-            <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 0.4rem;">
-              ${formatWodMeta(w)}
-            </p>
-            <p style="font-size: 0.85rem; color: var(--text-muted, #888); margin-bottom: 0.75rem;">
-              ${summarizeMovements(w)}
-            </p>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
-              <span class="badge badge-orange">Daily 20</span>
-            </div>
-          </div>
-        </a>
-      `).join('');
-
-      document.getElementById('workouts-grid').innerHTML = benchmarkCards + userCards + dailyWodCards;
-    }
-
-    document.getElementById('movement-content').style.display = '';
+    document.getElementById('wod-grid').innerHTML = benchmarkCards + userCards + dailyCards;
   }
 
-  document.addEventListener('DOMContentLoaded', async () => {
-    await initSupabase();
-    loadMovementPage();
+  /* ── 9. Common Faults tab ── */
+  if (faults.length > 0) {
+    document.getElementById('faults-list').innerHTML = faults.map(f =>
+      `<li class="fault-item">
+        <div class="fault-mistake">
+          <span class="fault-icon">❌</span>
+          <div class="fault-text"><strong>${f.mistake || f.title || 'Common Fault'}</strong>${f.mistakeDetail || f.description || ''}</div>
+        </div>
+        <div class="fault-fix">
+          <span class="fault-fix-icon">✅</span>
+          <div class="fault-fix-text"><strong>The Fix</strong>${f.fix || f.correction || ''}</div>
+        </div>
+      </li>`
+    ).join('');
+  } else {
+    document.getElementById('faults-list').innerHTML =
+      `<div class="tab-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p>Common faults not yet available for this movement.</p></div>`;
+    document.getElementById('tab-btn-faults').style.opacity = '.55';
+  }
+
+  /* ── 10. FAQ card ── */
+  if (faq.length > 0) {
+    document.getElementById('faq-count').textContent = faq.length;
+    document.getElementById('faq-list').innerHTML = faq.map(item =>
+      `<li class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+          ${item.q || item.question || ''}
+          <svg class="faq-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+        </button>
+        <div class="faq-a">${item.a || item.answer || ''}</div>
+      </li>`
+    ).join('');
+    document.getElementById('faq-card').style.display = '';
+  }
+
+  /* ── 11. Related movements sidebar ── */
+  if (related.length > 0) {
+    document.getElementById('related-tags').innerHTML = related.map(r => {
+      const rSlug = r.slug || slugify(r.name || r);
+      const rName = r.name || titleCase(rSlug);
+      return `<a href="/movements/${rSlug}" class="rel-tag">${rName} <span class="arrow">→</span></a>`;
+    }).join('');
+    document.getElementById('related-card').style.display = '';
+  }
+
+  /* ── 12. Equipment sidebar ── */
+  renderEquipment(equipment);
+}
+
+/* ══════════════════════════════════════════
+   AUTH STATE + INIT
+══════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', async () => {
+  await initSupabase();
+
+  // Auth state listener
+  supabaseClient.auth.onAuthStateChange((event, session) => {
+    const guestEl = document.getElementById('nav-guest');
+    const authEl  = document.getElementById('nav-auth');
+    if (session?.user) {
+      if (guestEl) guestEl.style.display = 'none';
+      if (authEl)  authEl.style.display  = 'flex';
+      const user     = session.user;
+      const initials = (user.user_metadata?.display_name || user.email || 'A')
+        .split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 2);
+      const name   = user.user_metadata?.display_name || user.email?.split('@')[0] || 'Athlete';
+      const handle = '@' + (user.email?.split('@')[0] || 'athlete');
+      ['avatar-initials', 'avatar-initials-dd'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = initials;
+      });
+      const nameEl   = document.getElementById('avatar-name-dd');
+      const handleEl = document.getElementById('avatar-handle-dd');
+      if (nameEl)   nameEl.textContent   = name;
+      if (handleEl) handleEl.textContent = handle;
+    } else {
+      if (guestEl) guestEl.style.display = 'flex';
+      if (authEl)  authEl.style.display  = 'none';
+    }
   });
+
+  // Load page data
+  loadMovementPage();
+});
 </script>
+<script src="/js/footer.js"></script>
 </body>
 </html>

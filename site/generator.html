@@ -25,52 +25,56 @@
 <!-- Supabase CDN (only loads when configured) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
+/* ── LIGHT DESIGN COMPATIBILITY VARS ────────────────────────
+   Map dark-theme aliases to light tokens so all inline styles
+   and component CSS resolve correctly without an HTML rewrite. */
 :root{
-  --bg:#111118; --card:#1E1E2C; --dk2:#16161F;
-  --bd:#2E2E42; --tx:#EAEAF0; --mu:#888899;
-  --or:#C41212; --orl:#E03030; --r:12px;
+  --card:#fff; --dk2:var(--bg,#f3f3f3);
+  --bd:var(--border,#e5e5e5); --tx:var(--text,#1a1a1a);
+  --mu:var(--muted,#666); --orl:var(--or,#C41212); --r:var(--radius,10px);
 }
 /* ── GENERATOR-SPECIFIC STYLES ───────────────────────────── */
-.gen-page{max-width:1400px;margin:0 auto;padding:36px 20px 80px}
-.page-hero{margin-bottom:32px}
-.page-hero h1{font-size:30px;font-weight:900;margin-bottom:6px}
-.page-hero p{color:var(--mu);font-size:15px}
+.gen-page{max-width:1160px;margin:0 auto;padding:32px 24px 80px}
+@media(max-width:767px){.gen-page{padding:20px 14px 60px}}
+.gen-page-header{margin-bottom:24px}
+.gen-page-title{font-family:var(--font-head,'Bebas Neue',sans-serif);font-size:2.6rem;letter-spacing:.04em;line-height:1;color:var(--text,#1a1a1a);margin-bottom:6px}
+.gen-page-subtitle{font-size:1rem;color:var(--muted,#666);line-height:1.5}
 
-.section{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:24px;margin-top:20px}
+.section{background:var(--card);border:1.5px solid var(--bd);border-radius:var(--r);padding:24px;margin-top:20px}
 .slabel{font-size:10px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
-.stitle{font-size:16px;font-weight:700;margin-bottom:14px}
+.stitle{font-size:16px;font-weight:700;margin-bottom:14px;color:var(--tx)}
 
 /* equipment grid */
 .eq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(115px,1fr));gap:9px}
-.eq-card{background:var(--dk2);border:2px solid var(--bd);border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .15s;user-select:none}
-.eq-card:hover{border-color:var(--orl)}
-.eq-card.sel{border-color:var(--or);background:rgba(196,18,18,.15);box-shadow:0 0 0 1px var(--or)}
+.eq-card{background:var(--white,#fff);border:1.5px solid var(--bd);border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .15s;user-select:none;color:var(--tx)}
+.eq-card:hover{border-color:var(--or);background:rgba(196,18,18,.04)}
+.eq-card.sel{border-color:var(--or);background:rgba(196,18,18,.08);box-shadow:0 0 0 1px var(--or)}
 .eq-card .icon{font-size:24px;margin-bottom:5px;display:block}
 .eq-card .name{font-size:11px;font-weight:700}
 
 /* body focus */
 .bf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:9px}
-.bf-card{background:var(--dk2);border:2px solid var(--bd);border-radius:10px;padding:12px 10px;text-align:center;cursor:pointer;transition:all .15s;user-select:none}
-.bf-card:hover{border-color:var(--orl)}
-.bf-card.sel{border-color:var(--or);background:rgba(196,18,18,.15)}
+.bf-card{background:var(--white,#fff);border:1.5px solid var(--bd);border-radius:10px;padding:12px 10px;text-align:center;cursor:pointer;transition:all .15s;user-select:none;color:var(--tx)}
+.bf-card:hover{border-color:var(--or);background:rgba(196,18,18,.04)}
+.bf-card.sel{border-color:var(--or);background:rgba(196,18,18,.08)}
 .bf-card .icon{font-size:20px;margin-bottom:4px;display:block}
 .bf-card .name{font-size:12px;font-weight:700;margin-bottom:2px;display:block}
-.bf-card .sub{font-size:10px;color:var(--mu);display:block}
+.bf-card .sub{font-size:10px;color:var(--muted,#666);display:block}
 
 /* pills */
 .pill-group{display:flex;flex-wrap:wrap;gap:8px}
-.pill{background:var(--dk2);border:2px solid var(--bd);border-radius:50px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;user-select:none}
-.pill:hover{border-color:var(--orl)}
-.pill.sel{border-color:var(--or);background:rgba(196,18,18,.15);color:var(--orl)}
+.pill{background:var(--white,#fff);border:1.5px solid var(--bd);border-radius:50px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;user-select:none;color:var(--tx)}
+.pill:hover{border-color:var(--or);color:var(--or)}
+.pill.sel{border-color:var(--or);background:var(--or);color:#fff}
 
 /* slider */
 .slider-row{display:flex;align-items:center;gap:14px;margin-top:8px}
 .sval{font-size:28px;font-weight:900;color:var(--or);min-width:70px;text-align:center}
-.sval small{font-size:11px;color:var(--mu);font-weight:400;display:block}
-input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:12px;background:var(--bd);border-radius:6px;outline:none;cursor:pointer;overflow:visible}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;background:var(--or);border-radius:50%;cursor:pointer;border:3px solid rgba(255,255,255,.2);box-shadow:0 2px 6px rgba(0,0,0,.5)}
-input[type=range]::-moz-range-thumb{width:26px;height:26px;background:var(--or);border-radius:50%;cursor:pointer;border:3px solid rgba(255,255,255,.2);box-shadow:0 2px 6px rgba(0,0,0,.5)}
-input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radius:6px}
+.sval small{font-size:11px;color:var(--muted,#666);font-weight:400;display:block}
+input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:8px;background:var(--bd);border-radius:6px;outline:none;cursor:pointer;overflow:visible}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;background:var(--or);border-radius:50%;cursor:pointer;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;background:var(--or);border-radius:50%;cursor:pointer;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radius:6px}
 
 /* generate button */
 .gen-btn{display:block;width:100%;margin-top:24px;padding:16px;background:var(--or);color:#fff;font-size:16px;font-weight:800;border:none;border-radius:var(--r);cursor:pointer;letter-spacing:.3px;transition:all .2s}
@@ -83,76 +87,76 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
 
 /* workout result */
 #workout-result{display:none;margin-top:26px}
-.res-hdr{background:linear-gradient(135deg,var(--or) 0%,#c44400 100%);border-radius:var(--r) var(--r) 0 0;padding:22px 26px}
-.res-hdr h2{font-size:22px;font-weight:900;color:#fff}
-.res-hdr .rsub{color:rgba(255,255,255,.8);font-size:13px;margin-top:3px}
-.res-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.chip{background:rgba(0,0,0,.25);color:rgba(255,255,255,.9);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
-.res-body{background:var(--card);border:1px solid var(--bd);border-top:none;border-radius:0 0 var(--r) var(--r);padding:24px}
-.wdesc{background:var(--dk2);border-left:3px solid var(--or);padding:12px 16px;border-radius:0 7px 7px 0;font-size:13px;line-height:1.7;margin-bottom:20px}
+.res-hdr{background:linear-gradient(135deg,var(--or) 0%,#8b0000 100%);border-radius:var(--r) var(--r) 0 0;padding:26px 30px}
+.res-hdr h2{font-family:var(--font-head,'Bebas Neue',sans-serif);font-size:2.4rem;letter-spacing:.03em;color:#fff;margin-bottom:4px}
+.res-hdr .rsub{color:rgba(255,255,255,.8);font-size:.9rem;margin-top:3px}
+.res-meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.chip{background:rgba(255,255,255,.15);color:rgba(255,255,255,.9);font-size:.78rem;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.02em}
+.res-body{background:var(--white,#fff);border:1.5px solid var(--bd);border-top:none;border-radius:0 0 var(--r) var(--r);padding:26px 30px}
+.wdesc{background:var(--bg,#f3f3f3);border-left:3px solid var(--or);padding:12px 16px;border-radius:0 7px 7px 0;font-size:.9rem;line-height:1.7;margin-bottom:20px;color:var(--tx)}
 .mov-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px}
-.mov-table th{padding:9px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--bd);background:var(--dk2)}
+.mov-table th{padding:9px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--muted,#666);text-transform:uppercase;letter-spacing:1px;border-bottom:1.5px solid var(--bd);background:var(--bg,#f3f3f3)}
 .mov-table td{padding:11px 12px;border-bottom:1px solid var(--bd);vertical-align:top}
 .mov-table tr:last-child td{border-bottom:none}
-.mov-table tr:hover td{background:rgba(255,255,255,.02)}
-.mname{font-weight:700;font-size:14px}
+.mov-table tr:hover td{background:rgba(0,0,0,.02)}
+.mname{font-weight:700;font-size:14px;color:var(--tx)}
 .mname a{color:var(--tx);text-decoration:none}
-.mname a:hover{color:var(--orl)}
-.mtip{font-size:11px;color:var(--mu);margin-top:2px}
-.rbadge{background:rgba(196,18,18,.18);color:var(--orl);font-weight:800;font-size:13px;padding:3px 11px;border-radius:20px;display:inline-block;border:1px solid var(--or)}
-.score-box{background:var(--dk2);border:1px solid var(--bd);border-radius:9px;padding:16px;margin-bottom:18px}
+.mname a:hover{color:var(--or)}
+.mtip{font-size:11px;color:var(--muted,#666);margin-top:2px}
+.rbadge{background:rgba(196,18,18,.1);color:var(--or);font-weight:800;font-size:13px;padding:3px 11px;border-radius:20px;display:inline-block;border:1px solid rgba(196,18,18,.3)}
+.score-box{background:var(--bg,#f3f3f3);border:1.5px solid var(--bd);border-radius:9px;padding:16px;margin-bottom:18px}
 .score-box h4{font-size:11px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
-.score-box p{font-size:13px;line-height:1.6}
-.res-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:4px}
-.abtn{flex:1;min-width:110px;padding:11px 14px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:7px;text-decoration:none}
+.score-box p{font-size:13px;line-height:1.6;color:var(--tx)}
+.res-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}
+.abtn{flex:1;min-width:110px;padding:11px 14px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;font-family:inherit}
 .abtn.pri{background:var(--or);color:#fff}
-.abtn.pri:hover{background:var(--orl)}
-.abtn.sec{background:var(--dk2);color:var(--tx);border:1px solid var(--bd)}
-.abtn.sec:hover{border-color:var(--or);color:var(--orl)}
-.abtn.gho{background:transparent;color:var(--mu);border:1px solid var(--bd)}
-.abtn.gho:hover{color:var(--tx);border-color:var(--mu)}
+.abtn.pri:hover{background:var(--or-dark,#a00e0e)}
+.abtn.sec{background:var(--white,#fff);color:var(--tx);border:1.5px solid var(--bd)}
+.abtn.sec:hover{border-color:var(--or);color:var(--or)}
+.abtn.gho{background:transparent;color:var(--muted,#666);border:1.5px solid var(--bd)}
+.abtn.gho:hover{color:var(--tx);border-color:#aaa}
 .warmup-cool{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
 @media(max-width:500px){.warmup-cool{grid-template-columns:1fr}}
-.wc-card{background:var(--dk2);border:1px solid var(--bd);border-radius:9px;padding:14px}
-.wc-card h4{font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.wc-card{background:var(--bg,#f3f3f3);border:1.5px solid var(--bd);border-radius:9px;padding:14px}
+.wc-card h4{font-size:11px;font-weight:700;color:var(--muted,#666);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
 .wc-card li{font-size:12px;padding:2px 0;list-style:none;display:flex;align-items:center;gap:7px;color:var(--tx)}
 .wc-card li::before{content:'›';color:var(--or);font-weight:700}
 
 /* modals */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;align-items:center;justify-content:center;padding:20px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.open{display:flex}
-.modal{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:32px;width:100%;max-width:460px;position:relative;max-height:90vh;overflow-y:auto}
-.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--mu);font-size:20px;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:all .15s}
+.modal{background:var(--white,#fff);border:1.5px solid var(--bd);border-radius:16px;padding:32px;width:100%;max-width:460px;position:relative;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted,#666);font-size:20px;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:all .15s}
 .modal-close:hover{background:var(--bd);color:var(--tx)}
-.modal h2{font-size:22px;font-weight:900;margin-bottom:6px}
-.msub{color:var(--mu);font-size:13px;margin-bottom:20px}
+.modal h2{font-size:22px;font-weight:900;margin-bottom:6px;color:var(--tx)}
+.msub{color:var(--muted,#666);font-size:13px;margin-bottom:20px}
 .field{margin-bottom:16px}
-.field label{display:block;font-size:12px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
-.field input,.field textarea,.field select{width:100%;background:var(--dk2);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;color:var(--tx);font-size:14px;outline:none;font-family:inherit}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--muted,#666);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.field input,.field textarea,.field select{width:100%;background:var(--bg,#f3f3f3);border:1.5px solid var(--bd);border-radius:8px;padding:10px 12px;color:var(--tx);font-size:14px;outline:none;font-family:inherit;transition:border-color .15s}
 .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--or)}
 .field textarea{min-height:80px;resize:vertical}
-.modal-btn{width:100%;padding:13px;background:var(--or);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;margin-top:4px;transition:all .2s}
-.modal-btn:hover{background:var(--orl)}
-.modal-link{text-align:center;margin-top:12px;font-size:13px;color:var(--mu)}
+.modal-btn{width:100%;padding:13px;background:var(--or);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;margin-top:4px;transition:all .2s;font-family:inherit}
+.modal-btn:hover{background:var(--or-dark,#a00e0e)}
+.modal-link{text-align:center;margin-top:12px;font-size:13px;color:var(--muted,#666)}
 .modal-link a{color:var(--or);cursor:pointer;text-decoration:none}
 .modal-recovery{display:flex;justify-content:center;gap:16px;margin-top:10px;font-size:12px}
-.modal-recovery a{color:var(--mu);text-decoration:none;cursor:pointer}
+.modal-recovery a{color:var(--muted,#666);text-decoration:none;cursor:pointer}
 .modal-recovery a:hover{color:var(--or);text-decoration:underline}
-.modal-error{background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);color:#E74C3C;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
+.modal-error{background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.4);color:#E74C3C;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
 .modal-error.vis{display:block}
-.modal-success{background:rgba(39,174,96,.15);border:1px solid rgba(39,174,96,.4);color:#27AE60;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
+.modal-success{background:rgba(39,174,96,.1);border:1px solid rgba(39,174,96,.4);color:#27AE60;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
 .modal-success.vis{display:block}
 
 
 .lb-table{width:100%;border-collapse:collapse;font-size:13px}
-.lb-table th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--bd);background:var(--dk2)}
+.lb-table th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--muted,#666);text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--bd);background:var(--dk2)}
 .lb-table td{padding:12px 14px;border-bottom:1px solid var(--bd)}
 .lb-table tr:hover td{background:rgba(255,255,255,.02)}
 .rank-badge{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0}
 .rank-1{background:gold;color:#333}
 .rank-2{background:#C0C0C0;color:#333}
 .rank-3{background:#CD7F32;color:#fff}
-.rank-other{background:var(--dk2);color:var(--mu)}
+.rank-other{background:var(--dk2);color:var(--muted,#666)}
 .lb-user{display:flex;align-items:center;gap:10px}
 .lb-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
 .lb-score{font-weight:800;color:var(--orl)}
@@ -163,7 +167,7 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
 .badge-bl{background:rgba(52,152,219,.2);color:#5dade2;border:1px solid rgba(52,152,219,.3)}
 .badge-gr{background:rgba(39,174,96,.2);color:#58d68d;border:1px solid rgba(39,174,96,.3)}
 .badge-pu{background:rgba(155,89,182,.2);color:#c39bd3;border:1px solid rgba(155,89,182,.3)}
-.badge-mu{background:var(--dk2);color:var(--mu);border:1px solid var(--bd)}
+.badge-mu{background:var(--dk2);color:var(--muted,#666);border:1px solid var(--bd)}
 
 /* toast */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 18px;font-size:14px;font-weight:600;box-shadow:0 8px 32px rgba(0,0,0,.4);transform:translateY(80px);opacity:0;transition:all .3s;z-index:9999;max-width:320px}
@@ -199,54 +203,49 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
   #print-area .pfoot{margin-top:20px;padding-top:10px;border-top:1px solid #ddd;font-size:10px;color:#999;text-align:center}
 }
 
-/* ── MODE TOGGLE ─────────────────────────────────────────────── */
-.gen-mode-toggle{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px}
-@media(max-width:500px){.gen-mode-toggle{grid-template-columns:1fr}}
-.gen-mode-btn{background:var(--card);border:2px solid var(--bd);border-radius:14px;padding:18px 20px;text-align:left;cursor:pointer;transition:all .2s;color:var(--tx);width:100%;display:flex;flex-direction:column;gap:5px}
-.gen-mode-btn:hover{border-color:var(--orl);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.2)}
-.gen-mode-btn.active{border-color:var(--or);background:rgba(196,18,18,.08);box-shadow:0 0 0 1px var(--or)}
-.gen-mode-btn .m-icon{font-size:26px;line-height:1}
-.gen-mode-btn .m-name{font-size:16px;font-weight:800;margin-top:2px}
-.gen-mode-btn .m-sub{font-size:12px;color:var(--mu);line-height:1.4}
-.gen-mode-btn.active .m-sub{color:rgba(196,18,18,.7)}
-.m-badge{background:rgba(39,174,96,.18);color:#58d68d;border:1px solid rgba(39,174,96,.3);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:6px;vertical-align:middle;white-space:nowrap}
+/* ── MODE TOGGLE (tab style) ─────────────────────────────────── */
+.mode-toggle{display:flex;gap:0;border-bottom:2px solid var(--bd);margin-bottom:24px}
+.mode-tab{padding:12px 22px;background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;font-size:.95rem;font-weight:700;color:var(--muted,#666);font-family:inherit;transition:color .15s,border-color .15s;white-space:nowrap;margin-bottom:-2px}
+.mode-tab:hover{color:var(--tx)}
+.mode-tab.active{color:var(--or);border-bottom-color:var(--or)}
+.tab-badge{background:rgba(34,197,94,.1);color:#16a34a;border:1px solid rgba(34,197,94,.3);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:6px;vertical-align:middle;white-space:nowrap}
 
 /* ── CYO BUILDER ─────────────────────────────────────────────── */
-.cyo-mov-builder{border:1px solid var(--bd);border-radius:10px;background:var(--dk2);overflow:visible}
+.cyo-mov-builder{border:1.5px solid var(--bd);border-radius:10px;background:var(--bg,#f3f3f3);overflow:visible}
 .cyo-mov-search-wrap{padding:12px;position:relative}
-.cyo-mov-search-wrap input{width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:11px 14px;color:var(--tx);font-size:14px;outline:none;box-sizing:border-box;transition:border-color .15s}
+.cyo-mov-search-wrap input{width:100%;background:var(--white,#fff);border:1.5px solid var(--bd);border-radius:8px;padding:11px 14px;color:var(--tx);font-size:14px;outline:none;box-sizing:border-box;transition:border-color .15s}
 .cyo-mov-search-wrap input:focus{border-color:var(--or)}
-.cyo-mov-dropdown{position:absolute;top:calc(100% - 4px);left:12px;right:12px;background:var(--card);border:1px solid var(--or);border-radius:10px;z-index:400;max-height:340px;overflow-y:auto;display:none;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+.cyo-mov-dropdown{position:absolute;top:calc(100% - 4px);left:12px;right:12px;background:var(--white,#fff);border:1.5px solid var(--or);border-radius:10px;z-index:400;max-height:340px;overflow-y:auto;display:none;box-shadow:0 8px 24px rgba(0,0,0,.12)}
 .cyo-mov-dropdown.open{display:block}
-.cyo-mov-dd-item{padding:11px 16px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.cyo-mov-dd-item{padding:11px 16px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--tx)}
 .cyo-mov-dd-item:last-child{border-bottom:none}
-.cyo-mov-dd-item:hover{background:rgba(196,18,18,.1);color:var(--orl)}
-.cyo-mov-dd-item .dd-cat{font-size:10px;color:var(--mu);flex-shrink:0}
+.cyo-mov-dd-item:hover{background:rgba(196,18,18,.06);color:var(--or)}
+.cyo-mov-dd-item .dd-cat{font-size:10px;color:var(--muted,#666);flex-shrink:0}
 /* browse mode */
-.cyo-browse-cats{display:flex;flex-wrap:wrap;gap:5px;padding:10px 12px;border-bottom:1px solid var(--bd);background:var(--dk2);position:sticky;top:0;z-index:1}
-.cyo-cat-chip{background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:4px 11px;font-size:11px;font-weight:700;cursor:pointer;color:var(--mu);transition:all .15s;white-space:nowrap;font-family:inherit}
-.cyo-cat-chip:hover{border-color:var(--or);color:var(--orl)}
-.cyo-cat-chip.active{background:rgba(196,18,18,.15);border-color:var(--or);color:var(--orl)}
-.cyo-browse-count{font-size:10px;color:var(--mu);padding:6px 16px 2px;font-style:italic}
-.cyo-browse-more{padding:10px 16px;font-size:11px;color:var(--mu);text-align:center;border-top:1px solid var(--bd);font-style:italic}
+.cyo-browse-cats{display:flex;flex-wrap:wrap;gap:5px;padding:10px 12px;border-bottom:1px solid var(--bd);background:var(--bg,#f3f3f3);position:sticky;top:0;z-index:1}
+.cyo-cat-chip{background:var(--white,#fff);border:1.5px solid var(--bd);border-radius:20px;padding:4px 11px;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted,#666);transition:all .15s;white-space:nowrap;font-family:inherit}
+.cyo-cat-chip:hover{border-color:var(--or);color:var(--or)}
+.cyo-cat-chip.active{background:rgba(196,18,18,.1);border-color:var(--or);color:var(--or)}
+.cyo-browse-count{font-size:10px;color:var(--muted,#666);padding:6px 16px 2px;font-style:italic}
+.cyo-browse-more{padding:10px 16px;font-size:11px;color:var(--muted,#666);text-align:center;border-top:1px solid var(--bd);font-style:italic}
 .cyo-mov-list{padding:4px 12px 12px}
-.cyo-mov-empty{padding:24px;text-align:center;color:var(--mu);font-size:13px;font-style:italic}
-.cyo-mov-count{font-size:11px;color:var(--mu);padding:4px 0 10px}
-.cyo-mov-row{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--bd);border-radius:9px;padding:11px 14px;margin-bottom:7px;transition:border-color .15s}
-.cyo-mov-row:hover{border-color:var(--bd)}
+.cyo-mov-empty{padding:24px;text-align:center;color:var(--muted,#666);font-size:13px;font-style:italic}
+.cyo-mov-count{font-size:11px;color:var(--muted,#666);padding:4px 0 10px}
+.cyo-mov-row{display:flex;align-items:center;gap:8px;background:var(--white,#fff);border:1.5px solid var(--bd);border-radius:9px;padding:11px 14px;margin-bottom:7px;transition:border-color .15s}
+.cyo-mov-row:hover{border-color:var(--or)}
 .cyo-mov-row-num{font-size:12px;font-weight:900;color:var(--or);min-width:18px;text-align:center}
-.cyo-mov-row-name{font-size:14px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.cyo-mov-row input{background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:7px 10px;color:var(--tx);font-size:13px;outline:none;font-family:inherit;transition:border-color .15s}
+.cyo-mov-row-name{font-size:14px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--tx)}
+.cyo-mov-row input{background:var(--bg,#f3f3f3);border:1.5px solid var(--bd);border-radius:7px;padding:7px 10px;color:var(--tx);font-size:13px;outline:none;font-family:inherit;transition:border-color .15s}
 .cyo-mov-row input:focus{border-color:var(--or)}
 .cyo-mov-row-reps{width:100px;min-width:100px;text-align:center}
 .cyo-mov-row-tip{flex:1;min-width:80px}
-.cyo-mov-row-tip::placeholder{color:var(--mu)}
+.cyo-mov-row-tip::placeholder{color:var(--muted,#666)}
 .cyo-mov-row-del{background:none;border:none;color:#e74c3c;font-size:20px;cursor:pointer;padding:2px 5px;opacity:.4;transition:opacity .15s;line-height:1;flex-shrink:0}
 .cyo-mov-row-del:hover{opacity:1}
 .cyo-gate{text-align:center;padding:48px 24px}
 .cyo-gate .g-icon{font-size:52px;margin-bottom:16px}
-.cyo-gate h3{font-size:22px;font-weight:900;margin-bottom:8px}
-.cyo-gate p{color:var(--mu);font-size:14px;max-width:360px;margin:0 auto 20px}
+.cyo-gate h3{font-size:22px;font-weight:900;margin-bottom:8px;color:var(--tx)}
+.cyo-gate p{color:var(--muted,#666);font-size:14px;max-width:360px;margin:0 auto 20px}
 .cyo-gate-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 </style>
   <!-- Google tag (gtag.js) -->
@@ -269,25 +268,15 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
 <div class="gen-page">
 
   <!-- Page header -->
-  <div style="display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:24px">
-    <div>
-      <h1 style="font-size:26px;font-weight:900;margin:0 0 4px">Smart WOD Builder</h1>
-      <p style="color:var(--mu);font-size:14px;margin:0">Generate a custom workout or build your own from scratch</p>
-    </div>
+  <div class="gen-page-header">
+    <h1 class="gen-page-title">Smart WOD Builder</h1>
+    <p class="gen-page-subtitle">Generate a custom workout in seconds, or build your own from scratch</p>
   </div>
 
-  <!-- Mode Toggle -->
-  <div class="gen-mode-toggle">
-    <button class="gen-mode-btn active" id="mode-btn-generate" onclick="setGenMode('generate')">
-      <span class="m-icon">⚡</span>
-      <span class="m-name">Smart WOD Builder</span>
-      <span class="m-sub">Answer a few questions — I'll build the workout for you</span>
-    </button>
-    <button class="gen-mode-btn" id="mode-btn-create" onclick="setGenMode('create')">
-      <span class="m-icon">✏️</span>
-      <span class="m-name">Create Your Own</span>
-      <span class="m-sub">Build it movement by movement<span class="m-badge" id="cyo-free-badge">Free Account</span></span>
-    </button>
+  <!-- Mode Toggle (tabs) -->
+  <div class="mode-toggle">
+    <button class="mode-tab active" id="mode-btn-generate" onclick="setGenMode('generate')">⚡ Smart WOD Builder</button>
+    <button class="mode-tab" id="mode-btn-create" onclick="setGenMode('create')">✏️ Create Your Own <span class="tab-badge" id="cyo-free-badge">Free Account</span></button>
   </div>
 
   <!-- ── GENERATE MODE ─────────────────────────────────────── -->
@@ -319,7 +308,7 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
   <!-- Body Focus -->
   <div class="section">
     <div class="slabel">Step 2</div>
-    <div class="stitle">What do you want to target? <span style="font-size:12px;font-weight:500;color:var(--mu);margin-left:6px">— select one or more</span></div>
+    <div class="stitle">What do you want to target? <span style="font-size:12px;font-weight:500;color:var(--muted,#666);margin-left:6px">— select one or more</span></div>
     <div class="bf-grid" id="bf-grid">
       <label class="bf-card sel" data-val="full-body" data-exclusive="true"><span class="icon">🔥</span><span class="name">Full Body</span><span class="sub">All muscle groups</span></label>
       <label class="bf-card" data-val="upper-body"><span class="icon">💪</span><span class="name">Upper Body</span><span class="sub">Push + Pull</span></label>
@@ -431,8 +420,8 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
       <div class="section">
         <div class="slabel">Workout Details</div>
         <div class="stitle">Name your workout</div>
-        <input type="text" id="cyo-title" placeholder="e.g. Monday Grinder, Leg Day Special…" style="width:100%;background:var(--dk2);border:1px solid var(--bd);border-radius:8px;padding:11px 14px;color:var(--tx);font-size:15px;outline:none;margin-bottom:12px;box-sizing:border-box" onfocus="this.style.borderColor='var(--or)'" onblur="this.style.borderColor='var(--bd)'">
-        <textarea id="cyo-desc" placeholder="What's this workout about? Scaling notes, intent, who it's for…" style="width:100%;background:var(--dk2);border:1px solid var(--bd);border-radius:8px;padding:11px 14px;color:var(--tx);font-size:13px;outline:none;min-height:70px;resize:vertical;box-sizing:border-box;font-family:inherit" onfocus="this.style.borderColor='var(--or)'" onblur="this.style.borderColor='var(--bd)'"></textarea>
+        <input type="text" id="cyo-title" placeholder="e.g. Monday Grinder, Leg Day Special…" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-size:15px;outline:none;margin-bottom:12px;box-sizing:border-box;transition:border-color .15s" onfocus="this.style.borderColor='var(--or)'" onblur="this.style.borderColor='var(--border)'">
+        <textarea id="cyo-desc" placeholder="What's this workout about? Scaling notes, intent, who it's for…" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-size:13px;outline:none;min-height:70px;resize:vertical;box-sizing:border-box;font-family:inherit;transition:border-color .15s" onfocus="this.style.borderColor='var(--or)'" onblur="this.style.borderColor='var(--border)'"></textarea>
       </div>
 
       <div class="section">
@@ -473,12 +462,12 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
         <div class="stitle">Duration & difficulty</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
           <div>
-            <div style="font-size:12px;color:var(--mu);margin-bottom:8px">Time cap — <strong id="cyo-dur-val" style="color:var(--or)">20</strong> min</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Time cap — <strong id="cyo-dur-val" style="color:var(--or)">20</strong> min</div>
             <input type="range" id="cyo-duration" min="5" max="90" step="5" value="20" style="width:100%;accent-color:var(--or)" oninput="document.getElementById('cyo-dur-val').textContent=this.value">
-            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mu);margin-top:4px"><span>5 min</span><span>90 min</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted,#666);margin-top:4px"><span>5 min</span><span>90 min</span></div>
           </div>
           <div>
-            <div style="font-size:12px;color:var(--mu);margin-bottom:8px">Experience level</div>
+            <div style="font-size:12px;color:var(--muted,#666);margin-bottom:8px">Experience level</div>
             <div class="pill-group" id="cyo-level-group">
               <label class="pill" data-val="beginner">🌱 Beginner</label>
               <label class="pill sel" data-val="intermediate">🔥 Intermediate</label>
@@ -503,20 +492,20 @@ input[type=range]::-moz-range-track{height:12px;background:var(--bd);border-radi
       <div class="section">
         <div class="slabel">Step 5</div>
         <div class="stitle">Scoring</div>
-        <input type="text" id="cyo-scoring" placeholder="e.g. Total rounds + reps completed, Time to finish, Max load" style="width:100%;background:var(--dk2);border:1px solid var(--bd);border-radius:8px;padding:11px 14px;color:var(--tx);font-size:14px;outline:none;box-sizing:border-box" onfocus="this.style.borderColor='var(--or)'" onblur="this.style.borderColor='var(--bd)'">
+        <input type="text" id="cyo-scoring" placeholder="e.g. Total rounds + reps completed, Time to finish, Max load" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-size:14px;outline:none;box-sizing:border-box;transition:border-color .15s" onfocus="this.style.borderColor='var(--or)'" onblur="this.style.borderColor='var(--border)'">
       </div>
 
       <!-- Save options -->
       <div class="section" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
         <div style="display:flex;align-items:center;gap:10px">
-          <label style="font-size:14px;cursor:pointer;display:flex;align-items:center;gap:7px"><input type="checkbox" id="cyo-public" style="accent-color:var(--or)"> Share with community</label>
+          <label style="font-size:14px;cursor:pointer;display:flex;align-items:center;gap:7px;color:var(--text)"><input type="checkbox" id="cyo-public" style="accent-color:var(--or)"> Share with community</label>
         </div>
         <div style="display:flex;gap:10px">
           <button class="abtn sec" style="flex:unset" onclick="cyoReset()">🔄 Start Over</button>
           <button class="abtn pri" style="flex:unset" id="cyo-save-btn" onclick="cyoSave()">💾 Save Workout</button>
         </div>
       </div>
-      <div id="cyo-alert" style="display:none;background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);color:#e74c3c;border-radius:8px;padding:12px 16px;font-size:13px;margin-top:8px"></div>
+      <div id="cyo-alert" style="display:none;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.4);color:#e74c3c;border-radius:8px;padding:12px 16px;font-size:13px;margin-top:8px"></div>
 
     </div><!-- /cyo-builder -->
   </div><!-- /gen-mode-create -->
@@ -1040,7 +1029,7 @@ function renderWorkout(w) {
     <tr>
       <td><div class="mname"><a href="/movements/${slugify(r.movement)}">${r.movement}</a></div>${r.tip ? `<div class="mtip">💡 ${r.tip}</div>` : ''}</td>
       <td><span class="rbadge">${r.reps}</span></td>
-      <td style="color:var(--mu);font-size:12px">${r.tip || ''}</td>
+      <td style="color:var(--muted,#666);font-size:12px">${r.tip || ''}</td>
     </tr>`).join('');
   document.getElementById('wod-scoring').textContent = w.scoring;
 
@@ -1405,7 +1394,7 @@ function cyoSearchMovements() {
     const matches = cyoAllMovements.filter(m => m.name.toLowerCase().includes(q)).slice(0, 15);
     cyoDropdownResults = matches;
     if (!matches.length) {
-      dd.innerHTML = '<div class="cyo-mov-dd-item" style="color:var(--mu);cursor:default">No movements found</div>';
+      dd.innerHTML = '<div class="cyo-mov-dd-item" style="color:var(--muted,#666);cursor:default">No movements found</div>';
       dd.classList.add('open'); return;
     }
     dd.innerHTML = matches.map((m, i) =>
@@ -1417,7 +1406,7 @@ function cyoSearchMovements() {
 
 function cyoShowBrowseMode(dd) {
   if (!cyoAllMovements.length) {
-    dd.innerHTML = '<div class="cyo-mov-dd-item" style="color:var(--mu);cursor:default">Loading movement library…</div>';
+    dd.innerHTML = '<div class="cyo-mov-dd-item" style="color:var(--muted,#666);cursor:default">Loading movement library…</div>';
     dd.classList.add('open');
     // Retry once loaded
     setTimeout(() => {
