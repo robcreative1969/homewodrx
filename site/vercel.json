@@ -11,6 +11,7 @@
     { "src": "/movements/([^/]+)", "dest": "/movement.html" },
     { "src": "/workouts/([^/]+)",  "dest": "/workout.html"  },
     { "src": "/stretches/([^/]+)", "dest": "/stretch-movement.html" },
+    { "src": "/stretch-routines/([^/]+)", "dest": "/stretch-routine.html" },
     { "src": "/u/([^/]+)",         "dest": "/profile.html"  },
     { "src": "^/(.*)\\.html$", "headers": { "Location": "/$1" }, "status": 308 },
     { "handle": "filesystem" },
