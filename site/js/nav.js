@@ -107,8 +107,7 @@ const Nav = {
     <div class="nav-dd${sA}" id="dd-stretch">
       <button class="nav-btn${sA}" onclick="toggleDD('dd-stretch')">Stretch<svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 6 8 10 12 6"/></svg></button>
       <div class="dd-panel">
-        <a href="/stretch.html"><div class="dl"><strong>The Daily 10</strong><small>Today's free stretch &amp; mobility session</small></div></a>
-        <a href="/stretch.html#generator"><div class="dl"><strong>Stretch Generator</strong><small>Auto-build a recovery routine</small></div></a>
+        <a href="/stretch.html"><div class="dl"><strong>Stretch Builder</strong><small>Auto-build a recovery routine</small></div></a>
         <a href="/stretches.html"><div class="dl"><strong>Browse Stretches</strong><small>Full stretch movement library</small></div></a>
         <a href="/stretch-routines.html"><div class="dl"><strong>Stretch Routines</strong><small>Curated mobility programs</small></div></a>
       </div>
@@ -210,8 +209,7 @@ const Nav = {
   <div class="ham-section">
     <div class="ham-section-title">Stretch</div>
     <div class="ham-links">
-      <a href="/stretch.html" class="ham-link">The Daily 10</a>
-      <a href="/stretch.html#generator" class="ham-link">Stretch Generator</a>
+      <a href="/stretch.html" class="ham-link">Stretch Builder</a>
       <a href="/stretches.html" class="ham-link">Browse Stretches</a>
       <a href="/stretch-routines.html" class="ham-link">Stretch Routines</a>
     </div>
