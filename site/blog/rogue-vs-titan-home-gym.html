@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Sentry Error Monitoring -->
+  <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rogue vs. Titan: Which Home Gym Brand Is Right for You? | HomeWODrx Blog</title>
+  <meta name="description" content="Rogue or Titan? We break down the real differences in quality, price, and value so garage gym athletes can make a confident choice before they spend.">
+  <meta property="og:title" content="Rogue vs. Titan: Which Home Gym Brand Is Right for You? | HomeWODrx">
+  <meta property="og:description" content="Rogue or Titan? We break down the real differences in quality, price, and value so garage gym athletes can make a confident choice before they spend.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://homewodrx.com/blog/rogue-vs-titan-home-gym">
+  <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://homewodrx.com/images/og-default.png">
+  <link rel="canonical" href="https://homewodrx.com/blog/rogue-vs-titan-home-gym">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Rogue vs. Titan: Which Home Gym Brand Is Right for You?",
+    "description": "A practical breakdown of Rogue Fitness vs. Titan Fitness for garage gym builders — covering racks, barbells, plates, and who each brand serves best.",
+    "datePublished": "2026-04-27",
+    "dateModified": "2026-04-27",
+    "author": { "@type": "Organization", "name": "HomeWODrx" },
+    "publisher": { "@type": "Organization", "name": "HomeWODrx", "url": "https://homewodrx.com" },
+    "url": "https://homewodrx.com/blog/rogue-vs-titan-home-gym",
+    "mainEntityOfPage": "https://homewodrx.com/blog/rogue-vs-titan-home-gym",
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://homewodrx.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://homewodrx.com/blog" },
+        { "@type": "ListItem", "position": 3, "name": "Rogue vs. Titan: Which Home Gym Brand Is Right for You?", "item": "https://homewodrx.com/blog/rogue-vs-titan-home-gym" }
+      ]
+    }
+  }
+  </script>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/db.js"></script>
+  <style>
+    .post-container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+    .post-breadcrumb {
+      padding: 20px 0 0;
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .post-breadcrumb a { color: var(--muted); text-decoration: none; }
+    .post-breadcrumb a:hover { color: var(--or); }
+    .post-breadcrumb .sep { color: var(--border); }
+
+    .post-header {
+      padding: 28px 0 32px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 36px;
+    }
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .post-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      background: rgba(37,99,235,.15);
+      color: #60a5fa;
+    }
+    .post-date, .post-readtime { font-size: 13px; color: var(--muted); }
+    .post-header h1 {
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      letter-spacing: -.3px;
+    }
+    .post-header .post-intro {
+      font-size: 17px;
+      color: var(--muted);
+      line-height: 1.75;
+      margin: 0;
+    }
+
+    .post-body { font-size: 16px; line-height: 1.8; color: var(--text); }
+    .post-body h2 {
+      font-size: 22px;
+      font-weight: 800;
+      margin: 40px 0 14px;
+      border-left: 3px solid var(--or);
+      padding-left: 14px;
+    }
+    .post-body h3 { font-size: 18px; font-weight: 700; margin: 28px 0 10px; }
+    .post-body p { margin-bottom: 20px; }
+    .post-body ul, .post-body ol { margin: 0 0 20px 20px; }
+    .post-body li { margin-bottom: 8px; line-height: 1.7; }
+    .post-body strong { font-weight: 700; }
+    .post-body a { color: var(--or); text-decoration: none; font-weight: 600; }
+    .post-body a:hover { color: var(--or-dark); }
+
+    .callout {
+      background: rgba(37,99,235,.07);
+      border: 1px solid rgba(37,99,235,.25);
+      border-left: 3px solid #2563eb;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 28px 0;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+    .callout strong { color: #60a5fa; }
+
+    /* comparison table */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 28px 0;
+      font-size: 15px;
+    }
+    .compare-table th {
+      background: var(--white);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+    .compare-table td {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+      color: var(--text);
+    }
+    .compare-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+    .compare-table .winner { color: #60a5fa; font-weight: 700; }
+
+    .post-related {
+      border-top: 1px solid var(--border);
+      padding-top: 36px;
+      margin-top: 52px;
+    }
+    .post-related h3 {
+      font-size: 16px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .related-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+      text-decoration: none;
+      transition: border-color .15s;
+    }
+    .related-card:hover { border-color: var(--or); }
+    .related-card .r-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .related-card h4 { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.35; }
+  </style>
+</head>
+<body data-nav-init="true" data-active-page="blog">
+<main>
+  <div class="post-container">
+
+    <nav class="post-breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span class="sep">›</span>
+      <a href="/blog">Blog</a>
+      <span class="sep">›</span>
+      <span>Rogue vs. Titan</span>
+    </nav>
+
+    <header class="post-header">
+      <div class="post-meta">
+        <span class="post-tag">Equipment</span>
+        <span class="post-date">April 27, 2026</span>
+        <span class="post-readtime">· 6 min read</span>
+      </div>
+      <h1>Rogue vs. Titan: Which Home Gym Brand Is Right for You?</h1>
+      <p class="post-intro">Two brands dominate the garage gym conversation — one on reputation, one on value. Here's how to choose without second-guessing yourself for the next two years.</p>
+    </header>
+
+    <article class="post-body">
+
+      <p>If you've spent more than ten minutes researching home gym equipment, you've run into this debate. Rogue Fitness and Titan Fitness sit at the top of almost every recommendation list for functional fitness training, and for good reason — both make equipment that will outlast most people's motivation to own a garage gym. But they're not interchangeable. The right pick depends on your budget, your training goals, and how much you care about domestic manufacturing and brand support.</p>
+
+      <p>This isn't a takedown of either brand. It's a practical breakdown so you can make a decision and stop agonizing.</p>
+
+      <h2>The Short Version</h2>
+
+      <p><strong>Rogue</strong> is the premium option. Equipment is largely manufactured in Columbus, Ohio. The fit and finish is excellent, the knurling on their barbells is particularly well-regarded, and their customer support has a strong reputation. You pay for all of that.</p>
+
+      <p><strong>Titan Fitness</strong> manufactures overseas and passes the savings to you. Quality has improved substantially over the past several years. For athletes who are budget-conscious or building out a complete setup from scratch, Titan often makes more sense per dollar spent — especially on racks and plate storage.</p>
+
+      <div class="callout">
+        <strong>Rule of thumb:</strong> If you have the budget and want to buy once and never think about it again, go Rogue. If you're outfitting a full garage gym and need to spread money across multiple pieces, Titan stretches further.
+      </div>
+
+      <h2>Head-to-Head by Category</h2>
+
+      <h3>Power Racks and Squat Stands</h3>
+
+      <p>This is where Titan earns its reputation. Their T-3 and T-6 series racks are structurally sound, compatible with a wide range of j-cups and accessories, and priced significantly below comparable Rogue offerings. For most garage gym athletes doing barbell squats, bench press, and strict press at home, a quality Titan rack is hard to argue against at its price point.</p>
+
+      <!-- AFFILIATE: update with Titan T-3/T-6 rack product link when approved -->
+      <!-- AFFILIATE: update with Rogue R-3/R-4 rack product link when approved -->
+
+      <p>Rogue racks are stiffer, have tighter tolerances, and the Monster series is genuinely overbuilt for a home environment (which some people love). If you're lifting seriously heavy or want Monster-compatible accessories — and you plan to keep this rack for 20 years — Rogue makes sense. If you're training at intermediate loads, Titan gets you 85–90% of the way there at 60% of the price.</p>
+
+      <h3>Barbells</h3>
+
+      <p>This is where Rogue's edge is most noticeable. Their barbells — especially the Ohio Bar variants — have a feel that's hard to match at a lower price. The knurling is sharp enough to grip without tearing your hands, the whip is appropriate for the movement (more on pulling bars, less on power bars), and the finish options are well thought out.</p>
+
+      <!-- AFFILIATE: update with Rogue Ohio Bar / Ohio Power Bar product link when approved -->
+      <!-- AFFILIATE: update with Titan barbell product link when approved -->
+
+      <p>Titan's barbells are functional and adequate for most training. They're a step down in feel from Rogue, but not by enough to affect your performance — especially if you're not yet lifting at a level where barbell feel is a limiting factor. For a first barbell purchase, a quality Titan bar is a reasonable starting point.</p>
+
+      <h3>Bumper Plates</h3>
+
+      <p>Both brands offer bumper plates that work fine for functional fitness training. The main differences are in durometer (how hard the rubber is), shore hardness consistency across batches, and color calibration on competition-style plates. For general training — dropping a barbell from overhead, deadlifts, cleans — either brand will hold up.</p>
+
+      <!-- AFFILIATE: update with bumper plate product links (Rogue HG 2.0 / Titan) when programs approved -->
+
+      <p>If you're buying your first set of bumpers, Titan's economy sets or color bumpers are worth considering. If you want plates that match competition feel and spec, Rogue's calibrated or competition-grade options are the step up.</p>
+
+      <h3>Accessories (Pull-up Rigs, GHDs, Plyo Boxes)</h3>
+
+      <p>Rogue dominates in accessories. Their freestanding pull-up rigs, GHD machines, and specialty equipment are simply better — both in build quality and in how they feel to use. If accessories are a core part of your setup, the gap between the two brands is wider here than anywhere else.</p>
+
+      <!-- AFFILIATE: update with Rogue Monster Lite rig / Titan accessory links when approved -->
+
+      <p>Titan's accessory lineup is growing and improving, but it lags behind. For a basic setup — a rack with pull-up bar, a barbell, plates, and maybe a few dumbbells or kettlebells — Titan is competitive. The more specialized your setup, the more Rogue pulls ahead.</p>
+
+      <h2>The Decision Framework</h2>
+
+      <table class="compare-table" aria-label="Rogue vs. Titan comparison">
+        <thead>
+          <tr>
+            <th>If you...</th>
+            <th>Consider</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Have a flexible budget and want to buy once</td>
+            <td class="winner">Rogue</td>
+          </tr>
+          <tr>
+            <td>Are outfitting a full gym on a tight budget</td>
+            <td class="winner">Titan</td>
+          </tr>
+          <tr>
+            <td>Care deeply about domestic manufacturing</td>
+            <td class="winner">Rogue</td>
+          </tr>
+          <tr>
+            <td>Need a solid rack and can prioritize spending on a better barbell</td>
+            <td class="winner">Titan rack + Rogue bar</td>
+          </tr>
+          <tr>
+            <td>Are buying your first barbell</td>
+            <td class="winner">Either; Titan saves money</td>
+          </tr>
+          <tr>
+            <td>Need specialized accessories (GHD, specialty bars, rigs)</td>
+            <td class="winner">Rogue</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>The Mixed Approach</h2>
+
+      <p>Many experienced garage gym athletes end up with equipment from both brands — and that's a legitimate strategy. A Titan rack as the foundation, a Rogue barbell for daily lifting, and Titan or off-brand bumper plates if cost is a concern. The brands use the same plate diameter standards, so mixing and matching is straightforward.</p>
+
+      <p>If you're starting from zero and trying to figure out where to put your money, prioritize the barbell. You touch it every session. A quality barbell from a reputable manufacturer will outlast almost anything else in your gym. Everything else is secondary.</p>
+
+      <div class="callout">
+        <strong>Already have your setup?</strong> Use <a href="/generator">the WOD generator</a> to build workouts around the equipment you have — no full rig required.
+      </div>
+
+      <h2>Final Thoughts</h2>
+
+      <p>The Rogue vs. Titan debate has a reasonable answer: it depends on your budget and what you value. Neither brand makes bad equipment. Rogue costs more and delivers more. Titan costs less and delivers enough for most athletes at most training levels. Buy the best barbell your budget allows, get a structurally sound rack from either brand, and stop overthinking the rest. The goal is to train consistently — not to own the most impressive garage gym on the block.</p>
+
+      <p>Once you have your setup dialed in, check out our <a href="/workouts">workout library</a> or the <a href="/generator">Daily WOD generator</a> to put it to use. And if you're still figuring out what equipment you actually need first, our <a href="/blog/best-home-gym-equipment">home gym equipment guide</a> is the right starting point.</p>
+
+    </article>
+
+    <section class="post-related">
+      <h3>More from the blog</h3>
+      <div class="related-grid">
+        <a href="/blog/best-home-gym-equipment" class="related-card">
+          <div class="r-tag">Equipment</div>
+          <h4>Best Home Gym Equipment for Functional Fitness Training (2026 Guide)</h4>
+        </a>
+        <a href="/blog/weekly-training-program-home" class="related-card">
+          <div class="r-tag">Programming</div>
+          <h4>How to Build Your Own Weekly Training Program at Home</h4>
+        </a>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script src="/js/nav.js"></script>
+<script src="/js/footer.js"></script>
+</body>
+</html>

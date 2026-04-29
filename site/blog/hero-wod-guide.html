@@ -43,10 +43,12 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="/js/config.js"></script>
   <script src="/js/db.js"></script>
-  <script src="/js/nav.js"></script>
   <style>
     .post-container {
       max-width: 760px;
@@ -56,19 +58,19 @@
     .post-breadcrumb {
       padding: 20px 0 0;
       font-size: 13px;
-      color: var(--mu);
+      color: var(--muted);
       display: flex;
       align-items: center;
       gap: 6px;
       flex-wrap: wrap;
     }
-    .post-breadcrumb a { color: var(--mu); text-decoration: none; }
+    .post-breadcrumb a { color: var(--muted); text-decoration: none; }
     .post-breadcrumb a:hover { color: var(--or); }
-    .post-breadcrumb .sep { color: var(--bd); }
+    .post-breadcrumb .sep { color: var(--border); }
 
     .post-header {
       padding: 28px 0 32px;
-      border-bottom: 1px solid var(--bd);
+      border-bottom: 1px solid var(--border);
       margin-bottom: 36px;
     }
     .post-meta {
@@ -90,7 +92,7 @@
     }
     .post-date, .post-readtime {
       font-size: 13px;
-      color: var(--mu);
+      color: var(--muted);
     }
     .post-header h1 {
       font-size: clamp(24px, 4vw, 36px);
@@ -101,18 +103,18 @@
     }
     .post-header .post-intro {
       font-size: 17px;
-      color: var(--mu);
+      color: var(--muted);
       line-height: 1.75;
       margin: 0;
     }
 
     /* Article body */
-    .post-body { font-size: 16px; line-height: 1.8; color: var(--tx); }
+    .post-body { font-size: 16px; line-height: 1.8; color: var(--text); }
     .post-body h2 {
       font-size: 22px;
       font-weight: 800;
       margin: 40px 0 14px;
-      color: var(--tx);
+      color: var(--text);
       border-left: 3px solid var(--or);
       padding-left: 14px;
     }
@@ -120,14 +122,14 @@
       font-size: 18px;
       font-weight: 700;
       margin: 28px 0 10px;
-      color: var(--tx);
+      color: var(--text);
     }
     .post-body p { margin-bottom: 20px; }
     .post-body ul, .post-body ol {
       margin: 0 0 20px 20px;
     }
     .post-body li { margin-bottom: 8px; line-height: 1.7; }
-    .post-body strong { color: var(--tx); font-weight: 700; }
+    .post-body strong { color: var(--text); font-weight: 700; }
 
     /* Callout box */
     .callout {
@@ -139,14 +141,14 @@
       margin: 28px 0;
       font-size: 15px;
       line-height: 1.7;
-      color: var(--tx);
+      color: var(--text);
     }
     .callout strong { color: var(--or); }
 
     /* WOD preview card */
     .wod-card {
-      background: var(--card);
-      border: 1px solid var(--bd);
+      background: var(--white);
+      border: 1px solid var(--border);
       border-radius: 10px;
       padding: 18px 22px;
       margin: 24px 0;
@@ -164,9 +166,9 @@
       font-size: 17px;
       font-weight: 800;
       margin-bottom: 10px;
-      color: var(--tx);
+      color: var(--text);
     }
-    .wod-card p { color: var(--mu); margin-bottom: 10px; font-size: 14px; line-height: 1.65; }
+    .wod-card p { color: var(--muted); margin-bottom: 10px; font-size: 14px; line-height: 1.65; }
     .wod-card a.wod-link {
       display: inline-flex;
       align-items: center;
@@ -176,11 +178,11 @@
       color: var(--or);
       text-decoration: none;
     }
-    .wod-card a.wod-link:hover { color: var(--orl); }
+    .wod-card a.wod-link:hover { color: var(--or-dark); }
 
     /* Related posts */
     .post-related {
-      border-top: 1px solid var(--bd);
+      border-top: 1px solid var(--border);
       padding-top: 36px;
       margin-top: 52px;
     }
@@ -189,7 +191,7 @@
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: .5px;
-      color: var(--mu);
+      color: var(--muted);
       margin-bottom: 20px;
     }
     .related-grid {
@@ -198,8 +200,8 @@
       gap: 16px;
     }
     .related-card {
-      background: var(--card);
-      border: 1px solid var(--bd);
+      background: var(--white);
+      border: 1px solid var(--border);
       border-radius: 10px;
       padding: 16px 18px;
       text-decoration: none;
@@ -211,13 +213,13 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: .5px;
-      color: var(--mu);
+      color: var(--muted);
       margin-bottom: 6px;
     }
     .related-card h4 {
       font-size: 15px;
       font-weight: 700;
-      color: var(--tx);
+      color: var(--text);
       line-height: 1.35;
     }
   </style>
@@ -367,5 +369,8 @@
 
   </div>
 </main>
+
+<script src="/js/nav.js"></script>
+<script src="/js/footer.js"></script>
 </body>
 </html>
