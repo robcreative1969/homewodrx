@@ -530,13 +530,9 @@ function clearAllFilters() {
 // ─────────────────────────────────────────
 async function loadFromSupabase() {
   try {
-    // Wait for supabaseClient (initialized by db.js)
-    let attempts = 0;
-    while (!supabaseClient && attempts < 40) {
-      await new Promise(r => setTimeout(r, 100));
-      attempts++;
-    }
-    if (!supabaseClient) return;
+    // Ensure Supabase client is ready (initSupabase defined in db.js)
+    if (!supabaseClient) await initSupabase();
+    if (!supabaseClient) return; // Not configured — keep local data
 
     const { data, error } = await supabaseClient
       .from('benchmark_workouts')
@@ -626,8 +622,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('sort-select').addEventListener('change', e => { sortBy = e.target.value; render(); });
 
   render();
-  initAuth();
-  loadFromSupabase();
+  loadFromSupabase(); // nav.js handles auth
 });
 </script>
 <script src="/js/footer.js"></script>
