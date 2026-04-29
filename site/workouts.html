@@ -218,7 +218,7 @@
     <div class="page-title-row">
       <h1 class="page-title">WORKOUTS</h1>
       <p class="page-subtitle">
-        <strong id="total-count">107</strong> benchmark WODs — Hero, Girl, Open, Games, Partner &amp; more
+        <strong id="total-count">—</strong> benchmark WODs — Hero, Girl, Open, Games, Partner &amp; more
       </p>
     </div>
 
@@ -280,7 +280,7 @@
 <!-- ── MAIN ── -->
 <main class="main">
   <div class="results-meta">
-    <p class="results-count">Showing <strong id="shown-count">107</strong> workouts</p>
+    <p class="results-count">Showing <strong id="shown-count">—</strong> workouts</p>
     <div class="sort-wrap">
       <span class="sort-label">Sort:</span>
       <select class="sort-select" id="sort-select">
@@ -554,9 +554,12 @@ async function loadFromSupabase() {
     }));
 
     document.getElementById('total-count').textContent = WODS.length;
-    render(); // Re-render with full dataset
+    render();
   } catch(e) {
-    console.warn('Supabase fetch failed, using local data:', e);
+    console.warn('Supabase fetch failed, falling back to local data:', e);
+    WODS = buildWorkoutsData();
+    document.getElementById('total-count').textContent = WODS.length;
+    render();
   }
 }
 
@@ -564,9 +567,9 @@ async function loadFromSupabase() {
 // INIT
 // ─────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  // Render local benchmarks.js data immediately for a fast first paint
-  WODS = buildWorkoutsData();
-  document.getElementById('total-count').textContent = WODS.length;
+  // Show a loading placeholder while Supabase fetches the full dataset
+  document.getElementById('wod-grid').innerHTML =
+    '<p style="color:var(--muted);grid-column:1/-1;padding:40px 0 20px;font-size:.95rem;">Loading workouts…</p>';
 
   // ?cat= URL param — used by nav dropdown links e.g. /workouts.html?cat=hero
   const params   = new URLSearchParams(location.search);
@@ -621,8 +624,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Sort
   document.getElementById('sort-select').addEventListener('change', e => { sortBy = e.target.value; render(); });
 
-  render();
-  loadFromSupabase(); // nav.js handles auth
+  loadFromSupabase(); // nav.js handles auth; this does the first real render
 });
 </script>
 <script src="/js/footer.js"></script>
