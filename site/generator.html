@@ -275,8 +275,8 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
 
   <!-- Mode Toggle (tabs) -->
   <div class="mode-toggle">
-    <button class="mode-tab active" id="mode-btn-generate" onclick="setGenMode('generate')">⚡ Smart WOD Builder</button>
-    <button class="mode-tab" id="mode-btn-create" onclick="setGenMode('create')">✏️ Create Your Own <span class="tab-badge" id="cyo-free-badge">Free Account</span></button>
+    <button class="mode-tab active" id="mode-btn-generate" onclick="setGenMode('generate')">Smart WOD Builder</button>
+    <button class="mode-tab" id="mode-btn-create" onclick="setGenMode('create')">Create Your Own <span class="tab-badge" id="cyo-free-badge">Free Account</span></button>
   </div>
 
   <!-- ── GENERATE MODE ─────────────────────────────────────── -->
@@ -287,21 +287,21 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
     <div class="slabel">Step 1</div>
     <div class="stitle">What are you working with?</div>
     <div class="eq-grid" id="eq-grid">
-      <label class="eq-card" data-val="bodyweight"><span class="icon">🤸</span><span class="name">Bodyweight</span></label>
-      <label class="eq-card" data-val="pullupbar"><span class="icon">🔩</span><span class="name">Pull-up Bar</span></label>
-      <label class="eq-card" data-val="kettlebell"><span class="icon">🔔</span><span class="name">Kettlebell</span></label>
-      <label class="eq-card" data-val="dumbbells"><span class="icon">🏋️</span><span class="name">Dumbbells</span></label>
-      <label class="eq-card" data-val="barbell"><span class="icon">⚡</span><span class="name">Barbell</span></label>
-      <label class="eq-card" data-val="resistancebands"><span class="icon">🎯</span><span class="name">Bands</span></label>
-      <label class="eq-card" data-val="jumprope"><span class="icon">🪢</span><span class="name">Jump Rope</span></label>
-      <label class="eq-card" data-val="box"><span class="icon">📦</span><span class="name">Plyo Box</span></label>
-      <label class="eq-card" data-val="medicineball"><span class="icon">⚽</span><span class="name">Med Ball</span></label>
-      <label class="eq-card" data-val="rings"><span class="icon">⭕</span><span class="name">Rings</span></label>
-      <label class="eq-card" data-val="slamball"><span class="icon">💥</span><span class="name">Slam Ball</span></label>
-      <label class="eq-card" data-val="treadmill"><span class="icon">🏃</span><span class="name">Treadmill</span></label>
-      <label class="eq-card" data-val="running"><span class="icon">👟</span><span class="name">Running</span></label>
-      <label class="eq-card" data-val="rower"><span class="icon">🚣</span><span class="name">Rower</span></label>
-      <label class="eq-card" data-val="airbike"><span class="icon">🚲</span><span class="name">Air Bike</span></label>
+      <label class="eq-card" data-val="bodyweight"><span class="name">Bodyweight</span></label>
+      <label class="eq-card" data-val="pullupbar"><span class="name">Pull-up Bar</span></label>
+      <label class="eq-card" data-val="kettlebell"><span class="name">Kettlebell</span></label>
+      <label class="eq-card" data-val="dumbbells"><span class="name">Dumbbells</span></label>
+      <label class="eq-card" data-val="barbell"><span class="name">Barbell</span></label>
+      <label class="eq-card" data-val="resistancebands"><span class="name">Bands</span></label>
+      <label class="eq-card" data-val="jumprope"><span class="name">Jump Rope</span></label>
+      <label class="eq-card" data-val="box"><span class="name">Plyo Box</span></label>
+      <label class="eq-card" data-val="medicineball"><span class="name">Med Ball</span></label>
+      <label class="eq-card" data-val="rings"><span class="name">Rings</span></label>
+      <label class="eq-card" data-val="slamball"><span class="name">Slam Ball</span></label>
+      <label class="eq-card" data-val="treadmill"><span class="name">Treadmill</span></label>
+      <label class="eq-card" data-val="running"><span class="name">Running</span></label>
+      <label class="eq-card" data-val="rower"><span class="name">Rower</span></label>
+      <label class="eq-card" data-val="airbike"><span class="name">Air Bike</span></label>
     </div>
   </div>
 
@@ -310,14 +310,14 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
     <div class="slabel">Step 2</div>
     <div class="stitle">What do you want to target? <span style="font-size:12px;font-weight:500;color:var(--muted,#666);margin-left:6px">— select one or more</span></div>
     <div class="bf-grid" id="bf-grid">
-      <label class="bf-card sel" data-val="full-body" data-exclusive="true"><span class="icon">🔥</span><span class="name">Full Body</span><span class="sub">All muscle groups</span></label>
-      <label class="bf-card" data-val="upper-body"><span class="icon">💪</span><span class="name">Upper Body</span><span class="sub">Push + Pull</span></label>
-      <label class="bf-card" data-val="lower-body"><span class="icon">🦵</span><span class="name">Lower Body</span><span class="sub">Legs + Hips</span></label>
-      <label class="bf-card" data-val="core"><span class="icon">🎯</span><span class="name">Core</span><span class="sub">Abs + Stability</span></label>
-      <label class="bf-card" data-val="push"><span class="icon">🤜</span><span class="name">Push</span><span class="sub">Chest · Triceps · Shoulders</span></label>
-      <label class="bf-card" data-val="pull"><span class="icon">🤛</span><span class="name">Pull</span><span class="sub">Back · Biceps</span></label>
-      <label class="bf-card" data-val="legs-glutes"><span class="icon">🍑</span><span class="name">Legs & Glutes</span><span class="sub">Posterior Chain</span></label>
-      <label class="bf-card" data-val="cardio"><span class="icon">❤️</span><span class="name">Cardio</span><span class="sub">Conditioning</span></label>
+      <label class="bf-card sel" data-val="full-body" data-exclusive="true"><span class="name">Full Body</span><span class="sub">All muscle groups</span></label>
+      <label class="bf-card" data-val="upper-body"><span class="name">Upper Body</span><span class="sub">Push + Pull</span></label>
+      <label class="bf-card" data-val="lower-body"><span class="name">Lower Body</span><span class="sub">Legs + Hips</span></label>
+      <label class="bf-card" data-val="core"><span class="name">Core</span><span class="sub">Abs + Stability</span></label>
+      <label class="bf-card" data-val="push"><span class="name">Push</span><span class="sub">Chest · Triceps · Shoulders</span></label>
+      <label class="bf-card" data-val="pull"><span class="name">Pull</span><span class="sub">Back · Biceps</span></label>
+      <label class="bf-card" data-val="legs-glutes"><span class="name">Legs & Glutes</span><span class="sub">Posterior Chain</span></label>
+      <label class="bf-card" data-val="cardio"><span class="name">Cardio</span><span class="sub">Conditioning</span></label>
     </div>
   </div>
 
@@ -326,9 +326,9 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
     <div class="slabel">Step 3</div>
     <div class="stitle">Experience level</div>
     <div class="pill-group" id="level-group">
-      <label class="pill" data-val="beginner">🌱 Beginner</label>
-      <label class="pill sel" data-val="intermediate">🔥 Intermediate</label>
-      <label class="pill" data-val="advanced">💀 Advanced</label>
+      <label class="pill" data-val="beginner">Beginner</label>
+      <label class="pill sel" data-val="intermediate">Intermediate</label>
+      <label class="pill" data-val="advanced">Advanced</label>
     </div>
   </div>
 
@@ -337,11 +337,11 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
     <div class="slabel">Step 4</div>
     <div class="stitle">Workout format</div>
     <div class="pill-group" id="format-group">
-      <label class="pill sel" data-val="any">🎲 Surprise Me</label>
-      <label class="pill" data-val="amrap">⏱ AMRAP</label>
-      <label class="pill" data-val="emom">📡 EMOM</label>
-      <label class="pill" data-val="fortime">🏁 For Time</label>
-      <label class="pill" data-val="circuit">🔄 Circuit</label>
+      <label class="pill sel" data-val="any">Surprise Me</label>
+      <label class="pill" data-val="amrap">AMRAP</label>
+      <label class="pill" data-val="emom">EMOM</label>
+      <label class="pill" data-val="fortime">For Time</label>
+      <label class="pill" data-val="circuit">Circuit</label>
     </div>
   </div>
 
@@ -361,7 +361,7 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
   </div>
 
   <button class="gen-btn" id="gen-btn" onclick="generateWorkout()">
-    <span class="bt">⚡ Generate My Workout</span>
+    <span class="bt">Generate My Workout</span>
     <div class="sp"></div>
   </button>
 
@@ -379,19 +379,19 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
         <tbody id="wod-movements"></tbody>
       </table>
       <div class="score-box">
-        <h4>📊 Scoring</h4>
+        <h4>Scoring</h4>
         <p id="wod-scoring"></p>
       </div>
       <div class="res-actions" id="wod-actions">
-        <button class="abtn pri" onclick="openLogResult()">📝 Log Result</button>
-        <button class="abtn sec" onclick="openSaveWorkout()">💾 Save Workout</button>
-        <button class="abtn sec" onclick="generateWorkout()">🔄 Regenerate</button>
-        <button class="abtn gho" onclick="printWorkout()">🖨️ Print WOD</button>
-        <button class="abtn gho" id="nominate-btn" onclick="nominateWorkout()">⭐ Nominate as Featured</button>
+        <button class="abtn pri" onclick="openLogResult()">Log Result</button>
+        <button class="abtn sec" onclick="openSaveWorkout()">Save Workout</button>
+        <button class="abtn sec" onclick="generateWorkout()">Regenerate</button>
+        <button class="abtn gho" onclick="printWorkout()">Print WOD</button>
+        <button class="abtn gho" id="nominate-btn" onclick="nominateWorkout()">Nominate as Featured</button>
       </div>
       <div class="warmup-cool">
-        <div class="wc-card"><h4>🔥 Warm-Up (do first)</h4><ul id="warmup-list"></ul></div>
-        <div class="wc-card"><h4>🧊 Cool-Down</h4><ul id="cooldown-list"></ul></div>
+        <div class="wc-card"><h4>Warm-Up (do first)</h4><ul id="warmup-list"></ul></div>
+        <div class="wc-card"><h4>Cool-Down</h4><ul id="cooldown-list"></ul></div>
       </div>
     </div>
   </div>
@@ -404,7 +404,7 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
     <!-- Gate: shown when not logged in -->
     <div id="cyo-gate" class="section" style="display:none">
       <div class="cyo-gate">
-        <div class="g-icon">✏️</div>
+        <div class="g-icon" style="font-size:52px;margin-bottom:16px">+</div>
         <h3>Create Your Own WOD</h3>
         <p>Build custom workouts from scratch using our full movement library, then save them to your profile. Free with an account.</p>
         <div class="cyo-gate-btns">
@@ -428,21 +428,21 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
         <div class="slabel">Step 1</div>
         <div class="stitle">What equipment is needed?</div>
         <div class="eq-grid" id="cyo-eq-grid">
-          <label class="eq-card" data-val="bodyweight" onclick="this.classList.toggle('sel')"><span class="icon">🤸</span><span class="name">Bodyweight</span></label>
-          <label class="eq-card" data-val="pullupbar" onclick="this.classList.toggle('sel')"><span class="icon">🔩</span><span class="name">Pull-up Bar</span></label>
-          <label class="eq-card" data-val="kettlebell" onclick="this.classList.toggle('sel')"><span class="icon">🔔</span><span class="name">Kettlebell</span></label>
-          <label class="eq-card" data-val="dumbbells" onclick="this.classList.toggle('sel')"><span class="icon">🏋️</span><span class="name">Dumbbells</span></label>
-          <label class="eq-card" data-val="barbell" onclick="this.classList.toggle('sel')"><span class="icon">⚡</span><span class="name">Barbell</span></label>
-          <label class="eq-card" data-val="resistancebands" onclick="this.classList.toggle('sel')"><span class="icon">🎯</span><span class="name">Bands</span></label>
-          <label class="eq-card" data-val="jumprope" onclick="this.classList.toggle('sel')"><span class="icon">🪢</span><span class="name">Jump Rope</span></label>
-          <label class="eq-card" data-val="box" onclick="this.classList.toggle('sel')"><span class="icon">📦</span><span class="name">Plyo Box</span></label>
-          <label class="eq-card" data-val="medicineball" onclick="this.classList.toggle('sel')"><span class="icon">⚽</span><span class="name">Med Ball</span></label>
-          <label class="eq-card" data-val="rings" onclick="this.classList.toggle('sel')"><span class="icon">⭕</span><span class="name">Rings</span></label>
-          <label class="eq-card" data-val="slamball" onclick="this.classList.toggle('sel')"><span class="icon">💥</span><span class="name">Slam Ball</span></label>
-          <label class="eq-card" data-val="treadmill" onclick="this.classList.toggle('sel')"><span class="icon">🏃</span><span class="name">Treadmill</span></label>
-          <label class="eq-card" data-val="running" onclick="this.classList.toggle('sel')"><span class="icon">👟</span><span class="name">Running</span></label>
-          <label class="eq-card" data-val="rower" onclick="this.classList.toggle('sel')"><span class="icon">🚣</span><span class="name">Rower</span></label>
-          <label class="eq-card" data-val="airbike" onclick="this.classList.toggle('sel')"><span class="icon">🚲</span><span class="name">Air Bike</span></label>
+          <label class="eq-card" data-val="bodyweight" onclick="this.classList.toggle('sel')"><span class="name">Bodyweight</span></label>
+          <label class="eq-card" data-val="pullupbar" onclick="this.classList.toggle('sel')"><span class="name">Pull-up Bar</span></label>
+          <label class="eq-card" data-val="kettlebell" onclick="this.classList.toggle('sel')"><span class="name">Kettlebell</span></label>
+          <label class="eq-card" data-val="dumbbells" onclick="this.classList.toggle('sel')"><span class="name">Dumbbells</span></label>
+          <label class="eq-card" data-val="barbell" onclick="this.classList.toggle('sel')"><span class="name">Barbell</span></label>
+          <label class="eq-card" data-val="resistancebands" onclick="this.classList.toggle('sel')"><span class="name">Bands</span></label>
+          <label class="eq-card" data-val="jumprope" onclick="this.classList.toggle('sel')"><span class="name">Jump Rope</span></label>
+          <label class="eq-card" data-val="box" onclick="this.classList.toggle('sel')"><span class="name">Plyo Box</span></label>
+          <label class="eq-card" data-val="medicineball" onclick="this.classList.toggle('sel')"><span class="name">Med Ball</span></label>
+          <label class="eq-card" data-val="rings" onclick="this.classList.toggle('sel')"><span class="name">Rings</span></label>
+          <label class="eq-card" data-val="slamball" onclick="this.classList.toggle('sel')"><span class="name">Slam Ball</span></label>
+          <label class="eq-card" data-val="treadmill" onclick="this.classList.toggle('sel')"><span class="name">Treadmill</span></label>
+          <label class="eq-card" data-val="running" onclick="this.classList.toggle('sel')"><span class="name">Running</span></label>
+          <label class="eq-card" data-val="rower" onclick="this.classList.toggle('sel')"><span class="name">Rower</span></label>
+          <label class="eq-card" data-val="airbike" onclick="this.classList.toggle('sel')"><span class="name">Air Bike</span></label>
         </div>
       </div>
 
@@ -450,10 +450,10 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
         <div class="slabel">Step 2</div>
         <div class="stitle">Workout format</div>
         <div class="pill-group" id="cyo-format-group">
-          <label class="pill sel" data-val="AMRAP">⏱ AMRAP</label>
-          <label class="pill" data-val="EMOM">📡 EMOM</label>
-          <label class="pill" data-val="For Time">🏁 For Time</label>
-          <label class="pill" data-val="Circuit">🔄 Circuit</label>
+          <label class="pill sel" data-val="AMRAP">AMRAP</label>
+          <label class="pill" data-val="EMOM">EMOM</label>
+          <label class="pill" data-val="For Time">For Time</label>
+          <label class="pill" data-val="Circuit">Circuit</label>
         </div>
       </div>
 
@@ -469,9 +469,9 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
           <div>
             <div style="font-size:12px;color:var(--muted,#666);margin-bottom:8px">Experience level</div>
             <div class="pill-group" id="cyo-level-group">
-              <label class="pill" data-val="beginner">🌱 Beginner</label>
-              <label class="pill sel" data-val="intermediate">🔥 Intermediate</label>
-              <label class="pill" data-val="advanced">💀 Advanced</label>
+              <label class="pill" data-val="beginner">Beginner</label>
+              <label class="pill sel" data-val="intermediate">Intermediate</label>
+              <label class="pill" data-val="advanced">Advanced</label>
             </div>
           </div>
         </div>
@@ -482,7 +482,7 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
         <div class="stitle">Add your movements</div>
         <div class="cyo-mov-builder">
           <div class="cyo-mov-search-wrap">
-            <input type="text" id="cyo-mov-search" placeholder="🔍 Search movement library…" autocomplete="off" oninput="cyoSearchMovements()" onfocus="cyoSearchMovements()">
+            <input type="text" id="cyo-mov-search" placeholder="Search movement library…" autocomplete="off" oninput="cyoSearchMovements()" onfocus="cyoSearchMovements()">
             <div class="cyo-mov-dropdown" id="cyo-mov-dropdown"></div>
           </div>
           <div id="cyo-mov-list"><div class="cyo-mov-empty">No movements yet — click above to browse or search the library.</div></div>
@@ -501,8 +501,8 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
           <label style="font-size:14px;cursor:pointer;display:flex;align-items:center;gap:7px;color:var(--text)"><input type="checkbox" id="cyo-public" style="accent-color:var(--or)"> Share with community</label>
         </div>
         <div style="display:flex;gap:10px">
-          <button class="abtn sec" style="flex:unset" onclick="cyoReset()">🔄 Start Over</button>
-          <button class="abtn pri" style="flex:unset" id="cyo-save-btn" onclick="cyoSave()">💾 Save Workout</button>
+          <button class="abtn sec" style="flex:unset" onclick="cyoReset()">Start Over</button>
+          <button class="abtn pri" style="flex:unset" id="cyo-save-btn" onclick="cyoSave()">Save Workout</button>
         </div>
       </div>
       <div id="cyo-alert" style="display:none;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.4);color:#e74c3c;border-radius:8px;padding:12px 16px;font-size:13px;margin-top:8px"></div>
@@ -546,7 +546,7 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
 <div class="modal-overlay" id="result-modal">
 <div class="modal">
   <button class="modal-close" onclick="closeModal('result-modal')">✕</button>
-  <h2>📝 Log Your Result</h2>
+  <h2>Log Your Result</h2>
   <p class="msub" id="result-modal-sub">Record your score for this workout</p>
   <div id="result-error" class="modal-error"></div>
   <div class="field"><label id="score-label">Score</label><input type="text" id="result-score" placeholder="e.g. 8 rounds + 12 reps"></div>
@@ -572,7 +572,7 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
 <div class="modal-overlay" id="save-modal">
 <div class="modal">
   <button class="modal-close" onclick="closeModal('save-modal')">✕</button>
-  <h2>💾 Save Workout</h2>
+  <h2>Save Workout</h2>
   <p class="msub">Give your workout a name and save it.</p>
   <div id="save-error" class="modal-error"></div>
   <div class="field"><label>Workout Name</label><input type="text" id="save-name" placeholder="e.g. My Monday Grind"></div>
@@ -754,6 +754,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupEquipmentGrid();
   setupBodyFocusGrid();
   setupPillGroups();
+  // Support /generator#create to open CYO mode directly (from nav dropdown)
+  if (window.location.hash === '#create') setGenMode('create');
 });
 
 // ── SELECTION HELPERS ─────────────────────────────────────────

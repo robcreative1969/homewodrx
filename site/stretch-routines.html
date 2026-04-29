@@ -46,6 +46,13 @@
 <script src="/js/db.js"></script>
 <script src="/js/nav.js"></script>
 <style>
+/* ── PAGE HERO ────────────────────────────────────────── */
+.page-hero-white{background:var(--white);border-bottom:1.5px solid var(--border);padding:32px 0 24px;margin-bottom:0}
+.page-hero-inner{max-width:1200px;margin:0 auto;padding:0 24px}
+.page-hero-title{font-family:var(--font-head);font-size:2.6rem;letter-spacing:.04em;line-height:1;margin-bottom:8px;color:var(--text)}
+.page-hero-sub{font-size:1rem;color:var(--muted);line-height:1.55;max-width:640px;margin:0}
+@media(max-width:600px){.page-hero-white{padding:22px 0 18px}.page-hero-title{font-size:2rem}}
+
 /* ── ROUTINES GRID ───────────────────────────────────── */
 .routines-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;}
 @media(max-width:480px){.routines-grid{grid-template-columns:1fr;}}
@@ -85,31 +92,36 @@
 </head>
 <body data-nav-init="true" data-active-page="stretch">
 
+<!-- FULL-WIDTH PAGE HERO -->
+<div class="page-hero-white">
+  <div class="page-hero-inner">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span>›</span>
+      <a href="/stretch">Stretch</a><span>›</span>
+      Routines
+    </nav>
+    <h1 class="page-hero-title">Stretch Routines</h1>
+    <p class="page-hero-sub">Curated, step-by-step mobility sequences built for functional fitness athletes — from pre-WOD warm-ups to targeted recovery work.</p>
+  </div>
+</div>
 
 <div class="page-wrap">
 
-  <!-- BREADCRUMB -->
-  <nav class="breadcrumb" aria-label="Breadcrumb">
-    <a href="/">Home</a><span>›</span>
-    <a href="/stretch">Stretch</a><span>›</span>
-    Routines
-  </nav>
-
-  <!-- HEADER -->
-  <div class="page-header">
-    <h1>Stretch Routines</h1>
-    <p>Curated, step-by-step mobility sequences built for functional fitness athletes — from pre-WOD warm-ups to targeted recovery work.</p>
-  </div>
-
-  <!-- FILTER BAR -->
-  <div class="filter-bar" id="filter-bar">
-    <button class="filter-chip active" data-filter="all">All Routines</button>
-    <button class="filter-chip" data-filter="All Levels">All Levels</button>
-    <button class="filter-chip" data-filter="Intermediate+">Intermediate+</button>
-    <button class="filter-chip" data-filter="Dynamic">Dynamic</button>
-    <button class="filter-chip" data-filter="Static">Static</button>
-    <button class="filter-chip" data-filter="Yoga">Yoga</button>
-    <button class="filter-chip" data-filter="Mixed">Mixed</button>
+  <!-- SEARCH + FILTER ROW -->
+  <div class="search-filter-row" style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
+    <div style="flex:1;min-width:200px;position:relative;">
+      <input type="text" id="routine-search" placeholder="Search routines…" style="width:100%;box-sizing:border-box;padding:9px 14px 9px 36px;border:1.5px solid var(--border);border-radius:8px;font-size:.875rem;background:var(--white);color:var(--text);outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--or)'" onblur="this.style.borderColor='var(--border)'">
+      <svg style="position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--muted);pointer-events:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </div>
+    <div class="filter-bar" id="filter-bar" style="margin-bottom:0">
+      <button class="filter-chip active" data-filter="all">All Routines</button>
+      <button class="filter-chip" data-filter="All Levels">All Levels</button>
+      <button class="filter-chip" data-filter="Intermediate+">Intermediate+</button>
+      <button class="filter-chip" data-filter="Dynamic">Dynamic</button>
+      <button class="filter-chip" data-filter="Static">Static</button>
+      <button class="filter-chip" data-filter="Yoga">Yoga</button>
+      <button class="filter-chip" data-filter="Mixed">Mixed</button>
+    </div>
   </div>
 
   <!-- ROUTINES GRID -->
@@ -121,8 +133,8 @@
     <h3>More Stretch Tools</h3>
     <p>Build a custom routine with the generator, or browse all 50+ individual stretches in the library.</p>
     <div class="also-links">
-      <a href="/stretch" class="also-link">🎲 Stretch Generator</a>
-      <a href="/stretches/hip-flexor-stretch" class="also-link-ghost">📚 Browse Individual Stretches</a>
+      <a href="/stretch" class="also-link">Stretch Builder</a>
+      <a href="/stretches/hip-flexor-stretch" class="also-link-ghost">Browse Individual Stretches</a>
     </div>
   </div>
 
@@ -142,14 +154,13 @@
     return `
       <a href="/stretch-routines/${r.slug}" class="routine-card" data-modality="${r.modality}" data-level="${r.levelLabel}">
         <div class="card-header">
-          <span class="card-icon">${r.icon}</span>
           <div class="card-name">${r.name}</div>
           <div class="card-tagline">${r.tagline}</div>
         </div>
         <div class="card-meta">
-          <span class="meta-chip chip-duration">⏱ ${r.duration} min</span>
+          <span class="meta-chip chip-duration">${r.duration} min</span>
           <span class="meta-chip ${levelChipClass(r)}">● ${r.levelLabel}</span>
-          <span class="meta-chip chip-modality">${r.modalityIcon} ${r.modality}</span>
+          <span class="meta-chip chip-modality">${r.modality}</span>
         </div>
         <div class="card-footer">
           <span class="card-steps">${r.stretches.length} stretches</span>
@@ -160,11 +171,22 @@
       </a>`;
   }
 
-  function render(filter) {
+  let activeFilter = 'all';
+  let searchQuery = '';
+
+  function render() {
     let routines = STRETCH_ROUTINES;
-    if (filter && filter !== 'all') {
-      routines = STRETCH_ROUTINES.filter(r =>
-        r.levelLabel === filter || r.modality === filter
+    if (activeFilter && activeFilter !== 'all') {
+      routines = routines.filter(r =>
+        r.levelLabel === activeFilter || r.modality === activeFilter
+      );
+    }
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      routines = routines.filter(r =>
+        r.name.toLowerCase().includes(q) ||
+        (r.tagline || '').toLowerCase().includes(q) ||
+        (r.modality || '').toLowerCase().includes(q)
       );
     }
     grid.innerHTML = routines.length
@@ -173,7 +195,7 @@
     label.textContent = routines.length + (routines.length === 1 ? ' routine' : ' routines');
   }
 
-  render('all');
+  render();
 
   // ── Filter chips ─────────────────────────────────────────────────────────
   document.getElementById('filter-bar').addEventListener('click', function(e) {
@@ -181,7 +203,15 @@
     if (!chip) return;
     document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
     chip.classList.add('active');
-    render(chip.dataset.filter);
+    activeFilter = chip.dataset.filter;
+    render();
+  });
+
+  // ── Search ────────────────────────────────────────────────────────────────
+  let searchTimer;
+  document.getElementById('routine-search').addEventListener('input', function(e) {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => { searchQuery = e.target.value.trim(); render(); }, 180);
   });
 </script>
 <script src="/js/footer.js"></script>

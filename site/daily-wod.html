@@ -106,6 +106,18 @@
       color: var(--text);
       font-weight: 500;
     }
+    /* ── Result Modal ──────────────────────────────────────────── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0,0,0,.55);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
   </style>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
@@ -278,7 +290,7 @@
             Start WOD Timer
           </button>
           <a href="/workouts" class="btn btn-secondary">Browse Workouts</a>
-          <button class="btn btn-secondary" onclick="printWod()">🖨️ Print WOD</button>
+          <button class="btn btn-secondary" onclick="printWod()">Print WOD</button>
         </div>
       </div>`;
   }
