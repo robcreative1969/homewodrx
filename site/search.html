@@ -690,3 +690,582 @@
 <script src="/js/stretch-routines-db.js"></script>
 
 <script>
+// ─────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────
+function slugify(str) {
+  return String(str).toLowerCase()
+    .replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function hl(text, q) {
+  if (!q || !text) return esc(text||'');
+  let r = esc(text);
+  q.trim().split(/\s+/).forEach(t => {
+    if (!t) return;
+    r = r.replace(new RegExp('('+t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')', 'gi'), '<mark>$1</mark>');
+  });
+  return r;
+}
+
+// ─────────────────────────────────────────────
+// BUILD SEARCH DATA FROM LIVE DB SCRIPTS
+// ─────────────────────────────────────────────
+function parseDurLow(s) {
+  if (!s) return 20;
+  const m = String(s).match(/(\d+)/);
+  return m ? parseInt(m[1]) : 20;
+}
+
+const TAG_TO_MG = {
+  lower:'lower', 'legs-glutes':'lower', push:'upper', pull:'upper',
+  core:'core', full:'full-body', cardio:'conditioning', oly:'full-body',
+};
+const TAG_TO_MUSCLE = {
+  lower:'Lower Body', 'legs-glutes':'Legs / Glutes', push:'Upper Body',
+  pull:'Upper Body', core:'Core', full:'Full Body',
+  cardio:'Conditioning', oly:'Full Body',
+};
+const MVDB_CAT_MAP = {
+  bodyweight:'bodyweight', pullupbar:'gymnastics', barbell:'barbell',
+  dumbbell:'dumbbell', kettlebell:'kettlebell', cardio:'cardio',
+  olympic:'barbell',
+};
+
+function buildWorkouts() {
+  if (typeof BENCHMARKS === 'undefined') return [];
+  return BENCHMARKS.map(w => ({
+    name:   w.name,
+    slug:   w.slug,
+    cat:    w.category,
+    format: w.format,
+    diff:   w.difficulty,
+    focus:  w.body_focus || 'full-body',
+    eq:     w.equipment || [],
+    mvs:    (w.movements || []).map(m => m.name),
+    tags:   w.tags || [],
+    dur:    parseDurLow(w.duration_estimate),
+    scoring: w.scoring_type || '',
+  }));
+}
+
+function buildMovements() {
+  if (typeof MOVEMENT_DB === 'undefined') return [];
+  const out = [], seen = new Set();
+  Object.entries(MOVEMENT_DB).forEach(([rawCat, mvs]) => {
+    const cat = MVDB_CAT_MAP[rawCat] || rawCat;
+    (mvs || []).forEach(m => {
+      if (!m.name || seen.has(m.name)) return;
+      seen.add(m.name);
+      const tags = m.tags || [];
+      let mg = 'full-body', muscle = 'Full Body';
+      for (const t of tags) { if (TAG_TO_MG[t]) { mg = TAG_TO_MG[t]; muscle = TAG_TO_MUSCLE[t]; break; } }
+      out.push({ name: m.name, cat, mg, muscle });
+    });
+  });
+  return out.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+function buildStretches() {
+  const out = [];
+  if (typeof STRETCH_DB !== 'undefined') {
+    Object.entries(STRETCH_DB).forEach(([modality, arr]) => {
+      (arr || []).forEach(s => {
+        if (!s.name) return;
+        out.push({
+          name: s.name,
+          slug: slugify(s.name),
+          type: 'movement',
+          area: (s.focus || [])[0] || 'full',
+          modality,
+        });
+      });
+    });
+  }
+  if (typeof STRETCH_ROUTINES !== 'undefined') {
+    (STRETCH_ROUTINES || []).forEach(r => {
+      if (!r.name || !r.slug) return;
+      const focus = (r.focus || [])[0] || 'full-body';
+      out.push({
+        name: r.name,
+        slug: r.slug,
+        type: 'routine',
+        area: focus.toLowerCase().replace(/\s+/g,'-'),
+        modality: 'routine',
+      });
+    });
+  }
+  return out;
+}
+
+const BLOG = [
+  { title:'The Complete Guide to Named Benchmark WODs', date:'Apr 10, 2026', excerpt:'Everything you need to know about Girl WODs, Hero WODs, and how to approach them with strategy.', slug:'named-benchmark-wods-guide', topic:'training', type:'guide' },
+  { title:'How to Scale WODs for Any Fitness Level', date:'Mar 28, 2026', excerpt:"Scaling isn't about doing less — it's about preserving the stimulus. Here's the right way to think about it.", slug:'how-to-scale-wods', topic:'training', type:'how-to' },
+  { title:'Best Home Gym Equipment for Functional Fitness', date:'Mar 15, 2026', excerpt:'Build a capable home gym without blowing your budget. Our picks for every space and price point.', slug:'best-home-gym-equipment', topic:'gear', type:'guide' },
+  { title:'Why Stretching Matters More Than You Think', date:'Mar 5, 2026', excerpt:"Most athletes skip the stretch. Here's what you're leaving on the table — and how to fix it fast.", slug:'why-stretching-matters', topic:'recovery', type:'deep-dive' },
+  { title:'Hero WOD Guide: History, Meaning & Strategy', date:'Feb 20, 2026', excerpt:'Hero WODs honor fallen service members. Understanding their origin changes how you approach them.', slug:'hero-wod-guide', topic:'training', type:'guide' },
+  { title:'How to Build a Weekly Training Program at Home', date:'May 2, 2026', excerpt:'A five-day plan for building strength, conditioning, and mobility without a box membership.', slug:'weekly-training-program-home', topic:'training', type:'guide' },
+  { title:'Rogue vs Titan: Which Home Gym Equipment Is Right for You?', date:'Apr 26, 2026', excerpt:'Head-to-head on price, quality, and value. We break down the key differences so you can decide.', slug:'rogue-vs-titan-home-gym', topic:'gear', type:'guide' },
+];
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+const state = {
+  query: '',
+  tab: 'all',
+  format: 'all', diff: 'all', dur: 'all', focus: 'all', scoring: 'all',
+  modality: new Set(), equipment: new Set(),
+  mvCat: 'all', mvMuscle: 'all',
+  stretchArea: 'all', stretchType: 'all',
+  gearCat: 'all',
+  blogTopic: 'all', blogType: 'all',
+};
+
+// Populated on DOMContentLoaded
+let WORKOUTS = [], MOVEMENTS = [], STRETCHES = [];
+
+// ─────────────────────────────────────────────
+// SEARCH LOGIC
+// ─────────────────────────────────────────────
+function scoreWod(w, q) {
+  if (!q) return 1;
+  let score = 0;
+  const terms = q.toLowerCase().split(/\s+/).filter(Boolean);
+  const title = w.name.toLowerCase();
+  const mvs   = w.mvs.join(' ').toLowerCase();
+  for (const t of terms) {
+    if (title === t) score += 30;
+    else if (title.includes(t)) score += 12;
+    if (mvs.includes(t)) score += 5;
+    if ((w.cat||'').toLowerCase().includes(t)) score += 3;
+    if ((w.format||'').toLowerCase().includes(t)) score += 2;
+    if ((w.tags||[]).some(tag => tag.includes(t))) score += 3;
+  }
+  return score;
+}
+
+function textMatch(text, q) {
+  if (!q) return true;
+  const low = text.toLowerCase();
+  return q.toLowerCase().split(/\s+/).every(t => low.includes(t));
+}
+
+function applyWodFilters(w) {
+  if (state.format !== 'all' && w.format !== state.format) return false;
+  if (state.diff   !== 'all' && w.diff   !== state.diff)   return false;
+  if (state.focus  !== 'all' && w.focus  !== state.focus)  return false;
+  if (state.dur !== 'all') {
+    const d = w.dur;
+    if (state.dur === '0-10'  && d >= 10) return false;
+    if (state.dur === '10-20' && (d < 10 || d > 20)) return false;
+    if (state.dur === '20-30' && (d <= 20 || d > 30)) return false;
+    if (state.dur === '30+'   && d <= 30) return false;
+  }
+  if (state.equipment.size > 0) {
+    for (const eq of state.equipment) { if (!w.eq.includes(eq)) return false; }
+  }
+  if (state.modality.size > 0) {
+    for (const mod of state.modality) { if (!(w.tags||[]).includes(mod)) return false; }
+  }
+  return true;
+}
+
+function getFiltered() {
+  const q = state.query;
+  const wods = WORKOUTS.filter(w => {
+    const s = scoreWod(w, q); w._score = s;
+    return (q ? s > 0 : true) && applyWodFilters(w);
+  }).sort((a, b) => q ? b._score - a._score : a.name.localeCompare(b.name));
+
+  const mvs = MOVEMENTS.filter(m => {
+    if (!textMatch(`${m.name} ${m.cat} ${m.muscle}`, q)) return false;
+    if (state.mvCat    !== 'all' && m.cat !== state.mvCat)    return false;
+    if (state.mvMuscle !== 'all' && m.mg  !== state.mvMuscle) return false;
+    return true;
+  });
+  const stretches = STRETCHES.filter(s => {
+    if (!textMatch(`${s.name} ${s.type} ${s.area} ${s.modality}`, q)) return false;
+    if (state.stretchArea !== 'all' && s.area !== state.stretchArea) return false;
+    if (state.stretchType !== 'all' && s.type !== state.stretchType) return false;
+    return true;
+  });
+  const blog = BLOG.filter(b => {
+    if (!textMatch(`${b.title} ${b.excerpt}`, q)) return false;
+    if (state.blogTopic !== 'all' && b.topic !== state.blogTopic) return false;
+    if (state.blogType  !== 'all' && b.type  !== state.blogType)  return false;
+    return true;
+  });
+  return { wods, mvs, stretches, blog };
+}
+
+// ─────────────────────────────────────────────
+// RENDER CARDS
+// ─────────────────────────────────────────────
+const CAT_BADGE = {
+  hero:['b-hero','Hero WOD'], girl:['b-girl','Girl WOD'], open:['b-open','Open WOD'],
+  games:['b-games','Games WOD'], partner:['b-partner','Partner'],
+  benchmark:['b-benchmark','Benchmark'],
+};
+const DIFF_BADGE = { beginner:'b-beginner', intermediate:'b-intermediate', advanced:'b-advanced' };
+function catBadge(cat) {
+  const [cls, label] = CAT_BADGE[cat] || ['b-benchmark', cat];
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+function diffBadge(d) {
+  return d ? `<span class="badge ${DIFF_BADGE[d]||'b-benchmark'}">${d[0].toUpperCase()+d.slice(1)}</span>` : '';
+}
+
+function wodCard(w, q='') {
+  const mvText = w.mvs.slice(0,4).map(m => hl(m,q)).join(', ') + (w.mvs.length>4 ? ` +${w.mvs.length-4} more` : '');
+  return `<a href="/workouts/${esc(w.slug)}" class="card">
+    <div class="wod-name">${hl(w.name,q)}</div>
+    <div class="card-meta">
+      ${w.format ? `<span>${esc(w.format)}</span>` : ''}
+      ${w.focus  ? `<span>${esc(w.focus.replace(/-/g,' '))}</span>` : ''}
+    </div>
+    <div class="card-movements">${mvText}</div>
+    <div class="card-footer">${catBadge(w.cat)}${diffBadge(w.diff)}</div>
+  </a>`;
+}
+
+function mvCard(m, q='') {
+  return `<a href="/movements/${encodeURIComponent(slugify(m.name))}" class="mv-mini">
+    <div class="mv-mini-name">${hl(m.name,q)}</div>
+    <div class="mv-mini-tags">
+      <span class="mv-tag mv-tag-${esc(m.cat)}">${esc(m.cat)}</span>
+      <span class="mv-tag mv-tag-muscle">${esc(m.muscle)}</span>
+    </div>
+  </a>`;
+}
+
+function stretchCard(s, q='') {
+  const href = s.type === 'routine' ? `/stretch-routines/${esc(s.slug)}` : `/stretches/${esc(s.slug)}`;
+  return `<a href="${href}" class="stretch-mini">
+    <div class="stretch-mini-name">${hl(s.name,q)}</div>
+    <div class="stretch-mini-tags">
+      <span class="stretch-tag stretch-tag-${esc(s.type)}">${s.type === 'routine' ? 'Routine' : 'Stretch'}</span>
+      <span class="stretch-tag stretch-tag-area">${esc(s.area.replace(/-/g,' '))}</span>
+    </div>
+  </a>`;
+}
+
+function blogCard(b, q='') {
+  return `<a href="/blog/${b.slug}" class="card">
+    <div class="blog-card-date">${b.date}</div>
+    <div class="blog-card-title">${hl(b.title,q)}</div>
+    <div class="blog-card-excerpt">${hl(b.excerpt,q)}</div>
+    <span class="blog-read-more">Read More →</span>
+  </a>`;
+}
+
+function emptyState(icon, title, msg, suggestions=[]) {
+  const chips = suggestions.map(s =>
+    `<button class="suggest-chip" onclick="suggest('${esc(s)}')">${esc(s)}</button>`
+  ).join('');
+  return `<div class="empty-state"><h3>${title}</h3><p>${msg}</p>${chips ? `<div class="empty-suggestions">${chips}</div>` : ''}</div>`;
+}
+
+function suggest(term) {
+  const input = document.getElementById('search-input');
+  input.value = term; state.query = term;
+  document.getElementById('search-clear').style.display = 'block';
+  render(); input.focus();
+}
+
+// ─────────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────────
+function render() {
+  const { wods, mvs, stretches, blog } = getFiltered();
+  const q = state.query;
+
+  document.getElementById('cnt-workouts').textContent = q ? wods.length : '';
+  document.getElementById('cnt-movements').textContent = q ? mvs.length : '';
+  document.getElementById('cnt-stretches').textContent = q ? stretches.length : '';
+  document.getElementById('cnt-gear').textContent = '';
+  document.getElementById('cnt-blog').textContent = q ? blog.length : '';
+
+  document.getElementById('filter-strip').classList.toggle('visible', state.tab === 'workouts');
+  document.getElementById('filter-strip-movements').classList.toggle('visible', state.tab === 'movements');
+  document.getElementById('filter-strip-stretches').classList.toggle('visible', state.tab === 'stretches');
+
+  const area = document.getElementById('results-area');
+  const hdr  = document.getElementById('results-header');
+  const cnt  = document.getElementById('results-count');
+
+  if (state.tab === 'all') {
+    hdr.style.display = 'none';
+    renderAll(area, wods, mvs, stretches, blog, q);
+  } else if (state.tab === 'workouts') {
+    hdr.style.display = 'flex';
+    cnt.innerHTML = `<strong>${wods.length}</strong> workout${wods.length!==1?'s':''}`;
+    area.innerHTML = wods.length
+      ? `<div class="card-grid-3">${wods.map(w=>wodCard(w,q)).join('')}</div>`
+      : emptyState('','No workouts found','Try adjusting your search or filters.',['Murph','AMRAP','barbell','gymnastics']);
+  } else if (state.tab === 'movements') {
+    hdr.style.display = 'flex';
+    cnt.innerHTML = `<strong>${mvs.length}</strong> movement${mvs.length!==1?'s':''}`;
+    area.innerHTML = mvs.length
+      ? `<div class="card-grid-4">${mvs.map(m=>mvCard(m,q)).join('')}</div>`
+      : emptyState('','No movements found','Try a different search term.',['pull-up','squat','barbell']);
+  } else if (state.tab === 'stretches') {
+    hdr.style.display = 'flex';
+    cnt.innerHTML = `<strong>${stretches.length}</strong> stretch${stretches.length!==1?'es':''}`;
+    area.innerHTML = stretches.length
+      ? `<div class="card-grid-4">${stretches.map(s=>stretchCard(s,q)).join('')}</div>`
+      : emptyState('','No stretches found','Try a different search term.',['hip','shoulder','routine']);
+  } else if (state.tab === 'gear') {
+    hdr.style.display = 'flex';
+    cnt.innerHTML = `<strong>0</strong> products`;
+    area.innerHTML = `<div class="empty-state"><h3>Browse gear in the shop</h3><p><a href="/shop" style="color:var(--or);">Visit the Shop →</a></p></div>`;
+  } else if (state.tab === 'blog') {
+    hdr.style.display = 'flex';
+    cnt.innerHTML = `<strong>${blog.length}</strong> post${blog.length!==1?'s':''}`;
+    area.innerHTML = blog.length
+      ? `<div class="card-grid-2">${blog.map(b=>blogCard(b,q)).join('')}</div>`
+      : emptyState('','No posts found','Try a different search term.',['hero wod','scaling','equipment']);
+  }
+
+  renderPills();
+}
+
+function renderAll(area, wods, mvs, stretches, blog, q) {
+  const hasResults = wods.length + mvs.length + stretches.length + blog.length > 0;
+
+  if (!q && !hasActiveFilters()) {
+    area.innerHTML = `
+      <div class="result-section">
+        <div class="section-head"><h2>Featured Workouts</h2><a class="section-see-all" href="#" onclick="switchTab('workouts');return false;">Browse all →</a></div>
+        <div class="card-grid-3">${WORKOUTS.slice(0,3).map(w=>wodCard(w)).join('')}</div>
+      </div>
+      <div class="result-section">
+        <div class="section-head"><h2>Popular Movements</h2><a class="section-see-all" href="#" onclick="switchTab('movements');return false;">Browse all →</a></div>
+        <div class="card-grid-4">${MOVEMENTS.slice(0,4).map(m=>mvCard(m)).join('')}</div>
+      </div>
+      <div class="result-section">
+        <div class="section-head"><h2>Stretches &amp; Routines</h2><a class="section-see-all" href="#" onclick="switchTab('stretches');return false;">Browse all →</a></div>
+        <div class="card-grid-4">${STRETCHES.slice(0,4).map(s=>stretchCard(s)).join('')}</div>
+      </div>
+      <div class="result-section">
+        <div class="section-head"><h2>From the Blog</h2><a class="section-see-all" href="#" onclick="switchTab('blog');return false;">All posts →</a></div>
+        <div class="card-grid-2">${BLOG.slice(0,2).map(b=>blogCard(b)).join('')}</div>
+      </div>`;
+    return;
+  }
+
+  if (!hasResults) {
+    area.innerHTML = emptyState('', `No results for "${esc(q)}"`, 'Try a different search term or browse by type using the tabs above.', ['Murph','pull-up','kettlebell','AMRAP']);
+    return;
+  }
+
+  let html = '';
+  if (wods.length)     html += `<div class="result-section"><div class="section-head"><h2>Workouts <span class="section-count">${wods.length}</span></h2>${wods.length > 3 ? `<a class="section-see-all" href="#" onclick="switchTab('workouts');return false;">See all ${wods.length} →</a>` : ''}</div><div class="card-grid-3">${wods.slice(0,3).map(w=>wodCard(w,q)).join('')}</div></div>`;
+  if (mvs.length)      html += `<div class="result-section"><div class="section-head"><h2>Movements <span class="section-count">${mvs.length}</span></h2>${mvs.length > 4 ? `<a class="section-see-all" href="#" onclick="switchTab('movements');return false;">See all ${mvs.length} →</a>` : ''}</div><div class="card-grid-4">${mvs.slice(0,4).map(m=>mvCard(m,q)).join('')}</div></div>`;
+  if (stretches.length) html += `<div class="result-section"><div class="section-head"><h2>Stretches <span class="section-count">${stretches.length}</span></h2>${stretches.length > 4 ? `<a class="section-see-all" href="#" onclick="switchTab('stretches');return false;">See all ${stretches.length} →</a>` : ''}</div><div class="card-grid-4">${stretches.slice(0,4).map(s=>stretchCard(s,q)).join('')}</div></div>`;
+  if (blog.length)      html += `<div class="result-section"><div class="section-head"><h2>Blog <span class="section-count">${blog.length}</span></h2>${blog.length > 2 ? `<a class="section-see-all" href="#" onclick="switchTab('blog');return false;">See all ${blog.length} →</a>` : ''}</div><div class="card-grid-2">${blog.slice(0,2).map(b=>blogCard(b,q)).join('')}</div></div>`;
+  area.innerHTML = html;
+}
+
+// ─────────────────────────────────────────────
+// ACTIVE FILTER PILLS
+// ─────────────────────────────────────────────
+const EQ_LBL  = { bodyweight:'Bodyweight', barbell:'Barbell', dumbbell:'Dumbbell', kettlebell:'Kettlebell', pullUpBar:'Pull-Up Bar', jumpRope:'Jump Rope', rings:'Rings', rowingMachine:'Rower', assaultBike:'Air Bike', box:'Box', medBall:'Med Ball' };
+const MOD_LBL = { run:'Running', row:'Rowing', bike:'Biking', ski:'Skiing', jumprope:'Jump Rope', gymnastics:'Gymnastics', olympic:'Olympic Lifting', carries:'Carries', burpees:'Burpees' };
+
+function hasActiveFilters() {
+  return state.format!=='all' || state.diff!=='all' || state.dur!=='all' ||
+    state.focus!=='all' || state.scoring!=='all' ||
+    state.equipment.size>0 || state.modality.size>0 ||
+    state.mvCat!=='all' || state.mvMuscle!=='all' ||
+    state.stretchArea!=='all' || state.stretchType!=='all' ||
+    state.blogTopic!=='all' || state.blogType!=='all';
+}
+
+function renderPills() {
+  const wrap = document.getElementById('active-pills');
+  const pills = [];
+  if (state.tab === 'workouts') {
+    if (state.format !== 'all') pills.push({ label:`Format: ${state.format}`, key:'format' });
+    if (state.diff   !== 'all') pills.push({ label:`Level: ${state.diff}`,    key:'diff' });
+    if (state.dur    !== 'all') pills.push({ label:`Duration: ${state.dur==='0-10'?'<10 min':state.dur+' min'}`, key:'dur' });
+    if (state.focus  !== 'all') pills.push({ label:`Focus: ${state.focus.replace(/-/g,' ')}`, key:'focus' });
+    for (const eq  of state.equipment) pills.push({ label:`Eq: ${EQ_LBL[eq]||eq}`,    key:'eq:'+eq });
+    for (const mod of state.modality)  pills.push({ label:`Mod: ${MOD_LBL[mod]||mod}`, key:'mod:'+mod });
+  } else if (state.tab === 'movements') {
+    if (state.mvCat    !== 'all') pills.push({ label:`Category: ${state.mvCat}`,              key:'mvCat' });
+    if (state.mvMuscle !== 'all') pills.push({ label:`Muscle: ${state.mvMuscle.replace(/-/g,' ')}`, key:'mvMuscle' });
+  } else if (state.tab === 'stretches') {
+    if (state.stretchArea !== 'all') pills.push({ label:`Area: ${state.stretchArea.replace(/-/g,' ')}`, key:'stretchArea' });
+    if (state.stretchType !== 'all') pills.push({ label:`Type: ${state.stretchType}`, key:'stretchType' });
+  } else if (state.tab === 'blog') {
+    if (state.blogTopic !== 'all') pills.push({ label:`Topic: ${state.blogTopic}`, key:'blogTopic' });
+    if (state.blogType  !== 'all') pills.push({ label:`Type: ${state.blogType}`,   key:'blogType' });
+  }
+  if (state.tab === 'all') { wrap.innerHTML = ''; return; }
+  wrap.innerHTML = pills.map(p =>
+    `<button class="active-pill" data-clear="${esc(p.key)}">${esc(p.label)} <span class="pill-x">×</span></button>`
+  ).join('');
+  const badge = document.getElementById('filter-count-badge');
+  if (pills.length) { badge.textContent = pills.length; badge.classList.add('visible'); }
+  else badge.classList.remove('visible');
+}
+
+// ─────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────
+function switchTab(tab) {
+  state.tab = tab;
+  document.querySelectorAll('.type-tab').forEach(t => t.classList.toggle('active', t.dataset.tab===tab));
+  render();
+}
+function setActive(groupId, attr, val) {
+  document.querySelectorAll(`#${groupId} [data-${attr}]`).forEach(c =>
+    c.classList.toggle('active', c.dataset[attr]===val)
+  );
+}
+function resetFilters() {
+  state.format='all'; state.diff='all'; state.dur='all'; state.focus='all'; state.scoring='all';
+  state.equipment=new Set(); state.modality=new Set();
+  setActive('format-chips','format','all'); setActive('difficulty-chips','diff','all');
+  document.querySelectorAll('#equipment-chips .chip, #modality-chips .chip').forEach(c=>c.classList.remove('active'));
+  state.mvCat='all'; state.mvMuscle='all';
+  setActive('mv-cat-chips','mvcat','all'); setActive('mv-muscle-chips','mvmuscle','all');
+  state.stretchArea='all'; state.stretchType='all';
+  setActive('stretch-area-chips','stretcharea','all'); setActive('stretch-type-chips','stretchtype','all');
+  state.blogTopic='all'; state.blogType='all';
+  setActive('blog-topic-chips','blogtopic','all'); setActive('blog-type-chips','blogtype','all');
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  // Build data from live DB scripts
+  WORKOUTS  = buildWorkouts();
+  MOVEMENTS = buildMovements();
+  STRETCHES = buildStretches();
+
+  // Pre-fill from URL ?q=
+  const qp = new URLSearchParams(location.search).get('q');
+  if (qp) {
+    document.getElementById('search-input').value = qp;
+    state.query = qp;
+    document.getElementById('search-clear').style.display = 'block';
+  }
+
+  // Search input
+  let debounce;
+  document.getElementById('search-input').addEventListener('input', e => {
+    state.query = e.target.value;
+    document.getElementById('search-clear').style.display = state.query ? 'block' : 'none';
+    clearTimeout(debounce);
+    debounce = setTimeout(render, 180);
+  });
+  document.getElementById('search-clear').addEventListener('click', () => {
+    document.getElementById('search-input').value = '';
+    state.query = '';
+    document.getElementById('search-clear').style.display = 'none';
+    render();
+    document.getElementById('search-input').focus();
+  });
+
+  // Type tabs
+  document.querySelectorAll('.type-tab').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
+
+  // More filters toggle
+  document.getElementById('more-filters-btn').addEventListener('click', () => {
+    const btn   = document.getElementById('more-filters-btn');
+    const panel = document.getElementById('advanced-panel');
+    btn.classList.toggle('open'); panel.classList.toggle('open');
+    btn.querySelector('.arrow').textContent = panel.classList.contains('open') ? '▲' : '▼';
+  });
+
+  // Format chips
+  document.querySelectorAll('#format-chips .chip').forEach(c => c.addEventListener('click', () => {
+    state.format = c.dataset.format; setActive('format-chips','format',state.format); render();
+  }));
+  // Difficulty chips
+  document.querySelectorAll('#difficulty-chips .chip').forEach(c => c.addEventListener('click', () => {
+    state.diff = c.dataset.diff; setActive('difficulty-chips','diff',state.diff); render();
+  }));
+  // Duration chips
+  document.querySelectorAll('#duration-chips .chip').forEach(c => c.addEventListener('click', () => {
+    state.dur = c.dataset.dur; setActive('duration-chips','dur',state.dur); render();
+  }));
+  // Focus chips
+  document.querySelectorAll('#focus-chips .chip').forEach(c => c.addEventListener('click', () => {
+    state.focus = c.dataset.focus; setActive('focus-chips','focus',state.focus); render();
+  }));
+  // Scoring chips
+  document.querySelectorAll('#scoring-chips .chip').forEach(c => c.addEventListener('click', () => {
+    state.scoring = c.dataset.scoring; setActive('scoring-chips','scoring',state.scoring); render();
+  }));
+  // Modality (multi-toggle)
+  document.querySelectorAll('#modality-chips .chip').forEach(c => c.addEventListener('click', () => {
+    const mod = c.dataset.mod;
+    if (state.modality.has(mod)) { state.modality.delete(mod); c.classList.remove('active'); }
+    else { state.modality.add(mod); c.classList.add('active'); }
+    render();
+  }));
+  // Equipment (multi-toggle)
+  document.querySelectorAll('#equipment-chips .chip').forEach(c => c.addEventListener('click', () => {
+    const eq = c.dataset.eq;
+    if (state.equipment.has(eq)) { state.equipment.delete(eq); c.classList.remove('active'); }
+    else { state.equipment.add(eq); c.classList.add('active'); }
+    render();
+  }));
+
+  // Active pill clear
+  document.getElementById('active-pills').addEventListener('click', e => {
+    const pill = e.target.closest('.active-pill'); if (!pill) return;
+    const key = pill.dataset.clear;
+    if (key==='format')     { state.format='all';     setActive('format-chips','format','all'); }
+    if (key==='diff')       { state.diff='all';       setActive('difficulty-chips','diff','all'); }
+    if (key==='dur')        { state.dur='all'; }
+    if (key==='focus')      { state.focus='all';      setActive('focus-chips','focus','all'); }
+    if (key==='mvCat')      { state.mvCat='all';      setActive('mv-cat-chips','mvcat','all'); }
+    if (key==='mvMuscle')   { state.mvMuscle='all';   setActive('mv-muscle-chips','mvmuscle','all'); }
+    if (key==='stretchArea'){ state.stretchArea='all'; setActive('stretch-area-chips','stretcharea','all'); }
+    if (key==='stretchType'){ state.stretchType='all'; setActive('stretch-type-chips','stretchtype','all'); }
+    if (key==='blogTopic')  { state.blogTopic='all';  setActive('blog-topic-chips','blogtopic','all'); }
+    if (key==='blogType')   { state.blogType='all';   setActive('blog-type-chips','blogtype','all'); }
+    if (key.startsWith('eq:'))  { const v=key.slice(3); state.equipment.delete(v); document.querySelector(`[data-eq="${v}"]`)?.classList.remove('active'); }
+    if (key.startsWith('mod:')) { const v=key.slice(4); state.modality.delete(v);  document.querySelector(`[data-mod="${v}"]`)?.classList.remove('active'); }
+    render();
+  });
+
+  // Movement chips
+  document.querySelectorAll('#mv-cat-chips .chip').forEach(c => c.addEventListener('click', () => {
+    state.mvCat = c.dataset.mvcat; setActive('mv-cat-chips','mvcat',state.mvCat); render();
+  }));
+  document.querySelectorAll('#mv-muscle-chips .chip').forEach(c => c.addEventListener('click', () => {
+    state.mvMuscle = c.dataset.mvmuscle; setActive('mv-muscle-chips','mvmuscle',state.mvMuscle); render();
+  }));
+
+  // Stretch chips
+  document.querySelectorAll('#stretch-area-chips .chip').forEach(c => c.addEventListener('click', () => {
+    state.stretchArea = c.dataset.stretcharea; setActive('stretch-area-chips','stretcharea',state.stretchArea); render();
+  }));
+  document.querySelectorAll('#stretch-type-chips .chip').forEach(c => c.addEventListener('click', () => {
+    state.stretchType = c.dataset.stretchtype; setActive('stretch-type-chips','stretchtype',state.stretchType); render();
+  }));
+
+  // Blog chips
+  document.querySelectorAll('#blog-topic-chips .chip').forEach(c => c.addEventListener('click', () => {
+    state.blogTopic = c.dataset.blogtopic; setActive('blog-topic-chips','blogtopic',state.blogTopic); render();
+  }));
+  document.querySelectorAll('#blog-type-chips .chip').forEach(c => c.addEventListener('click', () => {
+    state.blogType = c.dataset.blogtype; setActive('blog-type-chips','blogtype',state.blogType); render();
+  }));
+
+  // Reset
+  document.getElementById('reset-filters').addEventListener('click', () => { resetFilters(); render(); });
+
+  render();
+});
+</script>
+</body>
+</html>
