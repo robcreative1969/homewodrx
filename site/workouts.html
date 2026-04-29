@@ -441,20 +441,12 @@ function filteredWods() {
 const CLOCK_SVG = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
 const ARROW_SVG = `<svg class="card-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`;
 
-function toMovSlug(name) {
-  return String(name || '').toLowerCase().replace(/['']/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-}
-
 function buildMovHtml(movements) {
   if (!movements || !movements.length) return '';
   const shown = movements.slice(0, 4);
   let html = shown.map(m => {
     const reps = m.reps ? `<span class="mov-reps">${m.reps}</span>` : '';
-    const slug = toMovSlug(m.name);
-    const nameHtml = slug
-      ? `<a href="/movements/${slug}" class="mov-name" style="color:inherit;text-decoration:none;" onclick="event.stopPropagation()">${m.name}</a>`
-      : `<span class="mov-name">${m.name}</span>`;
-    return `<div class="mov-line">${reps}${nameHtml}</div>`;
+    return `<div class="mov-line">${reps}<span class="mov-name">${m.name}</span></div>`;
   }).join('');
   if (movements.length > 4)
     html += `<div class="mov-line mov-more">+${movements.length - 4} more</div>`;
