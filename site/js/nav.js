@@ -13,8 +13,13 @@
 const Nav = {
 
   async init(activePage = '') {
-    await this.ensureSupabase();
+    // Render nav immediately — no waiting on auth network call
+    document.body.insertAdjacentHTML('afterbegin', this.render(activePage));
+    this.attachEventListeners();
+    this.loadSearchScript();
 
+    // Auth check happens async — updates avatar/state once resolved
+    await this.ensureSupabase();
     const currentUser = await db.getUser();
     if (currentUser) db.updateLastSeen();
 
@@ -26,11 +31,7 @@ const Nav = {
       } catch (e) { /* fallback to email-based display name */ }
     }
 
-    document.body.insertAdjacentHTML('afterbegin', this.render(activePage));
-
     this.updateAuth(currentUser, profileUsername);
-    this.attachEventListeners();
-    this.loadSearchScript();
   },
 
   loadSearchScript() {
@@ -69,6 +70,7 @@ const Nav = {
     const bA  = isBlog    ? ' active' : '';
 
     return `<nav class="site-nav">
+<div class="nav-inner">
   <a class="nav-logo" href="/">
     <img src="/HomeWODRx-logo-black-red-040626.png" alt="HomeWODrx" class="nav-logo-img">
   </a>
@@ -185,6 +187,7 @@ const Nav = {
       </div>
     </div>
   </div>
+</div>
 </nav>
 <div class="ham-panel" id="ham-panel">
   <div class="ham-section">
