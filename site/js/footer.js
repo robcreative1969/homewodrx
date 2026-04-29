@@ -3,6 +3,7 @@
 // ============================================================================
 // Injects the site-wide footer and floating feedback button into every page.
 // Add <script src="/js/footer.js"></script> near </body> on any page.
+// Login, signup, and other auth-only pages should NOT include this script.
 
 (function () {
   function injectFooter() {
@@ -10,55 +11,166 @@
     document.querySelectorAll('footer').forEach(function (el) { el.remove(); });
 
     var footer = document.createElement('footer');
-    footer.style.cssText = 'border-top:1px solid var(--bd);padding:40px 20px;margin-top:40px';
     footer.innerHTML = `
-      <div style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:32px">
-        <div>
-          <img src="/HomeWODRx-logo-white-red-black-strip-040626.png" alt="HomeWODrx" style="height:30px;width:auto;display:block;margin-bottom:12px">
-          <p style="font-size:13px;color:var(--mu);line-height:1.7">The complete platform for home and garage gym athletes.</p>
-        </div>
-        <div>
-          <div style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Workouts</div>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <a href="/workouts" style="color:var(--tx);font-size:13px;text-decoration:none">Named Benchmarks</a>
-            <a href="/generator" style="color:var(--tx);font-size:13px;text-decoration:none">Smart WOD Builder</a>
-            <a href="/daily-wod" style="color:var(--tx);font-size:13px;text-decoration:none">Daily 20</a>
-            <a href="/movements" style="color:var(--tx);font-size:13px;text-decoration:none">Movement Library</a>
-            <a href="/shop" style="color:var(--tx);font-size:13px;text-decoration:none">Gear Shop</a>
+      <style>
+        .hwrx-footer {
+          background: #111;
+          color: #ccc;
+          padding: 48px 24px 28px;
+          margin-top: 56px;
+          font-family: inherit;
+        }
+        .hwrx-footer-inner {
+          max-width: 1200px;
+          margin: 0 auto;
+          display: grid;
+          grid-template-columns: 1.3fr repeat(4, 1fr);
+          gap: 32px;
+          margin-bottom: 40px;
+        }
+        @media (max-width: 900px) { .hwrx-footer-inner { grid-template-columns: 1fr 1fr 1fr; } }
+        @media (max-width: 600px) { .hwrx-footer-inner { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 400px) { .hwrx-footer-inner { grid-template-columns: 1fr; } }
+        .hwrx-footer-logo {
+          display: block;
+          height: 34px;
+          width: auto;
+          margin-bottom: 12px;
+        }
+        .hwrx-footer-brand p {
+          font-size: .82rem;
+          line-height: 1.65;
+          color: #888;
+          max-width: 220px;
+          margin: 0;
+        }
+        .hwrx-footer-col h4 {
+          font-size: .78rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: .08em;
+          color: #fff;
+          margin: 0 0 14px;
+        }
+        .hwrx-footer-col ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 9px;
+        }
+        .hwrx-footer-col li a {
+          font-size: .82rem;
+          color: #888;
+          text-decoration: none;
+          transition: color .15s;
+        }
+        .hwrx-footer-col li a:hover { color: var(--or, #C41212); }
+        .hwrx-footer-bottom {
+          max-width: 1200px;
+          margin: 0 auto;
+          border-top: 1px solid #222;
+          padding-top: 20px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+        .hwrx-footer-bottom p {
+          font-size: .75rem;
+          color: #555;
+          margin: 0;
+        }
+        .hwrx-footer-bottom a {
+          color: #555;
+          text-decoration: none;
+          transition: color .15s;
+        }
+        .hwrx-footer-bottom a:hover { color: var(--or, #C41212); }
+        .hwrx-footer-disclosure {
+          max-width: 1200px;
+          margin: 0 auto 16px;
+          font-size: .72rem;
+          color: #444;
+          line-height: 1.5;
+        }
+      </style>
+
+      <div class="hwrx-footer">
+        <div class="hwrx-footer-inner">
+
+          <!-- Brand -->
+          <div class="hwrx-footer-brand">
+            <img src="/HomeWODRx-logo-white-red-black-strip-040626.png" alt="HomeWODrx" class="hwrx-footer-logo">
+            <p>The training platform for functional fitness athletes — at the box, the health club, or at home.</p>
           </div>
-        </div>
-        <div>
-          <div style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Community</div>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <a href="/contact" style="color:var(--tx);font-size:13px;text-decoration:none">Contact &amp; Feedback</a>
+
+          <!-- Workouts -->
+          <div class="hwrx-footer-col">
+            <h4>Workouts</h4>
+            <ul>
+              <li><a href="/workouts.html">The Girls</a></li>
+              <li><a href="/workouts.html">Hero WODs</a></li>
+              <li><a href="/workouts.html">Open WODs</a></li>
+              <li><a href="/workouts.html">Games WODs</a></li>
+              <li><a href="/workouts.html">Partner WODs</a></li>
+            </ul>
           </div>
-        </div>
-        <div>
-          <div style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Account</div>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <a href="/signup" style="color:var(--tx);font-size:13px;text-decoration:none">Sign Up Free</a>
-            <a href="/login" style="color:var(--tx);font-size:13px;text-decoration:none">Log In</a>
-            <a href="/admin" style="color:var(--mu);font-size:12px;text-decoration:none">Admin</a>
+
+          <!-- Train -->
+          <div class="hwrx-footer-col">
+            <h4>Train</h4>
+            <ul>
+              <li><a href="/daily-wod.html">The Daily 20</a></li>
+              <li><a href="/generator.html">Smart WOD Builder</a></li>
+              <li><a href="/generator.html">Create Your Own</a></li>
+              <li><a href="/timer.html">WOD Timer</a></li>
+              <li><a href="/movements.html">Movement Library</a></li>
+            </ul>
           </div>
-        </div>
-        <div>
-          <div style="font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Legal</div>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <a href="/privacy" style="color:var(--tx);font-size:13px;text-decoration:none">Privacy Policy</a>
-            <a href="/terms" style="color:var(--tx);font-size:13px;text-decoration:none">Terms of Service</a>
-            <a href="/disclaimer" style="color:var(--tx);font-size:13px;text-decoration:none">Fitness Disclaimer</a>
-            <a href="/cookies" style="color:var(--tx);font-size:13px;text-decoration:none">Cookie Notice</a>
+
+          <!-- Stretch & Mobility -->
+          <div class="hwrx-footer-col">
+            <h4>Stretch &amp; Mobility</h4>
+            <ul>
+              <li><a href="/stretch.html">The Daily 10</a></li>
+              <li><a href="/stretch.html">Smart Stretch Builder</a></li>
+              <li><a href="/stretch-routines.html">Hip &amp; Lower Body</a></li>
+              <li><a href="/stretch-routines.html">Shoulders &amp; Thoracic</a></li>
+              <li><a href="/stretch-routines.html">Recovery Routines</a></li>
+            </ul>
           </div>
+
+          <!-- More -->
+          <div class="hwrx-footer-col">
+            <h4>More</h4>
+            <ul>
+              <li><a href="/blog.html">Blog &amp; Articles</a></li>
+              <li><a href="/shop.html">Gear Shop</a></li>
+              <li><a href="/profile.html">My Profile</a></li>
+              <li><a href="/contact.html">Contact</a></li>
+              <li><a href="/privacy.html">Privacy Policy</a></li>
+            </ul>
+          </div>
+
         </div>
-      </div>
-      <div style="max-width:1080px;margin:24px auto 0;padding-top:20px;border-top:1px solid var(--bd);text-align:center">
-        <p style="font-size:11px;color:var(--mu);margin-bottom:8px">
-          As an Amazon Associate, HomeWODrx earns from qualifying purchases.
-          Product links on this site may earn us a small commission at no extra cost to you.
-        </p>
-        <p style="font-size:12px;color:var(--mu);margin:0">
-          &copy; 2026 HomeWODrx &middot; Built for athletes, by athletes.
-        </p>
+
+        <!-- Amazon disclosure -->
+        <div class="hwrx-footer-disclosure">
+          As an Amazon Associate, HomeWODrx earns from qualifying purchases. Product links on this site may earn us a small commission at no extra cost to you.
+        </div>
+
+        <!-- Bottom strip -->
+        <div class="hwrx-footer-bottom">
+          <p>&copy; 2026 HomeWODrx &middot; Built for athletes, by athletes.</p>
+          <p>
+            <a href="/privacy.html">Privacy</a> &middot;
+            <a href="/terms.html">Terms</a> &middot;
+            <a href="/cookies.html">Cookies</a>
+          </p>
+        </div>
       </div>
     `;
 
@@ -94,7 +206,7 @@
       }
       #fb-overlay.open { display: flex; }
       #fb-modal {
-        background: var(--bg, #0f0f0f); border: 1.5px solid var(--bd, #2a2a2a);
+        background: var(--white, #fff); border: 1.5px solid var(--border, #e5e5e5);
         border-radius: 16px; padding: 24px; width: 100%; max-width: 400px;
         box-shadow: 0 8px 40px rgba(0,0,0,0.5); animation: fbSlideUp 0.2s ease;
       }
@@ -102,14 +214,14 @@
         from { transform: translateY(24px); opacity: 0; }
         to   { transform: translateY(0);    opacity: 1; }
       }
-      #fb-modal h3 { font-size: 17px; font-weight: 800; margin: 0 0 4px; color: var(--tx, #f0f0f0); }
-      #fb-modal .fb-sub { font-size: 13px; color: var(--mu, #888); margin-bottom: 16px; }
+      #fb-modal h3 { font-size: 17px; font-weight: 800; margin: 0 0 4px; color: var(--text, #1a1a1a); }
+      #fb-modal .fb-sub { font-size: 13px; color: var(--muted, #666); margin-bottom: 16px; }
       .fb-types { display: flex; gap: 8px; margin-bottom: 14px; }
       .fb-type-chip {
-        flex: 1; border: 1.5px solid var(--bd, #2a2a2a);
-        background: var(--card, #1a1a1a); border-radius: 8px;
+        flex: 1; border: 1.5px solid var(--border, #e5e5e5);
+        background: var(--bg, #f3f3f3); border-radius: 8px;
         padding: 8px 4px; cursor: pointer; text-align: center;
-        font-size: 12px; font-weight: 700; color: var(--tx, #f0f0f0);
+        font-size: 12px; font-weight: 700; color: var(--text, #1a1a1a);
         transition: border-color 0.12s, background 0.12s; font-family: inherit;
       }
       .fb-type-chip:hover { border-color: var(--or, #C41212); }
@@ -120,22 +232,22 @@
       .fb-type-chip .fb-chip-icon { font-size: 16px; display: block; margin-bottom: 3px; }
       #fb-textarea {
         width: 100%; box-sizing: border-box;
-        background: var(--card, #1a1a1a); border: 1.5px solid var(--bd, #2a2a2a);
+        background: var(--bg, #f3f3f3); border: 1.5px solid var(--border, #e5e5e5);
         border-radius: 10px; padding: 10px 12px;
-        font-size: 13px; color: var(--tx, #f0f0f0); font-family: inherit;
+        font-size: 13px; color: var(--text, #1a1a1a); font-family: inherit;
         resize: none; outline: none; min-height: 90px;
         transition: border-color 0.15s; margin-bottom: 10px;
       }
       #fb-textarea:focus { border-color: var(--or, #C41212); }
       #fb-email-input {
         width: 100%; box-sizing: border-box;
-        background: var(--card, #1a1a1a); border: 1.5px solid var(--bd, #2a2a2a);
+        background: var(--bg, #f3f3f3); border: 1.5px solid var(--border, #e5e5e5);
         border-radius: 10px; padding: 9px 12px;
-        font-size: 13px; color: var(--tx, #f0f0f0); font-family: inherit;
+        font-size: 13px; color: var(--text, #1a1a1a); font-family: inherit;
         outline: none; transition: border-color 0.15s; margin-bottom: 14px;
       }
       #fb-email-input:focus { border-color: var(--or, #C41212); }
-      #fb-email-input::placeholder, #fb-textarea::placeholder { color: var(--mu, #666); }
+      #fb-email-input::placeholder, #fb-textarea::placeholder { color: var(--muted, #666); }
       .fb-actions { display: flex; gap: 10px; align-items: center; }
       #fb-send-btn {
         flex: 1; background: var(--or, #C41212); color: #fff; border: none;
@@ -145,18 +257,18 @@
       #fb-send-btn:hover { opacity: 0.88; }
       #fb-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
       #fb-cancel-btn {
-        background: none; border: 1.5px solid var(--bd, #2a2a2a);
-        color: var(--mu, #888); border-radius: 9px; padding: 11px 16px;
+        background: none; border: 1.5px solid var(--border, #e5e5e5);
+        color: var(--muted, #666); border-radius: 9px; padding: 11px 16px;
         font-size: 13px; cursor: pointer; font-family: inherit;
       }
-      #fb-cancel-btn:hover { border-color: var(--mu, #888); }
+      #fb-cancel-btn:hover { border-color: var(--muted, #666); }
       #fb-err { display:none; font-size:12px; color:var(--or,#C41212); margin-bottom:10px; }
       #fb-success {
         display:none; text-align:center; padding: 8px 0;
       }
       #fb-success .fb-ok-icon { font-size:32px; margin-bottom:8px; }
-      #fb-success p { font-size:14px; color:var(--tx,#f0f0f0); font-weight:700; margin:0 0 4px; }
-      #fb-success small { font-size:12px; color:var(--mu,#888); }
+      #fb-success p { font-size:14px; color:var(--text,#1a1a1a); font-weight:700; margin:0 0 4px; }
+      #fb-success small { font-size:12px; color:var(--muted,#666); }
 
       @media (orientation: landscape) and (max-height: 500px) {
         #fb-overlay {

@@ -684,4 +684,45 @@ const STRETCH_CONTENT = {
     youtube: 'JhWCtd9lyQU' // Dani Winks Flexibility — 3 Puppy Pose Variations for Open Shoulders
   },
 
+  // ── WRIST ──────────────────────────────────────────────────────────────────
+
+  'wrist-flexor-stretch': {
+    description: 'The wrist flexor stretch targets the muscles on the palm side of the forearm — the flexor carpi radialis, flexor carpi ulnaris, and palmaris longus — that control grip and wrist flexion. For athletes, chronically tight forearm flexors develop from heavy barbell work, pull-ups, and rope climbs. Releasing this group improves wrist extension range of motion, which is essential for a strong front rack position in cleans and front squats.',
+    cues: [
+      'Extend one arm in front of you at shoulder height, elbow straight, palm facing up toward the ceiling.',
+      'With your other hand, reach over the top and gently grasp the fingers of the extended arm.',
+      'Slowly pull the fingers back toward your body — the palm faces the ceiling, fingers pointing down.',
+      'Feel the stretch along the underside of the forearm from the wrist up toward the elbow. Do not force past discomfort at the elbow.',
+      'Keep your shoulder down and your elbow locked straight — bending the elbow significantly reduces the stretch intensity.',
+      'Hold for the prescribed time, then release and repeat on the other side.',
+    ],
+    youtube: 'RRM63cEPGa8' // Merck Manual — Wrist Flexor Stretch
+  },
+
+  'wrist-extensor-stretch': {
+    description: 'The wrist extensor stretch targets the muscles on the back of the forearm — the extensor carpi radialis and extensor digitorum — that pull the wrist upward. Tight wrist extensors are a primary cause of elbow pain (lateral epicondylitis) in athletes who do heavy pressing and pull-ups. Releasing this group also improves the wrist flexion range needed for handstands and front-rack positions under load.',
+    cues: [
+      'Extend one arm in front of you at shoulder height, elbow straight, palm facing away from you as if signaling "stop".',
+      'With your other hand, place your fingers over the back of your hand and gently press the fingers downward toward the floor.',
+      'The wrist will flex, creating a stretch along the top (dorsal side) of the forearm.',
+      'Keep your elbow locked and your shoulder relaxed — do not let it rise toward your ear.',
+      'To increase intensity, drop your arm slightly lower and apply gentle additional pressure with the assisting hand.',
+      'Hold, then switch sides. This pairs naturally with the wrist flexor stretch — do both on each side.',
+    ],
+    youtube: '_uINTR_7X-g' // Wrist Extensor Stretch
+  },
+
+  'wrist-circles': {
+    description: 'Wrist circles are a dynamic warm-up exercise that mobilizes the radiocarpal joint through its full range of motion and increases synovial fluid production. They are the essential first step before handstands, gymnastics movements, Olympic lifting, or any session involving front rack, catching, or pressing overhead. Skipping wrist warm-up is one of the most common causes of wrist pain in CrossFit athletes.',
+    cues: [
+      'Extend both arms forward at shoulder height, fingers loosely curled or interlaced together.',
+      'Begin rotating your wrists in slow clockwise circles, starting small and gradually expanding to the maximum comfortable range.',
+      'Complete the prescribed reps clockwise, then reverse direction for the same number of counterclockwise circles.',
+      'Move slowly and with control — the goal is joint lubrication and range of motion, not speed.',
+      'Pay attention to any sticky or grinding sensations; these areas indicate reduced mobility and should be moved through slowly, never forced.',
+      'To intensify, perform circles with fingers splayed wide to maximize the stretch through the palm and finger extensors simultaneously.',
+    ],
+    youtube: 'IJvS9bYl_cs' // How to Do Wrist Circles
+  },
+
 };

@@ -155,6 +155,22 @@ const STRETCH_DB = {
       focus: ["back", "shoulders"],
       level: ["b","i","a"]
     },
+    {
+      name: "Wrist Flexor Stretch",
+      tip: "Extend arm forward palm up, use other hand to pull fingers back toward you",
+      hold: { b: 20, i: 30, a: 40 },
+      sides: true,
+      focus: ["wrists", "shoulders"],
+      level: ["b","i","a"]
+    },
+    {
+      name: "Wrist Extensor Stretch",
+      tip: "Extend arm forward palm facing away, use other hand to press fingers toward the floor",
+      hold: { b: 20, i: 30, a: 40 },
+      sides: true,
+      focus: ["wrists", "shoulders"],
+      level: ["b","i","a"]
+    },
   ],
 
   // ── DYNAMIC / MOBILITY (movement-based) ─────────────────────────────────
@@ -269,6 +285,14 @@ const STRETCH_DB = {
       hold: { b: 30, i: 45, a: 60 },
       sides: false,
       focus: ["hips", "hamstrings", "calves", "full"],
+      level: ["b","i","a"]
+    },
+    {
+      name: "Wrist Circles",
+      tip: "Interlace fingers or rotate each wrist individually in full circles each direction",
+      reps: { b: 10, i: 12, a: 15 },
+      sides: false,
+      focus: ["wrists"],
       level: ["b","i","a"]
     },
   ],
