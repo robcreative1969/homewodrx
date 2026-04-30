@@ -798,6 +798,14 @@ section.module {
   .footer-inner { grid-template-columns: 1fr; }
 }
 
+/* ── Landscape on small screens (iPhone rotated) ── */
+/* Hide bottom tab bar — vertical space is precious in landscape; top bar handles nav */
+@media (orientation: landscape) and (max-height: 500px) {
+  .mobile-tab-bar   { display: none !important; }
+  .mobile-top-bar   { display: flex; }
+  .page-wrap, .page-wrap-sidebar { padding-bottom: 20px; }
+}
+
 /* ── Print ── */
 @media print {
   .site-nav, .mobile-top-bar, .mobile-tab-bar, .site-footer { display: none !important; }
