@@ -443,7 +443,7 @@
 <div class="page-wrap">
 
   <!-- EDIT PROFILE PANEL (own profile only) -->
-  <div class="edit-panel hidden" id="edit-panel">
+  <div class="edit-panel" id="edit-panel">
     <div class="edit-panel-hdr">
       <span class="edit-panel-title">Edit Profile</span>
       <div style="display:flex;align-items:center;gap:10px">
@@ -777,13 +777,15 @@ function renderProfile(data, isOwn) {
 
   // Build chips
   var chips = [];
+  var FREQ_LABEL = {'1-2':'1–2 days/week','3-4':'3–4 days/week','5-6':'5–6 days/week','daily':'Every day'};
+  var JOUR_LABEL = {'lt1':'<1 yr exp','1-2':'1–2 yrs exp','3-5':'3–5 yrs exp','6-10':'6–10 yrs exp','10plus':'10+ yrs exp'};
   if (data) {
-    if (data.gender)     chips.push(capitalise(data.gender));
-    if (data.experience) chips.push(capitalise(data.experience));
-    if (data.frequency)  chips.push(data.frequency.replace('-',' ') + ' days/week');
-    if (data.journey)    chips.push(data.journey + ' yrs experience');
-    if (data.goat)       chips.push('Goat: ' + data.goat);
-    if (data.fav_wod)    chips.push('Fav WOD: ' + data.fav_wod);
+    if (data.gender)              chips.push(capitalise(data.gender));
+    if (data.experience_level)    chips.push(capitalise(data.experience_level));
+    if (data.training_frequency)  chips.push(FREQ_LABEL[data.training_frequency] || data.training_frequency);
+    if (data.fitness_journey)     chips.push(JOUR_LABEL[data.fitness_journey]    || data.fitness_journey);
+    if (data.goat)                chips.push('Goat: ' + data.goat);
+    if (data.favorite_wod)        chips.push('Fav WOD: ' + data.favorite_wod);
   }
   document.getElementById('prof-chips').innerHTML = chips.map(function(c) {
     return '<span class="prof-chip">' + c + '</span>';
@@ -802,8 +804,8 @@ function renderProfile(data, isOwn) {
     document.getElementById('metric-since').textContent =
       d2.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
   }
-  if (data && data.experience) {
-    document.getElementById('metric-level').textContent = capitalise(data.experience);
+  if (data && data.experience_level) {
+    document.getElementById('metric-level').textContent = capitalise(data.experience_level);
   }
 
   // Own profile controls
@@ -814,13 +816,18 @@ function renderProfile(data, isOwn) {
     document.getElementById('edit-prs-btn').classList.remove('hidden');
     // Pre-fill edit form
     if (data) {
-      document.getElementById('edit-first-name').value = data.first_name || '';
-      document.getElementById('edit-last-name').value  = data.last_name  || '';
-      document.getElementById('edit-bio').value        = data.bio        || '';
-      document.getElementById('edit-goat').value       = data.goat       || '';
-      document.getElementById('edit-fav-wod').value    = data.fav_wod    || '';
-      document.getElementById('edit-country').value    = data.country    || '';
-      document.getElementById('edit-city').value       = data.city       || '';
+      document.getElementById('edit-first-name').value = data.first_name        || '';
+      document.getElementById('edit-last-name').value  = data.last_name         || '';
+      document.getElementById('edit-bio').value        = data.bio               || '';
+      document.getElementById('edit-goat').value       = data.goat              || '';
+      document.getElementById('edit-fav-wod').value    = data.favorite_wod      || '';
+      document.getElementById('edit-country').value    = data.country           || '';
+      document.getElementById('edit-city').value       = data.city              || '';
+      document.getElementById('edit-gender').value     = data.gender            || '';
+      document.getElementById('edit-birthday').value   = data.birthday          || '';
+      document.getElementById('edit-experience').value = data.experience_level  || '';
+      document.getElementById('edit-frequency').value  = data.training_frequency|| '';
+      document.getElementById('edit-journey').value    = data.fitness_journey   || '';
     }
   }
 }
@@ -963,18 +970,32 @@ function loadActivity(profileData, isOwn) {
       document.getElementById('metric-results').textContent = count;
     });
 
-  // Load recent WODs
+  // Accurate total WOD count (separate from display query)
+  supabaseClient.from('user_workouts')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', profileData.id)
+    .then(function(res) {
+      var total = res.count || 0;
+      document.getElementById('val-workouts').textContent = total;
+      document.getElementById('metric-wods').textContent  = total;
+    });
+
+  // Accurate public WOD count
+  supabaseClient.from('user_workouts')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', profileData.id)
+    .eq('is_public', true)
+    .then(function(res) {
+      document.getElementById('val-public').textContent = res.count || 0;
+    });
+
+  // Load recent 3 WODs for the activity cards
   supabaseClient.from('user_workouts').select('*')
     .eq('user_id', profileData.id)
     .order('created_at', { ascending: false })
     .limit(3)
     .then(function(res) {
       var workouts = res.data || [];
-      var pubCount = workouts.filter(function(w) { return w.is_public; }).length;
-      document.getElementById('val-workouts').textContent  = workouts.length;
-      document.getElementById('metric-wods').textContent   = workouts.length;
-      document.getElementById('val-public').textContent    = pubCount;
-
       if (workouts.length === 0) {
         grid.innerHTML = '';
         empty.classList.remove('hidden');
@@ -1011,17 +1032,18 @@ async function saveProfile() {
   var { data: { user } } = await supabaseClient.auth.getUser();
   if (!user) return;
   var updates = {
-    first_name: document.getElementById('edit-first-name').value.trim(),
-    last_name:  document.getElementById('edit-last-name').value.trim(),
-    bio:        document.getElementById('edit-bio').value.trim(),
-    goat:       document.getElementById('edit-goat').value.trim(),
-    fav_wod:    document.getElementById('edit-fav-wod').value.trim(),
-    country:    document.getElementById('edit-country').value.trim(),
-    city:       document.getElementById('edit-city').value.trim(),
-    experience: document.getElementById('edit-experience').value,
-    frequency:  document.getElementById('edit-frequency').value,
-    journey:    document.getElementById('edit-journey').value,
-    updated_at: new Date().toISOString(),
+    first_name:          document.getElementById('edit-first-name').value.trim(),
+    last_name:           document.getElementById('edit-last-name').value.trim(),
+    bio:                 document.getElementById('edit-bio').value.trim(),
+    goat:                document.getElementById('edit-goat').value.trim(),
+    favorite_wod:        document.getElementById('edit-fav-wod').value.trim(),
+    country:             document.getElementById('edit-country').value.trim(),
+    city:                document.getElementById('edit-city').value.trim(),
+    gender:              document.getElementById('edit-gender').value,
+    experience_level:    document.getElementById('edit-experience').value,
+    training_frequency:  document.getElementById('edit-frequency').value,
+    fitness_journey:     document.getElementById('edit-journey').value,
+    updated_at:          new Date().toISOString(),
   };
   await supabaseClient.from('profiles').update(updates).eq('id', user.id);
   toggleEditPanel();
