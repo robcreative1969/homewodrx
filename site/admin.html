@@ -207,14 +207,15 @@
 <div class="admin-page">
 
   <div class="admin-header">
-    <img src="HomeWODRx-logo-white-red-black-strip-040626.png" alt="HomeWODrx" class="admin-header-logo">
+    <span style="font-family:var(--font-head,'Bebas Neue',sans-serif);font-size:1.5rem;letter-spacing:.06em;color:var(--tx);margin-right:auto">Admin Panel</span>
     <span class="admin-badge">ADMIN</span>
     <button class="logout-btn" onclick="adminLogout()">Logout</button>
   </div>
 
   <!-- Stats Bar -->
   <div class="stats-bar">
-    <div class="stat-card"><div class="num" id="stat-workouts">—</div><div class="lbl">Total Workouts</div></div>
+    <div class="stat-card"><div class="num" id="stat-benchmarks">—</div><div class="lbl">Benchmarks</div></div>
+    <div class="stat-card"><div class="num" id="stat-workouts">—</div><div class="lbl">Community WODs</div></div>
     <div class="stat-card"><div class="num" id="stat-results">—</div><div class="lbl">Total Results</div></div>
     <div class="stat-card"><div class="num" id="stat-users">—</div><div class="lbl">Athletes</div></div>
     <div class="stat-card"><div class="num" id="stat-nominations">—</div><div class="lbl">Nominations Pending</div></div>
@@ -913,11 +914,12 @@ function setTodayDate(){
 
 async function loadStats(){
   if(!supabaseClient){
-    ['stat-workouts','stat-results','stat-users','stat-nominations','stat-pending-review','stat-movements'].forEach(id=>document.getElementById(id).textContent='—');
+    ['stat-benchmarks','stat-workouts','stat-results','stat-users','stat-nominations','stat-pending-review','stat-movements'].forEach(id=>document.getElementById(id).textContent='—');
     return;
   }
   try{
-    const[w,r,p,n,pr,mv]=await Promise.all([
+    const[bm,w,r,p,n,pr,mv]=await Promise.all([
+      supabaseClient.from('benchmarks').select('*',{count:'exact',head:true}),
       supabaseClient.from('workouts').select('*',{count:'exact',head:true}),
       supabaseClient.from('results').select('*',{count:'exact',head:true}),
       supabaseClient.from('profiles').select('*',{count:'exact',head:true}),
@@ -925,6 +927,7 @@ async function loadStats(){
       supabaseClient.from('workouts').select('*',{count:'exact',head:true}).eq('is_public',true).eq('is_approved',false),
       supabaseClient.from('movements').select('*',{count:'exact',head:true})
     ]);
+    document.getElementById('stat-benchmarks').textContent=bm.count||0;
     document.getElementById('stat-workouts').textContent=w.count||0;
     document.getElementById('stat-results').textContent=r.count||0;
     document.getElementById('stat-users').textContent=p.count||0;
