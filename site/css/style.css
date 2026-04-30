@@ -70,7 +70,7 @@ ul, ol { list-style: none; }
 
   /* Chrome */
   --nav-h:  64px;
-  --tab-h:  58px;
+  --tab-h:  64px;
 }
 
 /*
@@ -386,50 +386,63 @@ section.module {
 
 
 /* ═══════════════════════════════════════
-   8. NAV — MOBILE TOP BAR (≤ 767px)
+   8. NAV — MOBILE TOP BAR (≤ 767px portrait, all landscape)
 ═══════════════════════════════════════ */
 .mobile-top-bar {
   display: none;
-  position: sticky; top: 0; z-index: 1000;
+  position: sticky; top: 0; z-index: 1001;
   height: 52px; background: var(--white);
   border-bottom: 2px solid var(--or);
   align-items: center; padding: 0 16px;
   justify-content: space-between;
 }
-.mobile-top-bar .nav-logo-text { font-size: 1.1rem; }
+/* Icon buttons inside mobile top bar (search, hamburger) */
+.mob-top-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 8px;
+  background: none; border: none; cursor: pointer;
+  color: var(--text); text-decoration: none;
+  transition: background .15s, color .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.mob-top-btn:hover, .mob-top-btn.open { background: var(--or-xlight); color: var(--or); }
+.mob-top-btn svg { width: 20px; height: 20px; display: block; }
 
 
 /* ═══════════════════════════════════════
-   9. NAV — MOBILE BOTTOM TAB BAR (≤ 767px)
+   9. NAV — MOBILE BOTTOM TAB BAR (≤ 767px portrait)
 ═══════════════════════════════════════ */
 .mobile-tab-bar {
   display: none;
   position: fixed; bottom: 0; left: 0; right: 0;
   height: var(--tab-h); background: var(--white);
-  border-top: 1px solid var(--border);
-  box-shadow: 0 -2px 12px rgba(0,0,0,.08);
+  border-top: 2px solid var(--border);
+  box-shadow: 0 -4px 16px rgba(0,0,0,.10);
   z-index: 1000;
   padding-bottom: env(safe-area-inset-bottom);
 }
-.tab-items { display: flex; height: 100%; align-items: stretch; }
+.tab-items {
+  display: flex; height: 100%; align-items: stretch;
+  justify-content: space-around;
+}
 .tab-item {
   flex: 1; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 3px;
+  align-items: center; justify-content: center; gap: 4px;
   text-decoration: none; color: var(--muted);
-  font-size: .62rem; font-weight: 700; letter-spacing: .03em;
+  font-size: .65rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
   border: none; background: none; cursor: pointer;
   font-family: var(--font-body); transition: color .15s;
   -webkit-tap-highlight-color: transparent;
-  position: relative; padding: 6px 4px 4px;
+  position: relative; padding: 8px 4px 6px;
+  border-top: 3px solid transparent;
 }
-.tab-item svg { width: 22px; height: 22px; transition: transform .15s; }
-.tab-item:hover, .tab-item.active { color: var(--or); }
+.tab-item svg { width: 24px; height: 24px; transition: transform .15s; flex-shrink: 0; }
+.tab-item:active { background: var(--or-xlight); }
+.tab-item.active {
+  color: var(--or);
+  border-top-color: var(--or);
+}
 .tab-item.active svg { transform: translateY(-1px); }
-.tab-item.active::after {
-  content: ''; display: block; width: 4px; height: 4px;
-  background: var(--or); border-radius: 50%;
-  position: absolute; bottom: 5px;
-}
 
 
 /* ═══════════════════════════════════════
@@ -783,9 +796,12 @@ section.module {
   .mobile-top-bar   { display: flex; }
   .mobile-tab-bar   { display: flex; align-items: stretch; }
 
-  .page-wrap, .page-wrap-sidebar { padding: 20px 16px 96px; }
+  .page-wrap, .page-wrap-sidebar { padding: 20px 16px calc(var(--tab-h) + 20px + env(safe-area-inset-bottom)); }
   .page-header  { padding: 20px 16px 22px; }
   .wrap         { padding: 0 16px; }
+
+  /* Push Sentry feedback widget above the tab bar */
+  #sentry-feedback  { bottom: calc(var(--tab-h) + env(safe-area-inset-bottom) + 12px) !important; }
 
   .bento-2, .bento-3, .bento-4 { grid-template-columns: 1fr; }
   .footer-inner { grid-template-columns: 1fr 1fr; }
@@ -799,11 +815,14 @@ section.module {
 }
 
 /* ── Landscape on small screens (iPhone rotated) ── */
-/* Hide bottom tab bar — vertical space is precious in landscape; top bar handles nav */
+/* Hide bottom tab bar and desktop nav — use slim top bar only */
 @media (orientation: landscape) and (max-height: 500px) {
+  .site-nav         { display: none !important; }
   .mobile-tab-bar   { display: none !important; }
   .mobile-top-bar   { display: flex; }
   .page-wrap, .page-wrap-sidebar { padding-bottom: 20px; }
+  /* Sentry feedback widget: reset to default position in landscape */
+  #sentry-feedback  { bottom: 16px !important; }
 }
 
 /* ── Print ── */
