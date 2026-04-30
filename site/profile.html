@@ -310,6 +310,64 @@
 .mb-20 { margin-bottom: 20px; }
 .mb-28 { margin-bottom: 28px; }
 .hidden { display: none !important; }
+
+/* ── Auth gate (inline login for logged-out users on Profile tab) ── */
+.auth-gate-wrap {
+  display: flex; align-items: center; justify-content: center;
+  padding: 48px 16px 80px;
+}
+.auth-gate-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow-md);
+  padding: 2.75rem 2.5rem; width: 100%; max-width: 420px;
+}
+@media (max-width: 480px) { .auth-gate-card { padding: 2rem 1.25rem; } }
+.auth-gate-title {
+  font-family: var(--font-head); font-size: 2rem; letter-spacing: .04em;
+  text-align: center; margin-bottom: .35rem; line-height: 1; color: var(--text);
+}
+.auth-gate-sub {
+  color: var(--muted); text-align: center; margin-bottom: 1.75rem;
+  font-size: .875rem; line-height: 1.5;
+}
+.auth-gate-group { margin-bottom: 1.1rem; }
+.auth-gate-label {
+  display: block; font-size: .75rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--muted); margin-bottom: .4rem;
+}
+.auth-gate-input {
+  width: 100%; background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: .75rem 1rem;
+  color: var(--text); font-size: .95rem; font-family: var(--font-body);
+  transition: border-color .2s; outline: none;
+}
+.auth-gate-input:focus { background: var(--white); border-color: var(--or); }
+.auth-gate-input::placeholder { color: #bbb; }
+.btn-gate-submit {
+  width: 100%; padding: .9rem; background: var(--or); color: #fff; border: none;
+  border-radius: var(--radius); font-size: 1rem; font-weight: 700;
+  font-family: var(--font-body); margin-top: .4rem;
+  transition: background .15s; cursor: pointer;
+}
+.btn-gate-submit:hover { background: var(--or-dark); }
+.btn-gate-submit:disabled { opacity: .6; cursor: not-allowed; }
+.auth-gate-alert {
+  border-radius: var(--radius); padding: .7rem .9rem;
+  font-size: .875rem; margin-bottom: 1rem; display: none;
+}
+.auth-gate-alert.visible { display: block; }
+.auth-gate-alert-error {
+  background: rgba(196,18,18,.07); border: 1px solid rgba(196,18,18,.25); color: var(--or);
+}
+.auth-gate-alert-success {
+  background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.3); color: #16a34a;
+}
+.auth-gate-footer {
+  text-align: center; margin-top: 1.25rem; font-size: .875rem; color: var(--muted);
+}
+.auth-gate-footer a { color: var(--or); font-weight: 600; }
+.auth-gate-divider { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
   </style>
 
   <!-- Google Analytics -->
@@ -355,6 +413,33 @@
 
 <!-- MAIN -->
 <main>
+
+<!-- AUTH GATE: shown to logged-out users who tap the Profile tab -->
+<div id="auth-gate" class="hidden">
+  <div class="auth-gate-wrap">
+    <div class="auth-gate-card">
+      <h1 class="auth-gate-title">Welcome Back</h1>
+      <p class="auth-gate-sub">Log in to access your training history, PRs, and profile.</p>
+      <div class="auth-gate-alert auth-gate-alert-error" id="gate-error"></div>
+      <div class="auth-gate-alert auth-gate-alert-success" id="gate-success"></div>
+      <form id="gate-form">
+        <div class="auth-gate-group">
+          <label class="auth-gate-label" for="gate-email">Email</label>
+          <input type="email" id="gate-email" class="auth-gate-input" placeholder="you@example.com" required autocomplete="email"/>
+        </div>
+        <div class="auth-gate-group">
+          <label class="auth-gate-label" for="gate-password">Password</label>
+          <input type="password" id="gate-password" class="auth-gate-input" placeholder="••••••••" required autocomplete="current-password"/>
+        </div>
+        <button type="submit" class="btn-gate-submit" id="gate-submit-btn">Log In</button>
+      </form>
+      <hr class="auth-gate-divider">
+      <p class="auth-gate-footer">Don't have an account? <a href="/signup.html">Sign up free</a></p>
+      <p class="auth-gate-footer" style="margin-top:.5rem"><a href="/login.html">Forgot password?</a></p>
+    </div>
+  </div>
+</div>
+
 <div class="page-wrap">
 
   <!-- EDIT PROFILE PANEL (own profile only) -->
@@ -623,14 +708,14 @@ document.addEventListener('DOMContentLoaded', async function() {
   var session  = null;
   var currentUser = null;
   try {
-    var { data: { session: s } } = await supabase.auth.getSession();
+    var { data: { session: s } } = await supabaseClient.auth.getSession();
     session = s;
     currentUser = session ? session.user : null;
   } catch(e) { /* Supabase not ready */ }
 
   if (!urlUser && !currentUser) {
-    // Not logged in and no target user — redirect to login
-    window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.pathname);
+    // Not logged in and no target user — show inline login (keeps mobile nav visible)
+    showAuthGate();
     return;
   }
 
@@ -643,7 +728,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   // Load profile data
   var profileData = null;
   try {
-    var query = supabase.from('profiles').select('*');
+    var query = supabaseClient.from('profiles').select('*');
     if (targetUsername) {
       query = query.eq('username', targetUsername);
     } else {
@@ -743,7 +828,7 @@ function renderProfile(data, isOwn) {
 /* ── Lift PRs ── */
 function loadLiftPRs(profileData, isOwn) {
   if (!profileData) { renderLifts(isOwn); return; }
-  supabase.from('lift_prs')
+  supabaseClient.from('lift_prs')
     .select('*')
     .eq('user_id', profileData.id)
     .then(function(res) {
@@ -803,13 +888,13 @@ function editLiftInline(name, card) {
 }
 
 function saveLiftPR(name, value) {
-  supabase.auth.getUser().then(function(res) {
+  supabaseClient.auth.getUser().then(function(res) {
     var user = res.data && res.data.user;
     if (!user) return;
     if (value) {
-      supabase.from('lift_prs').upsert({ user_id: user.id, lift_name: name, weight_lbs: value }, { onConflict: 'user_id,lift_name' });
+      supabaseClient.from('lift_prs').upsert({ user_id: user.id, lift_name: name, weight_lbs: value }, { onConflict: 'user_id,lift_name' });
     } else {
-      supabase.from('lift_prs').delete().eq('user_id', user.id).eq('lift_name', name);
+      supabaseClient.from('lift_prs').delete().eq('user_id', user.id).eq('lift_name', name);
     }
   });
 }
@@ -870,7 +955,7 @@ function loadActivity(profileData, isOwn) {
   }
 
   // Load results count
-  supabase.from('results').select('id', { count: 'exact', head: true })
+  supabaseClient.from('results').select('id', { count: 'exact', head: true })
     .eq('user_id', profileData.id)
     .then(function(res) {
       var count = res.count || 0;
@@ -879,7 +964,7 @@ function loadActivity(profileData, isOwn) {
     });
 
   // Load recent WODs
-  supabase.from('user_workouts').select('*')
+  supabaseClient.from('user_workouts').select('*')
     .eq('user_id', profileData.id)
     .order('created_at', { ascending: false })
     .limit(3)
@@ -923,7 +1008,7 @@ function toggleEditPanel() {
 }
 
 async function saveProfile() {
-  var { data: { user } } = await supabase.auth.getUser();
+  var { data: { user } } = await supabaseClient.auth.getUser();
   if (!user) return;
   var updates = {
     first_name: document.getElementById('edit-first-name').value.trim(),
@@ -938,7 +1023,7 @@ async function saveProfile() {
     journey:    document.getElementById('edit-journey').value,
     updated_at: new Date().toISOString(),
   };
-  await supabase.from('profiles').update(updates).eq('id', user.id);
+  await supabaseClient.from('profiles').update(updates).eq('id', user.id);
   toggleEditPanel();
   window.location.reload();
 }
@@ -964,6 +1049,64 @@ function openResultModal(wod, score, isRx) {
 }
 document.querySelectorAll('.modal-overlay').forEach(function(m) {
   m.addEventListener('click', function(e) { if (e.target === m) m.classList.remove('open'); });
+});
+
+/* ── Auth gate ── */
+function showAuthGate() {
+  document.getElementById('auth-gate').classList.remove('hidden');
+  document.querySelector('.prof-header').style.display = 'none';
+  document.querySelector('.page-wrap').style.display   = 'none';
+}
+
+document.getElementById('gate-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  var email     = document.getElementById('gate-email').value.trim();
+  var password  = document.getElementById('gate-password').value;
+  var submitBtn = document.getElementById('gate-submit-btn');
+  var errEl     = document.getElementById('gate-error');
+  var succEl    = document.getElementById('gate-success');
+
+  errEl.className  = 'auth-gate-alert auth-gate-alert-error';
+  succEl.className = 'auth-gate-alert auth-gate-alert-success';
+  submitBtn.disabled    = true;
+  submitBtn.textContent = 'Logging in…';
+
+  try {
+    var { user, error } = await db.signIn(email, password);
+    if (error) {
+      errEl.textContent = error.message || 'Invalid email or password.';
+      errEl.className  += ' visible';
+      submitBtn.disabled    = false;
+      submitBtn.textContent = 'Log In';
+      return;
+    }
+    if (user) {
+      succEl.textContent = 'Logged in!';
+      succEl.className  += ' visible';
+
+      // Hide gate, reveal profile shell
+      document.getElementById('auth-gate').classList.add('hidden');
+      document.querySelector('.prof-header').style.display = '';
+      document.querySelector('.page-wrap').style.display   = '';
+
+      // Load the user's profile
+      isOwnProfile = true;
+      var profileData = null;
+      try {
+        var { data: rows } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single();
+        profileData = rows;
+      } catch(e) { /* profile not yet created */ }
+
+      renderProfile(profileData, true);
+      loadLiftPRs(profileData, true);
+      loadActivity(profileData, true);
+    }
+  } catch(err) {
+    errEl.textContent = 'Something went wrong. Please try again.';
+    errEl.className  += ' visible';
+    submitBtn.disabled    = false;
+    submitBtn.textContent = 'Log In';
+  }
 });
 
 /* ── Helpers ── */
