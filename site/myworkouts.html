@@ -524,16 +524,16 @@ textarea.form-input { resize:vertical; min-height:80px; line-height:1.5; }
 <script>
 var MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-var allWorkouts    = [];   // raw rows from user_workouts with results
-var visibleCount   = 20;   // pagination page size
+var allWorkouts    = [];   // enriched result rows
+var visibleCount   = 20;
 var currentType    = 'all';
-var logTargetId    = null; // user_workout id being logged against
+var logTargetSlug  = null; // benchmark_slug for re-logging
+var logTargetWodId = null; // workout_id for re-logging
 var deleteTargetId = null; // result id being deleted
 var logIsRx        = true;
 
 /* ─── Auth init ─── */
 document.addEventListener('DOMContentLoaded', async function() {
-  /* Set today as default log date */
   var today = new Date();
   document.getElementById('log-date').value = today.toISOString().split('T')[0];
 
@@ -546,30 +546,77 @@ document.addEventListener('DOMContentLoaded', async function() {
 
   var userId = session.user.id;
 
-  /* Load user_workouts joined with latest result for each */
-  var { data: workouts, error } = await supabaseClient
-    .from('user_workouts')
-    .select('*, results(id, score, is_rx, notes, logged_at)')
+  /* Load all results for this user, newest first */
+  var { data: results, error } = await supabaseClient
+    .from('results')
+    .select('*')
     .eq('user_id', userId)
+    .order('date', { ascending: false })
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('Error loading workouts:', error);
+    console.error('Error loading results:', error);
     document.getElementById('view-empty').style.display = 'block';
     return;
   }
 
-  if (!workouts || workouts.length === 0) {
+  if (!results || results.length === 0) {
     document.getElementById('view-empty').style.display = 'block';
     return;
   }
 
-  allWorkouts = workouts;
+  /* Collect unique benchmark slugs and workout IDs to fetch WOD details */
+  var slugs  = [];
+  var wodIds = [];
+  results.forEach(function(r) {
+    if (r.benchmark_slug && slugs.indexOf(r.benchmark_slug) === -1) slugs.push(r.benchmark_slug);
+    if (r.workout_id     && wodIds.indexOf(r.workout_id)   === -1) wodIds.push(r.workout_id);
+  });
+
+  var benchmarkMap = {};
+  if (slugs.length) {
+    var { data: bms } = await supabaseClient
+      .from('benchmark_workouts')
+      .select('slug, name, movements, category')
+      .in('slug', slugs);
+    if (bms) bms.forEach(function(b) { benchmarkMap[b.slug] = b; });
+  }
+
+  var workoutMap = {};
+  if (wodIds.length) {
+    var { data: uws } = await supabaseClient
+      .from('workouts')
+      .select('id, title, movements')
+      .in('id', wodIds);
+    if (uws) uws.forEach(function(w) { workoutMap[w.id] = w; });
+  }
+
+  /* Enrich each result row with WOD metadata */
+  allWorkouts = results.map(function(r) {
+    var wod  = r.benchmark_slug ? benchmarkMap[r.benchmark_slug]
+             : r.workout_id    ? workoutMap[r.workout_id]
+             : null;
+    var type = r.benchmark_slug ? 'benchmark' : 'generated';
+    var name = wod ? (wod.name || wod.title || r.benchmark_slug || 'Custom WOD')
+                   : (r.benchmark_slug || 'Custom WOD');
+    return {
+      _resultId:  r.id,
+      wod_type:   type,
+      wod_name:   name,
+      slug:       r.benchmark_slug || null,
+      workout_id: r.workout_id || null,
+      movements:  wod ? (wod.movements || []) : [],
+      created_at: r.date || r.created_at,
+      score:      r.score_display,
+      is_rx:      r.is_rx,
+      notes:      r.notes,
+    };
+  });
+
   document.getElementById('view-loggedin').style.display = 'block';
-
-  buildStats(workouts);
-  buildTabCounts(workouts);
-  renderCards(workouts);
+  buildStats(allWorkouts);
+  buildTabCounts(allWorkouts);
+  renderCards(allWorkouts);
 });
 
 /* ─── Stats strip ─── */
@@ -589,14 +636,9 @@ function buildStats(workouts) {
   document.getElementById('stat-benchmark').textContent = bench;
   document.getElementById('stat-month').textContent     = month;
 
-  /* Most recent workout name */
-  var sorted = workouts.slice().sort(function(a,b){
-    return new Date(b.created_at) - new Date(a.created_at);
-  });
-  if (sorted.length) {
-    var d = new Date(sorted[0].created_at);
-    var name = sorted[0].wod_name || 'WOD';
-    /* Truncate long names for the stat card */
+  if (workouts.length) {
+    var d    = new Date(workouts[0].created_at);
+    var name = workouts[0].wod_name || 'WOD';
     document.getElementById('stat-last').textContent      = name.length > 14 ? name.slice(0,13) + '…' : name;
     document.getElementById('stat-last-date').textContent = d.toLocaleDateString('en-US',{ month:'short', day:'numeric' });
   }
@@ -607,20 +649,13 @@ function buildTabCounts(workouts) {
   var counts = { all: 0, benchmark: 0, daily20: 0, generated: 0 };
   workouts.forEach(function(w){
     counts.all++;
-    var t = normalizeType(w.wod_type);
+    var t = w.wod_type;
     if (counts[t] !== undefined) counts[t]++;
   });
   document.getElementById('count-all').textContent       = counts.all;
   document.getElementById('count-benchmark').textContent = counts.benchmark;
   document.getElementById('count-daily20').textContent   = counts.daily20;
   document.getElementById('count-generated').textContent = counts.generated;
-}
-
-function normalizeType(t) {
-  if (!t) return 'generated';
-  if (t === 'benchmark') return 'benchmark';
-  if (t === 'daily20' || t === 'daily-20') return 'daily20';
-  return 'generated';
 }
 
 /* ─── Filter tabs ─── */
@@ -631,7 +666,7 @@ function filterCards(type, el) {
   visibleCount = 20;
   var filtered = type === 'all'
     ? allWorkouts
-    : allWorkouts.filter(function(w){ return normalizeType(w.wod_type) === type; });
+    : allWorkouts.filter(function(w){ return w.wod_type === type; });
   renderCards(filtered);
 }
 
@@ -640,7 +675,6 @@ function renderCards(workouts) {
   var container = document.getElementById('cards-container');
   var subset    = workouts.slice(0, visibleCount);
 
-  /* Group into month buckets, preserve order */
   var groups = {};
   var order  = [];
   subset.forEach(function(w) {
@@ -667,61 +701,52 @@ function renderCards(workouts) {
 
 /* ─── Build a single WOD card ─── */
 function buildCard(w) {
-  var nt        = normalizeType(w.wod_type);
-  var chipClass = nt === 'benchmark' ? 'chip-red' : nt === 'daily20' ? 'chip-purple' : 'chip-blue';
-  var chipLabel = nt === 'benchmark' ? 'Benchmark'  : nt === 'daily20' ? 'Daily 20'    : 'Generated';
+  var chipClass = w.wod_type === 'benchmark' ? 'chip-red' : 'chip-blue';
+  var chipLabel = w.wod_type === 'benchmark' ? 'Benchmark' : 'Generated';
 
   var d       = new Date(w.created_at);
   var dateStr = d.toLocaleDateString('en-US',{ month:'short', day:'numeric', year:'numeric' });
 
-  /* WOD name — link if slug available */
   var nameHtml = w.slug
-    ? '<a href="/workouts/' + w.slug + '" class="wod-name-link">' + esc(w.wod_name || 'Untitled WOD') + '</a>'
-    : '<span class="wod-name-plain">' + esc(w.wod_name || 'Custom WOD') + '</span>';
+    ? '<a href="/workouts/' + w.slug + '" class="wod-name-link">' + esc(w.wod_name) + '</a>'
+    : '<span class="wod-name-plain">' + esc(w.wod_name) + '</span>';
 
   /* Movements strip */
   var movHtml = '';
-  if (w.movements && w.movements.length) {
-    var movs = Array.isArray(w.movements) ? w.movements : [];
+  var movs = Array.isArray(w.movements) ? w.movements : [];
+  if (movs.length) {
     movHtml = '<div class="wod-movements">';
     movs.slice(0, 4).forEach(function(m) {
-      var slug = typeof m === 'object' ? (m.slug || '') : '';
-      var name = typeof m === 'object' ? (m.name || String(m)) : String(m);
-      movHtml += slug
-        ? '<a href="/movements/' + slug + '" class="wod-mov-link">' + esc(name) + '</a>'
-        : '<span class="wod-mov-link" style="cursor:default">' + esc(name) + '</span>';
+      var mslug = typeof m === 'object' ? (m.slug || '') : '';
+      var mname = typeof m === 'object' ? (m.name || String(m)) : String(m);
+      movHtml += mslug
+        ? '<a href="/movements/' + mslug + '" class="wod-mov-link">' + esc(mname) + '</a>'
+        : '<span class="wod-mov-link" style="cursor:default">' + esc(mname) + '</span>';
     });
-    if (movs.length > 4) {
-      movHtml += '<span class="wod-mov-link" style="cursor:default">+' + (movs.length - 4) + ' more</span>';
-    }
+    if (movs.length > 4) movHtml += '<span class="wod-mov-link" style="cursor:default">+' + (movs.length - 4) + ' more</span>';
     movHtml += '</div>';
   }
 
-  /* Latest result (most recent logged_at) */
-  var latestResult = null;
-  var resultHtml   = '';
-  if (w.results && w.results.length) {
-    latestResult = w.results.sort(function(a,b){
-      return new Date(b.logged_at) - new Date(a.logged_at);
-    })[0];
-    var rxClass = latestResult.is_rx ? 'rx-yes' : 'rx-no';
-    var rxLabel = latestResult.is_rx ? 'Rx'      : 'Scaled';
+  /* Result strip */
+  var resultHtml = '';
+  if (w.score) {
+    var rxClass = w.is_rx ? 'rx-yes' : 'rx-no';
+    var rxLabel = w.is_rx ? 'Rx' : 'Scaled';
     resultHtml  = '<div class="wod-result-strip">';
     resultHtml += '<div class="result-main">';
-    resultHtml += '<span class="result-score">' + esc(latestResult.score || '—') + '</span>';
+    resultHtml += '<span class="result-score">' + esc(w.score) + '</span>';
     resultHtml += '<span class="result-rx-badge ' + rxClass + '">' + rxLabel + '</span>';
     resultHtml += '</div>';
-    if (latestResult.notes) {
-      resultHtml += '<span class="result-notes">' + esc(latestResult.notes) + '</span>';
-    }
+    if (w.notes) resultHtml += '<span class="result-notes">' + esc(w.notes) + '</span>';
     resultHtml += '</div>';
   }
 
-  /* Assemble card HTML */
-  var wid  = JSON.stringify(w.id);
-  var wname= JSON.stringify(w.wod_name || 'WOD');
+  var slugArg  = JSON.stringify(w.slug || null);
+  var wodIdArg = JSON.stringify(w.workout_id || null);
+  var nameArg  = JSON.stringify(w.wod_name);
+  var ridArg   = JSON.stringify(w._resultId);
 
-  var html = '<div class="wod-card" data-id="' + esc(String(w.id)) + '" data-type="' + nt + '">';
+  var html = '<div class="wod-card" data-id="' + esc(String(w._resultId)) + '" data-type="' + w.wod_type + '">';
 
   html += '<div class="wod-card-top">';
   html += '<div class="wod-card-left">';
@@ -729,7 +754,7 @@ function buildCard(w) {
   html += nameHtml;
   html += movHtml;
   html += '<div class="wod-date">' + dateStr + '</div>';
-  html += '</div>'; /* wod-card-left */
+  html += '</div>';
 
   if (w.slug) {
     html += '<div class="wod-card-right">';
@@ -742,11 +767,9 @@ function buildCard(w) {
   if (resultHtml) html += resultHtml;
 
   html += '<div class="wod-card-foot">';
-  html += '<button class="btn-card-action btn-log-again" onclick="openLogModal(' + wid + ',' + wname + ')">Log Result</button>';
-  if (latestResult) {
-    html += '<button class="btn-card-action btn-delete-result" onclick="openDeleteModal(' + JSON.stringify(latestResult.id) + ')">Delete Result</button>';
-  }
-  html += '</div>'; /* wod-card-foot */
+  html += '<button class="btn-card-action btn-log-again" onclick="openLogModal(' + slugArg + ',' + wodIdArg + ',' + nameArg + ')">Log Again</button>';
+  html += '<button class="btn-card-action btn-delete-result" onclick="openDeleteModal(' + ridArg + ')">Delete</button>';
+  html += '</div>';
 
   html += '</div>'; /* wod-card */
   return html;
@@ -766,13 +789,14 @@ function loadMore() {
   visibleCount += 20;
   var filtered = currentType === 'all'
     ? allWorkouts
-    : allWorkouts.filter(function(w){ return normalizeType(w.wod_type) === currentType; });
+    : allWorkouts.filter(function(w){ return w.wod_type === currentType; });
   renderCards(filtered);
 }
 
 /* ─── Log modal ─── */
-function openLogModal(workoutId, name) {
-  logTargetId = workoutId;
+function openLogModal(slug, wodId, name) {
+  logTargetSlug  = slug;
+  logTargetWodId = wodId;
   document.getElementById('log-modal-title').textContent = 'Log Result — ' + name;
   document.getElementById('log-score').value = '';
   document.getElementById('log-notes').value = '';
@@ -785,7 +809,8 @@ function openLogModal(workoutId, name) {
 }
 function closeLogModal() {
   document.getElementById('log-modal').classList.remove('open');
-  logTargetId = null;
+  logTargetSlug  = null;
+  logTargetWodId = null;
 }
 function setRx(isRx) {
   logIsRx = isRx;
@@ -793,19 +818,26 @@ function setRx(isRx) {
   document.getElementById('rx-no').classList.toggle('selected', !isRx);
 }
 async function submitLog() {
-  if (!logTargetId) return;
+  if (!logTargetSlug && !logTargetWodId) return;
   var score = document.getElementById('log-score').value.trim();
   var date  = document.getElementById('log-date').value;
   var notes = document.getElementById('log-notes').value.trim();
 
-  var { error } = await supabaseClient.from('results').insert({
-    user_workout_id: logTargetId,
-    score:      score  || null,
-    is_rx:      logIsRx,
-    logged_at:  date   || new Date().toISOString().split('T')[0],
-    notes:      notes  || null
-  });
+  var { data: { session } } = await supabaseClient.auth.getSession();
+  if (!session) return;
 
+  var payload = {
+    user_id:       session.user.id,
+    username:      (session.user.user_metadata && session.user.user_metadata.full_name) || session.user.email.split('@')[0],
+    score_display: score  || null,
+    is_rx:         logIsRx,
+    date:          date   || new Date().toISOString().split('T')[0],
+    notes:         notes  || null,
+  };
+  if (logTargetSlug)  payload.benchmark_slug = logTargetSlug;
+  if (logTargetWodId) payload.workout_id     = logTargetWodId;
+
+  var { error } = await supabaseClient.from('results').insert(payload);
   if (error) { console.error('Log error:', error); return; }
   closeLogModal();
   window.location.reload();
