@@ -423,7 +423,6 @@ section.module {
 }
 .tab-items {
   display: flex; height: 100%; align-items: stretch;
-  justify-content: space-around;
 }
 .tab-item {
   flex: 1; display: flex; flex-direction: column;
@@ -433,16 +432,35 @@ section.module {
   border: none; background: none; cursor: pointer;
   font-family: var(--font-body); transition: color .15s;
   -webkit-tap-highlight-color: transparent;
-  position: relative; padding: 8px 4px 6px;
-  border-top: 3px solid transparent;
+  position: relative; padding: 0 4px;
 }
-.tab-item svg { width: 24px; height: 24px; transition: transform .15s; flex-shrink: 0; }
+/* ── Mobile feedback button (portrait only, above tab bar) ── */
+.mob-feedback-btn {
+  display: none;
+  position: fixed;
+  right: 16px;
+  bottom: calc(var(--tab-h) + env(safe-area-inset-bottom) + 14px);
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--or); color: #fff;
+  border: none; cursor: pointer; z-index: 999;
+  align-items: center; justify-content: center;
+  box-shadow: 0 4px 14px rgba(196,18,18,.40);
+  transition: transform .15s, box-shadow .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.mob-feedback-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(196,18,18,.45); }
+.mob-feedback-btn:active { transform: scale(.94); }
+
+/* Active indicator: absolutely-positioned top bar — doesn't affect centering */
+.tab-item::before {
+  content: ''; position: absolute; top: 0; left: 20%; right: 20%;
+  height: 3px; border-radius: 0 0 3px 3px;
+  background: transparent; transition: background .15s;
+}
+.tab-item svg { width: 24px; height: 24px; flex-shrink: 0; }
 .tab-item:active { background: var(--or-xlight); }
-.tab-item.active {
-  color: var(--or);
-  border-top-color: var(--or);
-}
-.tab-item.active svg { transform: translateY(-1px); }
+.tab-item.active { color: var(--or); }
+.tab-item.active::before { background: var(--or); }
 
 
 /* ═══════════════════════════════════════
@@ -800,8 +818,12 @@ section.module {
   .page-header  { padding: 20px 16px 22px; }
   .wrap         { padding: 0 16px; }
 
-  /* Push Sentry feedback widget above the tab bar */
-  #sentry-feedback  { bottom: calc(var(--tab-h) + env(safe-area-inset-bottom) + 12px) !important; }
+  /* Hamburger not needed in portrait — bottom tab bar is the nav */
+  #mobile-hamburger-btn { display: none; }
+
+  /* Replace Sentry's default widget with our custom button */
+  #sentry-feedback      { display: none !important; }
+  .mob-feedback-btn     { display: flex; }
 
   .bento-2, .bento-3, .bento-4 { grid-template-columns: 1fr; }
   .footer-inner { grid-template-columns: 1fr 1fr; }
@@ -815,14 +837,14 @@ section.module {
 }
 
 /* ── Landscape on small screens (iPhone rotated) ── */
-/* Hide bottom tab bar and desktop nav — use slim top bar only */
+/* Hide bottom tab bar and desktop nav — slim top bar with hamburger only */
 @media (orientation: landscape) and (max-height: 500px) {
-  .site-nav         { display: none !important; }
-  .mobile-tab-bar   { display: none !important; }
-  .mobile-top-bar   { display: flex; }
+  .site-nav              { display: none !important; }
+  .mobile-tab-bar        { display: none !important; }
+  .mobile-top-bar        { display: flex; }
+  #mobile-hamburger-btn  { display: flex; }   /* re-show for landscape nav */
+  .mob-feedback-btn      { display: none; }   /* Sentry default widget shows normally */
   .page-wrap, .page-wrap-sidebar { padding-bottom: 20px; }
-  /* Sentry feedback widget: reset to default position in landscape */
-  #sentry-feedback  { bottom: 16px !important; }
 }
 
 /* ── Print ── */
