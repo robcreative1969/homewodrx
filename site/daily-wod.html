@@ -594,10 +594,10 @@
   function formatReps(r) {
     if (!r) return r;
     var s = String(r);
-    // "60s" / "60S" → "60 sec"
-    s = s.replace(/(\d+)\s*s\b/gi, '$1 sec');
-    // "20m" → "20 m" (guards against "min" and "meters")
-    s = s.replace(/(\d+)\s*m\b(?!in|eters)/gi, '$1 m');
+    // "60s" / "60S" → "60 seconds"
+    s = s.replace(/(\d+)\s*s\b/gi, '$1 seconds');
+    // "20m" → "20 meters" (guards against "min" and "meters")
+    s = s.replace(/(\d+)\s*m\b(?!in|eters)/gi, '$1 meters');
     return s;
   }
   function cap(s) {
