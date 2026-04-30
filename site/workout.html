@@ -123,15 +123,15 @@
 .wod-cat-badge.partner    { background: #d1fae5; border-color: #16a34a; color: #15803d; }
 .wod-type-badge { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 20px; background: #f5f5f5; border: 1px solid var(--border); font-size: .78rem; font-weight: 700; color: var(--muted); }
 
-/* Movement list */
-.wod-move-list { list-style: none; margin-bottom: 0; display: flex; flex-direction: column; }
-.wod-move-row { display: flex; align-items: baseline; gap: 10px; padding: 7px 0; border-bottom: 1px solid #f3f3f3; }
-.wod-move-row:last-of-type { border-bottom: none; }
-.wod-reps { font-family: var(--font-head); font-size: 1.55rem; color: var(--or); letter-spacing: .04em; line-height: 1; width: 96px; text-align: right; flex-shrink: 0; }
-.wod-move-link { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; flex: 1; transition: color .15s; }
+/* Movement list — CSS Grid so reps column is uniform width across all rows */
+.wod-move-list { list-style: none; margin-bottom: 0; padding: 0; display: grid; grid-template-columns: max-content 1fr auto; column-gap: 14px; align-items: center; }
+.wod-move-row { display: contents; }
+.wod-reps { font-family: var(--font-head); font-size: 1.55rem; color: var(--or); letter-spacing: .04em; line-height: 1; white-space: nowrap; text-align: left; padding: 7px 0; border-bottom: 1px solid #f3f3f3; }
+.wod-move-link { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color .15s; padding: 7px 0; border-bottom: 1px solid #f3f3f3; }
 .wod-move-link:hover { color: var(--or); }
-.wod-load { font-size: .82rem; color: var(--muted); font-weight: 500; flex-shrink: 0; }
-.wod-move-separator { font-size: .72rem; color: var(--muted); font-style: italic; padding: 2px 0 2px 54px; }
+.wod-load { font-size: .82rem; color: var(--muted); font-weight: 500; white-space: nowrap; padding: 7px 0; border-bottom: 1px solid #f3f3f3; }
+.wod-round-sep { grid-column: 1 / -1; font-size: .72rem; color: var(--muted); font-style: italic; padding: 4px 0; border-bottom: 1px solid #f3f3f3; }
+.wod-move-separator { grid-column: 1 / -1; font-size: .72rem; color: var(--muted); font-style: italic; padding: 4px 0; border-bottom: 1px solid #f3f3f3; }
 .wod-score-note { font-size: .82rem; color: var(--muted); padding: 10px 0 0; }
 .wod-stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
 .wod-stat { display: flex; flex-direction: column; gap: 2px; }
@@ -799,8 +799,8 @@ function buildTimerUrl(w) {
 function formatReps(r) {
   if (!r) return r;
   var s = String(r);
-  // "35s" or "4 × 35s" → "35 sec"
-  s = s.replace(/(\d+)\s*s\b/gi, '$1 sec');
+  // "35s" or "4 × 35s" → "35 seconds"
+  s = s.replace(/(\d+)\s*s\b/gi, '$1 seconds');
   // "20m" or "4-5 × 20m" → "20 meters" (guards against "min" and "meters")
   s = s.replace(/(\d+)\s*m\b(?!in|eters)/gi, '$1 meters');
   return s;
