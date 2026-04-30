@@ -400,16 +400,16 @@ const Nav = {
       }
     });
 
-    // Suppress Sentry's default feedback widget on all devices.
-    // CSS alone doesn't catch it — Sentry injects async with inline styles that override it.
-    const hideSentry = () => {
-      const el = document.getElementById('sentry-feedback');
-      if (el) el.style.setProperty('display', 'none', 'important');
+    // Remove Sentry's default feedback widget from the DOM entirely on all devices.
+    // Newer Sentry SDKs inject a <sentry-feedback> custom element, not div#sentry-feedback.
+    const killSentry = () => {
+      document.querySelectorAll('sentry-feedback, #sentry-feedback, [id*="sentry"][id*="feedback"]')
+        .forEach(el => el.remove());
     };
-    hideSentry();
-    new MutationObserver(hideSentry).observe(document.body, { childList: true });
-    setTimeout(hideSentry, 800);
-    setTimeout(hideSentry, 2500);
+    killSentry();
+    // subtree:true catches insertion anywhere in the document, not just direct body children
+    new MutationObserver(killSentry).observe(document.body, { childList: true, subtree: true });
+    [300, 800, 2000, 4000].forEach(t => setTimeout(killSentry, t));
 
     // Close on Escape
     document.addEventListener('keydown', (e) => {
