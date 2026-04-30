@@ -91,9 +91,35 @@
 .span3 { grid-column: span 3; }
 .span6 { grid-column: span 6; }
 .bc { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); padding: 22px 24px; box-shadow: var(--shadow); }
-.bc-head { font-family: var(--font-head); font-size: 1.2rem; letter-spacing: .06em; margin-bottom: 14px; color: var(--text); }
-.scoring-note { margin-top: 14px; padding: 12px 16px; background: var(--bg); border-radius: 8px; border-left: 3px solid var(--or); font-size: .85rem; }
-.scoring-note strong { color: var(--or); display: block; font-size: .7rem; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 3px; }
+.bc-head { font-family: var(--font-head); font-size: 1.2rem; letter-spacing: .06em; margin-bottom: 14px; color: var(--text); display: flex; align-items: center; gap: 10px; }
+.bc-head .icon { width: 28px; height: 28px; border-radius: 6px; background: var(--or-xlight); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--or); }
+/* Movement-grouped coaching cues (Daily 20 style) */
+.mv-cue-list { display: flex; flex-direction: column; gap: 10px; }
+.mv-cue-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px; border-radius: 8px; background: #f9f9f9; border: 1px solid var(--border); }
+.mv-cue-icon { flex-shrink: 0; width: 28px; height: 28px; border-radius: 6px; background: var(--or-xlight); border: 1px solid #f5cece; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+.mv-cue-body { display: flex; flex-direction: column; gap: 2px; }
+.mv-cue-name { font-size: .78rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--or); }
+.mv-cue-tip { font-size: .875rem; color: var(--text); line-height: 1.45; }
+/* Related WODs */
+.related-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.rel-card { display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: var(--radius); border: 1px solid var(--border); background: #fafafa; text-decoration: none; color: var(--text); transition: all .15s; }
+.rel-card:hover { border-color: var(--or); background: var(--or-xlight); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(196,18,18,.12); }
+.rel-badge { font-size: .62rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; padding: 2px 8px; border-radius: 4px; align-self: flex-start; }
+.rb-girl      { background: #fce7f3; color: #9d174d; }
+.rb-hero      { background: #dbeafe; color: #1e40af; }
+.rb-benchmark { background: var(--or-xlight); color: var(--or); }
+.rb-open      { background: #d1fae5; color: #065f46; }
+.rb-games     { background: #fff3e0; color: #e65100; }
+.rb-partner   { background: #f3e8ff; color: #7b1fa2; }
+.rel-name { font-family: var(--font-head); font-size: 1.4rem; letter-spacing: .04em; line-height: 1; }
+.rel-card:hover .rel-name { color: var(--or); }
+.rel-desc { font-size: .75rem; color: var(--muted); line-height: 1.4; flex: 1; }
+.rel-arrow { font-size: .8rem; color: var(--muted); align-self: flex-end; margin-top: 4px; }
+.rel-card:hover .rel-arrow { color: var(--or); }
+.scale-row { display: flex; align-items: baseline; gap: 10px; font-size: .875rem; line-height: 1.8; border-bottom: 1px solid #f5f5f5; padding: 4px 0; }
+.scale-row:last-child { border: none; }
+.scale-mv { font-weight: 600; flex: 1; }
+.scale-rx { color: var(--or); font-weight: 700; font-size: .8rem; white-space: nowrap; }
 .equip-chip { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; border: 1px solid var(--border); background: #fafafa; font-size: .82rem; font-weight: 600; color: var(--text); text-decoration: none; transition: all .15s; }
 .equip-chip:hover { border-color: var(--or); color: var(--or); background: var(--or-xlight); }
 .equip-chips-wrap { display: flex; flex-wrap: wrap; gap: 9px; }
@@ -114,6 +140,7 @@
   .action-btn { width: auto; }
   .bento { grid-template-columns: repeat(2, 1fr); }
   .span3, .span6 { grid-column: span 2; }
+  .related-grid { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 767px) {
   .page-header { padding: 16px 16px 20px; }
@@ -122,6 +149,7 @@
   .meta-stack { display: flex; flex-direction: column; gap: 10px; }
   .bento { grid-template-columns: 1fr; gap: 12px; }
   .span3, .span6 { grid-column: span 1; }
+  .related-grid { grid-template-columns: repeat(3, 180px); overflow-x: auto; -webkit-overflow-scrolling: touch; }
 }
 
 /* ══ ANIMATIONS ══ */
@@ -376,14 +404,90 @@
         '</div>' +
 
         '<div class="bento">' +
-          '<div class="bc span6">' +
-            '<div class="bc-head">About This Workout</div>' +
-            '<p style="font-size:.9rem;line-height:1.7;color:var(--text)">' + escHtml(formatDesc) + '</p>' +
-            (wod.scoring ? '<div class="scoring-note"><strong>Scoring</strong>' + escHtml(wod.scoring) + '</div>' : '') +
-          '</div>' +
-          gearCardHtml +
+
+          // Scaling Options (span3) — Rx table from rows data
+          (function() {
+            var iconScaleSvg = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><line x1="10" y1="2" x2="10" y2="18"/><line x1="3" y1="7" x2="17" y2="7"/><line x1="5" y1="13" x2="15" y2="13"/></svg>';
+            var scaleRows = rows.filter(function(r) { return r.reps || r.duration; }).map(function(r) {
+              var mn = r.movement || r.name || '';
+              var rx = r.reps || r.duration || '';
+              var load = r.load || '';
+              return '<div class="scale-row"><span class="scale-mv">' + escHtml(mn) + '</span><span class="scale-rx">' + escHtml(String(rx)) + (load ? ' · ' + load : '') + '</span></div>';
+            }).join('');
+            return '<div class="bc span3">' +
+              '<div class="bc-head"><div class="icon">' + iconScaleSvg + '</div>Scaling Options</div>' +
+              '<div class="scale-tabs">' +
+                '<button class="scale-tab active" onclick="this.parentNode.querySelectorAll(\'.scale-tab\').forEach(function(b){b.classList.remove(\'active\')});this.classList.add(\'active\')">Rx</button>' +
+                '<button class="scale-tab" onclick="this.parentNode.querySelectorAll(\'.scale-tab\').forEach(function(b){b.classList.remove(\'active\')});this.classList.add(\'active\')">Scaled</button>' +
+              '</div>' +
+              '<div>' + scaleRows + '</div>' +
+            '</div>';
+          })() +
+
+          // Coaching Cues (span3) — per-movement tips
+          (function() {
+            var iconCueSvg = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><circle cx="10" cy="10" r="8"/><circle cx="10" cy="10" r="4"/><circle cx="10" cy="10" r="1" fill="currentColor" stroke="none"/></svg>';
+            var moveSvg = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="10" cy="4" r="2.5"/><path d="M10 7v5"/><path d="M7 17l3-5 3 5"/></svg>';
+            var cuesHtml = rows.filter(function(r) { return r.tip; }).map(function(r) {
+              var mn = r.movement || r.name || '';
+              return '<div class="mv-cue-item">' +
+                '<div class="mv-cue-icon">' + moveSvg + '</div>' +
+                '<div class="mv-cue-body">' +
+                  '<span class="mv-cue-name">' + escHtml(mn) + '</span>' +
+                  '<span class="mv-cue-tip">' + escHtml(r.tip) + '</span>' +
+                '</div>' +
+              '</div>';
+            }).join('');
+            if (!cuesHtml) {
+              // Generic cue when no tips available
+              cuesHtml = rows.slice(0, 4).map(function(r) {
+                var mn = r.movement || r.name || '';
+                return '<div class="mv-cue-item">' +
+                  '<div class="mv-cue-icon">' + moveSvg + '</div>' +
+                  '<div class="mv-cue-body">' +
+                    '<span class="mv-cue-name">' + escHtml(mn) + '</span>' +
+                    '<span class="mv-cue-tip">Focus on full range of motion and controlled breathing throughout.</span>' +
+                  '</div>' +
+                '</div>';
+              }).join('');
+            }
+            return '<div class="bc span3">' +
+              '<div class="bc-head"><div class="icon">' + iconCueSvg + '</div>Coaching Cues</div>' +
+              '<div class="mv-cue-list">' + cuesHtml + '</div>' +
+            '</div>';
+          })() +
+
+          // You Might Also Like — span6 with 5 benchmark cards
+          (function() {
+            var iconGridSvg = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><rect x="2" y="2" width="7" height="7" rx="1"/><rect x="11" y="2" width="7" height="7" rx="1"/><rect x="2" y="11" width="7" height="7" rx="1"/><rect x="11" y="11" width="7" height="7" rx="1"/></svg>';
+            var badgeMap = { girl: 'rb-girl', hero: 'rb-hero', open: 'rb-open', games: 'rb-games', partner: 'rb-partner', benchmark: 'rb-benchmark' };
+            var catLabels = { girl:'Girl', hero:'Hero', open:'Open', games:'Games', partner:'Partner', benchmark:'Benchmark' };
+            var relCards = '';
+            if (typeof BENCHMARKS !== 'undefined' && BENCHMARKS.length) {
+              var picks = BENCHMARKS.filter(function(b) { return b.slug; }).slice(0, 5);
+              relCards = picks.map(function(b) {
+                var cl = catLabels[b.category] || cap(b.category || '');
+                var rb = badgeMap[b.category] || 'rb-benchmark';
+                var mvs = ((b.movements || []).slice(0, 2).map(function(m) { return m.name || ''; }).join(' + ')) || (b.format || '');
+                return '<a class="rel-card" href="/workouts/' + b.slug + '">' +
+                  (cl ? '<span class="rel-badge ' + rb + '">' + escHtml(cl) + '</span>' : '') +
+                  '<div class="rel-name">' + escHtml(b.name) + '</div>' +
+                  '<div class="rel-desc">' + escHtml(mvs) + '</div>' +
+                  '<div class="rel-arrow">View &rarr;</div>' +
+                '</a>';
+              }).join('');
+            }
+            return relCards
+              ? '<div class="bc span6">' +
+                  '<div class="bc-head"><div class="icon">' + iconGridSvg + '</div>You Might Also Like</div>' +
+                  '<div class="related-grid">' + relCards + '</div>' +
+                '</div>'
+              : '';
+          })() +
+
+          // Leaderboard (hidden by default — shown after load)
           '<div class="bc span6" id="leaderboard-card" style="display:none">' +
-            '<div class="bc-head">Leaderboard</div>' +
+            '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M4 16V9a2 2 0 012-2h8a2 2 0 012 2v7"/><path d="M2 16h16"/><path d="M8 7V5a2 2 0 014 0v2"/></svg></div>Leaderboard</div>' +
             '<div style="display:flex;gap:8px;margin-bottom:16px" id="leaderboard-filters">' +
               '<button class="scale-tab active" data-period="day">Today</button>' +
               '<button class="scale-tab" data-period="week">This Week</button>' +
@@ -391,6 +495,7 @@
             '</div>' +
             '<div id="leaderboard-table"></div>' +
           '</div>' +
+
         '</div>' +
       '</div>';
 

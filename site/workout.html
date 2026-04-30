@@ -171,15 +171,33 @@
 .span6 { grid-column: span 6; }
 .bc { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); padding: 22px 24px; box-shadow: var(--shadow); }
 .bc-head { font-family: var(--font-head); font-size: 1.2rem; letter-spacing: .06em; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; color: var(--text); }
+.bc-head .icon { width: 28px; height: 28px; border-radius: 6px; background: var(--or-xlight); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--or); }
+.bc p { font-size: .88rem; color: var(--muted); line-height: 1.7; }
+.bc p + p { margin-top: 10px; }
 
 /* ── About / description ── */
 .about-text { font-size: .9rem; line-height: 1.75; color: var(--text); }
-.scoring-note { margin-top: 14px; padding: 12px 16px; background: var(--bg); border-radius: 8px; border-left: 3px solid var(--or); font-size: .85rem; }
-.scoring-note strong { color: var(--or); display: block; font-size: .7rem; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 3px; }
+.scoring-note { margin-top: 10px; font-size: .85rem; color: var(--muted); line-height: 1.6; }
+.scoring-note strong { color: var(--text); font-weight: 700; }
 
 /* ── Video card ── */
 .video-wrap { position: relative; width: 100%; border-radius: 8px; overflow: hidden; background: #111; aspect-ratio: 16 / 9; }
 .video-wrap iframe { width: 100%; height: 100%; border: 0; }
+.video-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: #f3f3f3; border-radius: 8px; aspect-ratio: 16 / 9; color: var(--muted); font-size: .8rem; }
+.video-placeholder .play-btn { width: 52px; height: 52px; background: rgba(0,0,0,.12); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+/* ── Related cards ── */
+.rel-badge { font-size: .62rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; padding: 2px 8px; border-radius: 4px; align-self: flex-start; }
+.rb-girl      { background: #fce7f3; color: #9d174d; }
+.rb-hero      { background: #dbeafe; color: #1e40af; }
+.rb-benchmark { background: var(--or-xlight); color: var(--or); }
+.rb-open      { background: #d1fae5; color: #065f46; }
+.rb-games     { background: #fff3e0; color: #e65100; }
+.rb-partner   { background: #f3e8ff; color: #7b1fa2; }
+.rel-desc { font-size: .75rem; color: var(--muted); line-height: 1.4; flex: 1; }
+.rel-arrow { font-size: .8rem; color: var(--muted); align-self: flex-end; margin-top: 4px; }
+.rel-card:hover .rel-arrow { color: var(--or); }
+.rel-card:hover .rel-name { color: var(--or); }
 
 /* ── Movements in bento ── */
 .movements-list { list-style: none; padding: 0; margin: 0; }
@@ -191,7 +209,7 @@
 .mov-rx { font-size: .78rem; color: var(--muted); margin-left: 6px; }
 
 /* ── Scaling ── */
-.scaling-box { background: rgba(196,18,18,.04); border: 1px solid rgba(196,18,18,.15); border-left: 3px solid var(--or); border-radius: 8px; padding: 14px 16px; font-size: .88rem; line-height: 1.7; color: var(--text); }
+.scaling-box { background: #fafafa; border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; font-size: .88rem; line-height: 1.7; color: var(--text); }
 .scale-tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
 .scale-tab { padding: 5px 14px; border-radius: 20px; border: 1.5px solid var(--border); font-size: .78rem; font-weight: 700; cursor: pointer; font-family: var(--font-body); background: none; color: var(--muted); transition: all .15s; }
 .scale-tab.active { background: var(--or); color: white; border-color: var(--or); }
@@ -996,24 +1014,35 @@ function renderBenchmarkLayout(w) {
     '</div>';
   }).join('');
 
-  // YouTube embed
+  // YouTube embed (always show for benchmarks; real embed or placeholder)
   var videoCard = '';
+  var iconPlaySvg = '<svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><polygon points="5,3 17,10 5,17"/></svg>';
   if (w.youtube_url) {
     var ym = w.youtube_url.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
     if (ym) {
       videoCard =
         '<div class="bc span3">' +
-          '<div class="bc-head">&#9654; Watch ' + escHtml(name) + '</div>' +
+          '<div class="bc-head"><div class="icon">' + iconPlaySvg + '</div>Movement Demo</div>' +
           '<div class="video-wrap">' +
             '<iframe src="https://www.youtube.com/embed/' + ym[1] + '" title="' + escHtml(name) + ' video" allowfullscreen loading="lazy"></iframe>' +
           '</div>' +
         '</div>';
     }
+  } else if (w.slug) {
+    // Benchmark without youtube_url — show placeholder
+    videoCard =
+      '<div class="bc span3">' +
+        '<div class="bc-head"><div class="icon">' + iconPlaySvg + '</div>Movement Demo</div>' +
+        '<div class="video-placeholder">' +
+          '<div class="play-btn"><svg width="22" height="22" viewBox="0 0 24 24" fill="rgba(0,0,0,.3)"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>' +
+          '<span>' + escHtml(name) + ' Demo Video</span>' +
+        '</div>' +
+      '</div>';
   }
 
   // Scoring note
   var scoringNoteHtml = (w.scoring_notes || w.scoring)
-    ? '<div class="scoring-note" style="margin-top:12px;font-size:.85rem;color:var(--muted);line-height:1.6"><strong style="color:var(--text)">Scoring: </strong>' + escHtml(w.scoring_notes || w.scoring) + '</div>'
+    ? '<p class="scoring-note"><strong>Scoring: </strong>' + escHtml(w.scoring_notes || w.scoring) + '</p>'
     : '';
 
   // Meta row items for page-header
@@ -1063,7 +1092,7 @@ function renderBenchmarkLayout(w) {
     }).filter(Boolean).join('');
     standardsCard =
       '<div class="bc span3">' +
-        '<div class="bc-head">&#9650; Movement Standards</div>' +
+        '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><line x1="10" y1="2" x2="10" y2="18"/><line x1="3" y1="7" x2="17" y2="7"/><line x1="5" y1="13" x2="15" y2="13"/></svg></div>Movement Standards</div>' +
         '<table class="standards-table">' +
           '<thead><tr><th>Movement</th><th>Men Rx</th><th>Women Rx</th></tr></thead>' +
           '<tbody>' + stdRows + '</tbody>' +
@@ -1073,7 +1102,7 @@ function renderBenchmarkLayout(w) {
   } else if (scalingHtml) {
     standardsCard =
       '<div class="bc span3">' +
-        '<div class="bc-head">&#9137; Scaling Options</div>' +
+        '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><line x1="10" y1="2" x2="10" y2="18"/><line x1="3" y1="7" x2="17" y2="7"/><line x1="5" y1="13" x2="15" y2="13"/></svg></div>Scaling Options</div>' +
         scalingHtml +
       '</div>';
   }
@@ -1097,7 +1126,7 @@ function renderBenchmarkLayout(w) {
 
         // About — full width span6
         '<div class="bc span6">' +
-          '<div class="bc-head">&#8505; About ' + escHtml(name) + '</div>' +
+          '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" width="15" height="15"><circle cx="10" cy="10" r="8"/><line x1="10" y1="9" x2="10" y2="14"/><circle cx="10" cy="6.5" r=".5" fill="currentColor" stroke="none"/></svg></div>About ' + escHtml(name) + '</div>' +
           '<div class="about-text">' + escHtml(w.description || 'A classic benchmark workout.') + '</div>' +
           scoringNoteHtml +
         '</div>' +
@@ -1107,7 +1136,7 @@ function renderBenchmarkLayout(w) {
 
         (tips.length
           ? '<div class="bc span3">' +
-              '<div class="bc-head">&#9679; Coaching Cues</div>' +
+              '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><circle cx="10" cy="10" r="8"/><circle cx="10" cy="10" r="4"/><circle cx="10" cy="10" r="1" fill="currentColor" stroke="none"/></svg></div>Coaching Cues</div>' +
               '<ul class="tip-list">' + tipsHtml + '</ul>' +
             '</div>'
           : '') +
@@ -1115,18 +1144,18 @@ function renderBenchmarkLayout(w) {
         videoCard +
 
         (faqs.length
-          ? '<div class="bc span6"><div class="bc-head">FAQ &mdash; ' + escHtml(name) + '</div>' + faqHtml + '</div>'
+          ? '<div class="bc span3"><div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><circle cx="10" cy="10" r="8"/><path d="M10 14v-1"/><path d="M10 10c0-1.5 2-2.5 2-4a2 2 0 00-4 0"/></svg></div>Frequently Asked</div>' + faqHtml + '</div>'
           : '') +
 
         // You Might Also Like — full width span6
         '<div class="bc span6" id="related-wods-card">' +
-          '<div class="bc-head">YOU MIGHT ALSO LIKE</div>' +
+          '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><rect x="2" y="2" width="7" height="7" rx="1"/><rect x="11" y="2" width="7" height="7" rx="1"/><rect x="2" y="11" width="7" height="7" rx="1"/><rect x="11" y="11" width="7" height="7" rx="1"/></svg></div>You Might Also Like</div>' +
           '<div id="related-wods-container"><div style="color:var(--muted);font-size:.85rem">Loading&hellip;</div></div>' +
         '</div>' +
 
         // My History (async, hidden until user is loaded)
         '<div class="bc span6" id="my-history-section" style="display:none">' +
-          '<div class="bc-head">&#9719; My Results</div>' +
+          '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><circle cx="10" cy="10" r="8"/><polyline points="10 6 10 10 13 12"/></svg></div>My Results</div>' +
           '<div id="my-history-inner"></div>' +
         '</div>' +
 
@@ -1207,26 +1236,26 @@ function renderUserWodLayout(w) {
       '<div class="bento">' +
 
         (scalingHtml
-          ? '<div class="bc span3"><div class="bc-head">Scaling Options</div>' + scalingHtml + '</div>'
+          ? '<div class="bc span3"><div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><line x1="10" y1="2" x2="10" y2="18"/><line x1="3" y1="7" x2="17" y2="7"/><line x1="5" y1="13" x2="15" y2="13"/></svg></div>Scaling Options</div>' + scalingHtml + '</div>'
           : '') +
 
         (tips.length
-          ? '<div class="bc span3"><div class="bc-head">Coaching Tips</div><ul class="tip-list">' + tipsHtml + '</ul></div>'
+          ? '<div class="bc span3"><div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><circle cx="10" cy="10" r="8"/><circle cx="10" cy="10" r="4"/><circle cx="10" cy="10" r="1" fill="currentColor" stroke="none"/></svg></div>Coaching Tips</div><ul class="tip-list">' + tipsHtml + '</ul></div>'
           : '') +
 
         '<div class="bc span6">' +
-          '<div class="bc-head">Equipment</div>' +
+          '<div class="bc-head"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div>Equipment</div>' +
           '<p class="equip-section-note">Shop the gear for this WOD &darr;</p>' +
           '<div class="equip-chips-wrap">' + equipChips + '</div>' +
         '</div>' +
 
         '<div class="bc span6" id="related-wods-card">' +
-          '<div class="bc-head">Related WODs</div>' +
+          '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><rect x="2" y="2" width="7" height="7" rx="1"/><rect x="11" y="2" width="7" height="7" rx="1"/><rect x="2" y="11" width="7" height="7" rx="1"/><rect x="11" y="11" width="7" height="7" rx="1"/></svg></div>You Might Also Like</div>' +
           '<div id="related-wods-container"><div style="color:var(--muted);font-size:.85rem">Loading&hellip;</div></div>' +
         '</div>' +
 
         '<div class="bc span6" id="my-history-section" style="display:none">' +
-          '<div class="bc-head">My Results</div>' +
+          '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><circle cx="10" cy="10" r="8"/><polyline points="10 6 10 10 13 12"/></svg></div>My Results</div>' +
           '<div id="my-history-inner"></div>' +
         '</div>' +
 
@@ -1269,16 +1298,17 @@ function renderRelatedWorkouts(container, w) {
       return;
     }
 
+    var badgeMap = { girl: 'rb-girl', hero: 'rb-hero', open: 'rb-open', games: 'rb-games', partner: 'rb-partner', benchmark: 'rb-benchmark' };
     container.innerHTML = '<div class="related-grid">' +
       related.map(function(b) {
-        var cl = CAT_LABELS[b.category] || cap(b.category || '');
+        var cl  = CAT_LABELS[b.category] || cap(b.category || '');
+        var rb  = badgeMap[b.category] || 'rb-benchmark';
+        var desc = summarizeMovements(b) || (b.format || '');
         return '<a class="rel-card" href="/workouts/' + b.slug + '">' +
-          '<span class="rel-name">' + escHtml(b.name) + '</span>' +
-          '<span class="rel-meta">' +
-            (cl ? '<span class="cat-badge ' + (b.category || '') + '">' + escHtml(cl) + '</span> ' : '') +
-            escHtml(b.format || '') +
-          '</span>' +
-          '<span class="rel-movs">' + escHtml(summarizeMovements(b)) + '</span>' +
+          (cl ? '<span class="rel-badge ' + rb + '">' + escHtml(cl) + '</span>' : '') +
+          '<div class="rel-name">' + escHtml(b.name) + '</div>' +
+          '<div class="rel-desc">' + escHtml(desc) + '</div>' +
+          '<div class="rel-arrow">View &rarr;</div>' +
         '</a>';
       }).join('') +
     '</div>';
@@ -1919,13 +1949,13 @@ async function loadWorkout() {
   try {
     var w;
     if (slug) {
-      // Try local BENCHMARKS array first (fast, no network)
-      if (typeof BENCHMARKS !== 'undefined') {
-        w = BENCHMARKS.find(function(b) { return b.slug === slug; });
+      // Fetch from Supabase first to get all fields (youtube_url, tips, scoring_notes, etc.)
+      if (db.getBenchmarkBySlug) {
+        try { w = await db.getBenchmarkBySlug(slug); } catch(e) { w = null; }
       }
-      // Fall back to DB
-      if (!w && db.getBenchmarkBySlug) {
-        w = await db.getBenchmarkBySlug(slug);
+      // Fall back to local JS array if DB unavailable
+      if (!w && typeof BENCHMARKS !== 'undefined') {
+        w = BENCHMARKS.find(function(b) { return b.slug === slug; }) || null;
       }
       if (w) {
         currentWod = w;
