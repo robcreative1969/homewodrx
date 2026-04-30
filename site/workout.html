@@ -127,7 +127,7 @@
 .wod-move-list { list-style: none; margin-bottom: 0; display: flex; flex-direction: column; }
 .wod-move-row { display: flex; align-items: baseline; gap: 10px; padding: 7px 0; border-bottom: 1px solid #f3f3f3; }
 .wod-move-row:last-of-type { border-bottom: none; }
-.wod-reps { font-family: var(--font-head); font-size: 1.55rem; color: var(--or); letter-spacing: .04em; line-height: 1; min-width: 44px; text-align: right; flex-shrink: 0; }
+.wod-reps { font-family: var(--font-head); font-size: 1.55rem; color: var(--or); letter-spacing: .04em; line-height: 1; width: 96px; text-align: right; flex-shrink: 0; }
 .wod-move-link { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; flex: 1; transition: color .15s; }
 .wod-move-link:hover { color: var(--or); }
 .wod-load { font-size: .82rem; color: var(--muted); font-weight: 500; flex-shrink: 0; }
@@ -620,6 +620,35 @@
   </div>
 </div>
 
+<!-- ── MODAL: EDIT WOD DETAILS ── -->
+<div class="wod-modal-overlay" id="edit-wod-modal">
+  <div class="wod-modal">
+    <div class="wod-modal-head">
+      <h3>Edit Workout</h3>
+      <button class="wod-modal-close" onclick="closeEditWodModal()">&#x2715;</button>
+    </div>
+    <div class="wod-modal-body">
+      <div id="edit-wod-error" class="wod-modal-error"></div>
+      <div class="wod-modal-field">
+        <label for="edit-wod-name">Workout Name</label>
+        <input type="text" id="edit-wod-name" placeholder="e.g. Slammer" maxlength="80">
+      </div>
+      <div class="wod-modal-field">
+        <label for="edit-wod-desc">Description (optional)</label>
+        <textarea id="edit-wod-desc" placeholder="What's the intent? Tips for athletes?"></textarea>
+      </div>
+      <label class="wod-modal-rx-row">
+        <input type="checkbox" id="edit-wod-public">
+        Make this workout public
+      </label>
+    </div>
+    <div class="wod-modal-foot">
+      <button class="wod-modal-cancel" onclick="closeEditWodModal()">Cancel</button>
+      <button class="wod-modal-submit" onclick="saveEditWod()">Save Changes &#x2192;</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── MODAL: AUTH GATE ── -->
 <div id="workout-auth-modal">
   <div class="wam">
@@ -767,6 +796,16 @@ function buildTimerUrl(w) {
 // ─────────────────────────────────────────────────────────────────────────────
 // FORMAT HELPERS
 // ─────────────────────────────────────────────────────────────────────────────
+function formatReps(r) {
+  if (!r) return r;
+  var s = String(r);
+  // "35s" or "4 × 35s" → "35 sec"
+  s = s.replace(/(\d+)\s*s\b/gi, '$1 sec');
+  // "20m" or "4-5 × 20m" → "20 meters" (guards against "min" and "meters")
+  s = s.replace(/(\d+)\s*m\b(?!in|eters)/gi, '$1 meters');
+  return s;
+}
+
 function formatWodMeta(b) {
   const parts = [];
   if (b.format) parts.push(b.format);
@@ -799,6 +838,81 @@ function canManageWorkout(w) {
   if (isAdmin()) return true;
   return w.user_id === currentUser.id;
 }
+function openEditWodModal() {
+  var w = currentWod;
+  if (!w) return;
+  var nameEl   = document.getElementById('edit-wod-name');
+  var descEl   = document.getElementById('edit-wod-desc');
+  var pubEl    = document.getElementById('edit-wod-public');
+  var errEl    = document.getElementById('edit-wod-error');
+  if (nameEl)  nameEl.value   = w.title || w.name || '';
+  if (descEl)  descEl.value   = w.description || '';
+  if (pubEl)   pubEl.checked  = !!w.is_public;
+  if (errEl)   { errEl.textContent = ''; errEl.style.display = 'none'; }
+  document.getElementById('edit-wod-modal').classList.add('active');
+  if (nameEl)  { nameEl.focus(); nameEl.select(); }
+}
+
+function closeEditWodModal() {
+  var el = document.getElementById('edit-wod-modal');
+  if (el) el.classList.remove('active');
+}
+
+async function saveEditWod() {
+  var user = currentUser || await db.getUser();
+  if (!user) return;
+  var w = currentWod;
+  if (!w || !w.id) return;
+
+  var nameEl = document.getElementById('edit-wod-name');
+  var descEl = document.getElementById('edit-wod-desc');
+  var pubEl  = document.getElementById('edit-wod-public');
+  var errEl  = document.getElementById('edit-wod-error');
+
+  var title    = (nameEl ? nameEl.value.trim() : '');
+  var desc     = (descEl ? descEl.value.trim() : '');
+  var isPublic = !!(pubEl && pubEl.checked);
+
+  if (!title) {
+    if (errEl) { errEl.textContent = 'Please enter a workout name.'; errEl.style.display = 'block'; }
+    if (nameEl) nameEl.focus();
+    return;
+  }
+
+  var submitBtn = document.querySelector('#edit-wod-modal .wod-modal-submit');
+  if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Saving…'; }
+
+  try {
+    var res = await supabaseClient.from('workouts')
+      .update({ title: title, description: desc, is_public: isPublic })
+      .eq('id', w.id)
+      .eq('user_id', user.id);
+    if (res.error) throw res.error;
+
+    // Update in-memory and on-page without a full reload
+    currentWod.title       = title;
+    currentWod.description = desc;
+    currentWod.is_public   = isPublic;
+    var phTitle = document.querySelector('.wod-ph-title');
+    if (phTitle) phTitle.textContent = title;
+    var crumb = document.querySelector('.breadcrumb');
+    if (crumb) {
+      var last = crumb.lastChild;
+      if (last && last.nodeType === 3) last.textContent = title.charAt(0).toUpperCase() + title.slice(1);
+    }
+    var descEl2 = document.querySelector('.wod-ph-desc');
+    if (desc && descEl2)       descEl2.textContent = desc;
+    else if (!desc && descEl2) descEl2.remove();
+
+    closeEditWodModal();
+    showWorkoutToast('Workout updated!', 'success');
+  } catch(e) {
+    if (errEl) { errEl.textContent = (e && e.message) || 'Error saving changes.'; errEl.style.display = 'block'; }
+  } finally {
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Save Changes →'; }
+  }
+}
+
 async function deleteCurrentWorkout() {
   if (!confirm('Delete this workout? This cannot be undone.')) return;
   const w = currentWod;
@@ -872,7 +986,7 @@ function buildWodHeroCardHTML(w) {
         : '';
       return '<li class="wod-move-row">' +
         (m.reps
-          ? '<span class="wod-reps">' + escHtml(String(m.reps)) + '</span>'
+          ? '<span class="wod-reps">' + escHtml(formatReps(m.reps)) + '</span>'
           : '<span class="wod-reps" style="font-size:.9rem;color:var(--muted)">—</span>') +
         '<a class="wod-move-link" href="/movements/' + mvSlug + '">' + escHtml(mvName) + '</a>' +
         loadHtml +
@@ -907,9 +1021,15 @@ function buildMetaStackHTML(w, isBm) {
   };
   var ctaSub = scorePrompts[w.scoring_type] || 'Log your result and track your progress.';
 
-  var adminHtml = canManageWorkout(w)
-    ? '<div class="admin-row"><button class="admin-delete-btn" onclick="deleteCurrentWorkout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg> Delete Workout</button></div>'
-    : '';
+  var adminHtml = '';
+  if (canManageWorkout(w)) {
+    if (!isBm) {
+      adminHtml += '<div class="admin-row"><button class="action-btn" onclick="openEditWodModal()">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>' +
+        ' Edit Details</button></div>';
+    }
+    adminHtml += '<div class="admin-row"><button class="admin-delete-btn" onclick="deleteCurrentWorkout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg> Delete Workout</button></div>';
+  }
 
   return '<div class="meta-stack">' +
     '<div class="cta-card">' +
@@ -1208,15 +1328,19 @@ function renderUserWodLayout(w) {
     return '<li><span class="tip-num">' + (i + 1) + '</span> <span>' + escHtml(t) + '</span></li>';
   }).join('');
 
-  var userMetaHtml = '';
-  if (w.format) userMetaHtml += '<span class="wod-ph-meta-item">' + escHtml(cap(w.format)) + '</span>';
+  var stLbls = { time: 'For Time', rounds_reps: 'AMRAP', reps: 'Max Reps', weight: 'Max Weight' };
+  var fmtLabel = w.format ? cap(w.format) : (w.scoring_type ? (stLbls[w.scoring_type] || cap(w.scoring_type)) : '');
+  var scoreLabel = w.scoring_type ? (stLbls[w.scoring_type] || cap(w.scoring_type)) : '';
+  // Only show scoring label separately if it differs from the format label
+  var showScoreLabel = scoreLabel && scoreLabel.toLowerCase() !== fmtLabel.toLowerCase();
   var userDur = w.duration_estimate || w.duration;
+  var userMetaHtml = '';
+  if (fmtLabel) userMetaHtml += '<span class="wod-ph-meta-item">' + escHtml(fmtLabel) + '</span>';
   if (userDur) {
     var durM = String(userDur).match(/\d+/);
     userMetaHtml += '<span class="wod-ph-meta-item">' + (durM ? durM[0] + ' min' : escHtml(String(userDur))) + '</span>';
   }
-  var stLbls = { time: 'For Time', rounds_reps: 'AMRAP', reps: 'Max Reps', weight: 'Max Weight' };
-  if (w.scoring_type) userMetaHtml += '<span class="wod-ph-meta-item">' + escHtml(stLbls[w.scoring_type] || cap(w.scoring_type)) + '</span>';
+  if (showScoreLabel) userMetaHtml += '<span class="wod-ph-meta-item">' + escHtml(scoreLabel) + '</span>';
 
   var pageHeaderHtml =
     '<div class="page-header">' +
@@ -1224,7 +1348,7 @@ function renderUserWodLayout(w) {
         '<nav class="breadcrumb" aria-label="Breadcrumb">' +
           '<a href="/">Home</a><span>›</span>' +
           '<a href="/myworkouts.html">My Workouts</a><span>›</span>' +
-          escHtml(name) +
+          escHtml(cap(name)) +
         '</nav>' +
         '<div class="wod-ph-title">' + escHtml(name) + '</div>' +
         (userMetaHtml ? '<div class="wod-ph-meta">' + userMetaHtml + '</div>' : '') +
