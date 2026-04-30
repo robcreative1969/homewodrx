@@ -14,35 +14,44 @@
   <link rel="stylesheet" href="/css/style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
-:root{--dk:#111118;--dk2:#1E1E2C;--bd:#2E2E42;--or:#C41212;--orl:#E03030;--tx:#EAEAF0;--mu:#888899;--card:#1E1E2C}
+/* Light theme — reuses site CSS vars from style.css. Local vars kept for inline JS template strings. */
+:root{
+  --dk:#faf9f7;    /* page bg (was dark) */
+  --dk2:#f0eeeb;   /* input/nested bg (was darker) */
+  --bd:#e5e3df;    /* border (was dark border) */
+  --or:#C41212;    /* red — unchanged */
+  --orl:#9E0E0E;   /* red darker (was lighter on dark) */
+  --tx:#1a1a1a;    /* text (was light on dark) */
+  --mu:#666;       /* muted (was grey on dark) */
+  --card:#fff;     /* card bg (was dark) */
+}
 .admin-page{max-width:1200px;margin:0 auto;padding:32px 20px 80px}
-.admin-lock{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.lock-card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:40px;width:100%;max-width:400px;text-align:center}
-.lock-card .icon{font-size:48px;margin-bottom:16px}
-.lock-card h1{font-size:24px;font-weight:900;margin-bottom:8px}
+.admin-lock{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg,#faf9f7)}
+.lock-card{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:40px;width:100%;max-width:400px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.lock-card h1{font-family:var(--font-head,'Bebas Neue',sans-serif);font-size:2rem;letter-spacing:.04em;margin-bottom:8px;color:var(--tx)}
 .lock-card p{color:var(--mu);font-size:14px;margin-bottom:24px}
 .lock-card input{width:100%;background:var(--dk2);border:1px solid var(--bd);border-radius:8px;padding:12px 14px;color:var(--tx);font-size:15px;outline:none;margin-bottom:12px;text-align:center;letter-spacing:2px}
 .lock-card input:focus{border-color:var(--or)}
 .lock-btn{width:100%;padding:13px;background:var(--or);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s}
 .lock-btn:hover{background:var(--orl)}
-.lock-error{color:#e74c3c;font-size:13px;margin-top:8px;display:none}
+.lock-error{color:#dc2626;font-size:13px;margin-top:8px;display:none}
 .lock-error.vis{display:block}
 
-.admin-header{background:var(--card);border-bottom:1px solid var(--bd);padding:16px 24px;display:flex;align-items:center;gap:16px;margin-bottom:32px;border-radius:12px}
+.admin-header{background:#fff;border:1px solid var(--bd);padding:16px 24px;display:flex;align-items:center;gap:16px;margin-bottom:32px;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .admin-header-logo{height:30px;width:auto;margin-right:auto}
-.admin-badge{background:rgba(196,18,18,.2);color:var(--or);border:1px solid rgba(196,18,18,.4);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.5px}
+.admin-badge{background:rgba(196,18,18,.08);color:var(--or);border:1px solid rgba(196,18,18,.25);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.5px}
 .logout-btn{padding:8px 14px;background:none;border:1px solid var(--bd);border-radius:7px;color:var(--mu);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
-.logout-btn:hover{border-color:var(--or);color:var(--orl)}
+.logout-btn:hover{border-color:var(--or);color:var(--or)}
 
-.tab-nav{display:flex;gap:0;border-bottom:1px solid var(--bd);margin-bottom:28px;flex-wrap:wrap}
-.tab-btn{padding:12px 18px;font-size:13px;font-weight:700;color:var(--mu);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:all .15s}
+.tab-nav{display:flex;gap:0;border-bottom:2px solid var(--bd);margin-bottom:28px;flex-wrap:wrap}
+.tab-btn{padding:12px 18px;font-size:13px;font-weight:700;color:var(--mu);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all .15s}
 .tab-btn:hover{color:var(--tx)}
 .tab-btn.active{color:var(--or);border-bottom-color:var(--or)}
 .tab-pane{display:none}
 .tab-pane.active{display:block}
 
-.section{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:24px;margin-bottom:20px}
-.section h2{font-size:17px;font-weight:800;margin-bottom:4px}
+.section{background:#fff;border:1px solid var(--bd);border-radius:12px;padding:24px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.section h2{font-family:var(--font-head,'Bebas Neue',sans-serif);font-size:1.4rem;letter-spacing:.04em;margin-bottom:4px;color:var(--tx)}
 .section .desc{color:var(--mu);font-size:13px;margin-bottom:20px}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media(max-width:600px){.grid-2{grid-template-columns:1fr}}
@@ -54,23 +63,23 @@
 .save-btn{padding:11px 22px;background:var(--or);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}
 .save-btn:hover{background:var(--orl)}
 .save-btn:disabled{opacity:.6;cursor:not-allowed}
-.del-btn{padding:11px 22px;background:none;border:1px solid rgba(231,76,60,.5);color:#e74c3c;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}
-.del-btn:hover{background:rgba(231,76,60,.1)}
+.del-btn{padding:11px 22px;background:none;border:1px solid rgba(196,18,18,.4);color:var(--or);border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}
+.del-btn:hover{background:rgba(196,18,18,.06)}
 
 .day-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
 @media(max-width:600px){.day-grid{grid-template-columns:repeat(4,1fr)}}
 .day-card{background:var(--dk2);border:1px solid var(--bd);border-radius:8px;padding:10px 8px;text-align:center}
 .day-card .day-name{font-size:10px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
-.day-card select{width:100%;background:var(--dk2);border:1px solid var(--bd);border-radius:5px;padding:5px 4px;color:var(--tx);font-size:11px;outline:none;margin-bottom:4px}
+.day-card select{width:100%;background:#fff;border:1px solid var(--bd);border-radius:5px;padding:5px 4px;color:var(--tx);font-size:11px;outline:none;margin-bottom:4px}
 .day-card select:focus{border-color:var(--or)}
 
 .cal-card{background:var(--dk2);border:1px solid var(--bd);border-radius:10px;padding:14px;cursor:pointer;transition:all .2s}
-.cal-card:hover{border-color:var(--orl);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.cal-card:hover{border-color:var(--or);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.1)}
 .cal-card.selected{border-color:var(--or);box-shadow:0 0 0 1px var(--or)}
 .cal-card.today{border-color:var(--or)}
-.cal-detail{background:var(--dk2);border:1px solid var(--or);border-radius:12px;padding:20px;margin-top:16px;animation:fadeSlide .25s ease}
+.cal-detail{background:#fff;border:1px solid var(--bd);border-radius:12px;padding:20px;margin-top:16px;animation:fadeSlide .25s ease;box-shadow:0 2px 8px rgba(0,0,0,.08)}
 .cal-detail .detail-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px}
-.cal-detail .detail-header h3{font-size:18px;font-weight:800;margin:0}
+.cal-detail .detail-header h3{font-size:18px;font-weight:800;margin:0;color:var(--tx)}
 .cal-detail .detail-actions{display:flex;gap:8px}
 .cal-detail .edit-btn{padding:8px 16px;background:var(--or);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
 .cal-detail .edit-btn:hover{background:var(--orl)}
@@ -78,46 +87,46 @@
 .cal-detail .close-btn:hover{border-color:var(--or);color:var(--tx)}
 .cal-detail table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
 .cal-detail th{padding:7px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;border-bottom:1px solid var(--bd)}
-.cal-detail td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.05)}
+.cal-detail td{padding:8px 10px;border-bottom:1px solid var(--bd);color:var(--tx)}
 .cal-detail tr:last-child td{border-bottom:none}
 @keyframes fadeSlide{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
 
 .table{width:100%;border-collapse:collapse;font-size:13px}
 .table th{padding:9px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--bd);background:var(--dk2)}
-.table td{padding:10px 12px;border-bottom:1px solid var(--bd);vertical-align:middle}
-.table tr:hover td{background:rgba(255,255,255,.02)}
+.table td{padding:10px 12px;border-bottom:1px solid var(--bd);vertical-align:middle;color:var(--tx)}
+.table tr:hover td{background:#faf9f7}
 .table tr:last-child td{border-bottom:none}
 
 .pill{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700}
-.pill-or{background:rgba(196,18,18,.2);color:var(--or);border:1px solid rgba(196,18,18,.4)}
-.pill-gr{background:rgba(39,174,96,.2);color:#58d68d;border:1px solid rgba(39,174,96,.3)}
-.pill-bl{background:rgba(52,152,219,.2);color:#5dade2;border:1px solid rgba(52,152,219,.3)}
+.pill-or{background:rgba(196,18,18,.08);color:var(--or);border:1px solid rgba(196,18,18,.25)}
+.pill-gr{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
+.pill-bl{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe}
 .pill-mu{background:var(--dk2);color:var(--mu);border:1px solid var(--bd)}
-.pill-pu{background:rgba(155,89,182,.2);color:#c39bd3;border:1px solid rgba(155,89,182,.3)}
+.pill-pu{background:#faf5ff;color:#7c3aed;border:1px solid #ddd6fe}
 
 .wod-preview{background:var(--dk2);border:1px solid var(--bd);border-radius:10px;padding:18px;margin-top:16px}
-.wod-preview h3{font-size:16px;font-weight:800;margin-bottom:4px}
+.wod-preview h3{font-size:16px;font-weight:800;margin-bottom:4px;color:var(--tx)}
 .wod-preview .meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
 .wod-preview table{width:100%;border-collapse:collapse;font-size:12px}
 .wod-preview th{padding:6px 8px;text-align:left;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;border-bottom:1px solid var(--bd)}
-.wod-preview td{padding:7px 8px;border-bottom:1px solid rgba(255,255,255,.05)}
+.wod-preview td{padding:7px 8px;border-bottom:1px solid var(--bd);color:var(--tx)}
 .wod-preview tr:last-child td{border-bottom:none}
 
 .alert{padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none}
 .alert.vis{display:block}
-.alert-ok{background:rgba(39,174,96,.15);border:1px solid rgba(39,174,96,.4);color:#58d68d}
-.alert-err{background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.4);color:#e74c3c}
-.alert-info{background:rgba(52,152,219,.15);border:1px solid rgba(52,152,219,.4);color:#5dade2}
+.alert-ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d}
+.alert-err{background:#fef2f2;border:1px solid #fecaca;color:#dc2626}
+.alert-info{background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8}
 
 .stats-bar{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:28px}
-.stat-card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:18px;text-align:center}
+.stat-card{background:#fff;border:1px solid var(--bd);border-radius:10px;padding:18px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .stat-card .num{font-size:28px;font-weight:900;color:var(--or)}
 .stat-card .lbl{font-size:12px;color:var(--mu);margin-top:4px}
 
-.approve-btn{padding:6px 12px;background:rgba(39,174,96,.15);border:1px solid rgba(39,174,96,.4);color:#58d68d;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
-.approve-btn:hover{background:rgba(39,174,96,.3)}
-.reject-btn{padding:6px 12px;background:none;border:1px solid rgba(231,76,60,.4);color:#e74c3c;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
-.reject-btn:hover{background:rgba(231,76,60,.1)}
+.approve-btn{padding:6px 12px;background:#f0fdf4;border:1px solid #bbf7d0;color:#16a34a;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
+.approve-btn:hover{background:#dcfce7}
+.reject-btn{padding:6px 12px;background:none;border:1px solid #fecaca;color:#dc2626;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
+.reject-btn:hover{background:#fef2f2}
 
 .action-btn{padding:5px 10px;background:none;border:1px solid var(--bd);color:var(--mu);border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;margin-right:4px}
 .action-btn:hover{border-color:var(--or);color:var(--or)}
@@ -128,8 +137,7 @@
 .movement-card .prop label{color:var(--mu);font-size:11px}
 .movement-card .prop span{color:var(--tx);font-weight:600}
 .movement-card .tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
-.movement-card .tag{display:inline-block;background:rgba(196,18,18,.15);color:var(--or);font-size:10px;padding:2px 6px;border-radius:3px}
-
+.movement-card .tag{display:inline-block;background:rgba(196,18,18,.08);color:var(--or);font-size:10px;padding:2px 6px;border-radius:3px}
 
 </style>
   <!-- Google tag (gtag.js) -->
@@ -142,12 +150,11 @@
   </script>
   <script defer src="/_vercel/insights/script.js"></script>
 </head>
-<body data-nav-init="true" style="background:var(--dk);color:var(--tx);font-family:'Segoe UI',system-ui,sans-serif">
+<body data-nav-init="true" style="background:var(--bg,#faf9f7);color:var(--text,#1a1a1a)">
 
 <!-- LOCK SCREEN -->
 <div id="lock-screen" class="admin-lock">
   <div class="lock-card">
-    <div class="icon">🔐</div>
     <h1>Admin Panel</h1>
     <p id="lock-subtitle">Sign in with your admin account to access site controls.</p>
     <!-- Sign In Form (default) -->
@@ -217,32 +224,32 @@
 
   <!-- Tab Nav -->
   <div class="tab-nav">
-    <button class="tab-btn active" onclick="showAdminTab('daily')">📅 The Daily 20</button>
-    <button class="tab-btn" onclick="showAdminTab('featured')">⭐ Featured WOD</button>
-    <button class="tab-btn" onclick="showAdminTab('nominations')">🏆 Nominations</button>
-    <button class="tab-btn" onclick="showAdminTab('results')">📊 Recent Results</button>
-    <button class="tab-btn" onclick="showAdminTab('config')">⚙️ WOD Config</button>
-    <button class="tab-btn" onclick="showAdminTab('athletes')">👥 Athletes</button>
-    <button class="tab-btn" onclick="showAdminTab('workouts')">🏋️ Workouts</button>
-    <button class="tab-btn" onclick="showAdminTab('benchmarks')">🥇 Benchmarks</button>
-    <button class="tab-btn" onclick="showAdminTab('movements')">💪 Movements</button>
+    <button class="tab-btn active" onclick="showAdminTab('daily')">The Daily 20</button>
+    <button class="tab-btn" onclick="showAdminTab('featured')">Featured WOD</button>
+    <button class="tab-btn" onclick="showAdminTab('nominations')">Nominations</button>
+    <button class="tab-btn" onclick="showAdminTab('results')">Recent Results</button>
+    <button class="tab-btn" onclick="showAdminTab('config')">WOD Config</button>
+    <button class="tab-btn" onclick="showAdminTab('athletes')">Athletes</button>
+    <button class="tab-btn" onclick="showAdminTab('workouts')">Workouts</button>
+    <button class="tab-btn" onclick="showAdminTab('benchmarks')">Benchmarks</button>
+    <button class="tab-btn" onclick="showAdminTab('movements')">Movements</button>
   </div>
 
   <!-- ─── TAB: DAILY WOD ──────────────────────────────────── -->
   <div id="tab-daily" class="tab-pane active">
     <div class="section">
-      <h2>📅 Today's Daily 20</h2>
+      <h2>Today's Daily 20</h2>
       <p class="desc">Today's auto-generated workout. You can override it with a custom workout below.</p>
       <div class="alert alert-info vis" id="daily-status">Loading today's WOD...</div>
       <div id="today-wod-preview"></div>
       <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
-        <button class="save-btn" onclick="refreshDailyWOD()">🔄 Regenerate Today</button>
-        <button class="save-btn" style="background:var(--dk2);color:var(--tx);border:1px solid var(--bd)" onclick="showOverrideForm()">✏️ Manual Override</button>
+        <button class="save-btn" onclick="refreshDailyWOD()">Regenerate Today</button>
+        <button class="save-btn" style="background:var(--dk2);color:var(--tx);border:1px solid var(--bd)" onclick="showOverrideForm()">Manual Override</button>
       </div>
     </div>
 
     <div class="section" id="override-form" style="display:none">
-      <h2>✏️ Manual WOD Override</h2>
+      <h2>Manual WOD Override</h2>
       <p class="desc">Set a custom workout for a specific date. This overrides the auto-generated WOD for that day.</p>
       <div class="alert" id="override-alert"></div>
       <div class="grid-2">
@@ -277,13 +284,13 @@
       </div>
       <div class="field"><label>Scoring Note</label><input type="text" id="ov-scoring" placeholder="e.g. Record total rounds + reps"></div>
       <div style="display:flex;gap:10px;margin-top:8px">
-        <button class="save-btn" onclick="saveOverride()">💾 Save Override</button>
-        <button class="del-btn" onclick="deleteOverride()">🗑 Delete Override</button>
+        <button class="save-btn" onclick="saveOverride()">Save Override</button>
+        <button class="del-btn" onclick="deleteOverride()">Delete Override</button>
       </div>
     </div>
 
     <div class="section">
-      <h2>📆 WOD Calendar (Next 7 Days)</h2>
+      <h2>WOD Calendar (Next 7 Days)</h2>
       <p class="desc">Preview upcoming auto-generated workouts. Click a date to override it.</p>
       <div id="wod-calendar"></div>
     </div>
@@ -292,7 +299,7 @@
   <!-- ─── TAB: FEATURED WOD ────────────────────────────────── -->
   <div id="tab-featured" class="tab-pane">
     <div class="section">
-      <h2>⭐ Featured WOD Scheduler</h2>
+      <h2>Featured WOD Scheduler</h2>
       <p class="desc">Set which workout is featured on the homepage for any date.</p>
       <div class="alert" id="featured-alert"></div>
       <div class="grid-2">
@@ -313,10 +320,10 @@
         <input type="text" id="feat-workout-id" placeholder="e.g. uuid-from-supabase">
       </div>
       <div class="field"><label>Notes (internal only)</label><input type="text" id="feat-notes" placeholder="e.g. National fitness day promotion"></div>
-      <button class="save-btn" onclick="saveFeatured()">💾 Set Featured WOD</button>
+      <button class="save-btn" onclick="saveFeatured()">Set Featured WOD</button>
     </div>
     <div class="section">
-      <h2>📋 Upcoming Featured WODs</h2>
+      <h2>Upcoming Featured WODs</h2>
       <p class="desc">Scheduled featured workouts for the next 14 days.</p>
       <div id="featured-schedule"><p style="color:var(--mu);font-size:14px">Connect Supabase to see the featured schedule.</p></div>
     </div>
@@ -325,7 +332,7 @@
   <!-- ─── TAB: NOMINATIONS ─────────────────────────────────── -->
   <div id="tab-nominations" class="tab-pane">
     <div class="section">
-      <h2>🏆 Nomination Queue</h2>
+      <h2>Nomination Queue</h2>
       <p class="desc">Community workouts submitted for Featured WOD consideration.</p>
       <div class="alert" id="nom-alert"></div>
       <div id="nom-table-wrap"><p style="color:var(--mu);font-size:14px">Connect Supabase to see nominations.</p></div>
@@ -335,7 +342,7 @@
   <!-- ─── TAB: RECENT RESULTS ──────────────────────────────── -->
   <div id="tab-results" class="tab-pane">
     <div class="section">
-      <h2>📊 Recent Results</h2>
+      <h2>Recent Results</h2>
       <p class="desc">Latest workout results logged by athletes.</p>
       <div class="field" style="max-width:300px">
         <label>Filter by Workout Type</label>
@@ -352,7 +359,7 @@
   <!-- ─── TAB: WOD CONFIG ──────────────────────────────────── -->
   <div id="tab-config" class="tab-pane">
     <div class="section">
-      <h2>⚙️ Daily 20 Auto-Generation Config</h2>
+      <h2>Daily 20 Auto-Generation Config</h2>
       <p class="desc">These parameters control what gets auto-generated each day.</p>
       <div class="alert" id="config-alert"></div>
       <h3 style="font-size:14px;font-weight:700;margin-bottom:12px">Equipment Available for The Daily 20</h3>
@@ -366,8 +373,8 @@
       <h3 style="font-size:14px;font-weight:700;margin:20px 0 12px">Duration Range (minutes) by Day of Week</h3>
       <div class="day-grid" id="config-duration"></div>
       <div style="margin-top:24px">
-        <button class="save-btn" onclick="saveConfig()">💾 Save Config</button>
-        <button class="del-btn" style="margin-left:10px" onclick="resetConfig()">↩ Reset to Defaults</button>
+        <button class="save-btn" onclick="saveConfig()">Save Config</button>
+        <button class="del-btn" style="margin-left:10px" onclick="resetConfig()">Reset to Defaults</button>
       </div>
     </div>
   </div>
@@ -375,7 +382,7 @@
   <!-- ─── TAB: ATHLETES ────────────────────────────────────── -->
   <div id="tab-athletes" class="tab-pane">
     <div class="section">
-      <h2>👥 Athletes Management</h2>
+      <h2>Athletes Management</h2>
       <p class="desc">Manage user profiles and athlete data.</p>
       <div class="alert" id="athletes-alert"></div>
       <div style="display:flex;gap:10px;margin-bottom:20px">
@@ -391,7 +398,7 @@
       </div>
       <div id="athletes-table-wrap"><p style="color:var(--mu);font-size:14px">Loading athletes...</p></div>
       <div style="display:flex;gap:10px;margin-top:20px">
-        <button class="save-btn" onclick="loadMoreAthletes()">📥 Load More</button>
+        <button class="save-btn" onclick="loadMoreAthletes()">Load More</button>
       </div>
     </div>
   </div>
@@ -399,7 +406,7 @@
   <!-- ─── TAB: WORKOUTS ───────────────────────────────────── -->
   <div id="tab-workouts" class="tab-pane">
     <div class="section">
-      <h2>🏋️ Workouts Management</h2>
+      <h2>Workouts Management</h2>
       <p class="desc">Review, feature, and manage community workouts. To create a workout, use the <a href="/generator" target="_blank" style="color:var(--or)">generator page</a> while logged in as admin.</p>
       <div class="alert" id="workouts-alert"></div>
       <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
@@ -435,9 +442,9 @@
   <!-- ─── TAB: BENCHMARKS ─────────────────────────────────── -->
   <div id="tab-benchmarks" class="tab-pane">
     <div class="section">
-      <h2>🥇 Benchmark Workouts</h2>
+      <h2>Benchmark Workouts</h2>
       <p class="desc">Manage all named benchmarks — Girls, Heroes, and classic CrossFit WODs. Changes appear live on the site.</p>
-      <button class="save-btn" onclick="openBenchmarkForm(null)" style="margin-bottom:20px">➕ Add Benchmark</button>
+      <button class="save-btn" onclick="openBenchmarkForm(null)" style="margin-bottom:20px">+ Add Benchmark</button>
       <div class="alert" id="benchmarks-alert"></div>
       <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
         <select id="bm-category-filter" onchange="loadBenchmarksAdmin()" style="background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none">
@@ -462,7 +469,7 @@
 
     <!-- Benchmark Edit / Create Form -->
     <div id="bm-form-section" class="section" style="display:none;margin-top:20px">
-      <h2 id="bm-form-title">➕ Add Benchmark</h2>
+      <h2 id="bm-form-title">Add Benchmark</h2>
       <div class="alert" id="bm-form-alert"></div>
       <input type="hidden" id="bmf-id">
       <div class="grid-2">
@@ -525,8 +532,8 @@
       <div class="field"><label>Scoring Notes</label><textarea id="bmf-scoring-notes" rows="2" placeholder="e.g. Sub-3 min is elite. Sub-5 min is very strong."></textarea></div>
       <div class="field"><label>Tips (one tip per line)</label><textarea id="bmf-tips" rows="3" placeholder="Break thrusters before you have to, not when you need to.&#10;Rest at the top of the pull-up, not the bottom."></textarea></div>
       <div style="display:flex;gap:10px;margin-top:8px">
-        <button class="save-btn" onclick="saveBenchmark()">💾 Save Benchmark</button>
-        <button class="del-btn" id="bmf-delete-btn" style="display:none" onclick="deleteBenchmarkFromForm()">🗑 Delete</button>
+        <button class="save-btn" onclick="saveBenchmark()">Save Benchmark</button>
+        <button class="del-btn" id="bmf-delete-btn" style="display:none" onclick="deleteBenchmarkFromForm()">Delete</button>
         <button class="del-btn" onclick="closeBenchmarkForm()">Cancel</button>
       </div>
     </div>
@@ -535,9 +542,9 @@
   <!-- ─── TAB: MOVEMENTS ───────────────────────────────────── -->
   <div id="tab-movements" class="tab-pane">
     <div class="section">
-      <h2>💪 Movement Library</h2>
+      <h2>Movement Library</h2>
       <p class="desc">Manage all movements — descriptions, coaching tips, rep ranges, and daily WOD eligibility.</p>
-      <button class="save-btn" onclick="openMovementForm(null)" style="margin-bottom:20px">➕ Add Movement</button>
+      <button class="save-btn" onclick="openMovementForm(null)" style="margin-bottom:20px">+ Add Movement</button>
       <div class="alert" id="movements-alert"></div>
       <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
         <select id="movements-category" onchange="loadMovementsAdmin()" style="background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none">
@@ -572,7 +579,7 @@
 
     <!-- Movement Create / Edit Form -->
     <div id="movement-form-section" class="section" style="display:none;margin-top:20px">
-      <h2 id="movement-form-title">➕ Add Movement</h2>
+      <h2 id="movement-form-title">Add Movement</h2>
       <div class="alert" id="movement-form-alert"></div>
       <input type="hidden" id="mf-id">
       <div class="grid-2">
@@ -610,8 +617,8 @@
         <div class="field" style="margin:0"><label>Advanced</label><input type="text" id="mf-reps-a" placeholder="e.g. 20-25"></div>
       </div>
       <div style="display:flex;gap:10px;margin-top:8px">
-        <button class="save-btn" onclick="saveMovement()">💾 Save Movement</button>
-        <button class="del-btn" id="mf-delete-btn" style="display:none" onclick="deleteMovementFromForm()">🗑 Delete</button>
+        <button class="save-btn" onclick="saveMovement()">Save Movement</button>
+        <button class="del-btn" id="mf-delete-btn" style="display:none" onclick="deleteMovementFromForm()">Delete</button>
         <button class="del-btn" onclick="closeMovementForm()">Cancel</button>
       </div>
     </div>
@@ -622,8 +629,8 @@
 
 <script src="/js/config.js"></script>
 <script src="/js/db.js"></script>
-<script src="/js/benchmarks.js"></script>
 <script src="/js/movement-db.js"></script>
+<script src="/js/daily-wod.js"></script>
 
 <script>
 const MOVEMENT_DB_ADMIN = {
@@ -930,23 +937,22 @@ async function loadStats(){
 async function loadTodayWOD(){
   const today=new Date().toISOString().split('T')[0];
   const statusEl=document.getElementById('daily-status');
-  let override=null;
-  if(supabaseClient){
-    const{data}=await supabaseClient.from('daily_wods').select('*').eq('wod_date',today).single();
-    if(data?.workout_data)override=data.workout_data;
-  }
-  const wod=override||AdminDailyWOD.generate(today,adminConfig);
-  statusEl.textContent=override?`⚠️ Manual override active for ${today}`:`✅ Auto-generated for ${today}`;
-  statusEl.className=`alert ${override?'alert-info':'alert-ok'} vis`;
+  // Use DailyWOD.generate() — same engine as the homepage, includes override check internally
+  const wod=await DailyWOD.generate(today);
+  statusEl.textContent=wod.isManual?`Manual override active for ${today}`:`Auto-generated for ${today}`;
+  statusEl.className=`alert ${wod.isManual?'alert-info':'alert-ok'} vis`;
   renderWODPreview('today-wod-preview',wod);
 }
 
+const FMT_DISPLAY={amrap:'AMRAP',emom:'EMOM',fortime:'For Time',circuit:'Circuit'};
 function renderWODPreview(containerId,wod){
+  const title=wod.name||wod.title||'The Daily 20';
+  const fmt=FMT_DISPLAY[wod.format]||wod.format||'';
   document.getElementById(containerId).innerHTML=`
     <div class="wod-preview">
-      <h3>${escHtml(wod.title)}</h3>
+      <h3>${escHtml(title)}</h3>
       <div class="meta">
-        <span class="pill pill-or">${escHtml(wod.format||'')}</span>
+        <span class="pill pill-or">${escHtml(fmt)}</span>
         <span class="pill pill-mu">${cap(wod.difficulty||'intermediate')}</span>
         <span class="pill pill-mu">${wod.duration||20} min</span>
         <span class="pill pill-mu">${cap((wod.bodyFocus||wod.body_focus||'full-body').replace('-',' '))}</span>
@@ -956,7 +962,7 @@ function renderWODPreview(containerId,wod){
         <thead><tr><th>Movement</th><th>Reps</th></tr></thead>
         <tbody>${(wod.rows||[]).map(r=>`<tr><td>${escHtml(r.movement||r.name||'')}</td><td style="color:var(--or);font-weight:700">${escHtml(String(r.reps||''))}</td></tr>`).join('')}</tbody>
       </table>
-      <p style="color:var(--mu);font-size:12px;margin-top:10px">📊 Scoring: ${escHtml(wod.scoring||'')}</p>
+      <p style="color:var(--mu);font-size:12px;margin-top:10px">Scoring: ${escHtml(wod.scoring||'')}</p>
     </div>`;
 }
 
@@ -1015,10 +1021,10 @@ async function loadWODCalendar(){
   for(let i=0;i<7;i++){
     const d=new Date(today);d.setDate(today.getDate()+i);
     const dateStr=d.toISOString().split('T')[0];
-    let override=null;
-    if(supabaseClient){const{data}=await supabaseClient.from('daily_wods').select('workout_data').eq('wod_date',dateStr).single();if(data?.workout_data)override=data.workout_data;}
-    const wod=override||AdminDailyWOD.generate(dateStr,adminConfig);
+    // Use same engine as homepage — override check is internal to DailyWOD.generate()
+    const wod=await DailyWOD.generate(dateStr);
     calendarWods[dateStr]=wod;
+    const override=wod.isManual;
     const isToday=i===0;
     const movCount=(wod.rows||[]).length;
     html+=`<div class="cal-card${isToday?' today':''}${selectedCalDate===dateStr?' selected':''}" id="cal-card-${dateStr}" onclick="selectCalDate('${dateStr}')" title="Click to view full workout">
@@ -1026,7 +1032,7 @@ async function loadWODCalendar(){
         <span style="font-size:11px;font-weight:700;color:${isToday?'var(--or)':'var(--mu)'}">${isToday?'TODAY':DAYS[d.getDay()]} · ${d.toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>
         ${override?'<span class="pill pill-pu" style="font-size:10px">Manual</span>':'<span class="pill pill-bl" style="font-size:10px">Auto</span>'}
       </div>
-      <div style="font-size:14px;font-weight:700;margin-bottom:4px">${escHtml(wod.title)}</div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:4px">${escHtml(wod.name||wod.title||'')}</div>
       <div style="font-size:11px;color:var(--mu);margin-bottom:6px">${cap(wod.difficulty||'')} · ${cap((wod.bodyFocus||'full-body').replace('-',' '))}</div>
       <div style="font-size:11px;color:var(--or)">${movCount} movement${movCount!==1?'s':''} · ${wod.duration||20} min</div>
     </div>`;
@@ -1056,15 +1062,15 @@ function renderCalDetail(dateStr){
     <div class="detail-header">
       <div>
         <div style="font-size:12px;color:var(--mu);margin-bottom:4px">${dateLabel}</div>
-        <h3>${escHtml(wod.title)}</h3>
+        <h3>${escHtml(wod.name||wod.title||'')}</h3>
       </div>
       <div class="detail-actions">
-        <button class="edit-btn" onclick="openOverrideForDate('${dateStr}')">✏️ Override This Day</button>
+        <button class="edit-btn" onclick="openOverrideForDate('${dateStr}')">Override This Day</button>
         <button class="close-btn" onclick="selectCalDate('${dateStr}')">✕</button>
       </div>
     </div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
-      <span class="pill pill-or">${escHtml(wod.format||'')}</span>
+      <span class="pill pill-or">${escHtml(FMT_DISPLAY[wod.format]||wod.format||'')}</span>
       <span class="pill pill-mu">${cap(wod.difficulty||'intermediate')}</span>
       <span class="pill pill-mu">${wod.duration||20} min</span>
       <span class="pill pill-mu">${cap((wod.bodyFocus||wod.body_focus||'full-body').replace('-',' '))}</span>
@@ -1075,7 +1081,7 @@ function renderCalDetail(dateStr){
       <thead><tr><th>Movement</th><th>Reps</th><th>Tip</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>
-    <p style="color:var(--mu);font-size:12px;margin-top:12px">📊 Scoring: ${escHtml(wod.scoring||'')}</p>
+    <p style="color:var(--mu);font-size:12px;margin-top:12px">Scoring: ${escHtml(wod.scoring||'')}</p>
   </div>`;
   wrap.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
@@ -1103,8 +1109,6 @@ async function populateBenchmarkSelect(){
   if(supabaseClient){
     const{data}=await supabaseClient.from('benchmark_workouts').select('slug,name,category').order('category').order('name');
     if(data&&data.length){data.forEach(b=>{const opt=document.createElement('option');opt.value=b.slug;opt.textContent=`${b.name} (${b.category||'benchmark'})`;sel.appendChild(opt);});}
-  } else if(typeof BENCHMARKS!=='undefined'){
-    BENCHMARKS.forEach(b=>{const opt=document.createElement('option');opt.value=b.slug;opt.textContent=`${b.name} (${b.category||'benchmark'})`;sel.appendChild(opt);});
   }
   loadFeaturedSchedule();
 }
@@ -1364,15 +1368,15 @@ function renderWorkoutsTable(){
   filtered.forEach(w=>{
     const isPending=w.is_public&&w.is_approved===false;
     const statusBadge=isPending
-      ?'<span class="pill" style="background:rgba(255,165,0,.15);border:1px solid rgba(255,165,0,.4);color:#ffb347;font-size:11px">⏳ Pending</span>'
+      ?'<span class="pill" style="background:rgba(255,165,0,.15);border:1px solid rgba(255,165,0,.4);color:#b45309;font-size:11px">Pending</span>'
       :w.is_public
-        ?'<span class="pill pill-gr" style="font-size:11px">✅ Live</span>'
+        ?'<span class="pill pill-gr" style="font-size:11px">Live</span>'
         :'<span class="pill pill-mu" style="font-size:11px">Private</span>';
     const approveRejectBtns=isPending
-      ?`<button class="approve-btn" onclick="approveWorkout('${w.id}','${escHtml(w.title)}')">✅ Approve</button><button class="action-btn" style="border-color:rgba(196,18,18,.4);color:#e74c3c" onclick="rejectWorkout('${w.id}','${escHtml(w.title)}')">✗ Reject</button>`
+      ?`<button class="approve-btn" onclick="approveWorkout('${w.id}','${escHtml(w.title)}')">Approve</button><button class="action-btn" style="border-color:rgba(196,18,18,.4);color:#e74c3c" onclick="rejectWorkout('${w.id}','${escHtml(w.title)}')">Reject</button>`
       :'';
     const movementPreview=w.movements&&w.movements.length?`<div style="margin-top:4px;font-size:11px;color:var(--mu)">${w.movements.slice(0,3).map(m=>escHtml(m.name||m.movement||'')).join(', ')}${w.movements.length>3?'…':''}</div>`:'';
-    html+=`<tr style="${isPending?'background:rgba(255,165,0,.04)':''}"><td style="font-weight:700;max-width:160px" title="${escHtml(w.title)}">${escHtml(w.title)}${movementPreview}</td><td style="color:var(--mu);font-size:12px">${escHtml(w.username||'')}</td><td><span class="pill pill-or">${escHtml(w.format||'')}</span></td><td>${w.duration}m</td><td>${cap(w.level||'')}</td><td style="font-size:11px">${cap((w.body_focus||'').replace('-',' '))}</td><td>${statusBadge}</td><td>${w.is_featured?'<span class="pill pill-or">⭐</span>':'—'}</td><td>${w.result_count||0}</td><td style="display:flex;gap:4px;flex-wrap:wrap">${approveRejectBtns}<button class="action-btn" onclick="editWorkout('${w.id}')">Edit</button><button class="action-btn" onclick="deleteWorkout('${w.id}','${escHtml(w.title)}')">Delete</button></td></tr>`;
+    html+=`<tr style="${isPending?'background:rgba(255,165,0,.04)':''}"><td style="font-weight:700;max-width:160px" title="${escHtml(w.title)}">${escHtml(w.title)}${movementPreview}</td><td style="color:var(--mu);font-size:12px">${escHtml(w.username||'')}</td><td><span class="pill pill-or">${escHtml(w.format||'')}</span></td><td>${w.duration}m</td><td>${cap(w.level||'')}</td><td style="font-size:11px">${cap((w.body_focus||'').replace('-',' '))}</td><td>${statusBadge}</td><td>${w.is_featured?'<span class="pill pill-or">Featured</span>':'—'}</td><td>${w.result_count||0}</td><td style="display:flex;gap:4px;flex-wrap:wrap">${approveRejectBtns}<button class="action-btn" onclick="editWorkout('${w.id}')">Edit</button><button class="action-btn" onclick="deleteWorkout('${w.id}','${escHtml(w.title)}')">Delete</button></td></tr>`;
   });
   html+=`</tbody></table>`;
   document.getElementById('workouts-table-wrap').innerHTML=html;
@@ -1504,7 +1508,7 @@ function openMovementForm(m){
 
   if(m){
     // Edit mode
-    titleEl.textContent='✏️ Edit Movement';
+    titleEl.textContent='Edit Movement';
     delBtn.style.display='inline-block';
     document.getElementById('mf-id').value=m.id||'';
     document.getElementById('mf-name').value=m.name||'';
@@ -1524,7 +1528,7 @@ function openMovementForm(m){
     document.getElementById('mf-reps-a').value=parseRepsForDisplay(m.advanced_reps);
   }else{
     // Create mode
-    titleEl.textContent='➕ Add Movement';
+    titleEl.textContent='Add Movement';
     delBtn.style.display='none';
     document.getElementById('mf-id').value='';
     document.getElementById('mf-name').value='';
@@ -1684,7 +1688,7 @@ function openBenchmarkForm(b){
   document.getElementById('bm-form-alert').classList.remove('vis');
 
   if(b){
-    titleEl.textContent='✏️ Edit Benchmark';
+    titleEl.textContent='Edit Benchmark';
     delBtn.style.display='inline-block';
     document.getElementById('bmf-id').value=b.id||'';
     document.getElementById('bmf-name').value=b.name||'';
@@ -1705,7 +1709,7 @@ function openBenchmarkForm(b){
     const tips=Array.isArray(b.tips)?b.tips.join('\n'):(typeof b.tips==='string'?b.tips:'');
     document.getElementById('bmf-tips').value=tips;
   }else{
-    titleEl.textContent='➕ Add Benchmark';
+    titleEl.textContent='Add Benchmark';
     delBtn.style.display='none';
     document.getElementById('bmf-id').value='';
     document.getElementById('bmf-name').value='';
