@@ -459,17 +459,6 @@ function hasRunning(movements) {
 
 function buildWorkoutsData() {
   return []; // Data loaded from Supabase via loadFromSupabase()
-    name:      b.name,
-    slug:      b.slug,
-    cat:       b.category || 'benchmark',
-    type:      b.format || '',
-    minutes:   parseDurMin(b.duration_estimate),
-    dur:       b.duration_estimate || '',
-    equip:     b.equipment || [],
-    movements: b.movements || [],
-    hasRun:    hasRunning(b.movements),
-    diff:      b.difficulty || '',
-  }));
 }
 
 // ─────────────────────────────────────────
@@ -656,7 +645,7 @@ async function loadFromSupabase() {
       .from('benchmark_workouts')
       .select('slug, name, category, format, duration_estimate, difficulty, equipment, movements');
 
-    if (error || !data || !data.length) return;
+    if (error || !data || !data.length) throw new Error(error?.message || 'No data returned');
 
     WODS = data.map(b => ({
       name:      b.name,
