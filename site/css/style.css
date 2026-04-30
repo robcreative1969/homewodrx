@@ -813,7 +813,7 @@ section.module {
 @media (max-width: 767px) {
   .site-nav         { display: none; }
   .mobile-top-bar   { display: flex; }
-  .mobile-tab-bar   { display: flex; align-items: stretch; }
+  .mobile-tab-bar   { display: block; }
 
   .page-wrap, .page-wrap-sidebar { padding: 20px 16px calc(var(--tab-h) + 20px + env(safe-area-inset-bottom)); }
   .page-header  { padding: 20px 16px 22px; }
