@@ -612,7 +612,7 @@ function render() {
   const isD20 = activeCategory === 'daily20';
   document.getElementById('wod-grid').style.display    = isD20 ? 'none' : '';
   document.getElementById('empty-state').style.display = isD20 ? 'none' : '';
-  document.getElementById('d20-archive').style.display = isD20 ? '' : 'none';
+  document.getElementById('d20-archive').style.display = isD20 ? 'block' : 'none';
   updateTabCounts();
   if (isD20) {
     document.getElementById('shown-count').textContent = 90;
