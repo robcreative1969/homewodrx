@@ -212,6 +212,7 @@
 .stat-card.active { border-color: var(--or); background: rgba(196,18,18,.06); box-shadow: var(--shadow); }
 .stat-val { font-family: var(--font-head); font-size: 2.2rem; letter-spacing: .04em; color: var(--or); line-height: 1; margin-bottom: 4px; }
 .stat-lbl { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+.stat-sub { font-size: .65rem; color: var(--muted2); margin-top: 3px; line-height: 1.4; }
 
 /* ── WOD cards (activity preview) ── */
 .wod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
@@ -389,7 +390,8 @@
   <div class="prof-header-inner">
     <div class="prof-avatar-area">
       <div class="prof-avatar" id="prof-avatar">?</div>
-      <div class="avatar-hint hidden" id="avatar-hint">Tap to change<br>JPG · PNG · Max 5 MB</div>
+      <div class="avatar-hint hidden" id="avatar-hint">Tap to change<br>JPG · PNG · Max 5 MB<br>400×400 px recommended</div>
+      <input type="file" id="avatar-file-input" accept="image/jpeg,image/png,image/webp" style="display:none">
     </div>
     <div class="prof-body">
       <div class="prof-realname" id="prof-realname">Loading…</div>
@@ -462,6 +464,10 @@
       <div class="field">
         <label>Last Name</label>
         <input type="text" id="edit-last-name" placeholder="Last name">
+      </div>
+      <div class="field full">
+        <label>Username</label>
+        <input type="text" id="edit-username" placeholder="your_username" autocomplete="username">
       </div>
       <div class="field full">
         <label>Bio</label>
@@ -540,11 +546,11 @@
         <input type="text" id="edit-city" placeholder="e.g. Denver, CO">
       </div>
       <div class="field">
-        <label>Goat Movement 🐐</label>
+        <label>Goat Movement</label>
         <input type="text" id="edit-goat" placeholder="e.g. Double-unders">
       </div>
       <div class="field">
-        <label>Favorite WOD ❤️</label>
+        <label>Favorite WOD</label>
         <input type="text" id="edit-fav-wod" placeholder="e.g. Murph">
       </div>
     </div>
@@ -616,15 +622,18 @@
     <div class="stats-strip mb-20">
       <a href="/myworkouts.html" class="stat-card">
         <div class="stat-val" id="val-workouts">0</div>
-        <div class="stat-lbl">Workouts</div>
+        <div class="stat-lbl">WODs Built</div>
+        <div class="stat-sub">Workouts you've created</div>
       </a>
       <a href="/myworkouts.html" class="stat-card">
         <div class="stat-val" id="val-results">0</div>
         <div class="stat-lbl">Results Logged</div>
+        <div class="stat-sub">Completed & tracked</div>
       </a>
       <div class="stat-card">
         <div class="stat-val" id="val-public">0</div>
         <div class="stat-lbl">Public WODs</div>
+        <div class="stat-sub">Shared with the community</div>
       </div>
     </div>
 
@@ -758,7 +767,14 @@ function renderProfile(data, isOwn) {
   var bio     = data && data.bio ? data.bio : '';
   var initial = name.charAt(0).toUpperCase();
 
-  document.getElementById('prof-avatar').textContent  = initial;
+  var avatarEl = document.getElementById('prof-avatar');
+  if (data && data.avatar_url) {
+    avatarEl.innerHTML = '<img src="' + data.avatar_url + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+    avatarEl.style.background = 'transparent';
+  } else {
+    avatarEl.textContent = initial;
+    avatarEl.style.background = '';
+  }
   document.getElementById('prof-realname').textContent = name;
   document.getElementById('prof-handle').textContent  = handle;
 
@@ -812,12 +828,16 @@ function renderProfile(data, isOwn) {
   if (isOwn) {
     document.getElementById('edit-prof-btn').classList.remove('hidden');
     document.getElementById('avatar-hint').classList.remove('hidden');
-    document.getElementById('prof-avatar').classList.add('can-upload');
+    avatarEl.classList.add('can-upload');
+    avatarEl.addEventListener('click', function() {
+      document.getElementById('avatar-file-input').click();
+    });
     document.getElementById('edit-prs-btn').classList.remove('hidden');
     // Pre-fill edit form
     if (data) {
       document.getElementById('edit-first-name').value = data.first_name        || '';
       document.getElementById('edit-last-name').value  = data.last_name         || '';
+      document.getElementById('edit-username').value   = data.username          || '';
       document.getElementById('edit-bio').value        = data.bio               || '';
       document.getElementById('edit-goat').value       = data.goat              || '';
       document.getElementById('edit-fav-wod').value    = data.favorite_wod      || '';
@@ -971,7 +991,7 @@ function loadActivity(profileData, isOwn) {
     });
 
   // Accurate total WOD count (separate from display query)
-  supabaseClient.from('user_workouts')
+  supabaseClient.from('workouts')
     .select('id', { count: 'exact', head: true })
     .eq('user_id', profileData.id)
     .then(function(res) {
@@ -981,7 +1001,7 @@ function loadActivity(profileData, isOwn) {
     });
 
   // Accurate public WOD count
-  supabaseClient.from('user_workouts')
+  supabaseClient.from('workouts')
     .select('id', { count: 'exact', head: true })
     .eq('user_id', profileData.id)
     .eq('is_public', true)
@@ -990,7 +1010,7 @@ function loadActivity(profileData, isOwn) {
     });
 
   // Load recent 3 WODs for the activity cards
-  supabaseClient.from('user_workouts').select('*')
+  supabaseClient.from('workouts').select('id, title, format, is_public, created_at')
     .eq('user_id', profileData.id)
     .order('created_at', { ascending: false })
     .limit(3)
@@ -1000,17 +1020,17 @@ function loadActivity(profileData, isOwn) {
         grid.innerHTML = '';
         empty.classList.remove('hidden');
         document.getElementById('empty-workouts-sub').textContent = isOwn
-          ? "You haven't logged any workouts yet. Use the WOD Generator to build your first one."
+          ? "You haven't built any WODs yet. Use the WOD Generator to create your first one."
           : "No public workouts to show.";
       } else {
         empty.classList.add('hidden');
         grid.innerHTML = workouts.map(function(w) {
           return '<div class="wod-card">' +
             '<div class="wod-card-body">' +
-            '<div class="wod-chips"><span class="chip chip-red">' + (w.format_label || 'Custom') + '</span>' +
+            '<div class="wod-chips"><span class="chip chip-red">' + (w.format || 'Custom') + '</span>' +
             (w.is_public ? '<span class="chip chip-green">Public</span>' : '<span class="chip chip-grey">Private</span>') +
             '</div>' +
-            '<div class="wod-name">' + (w.name || 'Untitled WOD') + '</div>' +
+            '<div class="wod-name">' + (w.title || 'Untitled WOD') + '</div>' +
             '<div class="wod-date">' + formatDate(w.created_at) + '</div>' +
             '</div></div>';
         }).join('');
@@ -1034,6 +1054,7 @@ async function saveProfile() {
   var updates = {
     first_name:          document.getElementById('edit-first-name').value.trim(),
     last_name:           document.getElementById('edit-last-name').value.trim(),
+    username:            document.getElementById('edit-username').value.trim().toLowerCase().replace(/[^a-z0-9_]/g, ''),
     bio:                 document.getElementById('edit-bio').value.trim(),
     goat:                document.getElementById('edit-goat').value.trim(),
     favorite_wod:        document.getElementById('edit-fav-wod').value.trim(),
@@ -1129,6 +1150,52 @@ document.getElementById('gate-form').addEventListener('submit', async function(e
     submitBtn.disabled    = false;
     submitBtn.textContent = 'Log In';
   }
+});
+
+/* ── Avatar upload ── */
+document.getElementById('avatar-file-input').addEventListener('change', async function(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { alert('Image must be under 5 MB.'); this.value = ''; return; }
+
+  var avatarEl = document.getElementById('prof-avatar');
+  var prevContent = avatarEl.innerHTML;
+  var prevBg = avatarEl.style.background;
+  avatarEl.innerHTML = '…';
+  avatarEl.style.background = 'var(--or)';
+  avatarEl.style.fontSize = '1.2rem';
+  avatarEl.style.color = '#fff';
+
+  try {
+    var { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) throw new Error('Not logged in');
+
+    var ext = file.name.split('.').pop().toLowerCase() || 'jpg';
+    var path = user.id + '.' + ext;
+    var { error: upErr } = await supabaseClient.storage
+      .from('avatars')
+      .upload(path, file, { upsert: true, contentType: file.type });
+    if (upErr) throw upErr;
+
+    var { data: { publicUrl } } = supabaseClient.storage.from('avatars').getPublicUrl(path);
+    var url = publicUrl + '?t=' + Date.now();
+
+    var { error: dbErr } = await supabaseClient.from('profiles').update({ avatar_url: url }).eq('id', user.id);
+    if (dbErr) throw dbErr;
+
+    avatarEl.innerHTML = '<img src="' + url + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+    avatarEl.style.background = 'transparent';
+    avatarEl.style.fontSize = '';
+    avatarEl.style.color = '';
+  } catch(err) {
+    console.error('Avatar upload failed:', err);
+    avatarEl.innerHTML = prevContent;
+    avatarEl.style.background = prevBg;
+    avatarEl.style.fontSize = '';
+    avatarEl.style.color = '';
+    alert('Upload failed. Please try again.');
+  }
+  this.value = '';
 });
 
 /* ── Helpers ── */

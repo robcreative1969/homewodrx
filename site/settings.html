@@ -379,37 +379,17 @@
 
       <div class="section-eyebrow">Account</div>
 
-      <!-- Profile info -->
+      <!-- Profile info — edit on profile page -->
       <div class="s-card">
         <div class="s-card-hdr">
           <div class="s-card-title">Profile Information</div>
-          <div class="s-card-desc">Your name and display username visible to other athletes</div>
+          <div class="s-card-desc">Edit your name, username, bio, fitness details, and profile photo</div>
         </div>
-        <div class="s-card-body">
-          <div class="form-grid-2">
-            <div class="form-row">
-              <label for="first-name">First Name</label>
-              <input type="text" id="first-name" placeholder="First name" autocomplete="given-name"/>
-            </div>
-            <div class="form-row">
-              <label for="last-name">Last Name</label>
-              <input type="text" id="last-name" placeholder="Last name" autocomplete="family-name"/>
-            </div>
-          </div>
-          <div class="form-row">
-            <label for="username">Username</label>
-            <input type="text" id="username" placeholder="your_username" autocomplete="username"/>
-            <span class="form-hint">homewodrx.com/athletes/<strong id="username-preview">username</strong></span>
-          </div>
-        </div>
-        <div class="card-foot">
-          <div class="card-foot-left">
-            <span class="save-note" id="profile-save-note"></span>
-          </div>
-          <div class="card-foot-right">
-            <button class="btn btn-ghost btn-sm" onclick="resetProfileInfo()">Cancel</button>
-            <button class="btn btn-primary btn-sm" onclick="saveProfileInfo()">Save Changes</button>
-          </div>
+        <div class="s-card-body" style="flex-direction:row;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+          <p style="font-size:0.875rem;color:var(--muted);line-height:1.6;margin:0;">
+            Your full profile — including name, bio, experience level, and avatar — is managed from your Profile page.
+          </p>
+          <a href="/profile.html" class="btn btn-primary btn-sm" style="white-space:nowrap;flex-shrink:0;">Go to Profile</a>
         </div>
       </div>
 
@@ -529,6 +509,14 @@
 
       <div class="section-eyebrow">Notifications</div>
 
+      <!-- Coming soon note -->
+      <div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:var(--radius);padding:14px 18px;display:flex;align-items:flex-start;gap:10px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span style="font-size:0.8rem;color:#92400e;line-height:1.6;">
+          <strong>Email notifications are coming soon.</strong> Your preferences below are saved but no emails are sent yet. We'll flip the switch once the email system is fully live.
+        </span>
+      </div>
+
       <div class="s-card">
         <div class="s-card-hdr">
           <div class="s-card-title">Email Notifications</div>
@@ -634,6 +622,14 @@
     <div class="settings-section" id="section-privacy">
 
       <div class="section-eyebrow">Privacy</div>
+
+      <!-- Status note -->
+      <div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:var(--radius);padding:14px 18px;display:flex;align-items:flex-start;gap:10px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span style="font-size:0.8rem;color:#92400e;line-height:1.6;">
+          <strong>Privacy controls are being rolled out.</strong> Your choices below are saved to your account. Full enforcement — profile page gating, search filtering, and leaderboard opt-out — is being wired up now.
+        </span>
+      </div>
 
       <!-- Profile visibility -->
       <div class="s-card">
@@ -807,7 +803,6 @@
 // ── Cached profile data ──────────────────────────────────────────────────
 let _user     = null;
 let _profile  = null;
-let _origFirst, _origLast, _origUser;
 
 // ── Init on load ─────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
@@ -858,16 +853,6 @@ async function loadProfile() {
     if (error || !data) return;
     _profile = data;
 
-    // Profile info
-    const fn = data.first_name || '';
-    const ln = data.last_name  || '';
-    const un = data.username   || '';
-    document.getElementById('first-name').value = fn;
-    document.getElementById('last-name').value  = ln;
-    document.getElementById('username').value   = un;
-    document.getElementById('username-preview').textContent = un || 'username';
-    _origFirst = fn; _origLast = ln; _origUser = un;
-
     // Notifications
     const notif = data.notifications || {};
     document.getElementById('notif-daily').checked   = notif.daily   !== false;
@@ -909,40 +894,7 @@ function showSection(name, btn) {
   btn.classList.add('active');
 }
 
-// ── Username preview ──────────────────────────────────────────────────────
-document.getElementById('username').addEventListener('input', function() {
-  document.getElementById('username-preview').textContent = this.value || 'username';
-});
-
-// ── Save profile info ─────────────────────────────────────────────────────
-async function saveProfileInfo() {
-  const fn = document.getElementById('first-name').value.trim();
-  const ln = document.getElementById('last-name').value.trim();
-  const un = document.getElementById('username').value.trim();
-
-  if (!un) { showToast('Username cannot be empty', true); return; }
-
-  try {
-    const { error } = await supabaseClient
-      .from('profiles')
-      .update({ first_name: fn, last_name: ln, username: un })
-      .eq('id', _user.id);
-
-    if (error) throw error;
-    _origFirst = fn; _origLast = ln; _origUser = un;
-    document.getElementById('profile-save-note').textContent = '';
-    showToast('Profile updated');
-  } catch(e) {
-    showToast('Error saving profile: ' + (e.message || 'Please try again'), true);
-  }
-}
-
-function resetProfileInfo() {
-  document.getElementById('first-name').value = _origFirst || '';
-  document.getElementById('last-name').value  = _origLast  || '';
-  document.getElementById('username').value   = _origUser  || '';
-  document.getElementById('username-preview').textContent = _origUser || 'username';
-}
+// Profile info is now edited on the profile page — no save needed here
 
 // ── Email change ──────────────────────────────────────────────────────────
 let _emailOpen = false;
