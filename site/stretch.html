@@ -39,8 +39,6 @@
 <script src="/js/config.js"></script>
 <script src="/js/db.js"></script>
 <script src="/js/nav.js"></script>
-<script src="/js/stretch-db.js"></script>
-
 <style>
 /* ── PAGE-SPECIFIC VARS ──────────────────────────────────────────── */
 :root {
@@ -441,7 +439,88 @@ function slugify(name) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+// ── Static config (not in DB) ─────────────────────────────────────
+const STRETCH_FOCUS = [
+  { id: 'full',        label: 'Full Body',          icon: '🧘',  desc: 'Head to toe' },
+  { id: 'hips',        label: 'Hips & Glutes',      icon: '🦋',  desc: 'Hip flexors, glutes, groin' },
+  { id: 'hamstrings',  label: 'Hamstrings & Legs',  icon: '🦵',  desc: 'Posterior chain & quads' },
+  { id: 'back',        label: 'Back & Spine',        icon: '🔄',  desc: 'Thoracic & lumbar' },
+  { id: 'shoulders',   label: 'Shoulders & Neck',    icon: '💪',  desc: 'Deltoids, traps, lats' },
+  { id: 'chest',       label: 'Chest & Pecs',        icon: '🫁',  desc: 'Pectorals, anterior shoulder' },
+  { id: 'calves',      label: 'Calves & Ankles',     icon: '🦶',  desc: 'Gastrocnemius, soleus, ankle' },
+];
+
+// ── Stretch data (loaded from Supabase) ───────────────────────────
+let ALL_STRETCHES = [];
+
+async function loadStretchData() {
+  const { data } = await supabaseClient
+    .from('stretches')
+    .select('name, slug, modality, focus, level, sides, hold_beginner, hold_intermediate, hold_advanced, tip');
+  if (!data) return;
+  ALL_STRETCHES = data.map(s => ({
+    name:        s.name,
+    slug:        s.slug,
+    modality:    s.modality,
+    focus:       s.focus || [],
+    level:       s.level || [],
+    sides:       !!s.sides,
+    tip:         s.tip || '',
+    hold:        s.hold_beginner != null
+                   ? { b: s.hold_beginner, i: s.hold_intermediate, a: s.hold_advanced }
+                   : null,
+    reps:        s.hold_beginner == null ? { b: 10, i: 12, a: 15 } : null,
+    timedOrReps: s.hold_beginner == null ? 'reps' : 'timed',
+    pnfNote:     null,
+  }));
+}
+
+// ── Generate stretch session from flat ALL_STRETCHES array ────────
+function generateStretchSession({ focusAreas, duration, modalities, level }) {
+  let pool = ALL_STRETCHES.filter(m => {
+    const matchesMod   = modalities.includes(m.modality);
+    const matchesFocus = focusAreas.includes('full') || m.focus.some(f => focusAreas.includes(f));
+    const matchesLevel = m.level.includes(level);
+    return matchesMod && matchesFocus && matchesLevel;
+  });
+
+  pool = pool.sort(() => Math.random() - 0.5);
+
+  function estimateSeconds(stretch) {
+    let secs = stretch.hold ? stretch.hold[level] : 0;
+    if (stretch.timedOrReps === 'reps' || (stretch.reps && !stretch.hold)) {
+      secs = (stretch.reps ? (stretch.reps[level] || 8) : 8) * 4;
+    }
+    if (stretch.sides) secs *= 2;
+    secs += 5;
+    return secs;
+  }
+
+  const targetSecs = duration * 60;
+  const selected = [];
+  let totalSecs = 0;
+
+  const modalityRep = {};
+  for (const mod of modalities) {
+    const found = pool.find(p => p.modality === mod && !selected.includes(p));
+    if (found) { selected.push(found); modalityRep[mod] = true; totalSecs += estimateSeconds(found); }
+  }
+
+  for (const stretch of pool) {
+    if (selected.includes(stretch)) continue;
+    const est = estimateSeconds(stretch);
+    if (totalSecs + est <= targetSecs + 60) {
+      selected.push(stretch);
+      totalSecs += est;
+    }
+    if (totalSecs >= targetSecs) break;
+  }
+
+  return { stretches: selected, estimatedMinutes: Math.round(totalSecs / 60) };
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadStretchData();
   buildFocusGrid();
   setupPillGroups();
   setupModCards();

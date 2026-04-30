@@ -140,30 +140,34 @@
 
 </div>
 
-<script src="/js/stretch-routines-db.js"></script>
 <script>
   // ── Render ──────────────────────────────────────────────────────────────
   const grid = document.getElementById('routines-grid');
   const label = document.getElementById('grid-label');
 
+  let STRETCH_ROUTINES = [];
+  let activeFilter = 'all';
+  let searchQuery = '';
+
   function levelChipClass(r) {
-    return r.levelLabel === 'Intermediate+' ? 'chip-level intermediate' : 'chip-level';
+    return r.level_label === 'Intermediate+' ? 'chip-level intermediate' : 'chip-level';
   }
 
   function renderCard(r) {
+    const stretchCount = Array.isArray(r.stretches) ? r.stretches.length : 0;
     return `
-      <a href="/stretch-routines/${r.slug}" class="routine-card" data-modality="${r.modality}" data-level="${r.levelLabel}">
+      <a href="/stretch-routines/${r.slug}" class="routine-card" data-modality="${r.modality}" data-level="${r.level_label}">
         <div class="card-header">
           <div class="card-name">${r.name}</div>
           <div class="card-tagline">${r.tagline}</div>
         </div>
         <div class="card-meta">
           <span class="meta-chip chip-duration">${r.duration} min</span>
-          <span class="meta-chip ${levelChipClass(r)}">● ${r.levelLabel}</span>
+          <span class="meta-chip ${levelChipClass(r)}">● ${r.level_label}</span>
           <span class="meta-chip chip-modality">${r.modality}</span>
         </div>
         <div class="card-footer">
-          <span class="card-steps">${r.stretches.length} stretches</span>
+          <span class="card-steps">${stretchCount} stretches</span>
           <span class="card-cta">View Routine
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </span>
@@ -171,14 +175,11 @@
       </a>`;
   }
 
-  let activeFilter = 'all';
-  let searchQuery = '';
-
   function render() {
     let routines = STRETCH_ROUTINES;
     if (activeFilter && activeFilter !== 'all') {
       routines = routines.filter(r =>
-        r.levelLabel === activeFilter || r.modality === activeFilter
+        r.level_label === activeFilter || r.modality === activeFilter
       );
     }
     if (searchQuery) {
@@ -195,7 +196,16 @@
     label.textContent = routines.length + (routines.length === 1 ? ' routine' : ' routines');
   }
 
-  render();
+  // ── Load from Supabase ────────────────────────────────────────────────────
+  async function loadRoutines() {
+    const { data } = await supabaseClient
+      .from('stretch_routines')
+      .select('name, slug, tagline, duration, level_label, modality, stretches')
+      .order('name');
+    if (data) STRETCH_ROUTINES = data;
+    render();
+  }
+  loadRoutines();
 
   // ── Filter chips ─────────────────────────────────────────────────────────
   document.getElementById('filter-bar').addEventListener('click', function(e) {

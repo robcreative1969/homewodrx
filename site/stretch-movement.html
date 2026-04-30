@@ -48,8 +48,6 @@
 <script src="/js/config.js"></script>
 <script src="/js/db.js"></script>
 <script src="/js/nav.js"></script>
-<script src="/js/stretch-db.js"></script>
-<script src="/js/stretch-content.js"></script>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
 <script>
@@ -508,42 +506,59 @@ function pickGear(focusAreas, limit = 4) {
   return scored.slice(0, limit);
 }
 
-// ── Data helpers ──────────────────────────────────────────────────────────────
+// ── Data helpers (Supabase) ───────────────────────────────────────────────────
 
-function getAllStretches() {
-  const all = [];
-  for (const [modality, arr] of Object.entries(STRETCH_DB)) {
-    arr.forEach(s => all.push({ ...s, modality }));
-  }
-  return all;
+function extractYouTubeId(url) {
+  if (!url) return null;
+  const m = url.match(/[?&]v=([^&]+)/) || url.match(/youtu\.be\/([^?]+)/);
+  return m ? m[1] : null;
 }
 
-function findStretchBySlug(slug) {
-  const results = [];
-  for (const [modality, arr] of Object.entries(STRETCH_DB)) {
-    arr.forEach(s => {
-      if (slugify(s.name) === slug) results.push({ ...s, modality });
-    });
-  }
-  return results;
+// normalise a DB row to the shape the render code expects
+function normaliseRow(s) {
+  return {
+    name:      s.name,
+    slug:      s.slug,
+    modality:  s.modality,
+    focus:     s.focus || [],
+    level:     s.level || [],
+    sides:     !!s.sides,
+    tip:       s.tip || '',
+    hold:      s.hold_beginner != null
+                 ? { b: s.hold_beginner, i: s.hold_intermediate, a: s.hold_advanced }
+                 : null,
+    reps:      s.hold_beginner == null ? { b: 10, i: 12, a: 15 } : null,
+    timedOrReps: s.hold_beginner == null ? 'reps' : 'timed',
+    pnfNote:   null,
+    // content fields
+    description: s.description || null,
+    cues:        Array.isArray(s.cues) ? s.cues : [],
+    youtube:     extractYouTubeId(s.youtube_url),
+  };
 }
 
-function findRelated(currentSlug, focusAreas, limit = 4) {
-  const all = getAllStretches();
-  const scored = all
-    .filter(s => slugify(s.name) !== currentSlug)
-    .map(s => ({
-      ...s,
-      overlap: (s.focus || []).filter(f => focusAreas.includes(f)).length,
-    }))
+async function fetchStretchBySlug(slug) {
+  const { data } = await supabaseClient
+    .from('stretches')
+    .select('*')
+    .eq('slug', slug);
+  return (data || []).map(normaliseRow);
+}
+
+async function fetchRelated(currentSlug, focusAreas, limit = 4) {
+  const { data } = await supabaseClient
+    .from('stretches')
+    .select('name, slug, focus')
+    .neq('slug', currentSlug);
+  if (!data) return [];
+  const scored = data
+    .map(s => ({ ...s, overlap: (s.focus || []).filter(f => focusAreas.includes(f)).length }))
     .filter(s => s.overlap > 0)
     .sort((a, b) => b.overlap - a.overlap);
-
   const seen = new Set();
   const unique = [];
   for (const s of scored) {
-    const sl = slugify(s.name);
-    if (!seen.has(sl)) { seen.add(sl); unique.push(s); }
+    if (!seen.has(s.slug)) { seen.add(s.slug); unique.push(s); }
     if (unique.length >= limit) break;
   }
   return unique;
@@ -570,7 +585,7 @@ function injectJsonLd(data) {
 
 // ── Main render ───────────────────────────────────────────────────────────────
 
-function renderStretchPage() {
+async function renderStretchPage() {
   const slug = getSlug();
 
   if (!slug) {
@@ -578,7 +593,7 @@ function renderStretchPage() {
     return;
   }
 
-  const matches = findStretchBySlug(slug);
+  const matches = await fetchStretchBySlug(slug);
   if (!matches.length) {
     document.getElementById('not-found').style.display = 'block';
     return;
@@ -589,7 +604,7 @@ function renderStretchPage() {
   const displayName = primary.name;
   const allLevels = [...new Set(matches.flatMap(m => m.level || []))];
   const focusAreas = [...new Set(matches.flatMap(m => m.focus || []))];
-  const content = (typeof STRETCH_CONTENT !== 'undefined' && STRETCH_CONTENT[slug]) || null;
+  const content = { description: primary.description, cues: primary.cues, youtube: primary.youtube };
   const isReps = primary.timedOrReps === 'reps' || (primary.reps && !primary.hold);
 
   // ── SEO updates ──────────────────────────────────────────────
@@ -603,7 +618,7 @@ function renderStretchPage() {
   document.querySelector('meta[property="og:description"]').setAttribute('content', metaDesc);
   document.getElementById('canonical-url').href = canonicalPath;
   document.getElementById('og-url').setAttribute('content', canonicalPath);
-  if (content?.youtube) {
+  if (content.youtube) {
     const ogImg = `https://img.youtube.com/vi/${content.youtube}/maxresdefault.jpg`;
     document.getElementById('og-image').setAttribute('content', ogImg);
     document.getElementById('og-image-width').setAttribute('content', '1280');
@@ -612,7 +627,7 @@ function renderStretchPage() {
   }
 
   // ── JSON-LD ──────────────────────────────────────────────────
-  const cues = content?.cues || [];
+  const cues = content.cues || [];
   injectJsonLd([
     {
       '@context': 'https://schema.org',
@@ -680,7 +695,7 @@ function renderStretchPage() {
   }
 
   // ── Description ──────────────────────────────────────────────
-  document.getElementById('stretch-desc').innerHTML = content?.description
+  document.getElementById('stretch-desc').innerHTML = content.description
     ? `<p>${content.description}</p>`
     : `<p>${primary.tip}</p>`;
 
@@ -756,9 +771,9 @@ function renderStretchPage() {
   ).join('');
 
   // ── Related stretches ────────────────────────────────────────
-  const related = findRelated(slug, focusAreas);
+  const related = await fetchRelated(slug, focusAreas);
   document.getElementById('related-tags').innerHTML = related.length
-    ? related.map(r => `<a href="/stretches/${slugify(r.name)}" class="rel-tag">${r.name} <span class="arrow">→</span></a>`).join('')
+    ? related.map(r => `<a href="/stretches/${r.slug}" class="rel-tag">${r.name} <span class="arrow">→</span></a>`).join('')
     : '<p style="font-size:.82rem;color:var(--muted,#666);">No related stretches found.</p>';
 
   // ── Share buttons ─────────────────────────────────────────────
@@ -784,7 +799,7 @@ function renderStretchPage() {
 }
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', renderStretchPage);
+document.addEventListener('DOMContentLoaded', () => renderStretchPage());
 </script>
 <script src="/js/footer.js"></script>
 </body>

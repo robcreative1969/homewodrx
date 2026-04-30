@@ -685,10 +685,7 @@
 <script src="/js/config.js"></script>
 <script src="/js/db.js"></script>
 <script src="/js/nav.js"></script>
-<script src="/js/benchmarks.js"></script>
 <script src="/js/movement-db.js"></script>
-<script src="/js/stretch-db.js"></script>
-<script src="/js/stretch-routines-db.js"></script>
 
 <script>
 // ─────────────────────────────────────────────
@@ -735,9 +732,9 @@ const MVDB_CAT_MAP = {
   olympic:'barbell',
 };
 
-function buildWorkouts() {
-  if (typeof BENCHMARKS === 'undefined') return [];
-  return BENCHMARKS.map(w => ({
+async function buildWorkouts() {
+  const bms = await db.getAllBenchmarks();
+  return bms.map(w => ({
     name:   w.name,
     slug:   w.slug,
     cat:    w.category,
@@ -752,52 +749,60 @@ function buildWorkouts() {
   }));
 }
 
-function buildMovements() {
-  if (typeof MOVEMENT_DB === 'undefined') return [];
-  const out = [], seen = new Set();
-  Object.entries(MOVEMENT_DB).forEach(([rawCat, mvs]) => {
-    const cat = MVDB_CAT_MAP[rawCat] || rawCat;
-    (mvs || []).forEach(m => {
-      if (!m.name || seen.has(m.name)) return;
-      seen.add(m.name);
-      const tags = m.tags || [];
-      let mg = 'full-body', muscle = 'Full Body';
-      for (const t of tags) { if (TAG_TO_MG[t]) { mg = TAG_TO_MG[t]; muscle = TAG_TO_MUSCLE[t]; break; } }
-      out.push({ name: m.name, cat, mg, muscle });
-    });
+async function buildMovements() {
+  if (!supabaseClient) return [];
+  const { data } = await supabaseClient
+    .from('movements')
+    .select('name, slug, equipment_category, tags, muscles')
+    .order('name');
+  if (!data) return [];
+  return data.map(m => {
+    const tags = m.tags || [];
+    let mg = 'full-body', muscle = 'Full Body';
+    for (const t of tags) { if (TAG_TO_MG[t]) { mg = TAG_TO_MG[t]; muscle = TAG_TO_MUSCLE[t]; break; } }
+    // Fall back to first word of muscles field if tags gave no match
+    if (mg === 'full-body' && m.muscles) {
+      const first = m.muscles.split(',')[0].trim();
+      if (first) muscle = first;
+    }
+    return { name: m.name, slug: m.slug, cat: m.equipment_category || 'bodyweight', mg, muscle };
   });
-  return out.sort((a, b) => a.name.localeCompare(b.name));
 }
 
-function buildStretches() {
+async function buildStretches() {
   const out = [];
-  if (typeof STRETCH_DB !== 'undefined') {
-    Object.entries(STRETCH_DB).forEach(([modality, arr]) => {
-      (arr || []).forEach(s => {
-        if (!s.name) return;
-        out.push({
-          name: s.name,
-          slug: slugify(s.name),
-          type: 'movement',
-          area: (s.focus || [])[0] || 'full',
-          modality,
-        });
-      });
+  if (!supabaseClient) return out;
+
+  // Individual stretches from `stretches` table
+  const { data: stretches } = await supabaseClient
+    .from('stretches')
+    .select('name, slug, modality, focus');
+  (stretches || []).forEach(s => {
+    out.push({
+      name:     s.name,
+      slug:     s.slug,
+      type:     'movement',
+      area:     (s.focus || [])[0] || 'full',
+      modality: s.modality,
     });
-  }
-  if (typeof STRETCH_ROUTINES !== 'undefined') {
-    (STRETCH_ROUTINES || []).forEach(r => {
-      if (!r.name || !r.slug) return;
-      const focus = (r.focus || [])[0] || 'full-body';
-      out.push({
-        name: r.name,
-        slug: r.slug,
-        type: 'routine',
-        area: focus.toLowerCase().replace(/\s+/g,'-'),
-        modality: 'routine',
-      });
+  });
+
+  // Routines from `stretch_routines` table
+  const { data: routines } = await supabaseClient
+    .from('stretch_routines')
+    .select('name, slug, focus');
+  (routines || []).forEach(r => {
+    if (!r.name || !r.slug) return;
+    const focus = (r.focus || [])[0] || 'full-body';
+    out.push({
+      name:     r.name,
+      slug:     r.slug,
+      type:     'routine',
+      area:     focus.toLowerCase().replace(/\s+/g, '-'),
+      modality: 'routine',
     });
-  }
+  });
+
   return out;
 }
 
@@ -1143,11 +1148,9 @@ function resetFilters() {
 // ─────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  // Build data from live DB scripts
-  WORKOUTS  = buildWorkouts();
-  MOVEMENTS = buildMovements();
-  STRETCHES = buildStretches();
+document.addEventListener('DOMContentLoaded', async () => {
+  // Load all data from Supabase
+  [WORKOUTS, MOVEMENTS, STRETCHES] = await Promise.all([buildWorkouts(), buildMovements(), buildStretches()]);
 
   // Pre-fill from URL ?q=
   const qp = new URLSearchParams(location.search).get('q');

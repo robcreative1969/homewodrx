@@ -39,8 +39,6 @@
 <script src="/js/config.js"></script>
 <script src="/js/db.js"></script>
 <script src="/js/nav.js"></script>
-<script src="/js/stretch-db.js"></script>
-
 <style>
 /* ── PAGE-SPECIFIC VARS ──────────────────────────────────────────── */
 :root {
@@ -300,16 +298,7 @@ function slugify(str) {
   return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
-function buildMeta(entry) {
-  if (entry.hold) {
-    const b = entry.hold.b, a = entry.hold.a;
-    return `Hold: ${b}–${a} sec`;
-  }
-  if (entry.reps) return entry.reps;
-  return '';
-}
-
-// ── Build STRETCHES from STRETCH_DB ───────────────────────────────────────────
+// ── Modality / focus config ────────────────────────────────────────────────────
 const MODALITY_CONFIG = [
   { key: 'static',  label: 'Static Stretches',      desc: 'Hold-based stretches for flexibility and cool-down' },
   { key: 'dynamic', label: 'Dynamic Stretches',      desc: 'Movement-based prep for warm-ups and activation' },
@@ -322,20 +311,7 @@ const FOCUS_LABELS = {
   back: 'Back', chest: 'Chest', calves: 'Calves', wrists: 'Wrists', full: 'Full Body'
 };
 
-const STRETCHES = [];
-MODALITY_CONFIG.forEach(cfg => {
-  const entries = STRETCH_DB[cfg.key] || [];
-  entries.forEach(entry => {
-    STRETCHES.push({
-      name:  entry.name,
-      slug:  slugify(entry.name),
-      mod:   cfg.key,
-      focus: entry.focus || [],
-      meta:  buildMeta(entry),
-      sides: !!entry.sides,
-    });
-  });
-});
+let STRETCHES = [];
 
 // ── Filter state ───────────────────────────────────────────────────────────────
 let currentMod    = 'all';
@@ -448,8 +424,28 @@ document.getElementById('search').addEventListener('input', e => {
   render();
 });
 
-// ── Init ───────────────────────────────────────────────────────────────────────
-render();
+// ── Init — load from Supabase ─────────────────────────────────────────────────
+async function init() {
+  const { data } = await supabaseClient
+    .from('stretches')
+    .select('name, slug, modality, focus, sides, hold_beginner, hold_advanced')
+    .order('name');
+  if (data) {
+    STRETCHES = data.map(s => ({
+      name:  s.name,
+      slug:  s.slug,
+      mod:   s.modality,
+      focus: s.focus || [],
+      sides: !!s.sides,
+      meta:  s.hold_beginner != null
+               ? `Hold: ${s.hold_beginner}–${s.hold_advanced} sec`
+               : 'Dynamic',
+    }));
+    document.getElementById('total-count').textContent = STRETCHES.length;
+  }
+  render();
+}
+init();
 </script>
 <script src="/js/footer.js"></script>
 </body>
