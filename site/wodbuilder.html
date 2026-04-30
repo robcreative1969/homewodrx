@@ -245,10 +245,9 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
 .cyo-mov-row-tip::placeholder{color:var(--muted,#666)}
 .cyo-mov-row-del{background:none;border:none;color:#e74c3c;font-size:20px;cursor:pointer;padding:2px 5px;opacity:.4;transition:opacity .15s;line-height:1;flex-shrink:0}
 .cyo-mov-row-del:hover{opacity:1}
-.cyo-gate{text-align:center;padding:48px 24px}
-.cyo-gate .g-icon{font-size:52px;margin-bottom:16px}
-.cyo-gate h3{font-size:22px;font-weight:900;margin-bottom:8px;color:var(--tx)}
-.cyo-gate p{color:var(--muted,#666);font-size:14px;max-width:360px;margin:0 auto 20px}
+.cyo-gate{text-align:center;padding:60px 24px;background:var(--white,#fff);border:1px solid var(--border,#e5e5e5);border-radius:var(--radius,10px)}
+.cyo-gate h3{font-family:var(--font-head,'Bebas Neue',sans-serif);font-size:2rem;letter-spacing:.03em;color:var(--text,#1a1a1a);margin-bottom:10px}
+.cyo-gate p{font-size:.95rem;color:var(--muted,#666);max-width:400px;margin:0 auto 24px;line-height:1.6}
 .cyo-gate-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 
 /* ── PROTOTYPE CONFIG CLASSES ─────────────────────────── */
@@ -471,18 +470,17 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
 
   </div><!-- /gen-mode-generate -->
 
-  <!-- ── CREATE YOUR OWN MODE ──────────────────────────────── -->
+  <!-- CREATE YOUR OWN MODE -->
   <div id="gen-mode-create" style="display:none">
 
     <!-- Gate: shown when not logged in -->
-    <div id="cyo-gate" class="section" style="display:none">
+    <div id="cyo-gate" style="display:none">
       <div class="cyo-gate">
-        <div class="g-icon" style="font-size:52px;margin-bottom:16px">+</div>
         <h3>Create Your Own WOD</h3>
         <p>Build custom workouts from scratch using our full movement library, then save them to your profile. Free with an account.</p>
         <div class="cyo-gate-btns">
-          <button class="abtn pri" style="flex:unset;padding:12px 24px" onclick="openAuthModal('signup')">Create Free Account</button>
-          <button class="abtn sec" style="flex:unset;padding:12px 24px" onclick="openAuthModal('login')">Log In</button>
+          <button class="rbtn pri" style="flex:unset;padding:12px 28px" onclick="openAuthModal('signup')">Create Free Account</button>
+          <button class="rbtn sec" style="flex:unset;padding:12px 28px" onclick="openAuthModal('login')">Log In</button>
         </div>
       </div>
     </div>
@@ -490,95 +488,115 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
     <!-- Builder: shown when logged in -->
     <div id="cyo-builder" style="display:none">
 
-      <div class="section">
-        <div class="slabel">Workout Details</div>
-        <div class="stitle">Name your workout</div>
-        <input type="text" id="cyo-title" placeholder="e.g. Monday Grinder, Leg Day Special…" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-size:15px;outline:none;margin-bottom:12px;box-sizing:border-box;transition:border-color .15s" onfocus="this.style.borderColor='var(--or)'" onblur="this.style.borderColor='var(--border)'">
-        <textarea id="cyo-desc" placeholder="What's this workout about? Scaling notes, intent, who it's for…" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-size:13px;outline:none;min-height:70px;resize:vertical;box-sizing:border-box;font-family:inherit;transition:border-color .15s" onfocus="this.style.borderColor='var(--or)'" onblur="this.style.borderColor='var(--border)'"></textarea>
-      </div>
-
-      <div class="section">
-        <div class="slabel">Step 1</div>
-        <div class="stitle">What equipment is needed?</div>
-        <div class="eq-grid" id="cyo-eq-grid">
-          <label class="eq-card" data-val="bodyweight" onclick="this.classList.toggle('sel')"><span class="name">Bodyweight</span></label>
-          <label class="eq-card" data-val="pullupbar" onclick="this.classList.toggle('sel')"><span class="name">Pull-up Bar</span></label>
-          <label class="eq-card" data-val="kettlebell" onclick="this.classList.toggle('sel')"><span class="name">Kettlebell</span></label>
-          <label class="eq-card" data-val="dumbbells" onclick="this.classList.toggle('sel')"><span class="name">Dumbbells</span></label>
-          <label class="eq-card" data-val="barbell" onclick="this.classList.toggle('sel')"><span class="name">Barbell</span></label>
-          <label class="eq-card" data-val="resistancebands" onclick="this.classList.toggle('sel')"><span class="name">Bands</span></label>
-          <label class="eq-card" data-val="jumprope" onclick="this.classList.toggle('sel')"><span class="name">Jump Rope</span></label>
-          <label class="eq-card" data-val="box" onclick="this.classList.toggle('sel')"><span class="name">Plyo Box</span></label>
-          <label class="eq-card" data-val="medicineball" onclick="this.classList.toggle('sel')"><span class="name">Med Ball</span></label>
-          <label class="eq-card" data-val="rings" onclick="this.classList.toggle('sel')"><span class="name">Rings</span></label>
-          <label class="eq-card" data-val="slamball" onclick="this.classList.toggle('sel')"><span class="name">Slam Ball</span></label>
-          <label class="eq-card" data-val="treadmill" onclick="this.classList.toggle('sel')"><span class="name">Treadmill</span></label>
-          <label class="eq-card" data-val="running" onclick="this.classList.toggle('sel')"><span class="name">Running</span></label>
-          <label class="eq-card" data-val="rower" onclick="this.classList.toggle('sel')"><span class="name">Rower</span></label>
-          <label class="eq-card" data-val="airbike" onclick="this.classList.toggle('sel')"><span class="name">Air Bike</span></label>
+      <!-- Workout Details -->
+      <div class="config-grid full" style="margin-bottom:14px">
+        <div class="config-card">
+          <div class="step-label">Workout Details</div>
+          <div class="step-title">Name your workout</div>
+          <div class="step-hint">Give it a name and optional description — scaling notes, intent, who it's for.</div>
+          <input type="text" id="cyo-title" placeholder="e.g. Monday Grinder, Leg Day Special…" style="width:100%;background:var(--bg,#f3f3f3);border:1.5px solid var(--border,#e5e5e5);border-radius:8px;padding:11px 14px;color:var(--text,#1a1a1a);font-size:15px;outline:none;margin-bottom:12px;box-sizing:border-box;transition:border-color .15s;font-family:inherit" onfocus="this.style.borderColor='var(--or)'" onblur="this.style.borderColor='var(--border)'">
+          <textarea id="cyo-desc" placeholder="What's this workout about? Scaling notes, intent, who it's for…" style="width:100%;background:var(--bg,#f3f3f3);border:1.5px solid var(--border,#e5e5e5);border-radius:8px;padding:11px 14px;color:var(--text,#1a1a1a);font-size:13px;outline:none;min-height:70px;resize:vertical;box-sizing:border-box;font-family:inherit;transition:border-color .15s" onfocus="this.style.borderColor='var(--or)'" onblur="this.style.borderColor='var(--border)'"></textarea>
         </div>
       </div>
 
-      <div class="section">
-        <div class="slabel">Step 2</div>
-        <div class="stitle">Workout format</div>
-        <div class="pill-group" id="cyo-format-group">
-          <label class="pill sel" data-val="AMRAP">AMRAP</label>
-          <label class="pill" data-val="EMOM">EMOM</label>
-          <label class="pill" data-val="For Time">For Time</label>
-          <label class="pill" data-val="Circuit">Circuit</label>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="slabel">Step 3</div>
-        <div class="stitle">Duration & difficulty</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
-          <div>
-            <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Time cap — <strong id="cyo-dur-val" style="color:var(--or)">20</strong> min</div>
-            <input type="range" id="cyo-duration" min="5" max="90" step="5" value="20" style="width:100%;accent-color:var(--or)" oninput="document.getElementById('cyo-dur-val').textContent=this.value">
-            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted,#666);margin-top:4px"><span>5 min</span><span>90 min</span></div>
+      <!-- Equipment -->
+      <div class="config-grid full" style="margin-bottom:14px">
+        <div class="config-card">
+          <div class="step-label">Step 1</div>
+          <div class="step-title">What equipment is needed?</div>
+          <div class="step-hint">Select all equipment your workout requires.</div>
+          <div class="eq-grid" id="cyo-eq-grid">
+            <div class="eq-card" data-val="bodyweight" onclick="this.classList.toggle('sel')"><span class="eq-name">Bodyweight</span></div>
+            <div class="eq-card" data-val="pullupbar" onclick="this.classList.toggle('sel')"><span class="eq-name">Pull-up Bar</span></div>
+            <div class="eq-card" data-val="kettlebell" onclick="this.classList.toggle('sel')"><span class="eq-name">Kettlebell</span></div>
+            <div class="eq-card" data-val="dumbbells" onclick="this.classList.toggle('sel')"><span class="eq-name">Dumbbells</span></div>
+            <div class="eq-card" data-val="barbell" onclick="this.classList.toggle('sel')"><span class="eq-name">Barbell</span></div>
+            <div class="eq-card" data-val="resistancebands" onclick="this.classList.toggle('sel')"><span class="eq-name">Bands</span></div>
+            <div class="eq-card" data-val="jumprope" onclick="this.classList.toggle('sel')"><span class="eq-name">Jump Rope</span></div>
+            <div class="eq-card" data-val="box" onclick="this.classList.toggle('sel')"><span class="eq-name">Plyo Box</span></div>
+            <div class="eq-card" data-val="medicineball" onclick="this.classList.toggle('sel')"><span class="eq-name">Med Ball</span></div>
+            <div class="eq-card" data-val="rings" onclick="this.classList.toggle('sel')"><span class="eq-name">Rings</span></div>
+            <div class="eq-card" data-val="slamball" onclick="this.classList.toggle('sel')"><span class="eq-name">Slam Ball</span></div>
+            <div class="eq-card" data-val="running" onclick="this.classList.toggle('sel')"><span class="eq-name">Running</span></div>
+            <div class="eq-card" data-val="rower" onclick="this.classList.toggle('sel')"><span class="eq-name">Rower</span></div>
+            <div class="eq-card" data-val="airbike" onclick="this.classList.toggle('sel')"><span class="eq-name">Air Bike</span></div>
+            <div class="eq-card" data-val="treadmill" onclick="this.classList.toggle('sel')"><span class="eq-name">Treadmill</span></div>
           </div>
-          <div>
-            <div style="font-size:12px;color:var(--muted,#666);margin-bottom:8px">Experience level</div>
+        </div>
+      </div>
+
+      <!-- Format + Duration + Level -->
+      <div class="config-grid" style="margin-bottom:14px">
+        <div class="config-card">
+          <div class="step-label">Step 2</div>
+          <div class="step-title">Workout format</div>
+          <div class="step-hint">Choose the structure that fits your goal.</div>
+          <div class="format-grid" id="cyo-format-group">
+            <div class="format-card pill sel" data-val="AMRAP"><span class="format-name">AMRAP</span><span class="format-desc">As many rounds as possible in the time cap</span></div>
+            <div class="format-card pill" data-val="EMOM"><span class="format-name">EMOM</span><span class="format-desc">Every minute on the minute, one movement per minute</span></div>
+            <div class="format-card pill" data-val="For Time"><span class="format-name">For Time</span><span class="format-desc">Complete all work as fast as possible</span></div>
+            <div class="format-card pill" data-val="Circuit"><span class="format-name">Circuit</span><span class="format-desc">Fixed sets and reps, continuous movement flow</span></div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="config-card">
+            <div class="step-label">Step 3</div>
+            <div class="step-title">Duration</div>
+            <div class="step-hint">Time cap — <strong id="cyo-dur-val" style="color:var(--or,#C41212)">20</strong> min</div>
+            <input type="range" id="cyo-duration" min="5" max="90" step="5" value="20" style="width:100%;accent-color:var(--or,#C41212)" oninput="document.getElementById('cyo-dur-val').textContent=this.value;cyoUpdateScoring()">
+            <div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted,#666);margin-top:6px"><span>5 min</span><span>90 min</span></div>
+          </div>
+          <div class="config-card">
+            <div class="step-label">Step 4</div>
+            <div class="step-title">Experience level</div>
+            <div class="step-hint">Guides suggested scaling and complexity.</div>
             <div class="pill-group" id="cyo-level-group">
-              <label class="pill" data-val="beginner">Beginner</label>
-              <label class="pill sel" data-val="intermediate">Intermediate</label>
-              <label class="pill" data-val="advanced">Advanced</label>
+              <div class="pill" data-val="beginner">Beginner</div>
+              <div class="pill sel" data-val="intermediate">Intermediate</div>
+              <div class="pill" data-val="advanced">Advanced</div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="section">
-        <div class="slabel">Step 4</div>
-        <div class="stitle">Add your movements</div>
-        <div class="cyo-mov-builder">
-          <div class="cyo-mov-search-wrap">
-            <input type="text" id="cyo-mov-search" placeholder="Search movement library…" autocomplete="off" oninput="cyoSearchMovements()" onfocus="cyoSearchMovements()">
-            <div class="cyo-mov-dropdown" id="cyo-mov-dropdown"></div>
+      <!-- Add Movements -->
+      <div class="config-grid full" style="margin-bottom:14px">
+        <div class="config-card">
+          <div class="step-label">Step 5</div>
+          <div class="step-title">Add your movements</div>
+          <div class="step-hint">Search or browse the full movement library. Drag to reorder.</div>
+          <div class="cyo-mov-builder">
+            <div class="cyo-mov-search-wrap">
+              <input type="text" id="cyo-mov-search" placeholder="Search movement library…" autocomplete="off" oninput="cyoSearchMovements()" onfocus="cyoSearchMovements()">
+              <div class="cyo-mov-dropdown" id="cyo-mov-dropdown"></div>
+            </div>
+            <div id="cyo-mov-list"><div class="cyo-mov-empty">No movements yet — click above to browse or search the library.</div></div>
           </div>
-          <div id="cyo-mov-list"><div class="cyo-mov-empty">No movements yet — click above to browse or search the library.</div></div>
         </div>
       </div>
 
-      <div class="section">
-        <div class="slabel">Step 5</div>
-        <div class="stitle">Scoring</div>
-        <input type="text" id="cyo-scoring" placeholder="e.g. Total rounds + reps completed, Time to finish, Max load" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-size:14px;outline:none;box-sizing:border-box;transition:border-color .15s" onfocus="this.style.borderColor='var(--or)'" onblur="this.style.borderColor='var(--border)'">
+      <!-- Scoring -->
+      <div class="config-grid full" style="margin-bottom:14px">
+        <div class="config-card">
+          <div class="step-label">Step 6</div>
+          <div class="step-title">Scoring</div>
+          <div class="step-hint">How will athletes record their result?</div>
+          <input type="text" id="cyo-scoring" placeholder="e.g. Total rounds + reps completed, Time to finish, Max load" style="width:100%;background:var(--bg,#f3f3f3);border:1.5px solid var(--border,#e5e5e5);border-radius:8px;padding:11px 14px;color:var(--text,#1a1a1a);font-size:14px;outline:none;box-sizing:border-box;transition:border-color .15s;font-family:inherit" onfocus="this.style.borderColor='var(--or)'" onblur="this.style.borderColor='var(--border)'">
+        </div>
       </div>
 
-      <!-- Save options -->
-      <div class="section" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-        <div style="display:flex;align-items:center;gap:10px">
-          <label style="font-size:14px;cursor:pointer;display:flex;align-items:center;gap:7px;color:var(--text)"><input type="checkbox" id="cyo-public" style="accent-color:var(--or)"> Share with community</label>
-        </div>
+      <!-- Save row -->
+      <div class="config-card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <label style="font-size:.9rem;cursor:pointer;display:flex;align-items:center;gap:8px;color:var(--text,#1a1a1a)">
+          <input type="checkbox" id="cyo-public" style="accent-color:var(--or,#C41212);width:16px;height:16px"> Share with community
+        </label>
         <div style="display:flex;gap:10px">
-          <button class="abtn sec" style="flex:unset" onclick="cyoReset()">Start Over</button>
-          <button class="abtn pri" style="flex:unset" id="cyo-save-btn" onclick="cyoSave()">Save Workout</button>
+          <button class="rbtn sec" style="flex:unset" onclick="cyoReset()">Start Over</button>
+          <button class="rbtn pri" style="flex:unset" id="cyo-save-btn" onclick="cyoSave()">Save Workout</button>
         </div>
       </div>
-      <div id="cyo-alert" style="display:none;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.4);color:#e74c3c;border-radius:8px;padding:12px 16px;font-size:13px;margin-top:8px"></div>
+      <div id="cyo-alert" style="display:none;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.4);color:#e74c3c;border-radius:8px;padding:12px 16px;font-size:.875rem;margin-top:8px"></div>
 
     </div><!-- /cyo-builder -->
   </div><!-- /gen-mode-create -->
