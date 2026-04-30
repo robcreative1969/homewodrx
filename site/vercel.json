@@ -1,5 +1,9 @@
 {
   "routes": [
+    { "src": "/generator",     "headers": { "Location": "/wodbuilder"     }, "status": 301 },
+    { "src": "/generator.html","headers": { "Location": "/wodbuilder"     }, "status": 301 },
+    { "src": "/stretch$",      "headers": { "Location": "/stretchbuilder" }, "status": 301 },
+    { "src": "/stretch.html",  "headers": { "Location": "/stretchbuilder" }, "status": 301 },
     { "src": "/workouts/$",    "headers": { "Location": "/workouts"    }, "status": 301 },
     { "src": "/movements/$",   "headers": { "Location": "/movements"   }, "status": 301 },
     { "src": "/daily-wod/$",   "headers": { "Location": "/daily-wod"   }, "status": 301 },
