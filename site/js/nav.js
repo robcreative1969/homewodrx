@@ -400,19 +400,16 @@ const Nav = {
       }
     });
 
-    // Suppress Sentry's default feedback widget on portrait mobile.
-    // CSS alone doesn't catch it because Sentry injects it async with inline styles.
-    if (window.innerWidth <= 767) {
-      const hideSentry = () => {
-        const el = document.getElementById('sentry-feedback');
-        if (el) el.style.setProperty('display', 'none', 'important');
-      };
-      hideSentry();
-      // Watch for Sentry injecting it after page load
-      new MutationObserver(hideSentry).observe(document.body, { childList: true });
-      setTimeout(hideSentry, 800);
-      setTimeout(hideSentry, 2500);
-    }
+    // Suppress Sentry's default feedback widget on all devices.
+    // CSS alone doesn't catch it — Sentry injects async with inline styles that override it.
+    const hideSentry = () => {
+      const el = document.getElementById('sentry-feedback');
+      if (el) el.style.setProperty('display', 'none', 'important');
+    };
+    hideSentry();
+    new MutationObserver(hideSentry).observe(document.body, { childList: true });
+    setTimeout(hideSentry, 800);
+    setTimeout(hideSentry, 2500);
 
     // Close on Escape
     document.addEventListener('keydown', (e) => {
