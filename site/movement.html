@@ -96,14 +96,20 @@
   font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
   border: 1.5px solid;
 }
-.cat-badge.barbell      { background: #fef3c7; border-color: #d97706; color: #92400e; }
-.cat-badge.gymnastics   { background: #ede9fe; border-color: #7c3aed; color: #5b21b6; }
-.cat-badge.bodyweight   { background: #dcfce7; border-color: #16a34a; color: #15803d; }
-.cat-badge.cardio       { background: #dbeafe; border-color: #2563eb; color: #1d4ed8; }
-.cat-badge.weightlifting{ background: #fce7f3; border-color: #db2777; color: #be185d; }
-.cat-badge.kettlebell   { background: #fef3c7; border-color: #d97706; color: #92400e; }
-.cat-badge.dumbbell     { background: #f3f4f6; border-color: #6b7280; color: #374151; }
-.cat-badge.default      { background: #f3f4f6; border-color: #d1d5db; color: #374151; }
+.cat-badge.barbell       { background: #fef3c7; border-color: #d97706; color: #92400e; }
+.cat-badge.olympic       { background: #fef3c7; border-color: #d97706; color: #92400e; }
+.cat-badge.gymnastics    { background: #ede9fe; border-color: #7c3aed; color: #5b21b6; }
+.cat-badge.bodyweight    { background: #dcfce7; border-color: #16a34a; color: #15803d; }
+.cat-badge.lower         { background: #dcfce7; border-color: #16a34a; color: #15803d; }
+.cat-badge.push          { background: #dcfce7; border-color: #16a34a; color: #15803d; }
+.cat-badge.cardio        { background: #dbeafe; border-color: #2563eb; color: #1d4ed8; }
+.cat-badge.kettlebell    { background: #fef3c7; border-color: #d97706; color: #92400e; }
+.cat-badge.dumbbell      { background: #f3f4f6; border-color: #6b7280; color: #374151; }
+.cat-badge.core          { background: #fce7f3; border-color: #db2777; color: #be185d; }
+.cat-badge.fullbody      { background: #dbeafe; border-color: #2563eb; color: #1d4ed8; }
+.cat-badge.resistancebands { background: #f0fdf4; border-color: #22c55e; color: #15803d; }
+.cat-badge.slamball      { background: #fff7ed; border-color: #f97316; color: #c2410c; }
+.cat-badge.default       { background: #f3f4f6; border-color: #d1d5db; color: #374151; }
 
 .difficulty-dots { display: flex; align-items: center; gap: 4px; }
 .diff-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
@@ -737,17 +743,28 @@ function getSlug() {
   return new URLSearchParams(window.location.search).get('slug');
 }
 
-/* ── Category → badge class ── */
+/* ── Category → badge class (matches actual DB category values) ── */
+const CAT_CLASS = {
+  barbell: 'barbell', olympic: 'olympic', gymnastics: 'gymnastics',
+  bodyweight: 'bodyweight', lower: 'lower', push: 'push',
+  cardio: 'cardio', kettlebell: 'kettlebell', dumbbell: 'dumbbell',
+  core: 'core', fullbody: 'fullbody', resistancebands: 'resistancebands',
+  slamball: 'slamball',
+};
+const CAT_LABEL = {
+  barbell: 'Barbell', olympic: 'Olympic', gymnastics: 'Gymnastics',
+  bodyweight: 'Bodyweight', lower: 'Lower Body', push: 'Push',
+  cardio: 'Cardio', kettlebell: 'Kettlebell', dumbbell: 'Dumbbell',
+  core: 'Core', fullbody: 'Full Body', resistancebands: 'Resistance Bands',
+  slamball: 'Slam Ball',
+};
 function catBadgeClass(cat) {
   if (!cat) return 'default';
-  const c = cat.toLowerCase();
-  if (c.includes('barbell') || c.includes('olympic') || c.includes('weightlift')) return 'barbell';
-  if (c.includes('gymnastic') || c.includes('rings') || c.includes('bar')) return 'gymnastics';
-  if (c.includes('bodyweight') || c.includes('body weight')) return 'bodyweight';
-  if (c.includes('cardio') || c.includes('conditioning') || c.includes('run') || c.includes('row')) return 'cardio';
-  if (c.includes('kettlebell') || c.includes('kb')) return 'kettlebell';
-  if (c.includes('dumbbell') || c.includes('db')) return 'dumbbell';
-  return 'default';
+  return CAT_CLASS[cat.toLowerCase()] || 'default';
+}
+function catBadgeLabel(cat) {
+  if (!cat) return 'Movement';
+  return CAT_LABEL[cat.toLowerCase()] || cat.charAt(0).toUpperCase() + cat.slice(1);
 }
 
 /* ── Difficulty → dots + label ── */
@@ -868,24 +885,25 @@ async function loadMovementPage() {
   try {
     const { data, error } = await supabaseClient
       .from('movements')
-      .select('name, slug, muscles, description, tips, daily_wod_eligible, category, youtube_url, equipment, difficulty, scaling, faults, faq, related_movements')
+      .select('name, slug, muscles, description, tips, daily_wod_eligible, category, youtube_url, equipment, scaling_options, common_faults')
       .eq('slug', slug)
       .maybeSingle();
     if (!error && data) info = data;
+    else if (error) console.warn('Supabase movement query error:', error);
   } catch (e) {
     console.warn('Supabase movement fetch failed:', e);
   }
 
   const displayName = info?.name || movementName;
   const category    = info?.category || '';
-  const difficulty  = info?.difficulty || '';
+  const difficulty  = ''; // not in DB schema yet
   const muscles     = info?.muscles   || '';
   const tips        = Array.isArray(info?.tips)   ? info.tips   : (info?.tips ? [info.tips] : []);
   const equipment   = Array.isArray(info?.equipment) ? info.equipment : (info?.equipment ? [info.equipment] : []);
-  const scaling     = Array.isArray(info?.scaling)   ? info.scaling   : [];
-  const faults      = Array.isArray(info?.faults)    ? info.faults    : [];
-  const faq         = Array.isArray(info?.faq)       ? info.faq       : [];
-  const related     = Array.isArray(info?.related_movements) ? info.related_movements : [];
+  const scaling     = []; // scaling_options is text, not structured yet
+  const faults      = []; // common_faults is text, not structured yet
+  const faq         = [];
+  const related     = [];
 
   /* ── 2. Update SEO meta ── */
   const metaDesc = info?.description
@@ -949,7 +967,7 @@ async function loadMovementPage() {
   // Badge
   const badge = document.getElementById('hero-badge');
   badge.className = 'cat-badge ' + catBadgeClass(category);
-  badge.textContent = category || 'Movement';
+  badge.textContent = catBadgeLabel(category);
   badge.style.display = '';
 
   // Difficulty dots
@@ -967,7 +985,7 @@ async function loadMovementPage() {
 
   // Meta row
   document.getElementById('meta-wods-text').textContent = 'Loading workout count…';
-  document.getElementById('meta-cat-text').textContent = [category, difficulty].filter(Boolean).join(' · ');
+  document.getElementById('meta-cat-text').textContent = catBadgeLabel(category);
   if (muscles) {
     const muscleStr = Array.isArray(muscles) ? muscles.join(', ') : muscles;
     document.getElementById('meta-muscles-text').textContent = muscleStr;
