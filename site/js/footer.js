@@ -469,9 +469,7 @@
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', injectFooter);
-    document.addEventListener('DOMContentLoaded', injectFeedbackWidget);
   } else {
     injectFooter();
-    injectFeedbackWidget();
   }
 })();
