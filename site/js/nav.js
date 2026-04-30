@@ -78,8 +78,8 @@ const Nav = {
   },
 
   render(activePage) {
-    const isWorkout = ['workouts','workout','movements','movement','generator','timer','daily-wod'].includes(activePage);
-    const isStretch = ['stretch','stretches','stretch-movement','stretch-routines','stretch-routine'].includes(activePage);
+    const isWorkout = ['workouts','workout','movements','movement','generator','wodbuilder','timer','daily-wod'].includes(activePage);
+    const isStretch = ['stretch','stretchbuilder','stretches','stretch-movement','stretch-routines','stretch-routine'].includes(activePage);
     const isShop    = activePage === 'shop';
     const isBlog    = activePage === 'blog';
 
@@ -111,8 +111,8 @@ const Nav = {
           <div class="dd-col dd-col-right">
             <div class="dd-section-label">Train</div>
             <a href="/daily-wod.html"><div class="dl"><strong>The Daily 20</strong><small>Today's free auto-generated WOD</small></div></a>
-            <a href="/generator.html"><div class="dl"><strong>Smart WOD Builder</strong><small>Custom workout in seconds</small></div></a>
-            <a href="/generator.html#create"><div class="dl"><strong>Create Your Own</strong><small>Build movement by movement</small></div></a>
+            <a href="/wodbuilder.html"><div class="dl"><strong>Smart WOD Builder</strong><small>Custom workout in seconds</small></div></a>
+            <a href="/wodbuilder.html#create"><div class="dl"><strong>Create Your Own</strong><small>Build movement by movement</small></div></a>
             <div class="dd-div"></div>
             <a href="/timer.html"><div class="dl"><strong>WOD Timer</strong><small>AMRAP, EMOM, For Time &amp; more</small></div></a>
             <a href="/movements.html"><div class="dl"><strong>Movement Library</strong><small>200+ movements with demos</small></div></a>
@@ -126,7 +126,7 @@ const Nav = {
     <div class="nav-dd${sA}" id="dd-stretch">
       <button class="nav-btn${sA}" onclick="toggleDD('dd-stretch')">Stretch<svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 6 8 10 12 6"/></svg></button>
       <div class="dd-panel">
-        <a href="/stretch.html"><div class="dl"><strong>Stretch Builder</strong><small>Auto-build a recovery routine</small></div></a>
+        <a href="/stretchbuilder.html"><div class="dl"><strong>Smart Stretch Builder</strong><small>Auto-build a recovery routine</small></div></a>
         <a href="/stretches.html"><div class="dl"><strong>Browse Stretches</strong><small>Full stretch movement library</small></div></a>
         <a href="/stretch-routines.html"><div class="dl"><strong>Stretch Routines</strong><small>Curated mobility programs</small></div></a>
       </div>
@@ -218,8 +218,8 @@ const Nav = {
       <a href="/workouts.html?cat=benchmark" class="ham-link">Benchmarks</a>
       <a href="/workouts.html?cat=partner" class="ham-link">Partner WODs</a>
       <a href="/daily-wod.html" class="ham-link">The Daily 20</a>
-      <a href="/generator.html" class="ham-link">Smart WOD Builder</a>
-      <a href="/generator.html#create" class="ham-link">Create Your Own</a>
+      <a href="/wodbuilder.html" class="ham-link">Smart WOD Builder</a>
+      <a href="/wodbuilder.html#create" class="ham-link">Create Your Own</a>
       <a href="/timer.html" class="ham-link">WOD Timer</a>
       <a href="/movements.html" class="ham-link">Movement Library</a>
     </div>
@@ -228,7 +228,7 @@ const Nav = {
   <div class="ham-section">
     <div class="ham-section-title">Stretch</div>
     <div class="ham-links">
-      <a href="/stretch.html" class="ham-link">Stretch Builder</a>
+      <a href="/stretchbuilder.html" class="ham-link">Smart Stretch Builder</a>
       <a href="/stretches.html" class="ham-link">Browse Stretches</a>
       <a href="/stretch-routines.html" class="ham-link">Stretch Routines</a>
     </div>

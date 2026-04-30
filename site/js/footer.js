@@ -124,8 +124,8 @@
             <h4>Train</h4>
             <ul>
               <li><a href="/daily-wod.html">The Daily 20</a></li>
-              <li><a href="/generator.html">Smart WOD Builder</a></li>
-              <li><a href="/generator.html">Create Your Own</a></li>
+              <li><a href="/wodbuilder.html">Smart WOD Builder</a></li>
+              <li><a href="/wodbuilder.html#create">Create Your Own</a></li>
               <li><a href="/timer.html">WOD Timer</a></li>
               <li><a href="/movements.html">Movement Library</a></li>
             </ul>
@@ -135,8 +135,8 @@
           <div class="hwrx-footer-col">
             <h4>Stretch &amp; Mobility</h4>
             <ul>
-              <li><a href="/stretch.html">The Daily 10</a></li>
-              <li><a href="/stretch.html">Smart Stretch Builder</a></li>
+              <li><a href="/stretchbuilder.html">The Daily 10</a></li>
+              <li><a href="/stretchbuilder.html">Smart Stretch Builder</a></li>
               <li><a href="/stretch-routines.html">Hip &amp; Lower Body</a></li>
               <li><a href="/stretch-routines.html">Shoulders &amp; Thoracic</a></li>
               <li><a href="/stretch-routines.html">Recovery Routines</a></li>
