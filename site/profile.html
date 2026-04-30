@@ -861,7 +861,7 @@ function loadLiftPRs(profileData, isOwn) {
     .then(function(res) {
       if (res.data) {
         res.data.forEach(function(row) {
-          if (row.lift_name) liftData[row.lift_name] = row.weight_lbs || null;
+          if (row.lift_name) liftData[row.lift_name] = row.weight_lbs || (row.weight_kg ? Math.round(row.weight_kg * 2.20462) : null);
         });
       }
       renderLifts(isOwn);
