@@ -551,7 +551,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   var [resultsResp, savedResp] = await Promise.all([
     supabaseClient.from('results').select('*').eq('user_id', userId)
       .order('date', { ascending: false }).order('created_at', { ascending: false }),
-    supabaseClient.from('workouts').select('id, title, movements, created_at').eq('user_id', userId)
+    supabaseClient.from('workouts').select('id, title, movements, is_public, created_at').eq('user_id', userId)
       .order('created_at', { ascending: false })
   ]);
 
@@ -589,7 +589,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   var extraIds = wodIds.filter(function(id) { return !workoutMap[id]; });
   if (extraIds.length) {
     var { data: extras } = await supabaseClient
-      .from('workouts').select('id, title, movements').in('id', extraIds);
+      .from('workouts').select('id, title, movements, is_public').in('id', extraIds);
     if (extras) extras.forEach(function(w) { workoutMap[w.id] = w; });
   }
 
@@ -631,6 +631,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         workout_id: w.id,
         movements:  w.movements || [],
         created_at: w.created_at,
+        is_public:  w.is_public || false,
         score:      null,
         is_rx:      null,
         notes:      null,
@@ -685,7 +686,6 @@ function buildTabCounts(workouts) {
   });
   document.getElementById('count-all').textContent       = counts.all;
   document.getElementById('count-benchmark').textContent = counts.benchmark;
-  document.getElementById('count-daily20').textContent   = counts.daily20;
   document.getElementById('count-generated').textContent = counts.generated;
 }
 
@@ -738,18 +738,19 @@ function buildCard(w) {
   var d       = new Date(w.created_at);
   var dateStr = d.toLocaleDateString('en-US',{ month:'short', day:'numeric', year:'numeric' });
 
-  var nameHtml = w.slug
-    ? '<a href="/workouts/' + w.slug + '" class="wod-name-link">' + esc(w.wod_name) + '</a>'
+  var wodUrl   = w.slug ? '/workouts/' + w.slug : (w.workout_id ? '/workout.html?id=' + w.workout_id : null);
+  var nameHtml = wodUrl
+    ? '<a href="' + wodUrl + '" class="wod-name-link">' + esc(w.wod_name) + '</a>'
     : '<span class="wod-name-plain">' + esc(w.wod_name) + '</span>';
 
-  /* Movements strip */
+  /* Movements strip — handles {movement, reps, tip} objects from workouts table */
   var movHtml = '';
   var movs = Array.isArray(w.movements) ? w.movements : [];
   if (movs.length) {
     movHtml = '<div class="wod-movements">';
     movs.slice(0, 4).forEach(function(m) {
       var mslug = typeof m === 'object' ? (m.slug || '') : '';
-      var mname = typeof m === 'object' ? (m.name || String(m)) : String(m);
+      var mname = typeof m === 'object' ? (m.movement || m.name || String(m)) : String(m);
       movHtml += mslug
         ? '<a href="/movements/' + mslug + '" class="wod-mov-link">' + esc(mname) + '</a>'
         : '<span class="wod-mov-link" style="cursor:default">' + esc(mname) + '</span>';
@@ -787,10 +788,20 @@ function buildCard(w) {
   html += '<div class="wod-date">' + dateStr + '</div>';
   html += '</div>';
 
-  if (w.slug) {
+  if (wodUrl) {
     html += '<div class="wod-card-right">';
-    html += '<a href="/workouts/' + w.slug + '" class="wod-view-link">View WOD ';
+    html += '<a href="' + wodUrl + '" class="wod-view-link">View WOD ';
     html += '<svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>';
+    if (w.workout_id && !w.slug) {
+      var isPublic  = w.is_public ? true : false;
+      var pubLabel  = isPublic ? 'Public' : 'Private';
+      var pubIcon   = isPublic
+        ? '<svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>'
+        : '<svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+      var pubStyle  = isPublic ? 'color:var(--or)' : 'color:var(--muted)';
+      html += '<button class="wod-view-link" style="background:none;border:none;cursor:pointer;padding:0;font-size:.8rem;font-weight:700;' + pubStyle + '" onclick="togglePublic(\'' + w.workout_id + '\',' + isPublic + ',this)">';
+      html += pubIcon + ' ' + pubLabel + '</button>';
+    }
     html += '</div>';
   }
   html += '</div>'; /* wod-card-top */
@@ -871,8 +882,16 @@ async function submitLog() {
   if (logTargetSlug)  payload.benchmark_slug = logTargetSlug;
   if (logTargetWodId) payload.workout_id     = logTargetWodId;
 
+  var saveBtn = document.querySelector('#log-modal .btn-modal-primary');
+  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving…'; }
+
   var { error } = await supabaseClient.from('results').insert(payload);
-  if (error) { console.error('Log error:', error); return; }
+  if (error) {
+    console.error('Log error:', error);
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save Result'; }
+    alert('Could not save result: ' + (error.message || 'Unknown error'));
+    return;
+  }
   closeLogModal();
   window.location.reload();
 }
@@ -892,6 +911,36 @@ async function confirmDelete() {
   if (error) { console.error('Delete error:', error); return; }
   closeDeleteModal();
   window.location.reload();
+}
+
+/* ─── Toggle public/private on generated workouts ─── */
+async function togglePublic(workoutId, currentlyPublic, btn) {
+  var newVal = !currentlyPublic;
+  btn.disabled = true;
+
+  var { error } = await supabaseClient
+    .from('workouts').update({ is_public: newVal }).eq('id', workoutId);
+
+  if (error) {
+    console.error('Toggle public error:', error);
+    btn.disabled = false;
+    return;
+  }
+
+  /* Update button in-place without reload */
+  var pubLabel = newVal ? 'Public' : 'Private';
+  var pubIcon  = newVal
+    ? '<svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>'
+    : '<svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+  btn.style.color   = newVal ? 'var(--or)' : 'var(--muted)';
+  btn.innerHTML     = pubIcon + ' ' + pubLabel;
+  btn.setAttribute('onclick', 'togglePublic(\'' + workoutId + '\',' + newVal + ',this)');
+  btn.disabled = false;
+
+  /* Also update the in-memory card so filter/re-render reflects new state */
+  allWorkouts.forEach(function(w) {
+    if (w.workout_id === workoutId) w.is_public = newVal;
+  });
 }
 
 /* ─── Close modals on overlay click ─── */
