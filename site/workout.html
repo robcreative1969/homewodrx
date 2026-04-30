@@ -123,15 +123,16 @@
 .wod-cat-badge.partner    { background: #d1fae5; border-color: #16a34a; color: #15803d; }
 .wod-type-badge { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 20px; background: #f5f5f5; border: 1px solid var(--border); font-size: .78rem; font-weight: 700; color: var(--muted); }
 
-/* Movement list — CSS Grid so reps column is uniform width across all rows */
-.wod-move-list { list-style: none; margin-bottom: 0; padding: 0; display: grid; grid-template-columns: max-content 1fr auto; column-gap: 14px; align-items: center; }
-.wod-move-row { display: contents; }
-.wod-reps { font-family: var(--font-head); font-size: 1.55rem; color: var(--or); letter-spacing: .04em; line-height: 1; white-space: nowrap; text-align: left; padding: 7px 0; border-bottom: 1px solid #f3f3f3; }
-.wod-move-link { font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color .15s; padding: 7px 0; border-bottom: 1px solid #f3f3f3; }
+/* Movement list — table layout guarantees uniform column widths across all rows */
+.wod-move-list { list-style: none; margin-bottom: 0; padding: 0; display: table; width: 100%; border-collapse: collapse; }
+.wod-move-row { display: table-row; }
+.wod-reps { display: table-cell; font-family: var(--font-head); font-size: 1.55rem; color: var(--or); letter-spacing: .04em; line-height: 1; white-space: nowrap; text-align: left; padding: 7px 20px 7px 0; border-bottom: 1px solid #f3f3f3; vertical-align: middle; }
+.wod-move-link { display: table-cell; font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color .15s; padding: 7px 0; border-bottom: 1px solid #f3f3f3; vertical-align: middle; }
 .wod-move-link:hover { color: var(--or); }
-.wod-load { font-size: .82rem; color: var(--muted); font-weight: 500; white-space: nowrap; padding: 7px 0; border-bottom: 1px solid #f3f3f3; }
-.wod-round-sep { grid-column: 1 / -1; font-size: .72rem; color: var(--muted); font-style: italic; padding: 4px 0; border-bottom: 1px solid #f3f3f3; }
-.wod-move-separator { grid-column: 1 / -1; font-size: .72rem; color: var(--muted); font-style: italic; padding: 4px 0; border-bottom: 1px solid #f3f3f3; }
+.wod-load { font-size: .82rem; color: var(--muted); font-weight: 500; margin-left: 8px; white-space: nowrap; }
+.wod-round-sep { display: table-row; }
+.wod-round-sep-spacer { display: table-cell; }
+.wod-round-sep-text { display: table-cell; font-size: .72rem; color: var(--muted); font-style: italic; padding: 4px 0; border-bottom: 1px solid #f3f3f3; }
 .wod-score-note { font-size: .82rem; color: var(--muted); padding: 10px 0 0; }
 .wod-stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
 .wod-stat { display: flex; flex-direction: column; gap: 2px; }
@@ -224,8 +225,7 @@
 .scale-mv { font-weight: 600; flex: 1; }
 .scale-rx { color: var(--or); font-weight: 700; font-size: .8rem; white-space: nowrap; }
 
-/* ── Round separator ── */
-.wod-round-sep { list-style: none; text-align: center; font-size: .78rem; color: var(--muted); font-style: italic; font-weight: 600; letter-spacing: .04em; padding: 6px 0 8px; }
+/* ── Round separator (table-row with two cells) ── */
 
 /* ── Movement standards table ── */
 .standards-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
@@ -967,13 +967,12 @@ function buildWodHeroCardHTML(w) {
           : '';
         return '<li class="wod-move-row">' +
           '<span class="wod-reps">' + rep + '</span>' +
-          '<a class="wod-move-link" href="/movements/' + mvSlug + '">' + escHtml(mvName) + '</a>' +
-          loadHtml +
+          '<a class="wod-move-link" href="/movements/' + mvSlug + '">' + escHtml(mvName) + (loadHtml ? ' ' + loadHtml : '') + '</a>' +
         '</li>';
       }).join('');
       // After round 1 only, insert a separator listing remaining rounds
       var sep = (ri === 0 && roundNums.length > 1)
-        ? '<li class="wod-round-sep">— then ' + roundNums.slice(1).join(', then ') + ' —</li>'
+        ? '<li class="wod-round-sep"><span class="wod-round-sep-spacer"></span><span class="wod-round-sep-text">— then ' + roundNums.slice(1).join(', then ') + ' —</span></li>'
         : '';
       return rowsForRound + sep;
     }).join('');
@@ -988,8 +987,7 @@ function buildWodHeroCardHTML(w) {
         (m.reps
           ? '<span class="wod-reps">' + escHtml(formatReps(m.reps)) + '</span>'
           : '<span class="wod-reps" style="font-size:.9rem;color:var(--muted)">—</span>') +
-        '<a class="wod-move-link" href="/movements/' + mvSlug + '">' + escHtml(mvName) + '</a>' +
-        loadHtml +
+        '<a class="wod-move-link" href="/movements/' + mvSlug + '">' + escHtml(mvName) + (loadHtml ? ' ' + loadHtml : '') + '</a>' +
       '</li>';
     }).join('');
   }
