@@ -357,29 +357,6 @@
     }
     .suggest-chip:hover { background: var(--or); color: #fff; border-color: var(--or); }
 
-    /* ── Footer ── */
-    .site-footer {
-      background: #111; color: #aaa; margin-top: 4rem;
-      border-top: 3px solid var(--or);
-      padding: 48px 24px 24px;
-      font-size: .875rem;
-    }
-    .footer-inner { max-width: 1200px; margin: 0 auto; }
-    .footer-grid {
-      display: grid; grid-template-columns: repeat(4,1fr); gap: 32px 40px; margin-bottom: 40px;
-    }
-    @media (max-width: 800px) { .footer-grid { grid-template-columns: repeat(2,1fr); } }
-    @media (max-width: 480px) { .footer-grid { grid-template-columns: 1fr; } }
-    .footer-col h4 { font-family: var(--font-head); font-size: 1rem; letter-spacing: .06em; color: #fff; margin-bottom: 12px; }
-    .footer-col a { display: block; color: #aaa; text-decoration: none; margin-bottom: 8px; transition: color .15s; }
-    .footer-col a:hover { color: #fff; }
-    .footer-bottom {
-      border-top: 1px solid #333; padding-top: 20px;
-      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
-    }
-    .footer-logo { font-family: var(--font-head); font-size: 1.2rem; color: #fff; letter-spacing: .04em; }
-    .footer-logo span { color: var(--or); }
-    .footer-bottom p { font-size: .75rem; color: #666; }
   </style>
 
   <!-- Google Analytics -->
@@ -635,56 +612,12 @@
   <div id="results-area"></div>
 </div>
 
-<!-- ── FOOTER ── -->
-<footer class="site-footer">
-  <div class="footer-inner">
-    <div class="footer-grid">
-      <div class="footer-col">
-        <h4>Workouts</h4>
-        <a href="/workouts.html?cat=girl">The Girls</a>
-        <a href="/workouts.html?cat=hero">Hero WODs</a>
-        <a href="/workouts.html?cat=open">Open WODs</a>
-        <a href="/workouts.html?cat=benchmark">Benchmarks</a>
-        <a href="/workouts.html">All Workouts</a>
-      </div>
-      <div class="footer-col">
-        <h4>Train</h4>
-        <a href="/daily-wod.html">The Daily 20</a>
-        <a href="/wodbuilder.html">Smart WOD Builder</a>
-        <a href="/timer.html">WOD Timer</a>
-        <a href="/movements.html">Movement Library</a>
-      </div>
-      <div class="footer-col">
-        <h4>Stretch &amp; Mobility</h4>
-        <a href="/stretchbuilder.html">The Daily 10</a>
-        <a href="/stretches.html">Browse Stretches</a>
-        <a href="/stretch-routines.html">Stretch Routines</a>
-      </div>
-      <div class="footer-col">
-        <h4>More</h4>
-        <a href="/shop.html">Gear Shop</a>
-        <a href="/blog.html">Blog</a>
-        <a href="/search.html">Search</a>
-        <a href="/contact.html">Contact</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <div class="footer-logo">Home<span>WOD</span>rx</div>
-      <p>© 2026 HomeWodRX. All rights reserved.</p>
-      <div style="display:flex;gap:16px;font-size:.75rem;">
-        <a href="/privacy.html" style="color:#666;text-decoration:none;">Privacy</a>
-        <a href="/terms.html" style="color:#666;text-decoration:none;">Terms</a>
-        <a href="/disclaimer.html" style="color:#666;text-decoration:none;">Disclaimer</a>
-      </div>
-    </div>
-  </div>
-</footer>
-
 <!-- ── DATA & SCRIPTS ── -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/js/config.js"></script>
 <script src="/js/db.js"></script>
 <script src="/js/nav.js"></script>
+<script src="/js/footer.js"></script>
 <script src="/js/movement-db.js"></script>
 
 <script>
@@ -816,6 +749,25 @@ const BLOG = [
   { title:'Rogue vs Titan: Which Home Gym Equipment Is Right for You?', date:'Apr 26, 2026', excerpt:'Head-to-head on price, quality, and value. We break down the key differences so you can decide.', slug:'rogue-vs-titan-home-gym', topic:'gear', type:'guide' },
 ];
 
+const GEAR = [
+  { name:'Rep Fitness Barbell & Bumper Set',       cat:'Barbells & Plates',    asin:'B07DHMHCPB' },
+  { name:'Rogue Pull-Up Bar (Wall Mount)',          cat:'Pull-Up Bars',         asin:'B009TEYQMU' },
+  { name:'Kettlebell Kings Competition Set',        cat:'Kettlebells',          asin:'B01N0XMBP0' },
+  { name:'Rx Smart Gear Speed Rope',               cat:'Jump Ropes',           asin:'B0085OHLUY' },
+  { name:'Rogue Echo Bike',                         cat:'Cardio Machines',      asin:'B07DK9G74D' },
+  { name:'Concept2 Model D Rowing Machine',         cat:'Cardio Machines',      asin:'B00NH9AMKM' },
+  { name:'REP Fitness 20″ Plyo Box',               cat:'Boxes & Platforms',    asin:'B075MWLR5S' },
+  { name:'WODFitters Resistance Band Set',          cat:'Accessories',          asin:'B00MVSEVM0' },
+  { name:'Cap Barbell Olympic Bumper Plates',       cat:'Barbells & Plates',    asin:'B002RJNEVE' },
+  { name:'Titan Fitness Squat Stand',               cat:'Barbells & Plates',    asin:'B07L9CKZ4X' },
+  { name:'Yes4All Adjustable Kettlebell',           cat:'Kettlebells',          asin:'B07WN7KLFG' },
+  { name:'WOD Nation Speed Jump Rope',             cat:'Jump Ropes',           asin:'B01N3ASTBU' },
+  { name:'Assault AirBike Classic',                 cat:'Cardio Machines',      asin:'B01M9BLMWP' },
+  { name:'Rep Fitness Adjustable Plyo Box',         cat:'Boxes & Platforms',    asin:'B0849J6WVL' },
+  { name:'Bear Komplex Hand Grips',                 cat:'Accessories',          asin:'B01LW2FF5A' },
+  { name:'Rogue Monster Bands',                     cat:'Accessories',          asin:'B003HB5IEI' },
+];
+
 // ─────────────────────────────────────────────
 // STATE
 // ─────────────────────────────────────────────
@@ -904,7 +856,12 @@ function getFiltered() {
     if (state.blogType  !== 'all' && b.type  !== state.blogType)  return false;
     return true;
   });
-  return { wods, mvs, stretches, blog };
+  const gear = GEAR.filter(g => {
+    if (!textMatch(`${g.name} ${g.cat}`, q)) return false;
+    if (state.gearCat !== 'all' && g.cat !== state.gearCat) return false;
+    return true;
+  });
+  return { wods, mvs, stretches, blog, gear };
 }
 
 // ─────────────────────────────────────────────
@@ -967,6 +924,17 @@ function blogCard(b, q='') {
   </a>`;
 }
 
+function gearCard(g, q='') {
+  const href = g.asin
+    ? `https://www.amazon.com/dp/${g.asin}?tag=homewodrx0f-20`
+    : '/shop.html';
+  return `<a href="${href}" target="_blank" rel="noopener" class="gear-mini">
+    <div class="gear-mini-name">${hl(g.name,q)}</div>
+    <div class="gear-mini-cat">${esc(g.cat)}</div>
+    <span class="gear-mini-link">View on Amazon →</span>
+  </a>`;
+}
+
 function emptyState(icon, title, msg, suggestions=[]) {
   const chips = suggestions.map(s =>
     `<button class="suggest-chip" onclick="suggest('${esc(s)}')">${esc(s)}</button>`
@@ -985,18 +953,19 @@ function suggest(term) {
 // RENDER
 // ─────────────────────────────────────────────
 function render() {
-  const { wods, mvs, stretches, blog } = getFiltered();
+  const { wods, mvs, stretches, blog, gear } = getFiltered();
   const q = state.query;
 
   document.getElementById('cnt-workouts').textContent = q ? wods.length : '';
   document.getElementById('cnt-movements').textContent = q ? mvs.length : '';
   document.getElementById('cnt-stretches').textContent = q ? stretches.length : '';
-  document.getElementById('cnt-gear').textContent = '';
+  document.getElementById('cnt-gear').textContent = q ? gear.length : '';
   document.getElementById('cnt-blog').textContent = q ? blog.length : '';
 
   document.getElementById('filter-strip').classList.toggle('visible', state.tab === 'workouts');
   document.getElementById('filter-strip-movements').classList.toggle('visible', state.tab === 'movements');
   document.getElementById('filter-strip-stretches').classList.toggle('visible', state.tab === 'stretches');
+  document.getElementById('filter-strip-gear').classList.toggle('visible', state.tab === 'gear');
 
   const area = document.getElementById('results-area');
   const hdr  = document.getElementById('results-header');
@@ -1004,7 +973,7 @@ function render() {
 
   if (state.tab === 'all') {
     hdr.style.display = 'none';
-    renderAll(area, wods, mvs, stretches, blog, q);
+    renderAll(area, wods, mvs, stretches, blog, gear, q);
   } else if (state.tab === 'workouts') {
     hdr.style.display = 'flex';
     cnt.innerHTML = `<strong>${wods.length}</strong> workout${wods.length!==1?'s':''}`;
@@ -1025,8 +994,10 @@ function render() {
       : emptyState('','No stretches found','Try a different search term.',['hip','shoulder','routine']);
   } else if (state.tab === 'gear') {
     hdr.style.display = 'flex';
-    cnt.innerHTML = `<strong>0</strong> products`;
-    area.innerHTML = `<div class="empty-state"><h3>Browse gear in the shop</h3><p><a href="/shop" style="color:var(--or);">Visit the Shop →</a></p></div>`;
+    cnt.innerHTML = `<strong>${gear.length}</strong> product${gear.length!==1?'s':''}`;
+    area.innerHTML = gear.length
+      ? `<div class="card-grid-4">${gear.map(g=>gearCard(g,q)).join('')}</div>`
+      : emptyState('','No gear found','Try a different search term or browse all categories.',['barbell','kettlebell','rower']);
   } else if (state.tab === 'blog') {
     hdr.style.display = 'flex';
     cnt.innerHTML = `<strong>${blog.length}</strong> post${blog.length!==1?'s':''}`;
@@ -1038,8 +1009,8 @@ function render() {
   renderPills();
 }
 
-function renderAll(area, wods, mvs, stretches, blog, q) {
-  const hasResults = wods.length + mvs.length + stretches.length + blog.length > 0;
+function renderAll(area, wods, mvs, stretches, blog, gear, q) {
+  const hasResults = wods.length + mvs.length + stretches.length + blog.length + gear.length > 0;
 
   if (!q && !hasActiveFilters()) {
     area.innerHTML = `
@@ -1056,6 +1027,10 @@ function renderAll(area, wods, mvs, stretches, blog, q) {
         <div class="card-grid-4">${STRETCHES.slice(0,4).map(s=>stretchCard(s)).join('')}</div>
       </div>
       <div class="result-section">
+        <div class="section-head"><h2>Gear Picks</h2><a class="section-see-all" href="#" onclick="switchTab('gear');return false;">Browse all →</a></div>
+        <div class="card-grid-4">${GEAR.slice(0,4).map(g=>gearCard(g)).join('')}</div>
+      </div>
+      <div class="result-section">
         <div class="section-head"><h2>From the Blog</h2><a class="section-see-all" href="#" onclick="switchTab('blog');return false;">All posts →</a></div>
         <div class="card-grid-2">${BLOG.slice(0,2).map(b=>blogCard(b)).join('')}</div>
       </div>`;
@@ -1068,9 +1043,10 @@ function renderAll(area, wods, mvs, stretches, blog, q) {
   }
 
   let html = '';
-  if (wods.length)     html += `<div class="result-section"><div class="section-head"><h2>Workouts <span class="section-count">${wods.length}</span></h2>${wods.length > 3 ? `<a class="section-see-all" href="#" onclick="switchTab('workouts');return false;">See all ${wods.length} →</a>` : ''}</div><div class="card-grid-3">${wods.slice(0,3).map(w=>wodCard(w,q)).join('')}</div></div>`;
-  if (mvs.length)      html += `<div class="result-section"><div class="section-head"><h2>Movements <span class="section-count">${mvs.length}</span></h2>${mvs.length > 4 ? `<a class="section-see-all" href="#" onclick="switchTab('movements');return false;">See all ${mvs.length} →</a>` : ''}</div><div class="card-grid-4">${mvs.slice(0,4).map(m=>mvCard(m,q)).join('')}</div></div>`;
+  if (wods.length)      html += `<div class="result-section"><div class="section-head"><h2>Workouts <span class="section-count">${wods.length}</span></h2>${wods.length > 3 ? `<a class="section-see-all" href="#" onclick="switchTab('workouts');return false;">See all ${wods.length} →</a>` : ''}</div><div class="card-grid-3">${wods.slice(0,3).map(w=>wodCard(w,q)).join('')}</div></div>`;
+  if (mvs.length)       html += `<div class="result-section"><div class="section-head"><h2>Movements <span class="section-count">${mvs.length}</span></h2>${mvs.length > 4 ? `<a class="section-see-all" href="#" onclick="switchTab('movements');return false;">See all ${mvs.length} →</a>` : ''}</div><div class="card-grid-4">${mvs.slice(0,4).map(m=>mvCard(m,q)).join('')}</div></div>`;
   if (stretches.length) html += `<div class="result-section"><div class="section-head"><h2>Stretches <span class="section-count">${stretches.length}</span></h2>${stretches.length > 4 ? `<a class="section-see-all" href="#" onclick="switchTab('stretches');return false;">See all ${stretches.length} →</a>` : ''}</div><div class="card-grid-4">${stretches.slice(0,4).map(s=>stretchCard(s,q)).join('')}</div></div>`;
+  if (gear.length)      html += `<div class="result-section"><div class="section-head"><h2>Gear <span class="section-count">${gear.length}</span></h2>${gear.length > 4 ? `<a class="section-see-all" href="#" onclick="switchTab('gear');return false;">See all ${gear.length} →</a>` : ''}</div><div class="card-grid-4">${gear.slice(0,4).map(g=>gearCard(g,q)).join('')}</div></div>`;
   if (blog.length)      html += `<div class="result-section"><div class="section-head"><h2>Blog <span class="section-count">${blog.length}</span></h2>${blog.length > 2 ? `<a class="section-see-all" href="#" onclick="switchTab('blog');return false;">See all ${blog.length} →</a>` : ''}</div><div class="card-grid-2">${blog.slice(0,2).map(b=>blogCard(b,q)).join('')}</div></div>`;
   area.innerHTML = html;
 }
@@ -1087,6 +1063,7 @@ function hasActiveFilters() {
     state.equipment.size>0 || state.modality.size>0 ||
     state.mvCat!=='all' || state.mvMuscle!=='all' ||
     state.stretchArea!=='all' || state.stretchType!=='all' ||
+    state.gearCat!=='all' ||
     state.blogTopic!=='all' || state.blogType!=='all';
 }
 
@@ -1106,6 +1083,8 @@ function renderPills() {
   } else if (state.tab === 'stretches') {
     if (state.stretchArea !== 'all') pills.push({ label:`Area: ${state.stretchArea.replace(/-/g,' ')}`, key:'stretchArea' });
     if (state.stretchType !== 'all') pills.push({ label:`Type: ${state.stretchType}`, key:'stretchType' });
+  } else if (state.tab === 'gear') {
+    if (state.gearCat !== 'all') pills.push({ label:`Category: ${state.gearCat}`, key:'gearCat' });
   } else if (state.tab === 'blog') {
     if (state.blogTopic !== 'all') pills.push({ label:`Topic: ${state.blogTopic}`, key:'blogTopic' });
     if (state.blogType  !== 'all') pills.push({ label:`Type: ${state.blogType}`,   key:'blogType' });
@@ -1141,6 +1120,8 @@ function resetFilters() {
   setActive('mv-cat-chips','mvcat','all'); setActive('mv-muscle-chips','mvmuscle','all');
   state.stretchArea='all'; state.stretchType='all';
   setActive('stretch-area-chips','stretcharea','all'); setActive('stretch-type-chips','stretchtype','all');
+  state.gearCat='all';
+  setActive('gear-cat-chips','gearcat','all');
   state.blogTopic='all'; state.blogType='all';
   setActive('blog-topic-chips','blogtopic','all'); setActive('blog-type-chips','blogtype','all');
 }
@@ -1234,6 +1215,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (key==='mvMuscle')   { state.mvMuscle='all';   setActive('mv-muscle-chips','mvmuscle','all'); }
     if (key==='stretchArea'){ state.stretchArea='all'; setActive('stretch-area-chips','stretcharea','all'); }
     if (key==='stretchType'){ state.stretchType='all'; setActive('stretch-type-chips','stretchtype','all'); }
+    if (key==='gearCat')    { state.gearCat='all';    setActive('gear-cat-chips','gearcat','all'); }
     if (key==='blogTopic')  { state.blogTopic='all';  setActive('blog-topic-chips','blogtopic','all'); }
     if (key==='blogType')   { state.blogType='all';   setActive('blog-type-chips','blogtype','all'); }
     if (key.startsWith('eq:'))  { const v=key.slice(3); state.equipment.delete(v); document.querySelector(`[data-eq="${v}"]`)?.classList.remove('active'); }
@@ -1255,6 +1237,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   }));
   document.querySelectorAll('#stretch-type-chips .chip').forEach(c => c.addEventListener('click', () => {
     state.stretchType = c.dataset.stretchtype; setActive('stretch-type-chips','stretchtype',state.stretchType); render();
+  }));
+
+  // Gear category chips
+  document.querySelectorAll('#gear-cat-chips .chip').forEach(c => c.addEventListener('click', () => {
+    state.gearCat = c.dataset.gearcat; setActive('gear-cat-chips','gearcat',state.gearCat); render();
   }));
 
   // Blog chips
