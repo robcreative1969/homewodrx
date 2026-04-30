@@ -491,13 +491,14 @@
       <span class="filter-label">Category</span>
       <div id="gear-cat-chips">
         <button class="chip active" data-gearcat="all">All</button>
-        <button class="chip" data-gearcat="Barbells & Plates">Barbells &amp; Plates</button>
-        <button class="chip" data-gearcat="Kettlebells">Kettlebells</button>
-        <button class="chip" data-gearcat="Pull-Up Bars">Pull-Up Bars</button>
-        <button class="chip" data-gearcat="Jump Ropes">Jump Ropes</button>
-        <button class="chip" data-gearcat="Cardio Machines">Cardio Machines</button>
-        <button class="chip" data-gearcat="Boxes & Platforms">Boxes &amp; Platforms</button>
+        <button class="chip" data-gearcat="Barbells & Weights">Barbells &amp; Weights</button>
+        <button class="chip" data-gearcat="Pull-Up & Gymnastics">Pull-Up &amp; Gymnastics</button>
+        <button class="chip" data-gearcat="Cardio & Conditioning">Cardio &amp; Conditioning</button>
+        <button class="chip" data-gearcat="Plyo & Med Balls">Plyo &amp; Med Balls</button>
         <button class="chip" data-gearcat="Accessories">Accessories</button>
+        <button class="chip" data-gearcat="Supplements">Supplements</button>
+        <button class="chip" data-gearcat="Apparel & Footwear">Apparel &amp; Footwear</button>
+        <button class="chip" data-gearcat="Recovery">Recovery</button>
       </div>
     </div>
   </div>
@@ -750,22 +751,99 @@ const BLOG = [
 ];
 
 const GEAR = [
-  { name:'Rep Fitness Barbell & Bumper Set',       cat:'Barbells & Plates',    asin:'B07DHMHCPB' },
-  { name:'Rogue Pull-Up Bar (Wall Mount)',          cat:'Pull-Up Bars',         asin:'B009TEYQMU' },
-  { name:'Kettlebell Kings Competition Set',        cat:'Kettlebells',          asin:'B01N0XMBP0' },
-  { name:'Rx Smart Gear Speed Rope',               cat:'Jump Ropes',           asin:'B0085OHLUY' },
-  { name:'Rogue Echo Bike',                         cat:'Cardio Machines',      asin:'B07DK9G74D' },
-  { name:'Concept2 Model D Rowing Machine',         cat:'Cardio Machines',      asin:'B00NH9AMKM' },
-  { name:'REP Fitness 20″ Plyo Box',               cat:'Boxes & Platforms',    asin:'B075MWLR5S' },
-  { name:'WODFitters Resistance Band Set',          cat:'Accessories',          asin:'B00MVSEVM0' },
-  { name:'Cap Barbell Olympic Bumper Plates',       cat:'Barbells & Plates',    asin:'B002RJNEVE' },
-  { name:'Titan Fitness Squat Stand',               cat:'Barbells & Plates',    asin:'B07L9CKZ4X' },
-  { name:'Yes4All Adjustable Kettlebell',           cat:'Kettlebells',          asin:'B07WN7KLFG' },
-  { name:'WOD Nation Speed Jump Rope',             cat:'Jump Ropes',           asin:'B01N3ASTBU' },
-  { name:'Assault AirBike Classic',                 cat:'Cardio Machines',      asin:'B01M9BLMWP' },
-  { name:'Rep Fitness Adjustable Plyo Box',         cat:'Boxes & Platforms',    asin:'B0849J6WVL' },
-  { name:'Bear Komplex Hand Grips',                 cat:'Accessories',          asin:'B01LW2FF5A' },
-  { name:'Rogue Monster Bands',                     cat:'Accessories',          asin:'B003HB5IEI' },
+  // Barbells & Weights
+  { name:'Olympic Barbell',           cat:'Barbells & Weights',    href:'https://www.amazon.com/s?k=olympic+barbell+20kg&tag=homewodrx0f-20' },
+  { name:"Women's 15kg Barbell",      cat:'Barbells & Weights',    href:'https://www.amazon.com/s?k=15kg+barbell+womens+training&tag=homewodrx0f-20' },
+  { name:'Bumper Plates',             cat:'Barbells & Weights',    href:'https://www.amazon.com/s?k=bumper+plates+set&tag=homewodrx0f-20' },
+  { name:'Iron Plates',               cat:'Barbells & Weights',    href:'https://www.amazon.com/s?k=iron+weight+plates+set&tag=homewodrx0f-20' },
+  { name:'Dumbbells',                 cat:'Barbells & Weights',    href:'https://www.amazon.com/s?k=adjustable+dumbbells&tag=homewodrx0f-20' },
+  { name:'Kettlebell',                cat:'Barbells & Weights',    href:'https://www.amazon.com/s?k=kettlebell&tag=homewodrx0f-20' },
+  { name:'Squat Rack',                cat:'Barbells & Weights',    href:'https://www.amazon.com/s?k=squat+rack+home+gym&tag=homewodrx0f-20' },
+  { name:'Weight Bench',              cat:'Barbells & Weights',    href:'https://www.amazon.com/s?k=weight+bench+adjustable&tag=homewodrx0f-20' },
+  { name:'Barbell Collars',           cat:'Barbells & Weights',    href:'https://www.amazon.com/s?k=barbell+collars+clamps&tag=homewodrx0f-20' },
+  { name:'Trap Bar / Hex Bar',        cat:'Barbells & Weights',    href:'https://www.amazon.com/s?k=trap+bar+hex+bar+deadlift&tag=homewodrx0f-20' },
+  // Pull-Up & Gymnastics
+  { name:'Pull-up Bar',               cat:'Pull-Up & Gymnastics',  href:'https://www.amazon.com/s?k=pull-up+bar+door+mounted&tag=homewodrx0f-20' },
+  { name:'Gymnastics Rings',          cat:'Pull-Up & Gymnastics',  href:'https://www.amazon.com/s?k=gymnastics+rings+wood&tag=homewodrx0f-20' },
+  { name:'Parallettes',               cat:'Pull-Up & Gymnastics',  href:'https://www.amazon.com/s?k=parallettes+gymnastics&tag=homewodrx0f-20' },
+  { name:'Climbing Rope',             cat:'Pull-Up & Gymnastics',  href:'https://www.amazon.com/s?k=climbing+rope+gym&tag=homewodrx0f-20' },
+  { name:'Freestanding Rig',          cat:'Pull-Up & Gymnastics',  href:'https://www.amazon.com/s?k=freestanding+pull-up+bar+rig&tag=homewodrx0f-20' },
+  { name:'Gymnastics Grips',          cat:'Pull-Up & Gymnastics',  href:'https://www.amazon.com/s?k=gymnastics+grips+crossfit+hand+protection&tag=homewodrx0f-20' },
+  { name:'Chalk & Liquid Chalk',      cat:'Pull-Up & Gymnastics',  href:'https://www.amazon.com/s?k=liquid+chalk+gym+grip&tag=homewodrx0f-20' },
+  // Cardio & Conditioning
+  { name:'Rowing Machine',            cat:'Cardio & Conditioning', href:'https://www.amazon.com/s?k=concept2+rowing+machine&tag=homewodrx0f-20' },
+  { name:'Echo / Assault Bike',       cat:'Cardio & Conditioning', href:'https://www.amazon.com/s?k=echo+bike+air+bike&tag=homewodrx0f-20' },
+  { name:'SkiErg',                    cat:'Cardio & Conditioning', href:'https://www.amazon.com/s?k=concept2+ski+erg&tag=homewodrx0f-20' },
+  { name:'Speed Jump Rope',           cat:'Cardio & Conditioning', href:'https://www.amazon.com/s?k=crossfit+jump+rope+speed&tag=homewodrx0f-20' },
+  { name:'Battle Ropes',              cat:'Cardio & Conditioning', href:'https://www.amazon.com/s?k=battle+ropes+fitness&tag=homewodrx0f-20' },
+  { name:'Weight Sled',               cat:'Cardio & Conditioning', href:'https://www.amazon.com/s?k=weight+sled+push&tag=homewodrx0f-20' },
+  { name:'Treadmill',                 cat:'Cardio & Conditioning', href:'https://www.amazon.com/s?k=treadmill+home+gym&tag=homewodrx0f-20' },
+  // Plyo & Med Balls
+  { name:'Plyo Box',                  cat:'Plyo & Med Balls',      href:'https://www.amazon.com/s?k=plyo+box+wood&tag=homewodrx0f-20' },
+  { name:'Medicine Ball',             cat:'Plyo & Med Balls',      href:'https://www.amazon.com/s?k=medicine+ball+wall+ball&tag=homewodrx0f-20' },
+  { name:'Slam Ball',                 cat:'Plyo & Med Balls',      href:'https://www.amazon.com/s?k=slam+ball+no+bounce&tag=homewodrx0f-20' },
+  { name:'Sandbag',                   cat:'Plyo & Med Balls',      href:'https://www.amazon.com/s?k=crossfit+sandbag+training&tag=homewodrx0f-20' },
+  { name:'D-Ball / Heavy Ball',       cat:'Plyo & Med Balls',      href:'https://www.amazon.com/s?k=d-ball+heavy+ball&tag=homewodrx0f-20' },
+  // Training Accessories
+  { name:'Weight Vest',               cat:'Accessories',           href:'https://www.amazon.com/s?k=weight+vest+20+lb&tag=homewodrx0f-20' },
+  { name:'Resistance Bands',          cat:'Accessories',           href:'https://www.amazon.com/s?k=resistance+bands+set+pull+up&tag=homewodrx0f-20' },
+  { name:'GHD Machine',               cat:'Accessories',           href:'https://www.amazon.com/s?k=GHD+machine&tag=homewodrx0f-20' },
+  { name:'Steel Mace',                cat:'Accessories',           href:'https://www.amazon.com/s?k=steel+mace&tag=homewodrx0f-20' },
+  { name:'Steel Clubs',               cat:'Accessories',           href:'https://www.amazon.com/s?k=steel+clubs+fitness&tag=homewodrx0f-20' },
+  { name:'Ab Mat',                    cat:'Accessories',           href:'https://www.amazon.com/s?k=ab+mat+crossfit&tag=homewodrx0f-20' },
+  { name:'Wrist Wraps',               cat:'Accessories',           href:'https://www.amazon.com/s?k=wrist+wraps+weightlifting&tag=homewodrx0f-20' },
+  { name:'Lifting Straps',            cat:'Accessories',           href:'https://www.amazon.com/s?k=lifting+straps+deadlift&tag=homewodrx0f-20' },
+  { name:'Dip Belt',                  cat:'Accessories',           href:'https://www.amazon.com/s?k=dip+belt+weighted+pull+ups&tag=homewodrx0f-20' },
+  // Supplements
+  { name:'Whey Protein',              cat:'Supplements',           href:'https://www.amazon.com/s?k=whey+protein+powder&tag=homewodrx0f-20' },
+  { name:'Creatine Monohydrate',      cat:'Supplements',           href:'https://www.amazon.com/s?k=creatine+monohydrate+powder&tag=homewodrx0f-20' },
+  { name:'Alpha Brain',               cat:'Supplements',           href:'https://www.amazon.com/s?k=onnit+alpha+brain&tag=homewodrx0f-20' },
+  { name:'Shroom Tech Sport',         cat:'Supplements',           href:'https://www.amazon.com/s?k=shroom+tech+sport&tag=homewodrx0f-20' },
+  { name:'Pre-Workout',               cat:'Supplements',           href:'https://www.amazon.com/s?k=pre+workout+supplement&tag=homewodrx0f-20' },
+  { name:'BCAAs',                     cat:'Supplements',           href:'https://www.amazon.com/s?k=bcaa+amino+acids+workout&tag=homewodrx0f-20' },
+  { name:'Electrolytes',              cat:'Supplements',           href:'https://www.amazon.com/s?k=electrolyte+powder+packets+lmnt&tag=homewodrx0f-20' },
+  { name:'Collagen & Joint Support',  cat:'Supplements',           href:'https://www.amazon.com/s?k=collagen+peptides+joint+support&tag=homewodrx0f-20' },
+  { name:'Fish Oil / Omega-3',        cat:'Supplements',           href:'https://www.amazon.com/s?k=fish+oil+omega+3+supplement&tag=homewodrx0f-20' },
+  { name:'Vitamin D3 + K2',           cat:'Supplements',           href:'https://www.amazon.com/s?k=vitamin+d3+k2+supplement&tag=homewodrx0f-20' },
+  { name:'Greens Powder',             cat:'Supplements',           href:'https://www.amazon.com/s?k=greens+powder+superfood+supplement&tag=homewodrx0f-20' },
+  { name:'Ashwagandha',               cat:'Supplements',           href:'https://www.amazon.com/s?k=ashwagandha+supplement+stress&tag=homewodrx0f-20' },
+  { name:'Turmeric / Curcumin',       cat:'Supplements',           href:'https://www.amazon.com/s?k=turmeric+curcumin+supplement&tag=homewodrx0f-20' },
+  { name:'Protein Bars',              cat:'Supplements',           href:'https://www.amazon.com/s?k=protein+bars+high+protein&tag=homewodrx0f-20' },
+  { name:'Protein Shakes (RTD)',       cat:'Supplements',           href:'https://www.amazon.com/s?k=ready+to+drink+protein+shake+single+serving&tag=homewodrx0f-20' },
+  { name:'Casein Protein',            cat:'Supplements',           href:'https://www.amazon.com/s?k=casein+protein+powder+slow+release&tag=homewodrx0f-20' },
+  { name:"Lion's Mane",               cat:'Supplements',           href:'https://www.amazon.com/s?k=lions+mane+mushroom+supplement&tag=homewodrx0f-20' },
+  { name:'Tart Cherry Extract',       cat:'Supplements',           href:'https://www.amazon.com/s?k=tart+cherry+extract+supplement&tag=homewodrx0f-20' },
+  { name:'Melatonin',                 cat:'Supplements',           href:'https://www.amazon.com/s?k=melatonin+sleep+supplement&tag=homewodrx0f-20' },
+  // Apparel & Footwear
+  { name:'Nike Metcon',               cat:'Apparel & Footwear',    href:'https://www.amazon.com/s?k=nike+metcon+training+shoes&tag=homewodrx0f-20' },
+  { name:'Reebok Nano',               cat:'Apparel & Footwear',    href:'https://www.amazon.com/s?k=reebok+nano+training+shoes&tag=homewodrx0f-20' },
+  { name:'Training Shorts',           cat:'Apparel & Footwear',    href:'https://www.amazon.com/s?k=workout+shorts+men+training&tag=homewodrx0f-20' },
+  { name:'Training Leggings',         cat:'Apparel & Footwear',    href:'https://www.amazon.com/s?k=womens+workout+leggings+training&tag=homewodrx0f-20' },
+  { name:'Lifting Belt',              cat:'Apparel & Footwear',    href:'https://www.amazon.com/s?k=lifting+belt+4+inch&tag=homewodrx0f-20' },
+  { name:'Knee Sleeves',              cat:'Apparel & Footwear',    href:'https://www.amazon.com/s?k=knee+sleeves+7mm+weightlifting&tag=homewodrx0f-20' },
+  { name:'Weightlifting Shoes',       cat:'Apparel & Footwear',    href:'https://www.amazon.com/s?k=weightlifting+shoes+olympic+lifting&tag=homewodrx0f-20' },
+  { name:'Kane Recovery Shoes',       cat:'Apparel & Footwear',    href:'https://www.amazon.com/s?k=kane+recovery+shoes+revive&tag=homewodrx0f-20' },
+  { name:'Short Sleeve Workout Shirt',cat:'Apparel & Footwear',    href:'https://www.amazon.com/s?k=mens+short+sleeve+workout+shirt+moisture+wicking&tag=homewodrx0f-20' },
+  { name:'Long Sleeve Training Shirt',cat:'Apparel & Footwear',    href:'https://www.amazon.com/s?k=mens+long+sleeve+athletic+shirt+training&tag=homewodrx0f-20' },
+  { name:'Tank Top',                  cat:'Apparel & Footwear',    href:'https://www.amazon.com/s?k=mens+athletic+tank+top+workout&tag=homewodrx0f-20' },
+  { name:'Compression Shorts',        cat:'Apparel & Footwear',    href:'https://www.amazon.com/s?k=compression+shorts+mens+athletic&tag=homewodrx0f-20' },
+  { name:'Sweatpants',                cat:'Apparel & Footwear',    href:'https://www.amazon.com/s?k=athletic+sweatpants+mens+training&tag=homewodrx0f-20' },
+  { name:'Athletic Hoodie',           cat:'Apparel & Footwear',    href:'https://www.amazon.com/s?k=athletic+hoodie+pullover+workout&tag=homewodrx0f-20' },
+  { name:'Workout Socks',             cat:'Apparel & Footwear',    href:'https://www.amazon.com/s?k=athletic+socks+workout+cushioned&tag=homewodrx0f-20' },
+  { name:'Headbands',                 cat:'Apparel & Footwear',    href:'https://www.amazon.com/s?k=athletic+headband+sweat+wicking+workout&tag=homewodrx0f-20' },
+  { name:"Women's Workout Sets",      cat:'Apparel & Footwear',    href:'https://www.amazon.com/s?k=womens+workout+set+two+piece+matching+gym&tag=homewodrx0f-20' },
+  // Recovery
+  { name:'Chirp Wheel',               cat:'Recovery',              href:'https://www.amazon.com/s?k=chirp+wheel+back+roller&tag=homewodrx0f-20' },
+  { name:'Pso-Rite',                  cat:'Recovery',              href:'https://www.amazon.com/s?k=pso-rite+psoas+muscle+release&tag=homewodrx0f-20' },
+  { name:'TENS / EMS Stim Unit',      cat:'Recovery',              href:'https://www.amazon.com/s?k=tens+ems+muscle+stimulator+recovery&tag=homewodrx0f-20' },
+  { name:'Elastic Resistance Bands',  cat:'Recovery',              href:'https://www.amazon.com/s?k=resistance+loop+bands+set+multicolor&tag=homewodrx0f-20' },
+  { name:'Massage Gun',               cat:'Recovery',              href:'https://www.amazon.com/s?k=massage+gun+percussion&tag=homewodrx0f-20' },
+  { name:'Magnesium Glycinate',       cat:'Recovery',              href:'https://www.amazon.com/s?k=magnesium+glycinate+sleep+recovery&tag=homewodrx0f-20' },
+  { name:'Cold Plunge Tub',           cat:'Recovery',              href:'https://www.amazon.com/s?k=cold+plunge+tub+ice+bath&tag=homewodrx0f-20' },
+  { name:'Infrared Sauna',            cat:'Recovery',              href:'https://www.amazon.com/s?k=infrared+sauna+blanket+portable&tag=homewodrx0f-20' },
+  { name:'Inversion Table',           cat:'Recovery',              href:'https://www.amazon.com/s?k=inversion+table+back+decompression&tag=homewodrx0f-20' },
+  { name:'Foam Roller',               cat:'Recovery',              href:'https://www.amazon.com/s?k=foam+roller+deep+tissue&tag=homewodrx0f-20' },
+  { name:'Lacrosse Ball',             cat:'Recovery',              href:'https://www.amazon.com/s?k=lacrosse+ball+mobility+trigger+point&tag=homewodrx0f-20' },
 ];
 
 // ─────────────────────────────────────────────
@@ -925,13 +1003,11 @@ function blogCard(b, q='') {
 }
 
 function gearCard(g, q='') {
-  const href = g.asin
-    ? `https://www.amazon.com/dp/${g.asin}?tag=homewodrx0f-20`
-    : '/shop.html';
-  return `<a href="${href}" target="_blank" rel="noopener" class="gear-mini">
+  const href = g.href || '/shop.html';
+  return `<a href="${href}" target="_blank" rel="noopener sponsored" class="gear-mini">
     <div class="gear-mini-name">${hl(g.name,q)}</div>
     <div class="gear-mini-cat">${esc(g.cat)}</div>
-    <span class="gear-mini-link">View on Amazon →</span>
+    <span class="gear-mini-link">Shop Amazon →</span>
   </a>`;
 }
 
