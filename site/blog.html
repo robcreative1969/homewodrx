@@ -31,6 +31,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
   <!-- Shared site styles -->
   <link rel="stylesheet" href="/css/style.css">
 
@@ -344,10 +347,11 @@
         <h2>New Guides, Every Week</h2>
         <p>WOD breakdowns, scaling tips, and home gym advice — straight to your inbox. No spam, ever.</p>
       </div>
-      <form class="nl-form" onsubmit="return false">
-        <input class="nl-input" type="email" placeholder="your@email.com" aria-label="Email address"/>
-        <button class="nl-btn" type="submit">Subscribe Free</button>
+      <form class="nl-form" id="nl-form" onsubmit="nlSubmit(event)">
+        <input class="nl-input" id="nl-email" type="email" placeholder="your@email.com" aria-label="Email address" required/>
+        <button class="nl-btn" id="nl-btn" type="submit">Subscribe Free</button>
       </form>
+      <p class="nl-msg" id="nl-msg" style="display:none;margin-top:10px;font-size:.875rem;"></p>
     </div>
 
   </div><!-- /wrap -->
@@ -393,6 +397,45 @@
   card.remove();
 })();
 
+async function nlSubmit(e) {
+  e.preventDefault();
+  const email = document.getElementById('nl-email').value.trim();
+  const btn   = document.getElementById('nl-btn');
+  const msg   = document.getElementById('nl-msg');
+
+  btn.disabled = true;
+  btn.textContent = 'Subscribing…';
+
+  try {
+    if (!supabaseClient) await initSupabase();
+    const { error } = await supabaseClient
+      .from('email_subscribers')
+      .insert({ email, source: 'blog' });
+
+    msg.style.display = 'block';
+    if (error && error.code === '23505') {
+      // Duplicate — already subscribed
+      msg.style.color = 'rgba(255,255,255,.6)';
+      msg.textContent = 'You\'re already on the list!';
+      btn.textContent = 'Subscribed';
+    } else if (error) {
+      throw error;
+    } else {
+      msg.style.color = '#4ade80';
+      msg.textContent = '✓ You\'re in! We\'ll be in touch.';
+      btn.textContent = 'Subscribed ✓';
+      document.getElementById('nl-email').value = '';
+    }
+  } catch (err) {
+    msg.style.display = 'block';
+    msg.style.color = '#f87171';
+    msg.textContent = 'Something went wrong — please try again.';
+    btn.disabled = false;
+    btn.textContent = 'Subscribe Free';
+    console.error('Subscribe error:', err);
+  }
+}
+
 function filterPosts(category, btn) {
   document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
   btn.classList.add('active');
@@ -407,6 +450,8 @@ function filterPosts(category, btn) {
 }
 </script>
 
+<script src="/js/config.js"></script>
+<script src="/js/db.js"></script>
 <script src="/js/nav.js"></script>
 <script src="/js/footer.js"></script>
 </body>
