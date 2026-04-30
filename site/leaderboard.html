@@ -29,7 +29,6 @@
 <script src="/js/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="/js/db.js"></script>
-<script src="/js/benchmarks.js"></script>
 <style>
 .lb-page{max-width:1400px;margin:0 auto;padding:32px 20px 80px}
 .lb-header{margin-bottom:28px}
@@ -233,13 +232,12 @@ let displayedCount = 0;
 const PAGE_SIZE = 25;
 let currentPeriod = 'week';
 
-// Build lookup map for benchmark slugs
+// Build lookup map for benchmark slugs — populated async in init()
 const benchmarkMap = {};
-if (typeof BENCHMARKS !== 'undefined') {
-  BENCHMARKS.forEach(b => { benchmarkMap[b.slug] = b; });
-}
 
 async function init() {
+  const allBenchmarks = await db.getAllBenchmarks();
+  allBenchmarks.forEach(b => { benchmarkMap[b.slug] = b; });
   await loadStats();
   await applyFilters();
 }

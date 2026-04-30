@@ -48,7 +48,6 @@
 <script src="/js/config.js"></script>
 <script src="/js/db.js"></script>
 <script src="/js/nav.js"></script>
-<script src="/js/benchmarks.js"></script>
 <script src="/js/movement-db.js"></script>
 <script src="/js/daily-wod.js"></script>
 <!-- Google Analytics -->
@@ -1066,7 +1065,7 @@ async function loadMovementPage() {
   try {
     allBenchmarks = await db.getAllBenchmarks();
   } catch (e) {
-    allBenchmarks = (typeof BENCHMARKS !== 'undefined') ? BENCHMARKS : [];
+    allBenchmarks = [];
   }
 
   const matchingBenchmarks = allBenchmarks.filter(b =>

@@ -109,9 +109,15 @@
     .mv-badge.kettlebell      { background: #fce7f3; color: #be185d; }
     .mv-badge.dumbbell        { background: #e0f2f1; color: #00695c; }
     .mv-badge.pullupbar       { background: #e8f0fe; color: #1565c0; }
+    .mv-badge.rings           { background: #fff0e0; color: #b45309; }
     .mv-badge.jumprope        { background: #f3e8ff; color: #7b1fa2; }
     .mv-badge.resistancebands { background: #e0e7ff; color: #4338ca; }
     .mv-badge.cardio          { background: #dbeafe; color: #1d4ed8; }
+    .mv-badge.slamball        { background: #fde8e8; color: #b91c1c; }
+    .mv-badge.medball         { background: #fef9c3; color: #854d0e; }
+    .mv-badge.rope            { background: #e7f5e9; color: #166534; }
+    .mv-badge.box             { background: #f0fdf4; color: #166534; }
+    .mv-badge.ghd             { background: #f1f5f9; color: #334155; }
 
     .mv-card-body { padding: 10px 18px 14px; flex: 1; }
     .mv-tip { font-size: .83rem; color: var(--muted); line-height: 1.55; }
@@ -193,14 +199,20 @@
         <button class="chip" data-cat="bodyweight">Bodyweight</button>
         <button class="chip" data-cat="barbell">Barbell</button>
         <button class="chip" data-cat="kettlebell">Kettlebell</button>
-        <button class="chip" data-cat="dumbbell">Dumbbell</button>
+        <button class="chip" data-cat="dumbbells">Dumbbell</button>
         <button class="chip" data-cat="pullupbar">Pull-up Bar</button>
+        <button class="chip" data-cat="rings">Rings</button>
         <button class="chip" data-cat="jumprope">Jump Rope</button>
         <button class="chip" data-cat="resistancebands">Resistance Bands</button>
         <button class="chip" data-cat="running">Running</button>
         <button class="chip" data-cat="rower">Rower</button>
         <button class="chip" data-cat="assaultbike">Assault Bike</button>
         <button class="chip" data-cat="skierg">Ski Erg</button>
+        <button class="chip" data-cat="slamball">Slam Ball</button>
+        <button class="chip" data-cat="medicineball">Medicine Ball</button>
+        <button class="chip" data-cat="rope">Rope</button>
+        <button class="chip" data-cat="box">Box</button>
+        <button class="chip" data-cat="ghd">GHD</button>
       </div>
     </div>
     <div class="filter-divider"></div>
@@ -280,25 +292,39 @@
 <script src="/js/config.js"></script>
 <script src="/js/db.js"></script>
 <script src="/js/nav.js"></script>
-<script src="/js/benchmarks.js"></script>
-<script src="/js/movements.js"></script>
 
 <script>
 // ─────────────────────────────────────────
-// DATA HELPERS
+// CATEGORY CONFIG  (keyed to equipment_category values in Supabase)
 // ─────────────────────────────────────────
-function toSlug(name) {
-  return name.toLowerCase()
-    .replace(/['']/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-}
+const CATEGORY_CONFIG = [
+  { key: 'bodyweight',      label: 'Bodyweight',       badgeCls: 'bodyweight',      badgeLabel: 'Bodyweight'   },
+  { key: 'barbell',         label: 'Barbell',          badgeCls: 'barbell',         badgeLabel: 'Barbell'      },
+  { key: 'kettlebell',      label: 'Kettlebell',       badgeCls: 'kettlebell',      badgeLabel: 'Kettlebell'   },
+  { key: 'dumbbells',       label: 'Dumbbell',         badgeCls: 'dumbbell',        badgeLabel: 'Dumbbell'     },
+  { key: 'pullupbar',       label: 'Pull-up Bar',      badgeCls: 'pullupbar',       badgeLabel: 'Pull-up Bar'  },
+  { key: 'rings',           label: 'Rings',            badgeCls: 'rings',           badgeLabel: 'Rings'        },
+  { key: 'jumprope',        label: 'Jump Rope',        badgeCls: 'jumprope',        badgeLabel: 'Jump Rope'    },
+  { key: 'resistancebands', label: 'Resistance Bands', badgeCls: 'resistancebands', badgeLabel: 'Bands'        },
+  { key: 'running',         label: 'Running',          badgeCls: 'cardio',          badgeLabel: 'Running'      },
+  { key: 'rower',           label: 'Rowing Machine',   badgeCls: 'cardio',          badgeLabel: 'Rowing'       },
+  { key: 'assaultbike',     label: 'Assault Bike',     badgeCls: 'cardio',          badgeLabel: 'Assault Bike' },
+  { key: 'skierg',          label: 'Ski Erg',          badgeCls: 'cardio',          badgeLabel: 'Ski Erg'      },
+  { key: 'slamball',        label: 'Slam Ball',        badgeCls: 'slamball',        badgeLabel: 'Slam Ball'    },
+  { key: 'medicineball',    label: 'Medicine Ball',    badgeCls: 'medball',         badgeLabel: 'Med Ball'     },
+  { key: 'rope',            label: 'Rope',             badgeCls: 'rope',            badgeLabel: 'Rope'         },
+  { key: 'box',             label: 'Box / Plyo',       badgeCls: 'box',             badgeLabel: 'Box'          },
+  { key: 'ghd',             label: 'GHD',              badgeCls: 'ghd',             badgeLabel: 'GHD'          },
+];
+const CAT_MAP = Object.fromEntries(CATEGORY_CONFIG.map(c => [c.key, c]));
 
-// Build a lookup: lowercase movement name → count of BENCHMARKS that include it
-function buildBenchmarkCounts() {
+// ─────────────────────────────────────────
+// BENCHMARK COUNTS  (fetched from Supabase via db.getAllBenchmarks)
+// ─────────────────────────────────────────
+async function buildBenchmarkCounts() {
   const counts = {};
-  if (typeof BENCHMARKS === 'undefined') return counts;
-  BENCHMARKS.forEach(b => {
+  const benchmarks = await db.getAllBenchmarks();
+  benchmarks.forEach(b => {
     (b.movements || []).forEach(m => {
       const key = (m.name || '').toLowerCase().trim();
       counts[key] = (counts[key] || 0) + 1;
@@ -307,43 +333,35 @@ function buildBenchmarkCounts() {
   return counts;
 }
 
-// Flatten MOVEMENT_DB into a list with cat + slug + benchmarkCount
-function buildMovementsData(benchmarkCounts) {
-  if (typeof MOVEMENT_DB === 'undefined') return [];
-  const list = [];
-  Object.keys(MOVEMENT_DB).forEach(cat => {
-    (MOVEMENT_DB[cat] || []).forEach(m => {
-      const count = benchmarkCounts[(m.name || '').toLowerCase().trim()] || 0;
-      list.push({
-        name:  m.name,
-        slug:  toSlug(m.name),
-        cat:   cat,
-        tip:   m.tip || '',
-        count: count,
-      });
-    });
-  });
-  return list;
-}
+// ─────────────────────────────────────────
+// SUPABASE FETCH
+// ─────────────────────────────────────────
+async function loadMovements() {
+  const benchmarkCounts = await buildBenchmarkCounts();
 
-// ─────────────────────────────────────────
-// CATEGORY CONFIG
-// ─────────────────────────────────────────
-// Badge CSS class: bodyweight/barbell/kettlebell/dumbbell/pullupbar/jumprope/resistancebands/cardio
-const CATEGORY_CONFIG = [
-  { key: 'bodyweight',      label: 'Bodyweight',        badgeCls: 'bodyweight',      badgeLabel: 'Bodyweight'   },
-  { key: 'barbell',         label: 'Barbell',           badgeCls: 'barbell',         badgeLabel: 'Barbell'      },
-  { key: 'kettlebell',      label: 'Kettlebell',        badgeCls: 'kettlebell',      badgeLabel: 'Kettlebell'   },
-  { key: 'dumbbell',        label: 'Dumbbell',          badgeCls: 'dumbbell',        badgeLabel: 'Dumbbell'     },
-  { key: 'pullupbar',       label: 'Pull-up Bar',       badgeCls: 'pullupbar',       badgeLabel: 'Pull-up Bar'  },
-  { key: 'jumprope',        label: 'Jump Rope',         badgeCls: 'jumprope',        badgeLabel: 'Jump Rope'    },
-  { key: 'resistancebands', label: 'Resistance Bands',  badgeCls: 'resistancebands', badgeLabel: 'Bands'        },
-  { key: 'running',         label: 'Running',           badgeCls: 'cardio',          badgeLabel: 'Running'      },
-  { key: 'rower',           label: 'Rowing Machine',    badgeCls: 'cardio',          badgeLabel: 'Rowing'       },
-  { key: 'assaultbike',     label: 'Assault Bike',      badgeCls: 'cardio',          badgeLabel: 'Assault Bike' },
-  { key: 'skierg',          label: 'Ski Erg',           badgeCls: 'cardio',          badgeLabel: 'Ski Erg'      },
-];
-const CAT_MAP = Object.fromEntries(CATEGORY_CONFIG.map(c => [c.key, c]));
+  if (!supabaseClient) {
+    console.warn('Supabase not ready — movement library unavailable.');
+    return [];
+  }
+
+  const { data, error } = await supabaseClient
+    .from('movements')
+    .select('name, slug, equipment_category, wod_tip')
+    .order('name');
+
+  if (error || !data) {
+    console.error('Failed to load movements:', error);
+    return [];
+  }
+
+  return data.map(m => ({
+    name:  m.name,
+    slug:  m.slug,
+    cat:   m.equipment_category || 'bodyweight',
+    tip:   m.wod_tip || '',
+    count: benchmarkCounts[(m.name || '').toLowerCase().trim()] || 0,
+  }));
+}
 
 // ─────────────────────────────────────────
 // FILTER STATE
@@ -404,7 +422,6 @@ function render() {
   }
   empty.classList.remove('visible');
 
-  // Group by category, preserving CATEGORY_CONFIG order
   const bycat = {};
   list.forEach(m => {
     if (!bycat[m.cat]) bycat[m.cat] = [];
@@ -441,9 +458,8 @@ function clearAllFilters() {
 // ─────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  const benchmarkCounts = buildBenchmarkCounts();
-  ALL_MOVEMENTS = buildMovementsData(benchmarkCounts);
+document.addEventListener('DOMContentLoaded', async () => {
+  ALL_MOVEMENTS = await loadMovements();
   document.getElementById('total-count').textContent = ALL_MOVEMENTS.length;
 
   // Category chips

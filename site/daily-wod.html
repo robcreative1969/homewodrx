@@ -29,7 +29,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="/js/config.js"></script>
   <script src="/js/db.js"></script>
-  <script src="/js/benchmarks.js"></script>
   <script src="/js/movements.js"></script>
   <script src="/js/daily-wod.js"></script>
   <style>
@@ -467,8 +466,9 @@
             var badgeMap = { girl: 'rb-girl', hero: 'rb-hero', open: 'rb-open', games: 'rb-games', partner: 'rb-partner', benchmark: 'rb-benchmark' };
             var catLabels = { girl:'Girl', hero:'Hero', open:'Open', games:'Games', partner:'Partner', benchmark:'Benchmark' };
             var relCards = '';
-            if (typeof BENCHMARKS !== 'undefined' && BENCHMARKS.length) {
-              var picks = BENCHMARKS.filter(function(b) { return b.slug; }).slice(0, 5);
+            var _allBM = await db.getAllBenchmarks();
+            if (_allBM && _allBM.length) {
+              var picks = _allBM.filter(function(b) { return b.slug; }).slice(0, 5);
               relCards = picks.map(function(b) {
                 var cl = catLabels[b.category] || cap(b.category || '');
                 var rb = badgeMap[b.category] || 'rb-benchmark';

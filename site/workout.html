@@ -702,7 +702,6 @@
 <script src="/js/config.js"></script>
 <script src="/js/db.js"></script>
 <script src="/js/nav.js"></script>
-<script src="/js/benchmarks.js"></script>
 
 <script>
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1417,7 +1416,8 @@ function renderUserWodLayout(w) {
 function renderRelatedWorkouts(container, w) {
   if (!container) return;
   try {
-    if (typeof BENCHMARKS === 'undefined' || !BENCHMARKS.length) {
+    var bms = window._ALL_BENCHMARKS || [];
+    if (!bms.length) {
       container.innerHTML = '<p style="color:var(--muted);font-size:.85rem">No related WODs found.</p>';
       return;
     }
@@ -1425,12 +1425,12 @@ function renderRelatedWorkouts(container, w) {
     var currentSlug = w.slug || '';
     var currentName = (w.name || w.title || '').toLowerCase();
 
-    var related = BENCHMARKS.filter(function(b) {
+    var related = bms.filter(function(b) {
       return b.slug && b.slug !== currentSlug && (b.name || '').toLowerCase() !== currentName && (category ? b.category === category : true);
     }).slice(0, 5);
 
     if (related.length < 5) {
-      var others = BENCHMARKS.filter(function(b) {
+      var others = bms.filter(function(b) {
         return b.slug && b.slug !== currentSlug && (b.name || '').toLowerCase() !== currentName &&
                !related.some(function(r) { return r.slug === b.slug; });
       }).slice(0, 5 - related.length);
@@ -2092,15 +2092,15 @@ async function loadWorkout() {
 
   try {
     var w;
+    // Pre-load all benchmarks for related-WOD rendering
+    db.getAllBenchmarks().then(function(bms) { window._ALL_BENCHMARKS = bms || []; });
+
     if (slug) {
       // Fetch from Supabase first to get all fields (youtube_url, tips, scoring_notes, etc.)
       if (db.getBenchmarkBySlug) {
         try { w = await db.getBenchmarkBySlug(slug); } catch(e) { w = null; }
       }
-      // Fall back to local JS array if DB unavailable
-      if (!w && typeof BENCHMARKS !== 'undefined') {
-        w = BENCHMARKS.find(function(b) { return b.slug === slug; }) || null;
-      }
+      // db.getBenchmarkBySlug already falls back gracefully if Supabase is unavailable
       if (w) {
         currentWod = w;
         updateSeoMeta(w, true);
