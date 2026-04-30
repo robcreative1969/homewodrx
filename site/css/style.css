@@ -95,21 +95,21 @@ ul, ol { list-style: none; }
 
 /* Max-width wrapper (homepage sections, etc.) */
 .wrap {
-  max-width: 1200px;
+  max-width: 1248px;
   margin: 0 auto;
   padding: 0 24px;
 }
 
 /* Standard inner-page content area (single column) */
 .page-wrap {
-  max-width: 1200px;
+  max-width: 1248px;
   margin: 0 auto;
   padding: 32px 24px 80px;
 }
 
 /* Two-column layout: main content + sidebar */
 .page-wrap-sidebar {
-  max-width: 1200px;
+  max-width: 1248px;
   margin: 0 auto;
   padding: 32px 24px 80px;
   display: grid;
