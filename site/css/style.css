@@ -436,7 +436,9 @@ section.module {
   position: relative; padding: 0 4px;
 }
 /* Hide Sentry's default feedback widget everywhere — we use our own */
-#sentry-feedback { display: none !important; }
+/* Targets both the older div#sentry-feedback and the newer <sentry-feedback> custom element */
+#sentry-feedback,
+sentry-feedback { display: none !important; visibility: hidden !important; }
 
 /* ── Mobile feedback button (portrait only, above tab bar) ── */
 .mob-feedback-btn {
