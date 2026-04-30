@@ -253,28 +253,8 @@
 <div class="blog-main">
   <div class="wrap">
 
-    <!-- FEATURED POST -->
-    <a class="featured-post" href="/blog/hero-wod-guide.html" data-category="wod-guides">
-      <div class="featured-body">
-        <div>
-          <div class="feat-meta">
-            <span class="feat-tag">Featured</span>
-            <span class="feat-read-time">8 min read</span>
-          </div>
-          <h2>The Complete Guide to Hero WODs: History, Purpose & How to Attack Them</h2>
-          <p>Hero WODs are the most emotionally charged workouts in functional fitness — brutal by design, meaningful by intent. Learn their origins, what makes them different from benchmark WODs, and how to approach them whether you're a beginner or a seasoned athlete.</p>
-        </div>
-        <div class="feat-footer">
-          <span class="feat-date">April 10, 2026</span>
-          <span class="btn-read">
-            Read Article
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </span>
-        </div>
-      </div>
-    </a>
+    <!-- FEATURED POST — auto-populated from first grid card by JS; no edits needed here -->
+    <a class="featured-post" id="featuredPost" href="#"></a>
 
     <!-- MORE POSTS -->
     <div class="section-hdr">
@@ -283,6 +263,31 @@
     </div>
 
     <div class="post-grid" id="postGrid">
+      <!-- ↑ ADD NEW POSTS HERE (newest first) — the first card auto-becomes the featured post -->
+
+      <a class="post-card" href="/blog/rogue-vs-titan-home-gym.html" data-category="equipment">
+        <div class="post-card-body">
+          <div class="pc-tag">Equipment</div>
+          <h3>Rogue vs. Titan: Which Home Gym Brand Is Right for You?</h3>
+          <p>Rogue or Titan? We break down the real differences in quality, price, and value so garage gym athletes can make a confident choice before they spend.</p>
+          <div class="pc-footer">
+            <span class="pc-date">April 27, 2026 · 7 min read</span>
+            <span class="pc-link">Read <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          </div>
+        </div>
+      </a>
+
+      <a class="post-card" href="/blog/hero-wod-guide.html" data-category="wod-guides">
+        <div class="post-card-body">
+          <div class="pc-tag">WOD Guide</div>
+          <h3>The Complete Guide to Hero WODs: History, Purpose &amp; How to Attack Them</h3>
+          <p>Hero WODs are the most emotionally charged workouts in functional fitness — brutal by design, meaningful by intent.</p>
+          <div class="pc-footer">
+            <span class="pc-date">April 10, 2026 · 8 min read</span>
+            <span class="pc-link">Read <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+          </div>
+        </div>
+      </a>
 
       <a class="post-card" href="/blog/how-to-scale-wods.html" data-category="training">
         <div class="post-card-body">
@@ -344,18 +349,6 @@
         </div>
       </a>
 
-      <a class="post-card" href="/blog/rogue-vs-titan-home-gym.html" data-category="equipment">
-        <div class="post-card-body">
-          <div class="pc-tag">Equipment</div>
-          <h3>Rogue vs. Titan: Which Home Gym Brand Is Right for You?</h3>
-          <p>Rogue or Titan? We break down the real differences in quality, price, and value so garage gym athletes can make a confident choice before they spend.</p>
-          <div class="pc-footer">
-            <span class="pc-date">April 27, 2026 · 7 min read</span>
-            <span class="pc-link">Read <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
-          </div>
-        </div>
-      </a>
-
     </div><!-- /post-grid -->
 
     <!-- NEWSLETTER -->
@@ -375,6 +368,45 @@
 </div><!-- /blog-main -->
 
 <script>
+// Auto-promote: first grid card becomes the featured post
+(function() {
+  var grid = document.getElementById('postGrid');
+  var featured = document.getElementById('featuredPost');
+  if (!grid || !featured) return;
+  var card = grid.querySelector('.post-card');
+  if (!card) return;
+
+  var href     = card.getAttribute('href') || '#';
+  var cat      = card.getAttribute('data-category') || '';
+  var catLabel = (card.querySelector('.pc-tag') || {}).textContent || '';
+  var title    = (card.querySelector('h3') || {}).textContent || '';
+  var desc     = (card.querySelector('p') || {}).textContent || '';
+  var dateRaw  = (card.querySelector('.pc-date') || {}).textContent || '';
+  var parts    = dateRaw.split(' · ');
+  var date     = (parts[0] || '').trim();
+  var readTime = (parts[1] || '').trim();
+
+  featured.setAttribute('href', href);
+  featured.setAttribute('data-category', cat);
+  featured.innerHTML =
+    '<div class="featured-body">' +
+      '<div>' +
+        '<div class="feat-meta">' +
+          '<span class="feat-tag">Featured</span>' +
+          (readTime ? '<span class="feat-read-time">' + readTime + '</span>' : '') +
+        '</div>' +
+        '<h2>' + title + '</h2>' +
+        '<p>' + desc + '</p>' +
+      '</div>' +
+      '<div class="feat-footer">' +
+        '<span class="feat-date">' + date + '</span>' +
+        '<span class="btn-read">Read Article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>' +
+      '</div>' +
+    '</div>';
+
+  card.remove();
+})();
+
 function filterPosts(category, btn) {
   document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
   btn.classList.add('active');
@@ -383,7 +415,7 @@ function filterPosts(category, btn) {
     card.style.display = (category === 'all' || card.dataset.category === category) ? '' : 'none';
   });
 
-  // Featured post
+  // Featured post — respects data-category set by auto-promote above
   var feat = document.querySelector('.featured-post[data-category]');
   if (feat) feat.style.display = (category === 'all' || feat.dataset.category === category) ? '' : 'none';
 }
