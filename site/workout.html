@@ -1131,17 +1131,17 @@ function renderBenchmarkLayout(w) {
           scoringNoteHtml +
         '</div>' +
 
-        // Movement Standards (span3) + Coaching Cues (span3)
+        // Row 2: Video (span3, left) + Movement Standards / Scaling (span3, right)
+        videoCard +
         standardsCard +
 
+        // Row 3: Coaching Cues (span3, left) + FAQ (span3, right)
         (tips.length
           ? '<div class="bc span3">' +
               '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><circle cx="10" cy="10" r="8"/><circle cx="10" cy="10" r="4"/><circle cx="10" cy="10" r="1" fill="currentColor" stroke="none"/></svg></div>Coaching Cues</div>' +
               '<ul class="tip-list">' + tipsHtml + '</ul>' +
             '</div>'
           : '') +
-
-        videoCard +
 
         (faqs.length
           ? '<div class="bc span3"><div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><circle cx="10" cy="10" r="8"/><path d="M10 14v-1"/><path d="M10 10c0-1.5 2-2.5 2-4a2 2 0 00-4 0"/></svg></div>Frequently Asked</div>' + faqHtml + '</div>'
