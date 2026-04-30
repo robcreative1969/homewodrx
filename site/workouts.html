@@ -108,6 +108,37 @@
     }
     .sort-select:focus { border-color: var(--or); }
 
+    /* ── Daily 20 featured banner ── */
+    .d20-banner {
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.07);
+      padding: 20px 24px; margin-bottom: 24px; flex-wrap: wrap;
+    }
+    .d20-banner-left { display: flex; flex-direction: column; gap: 4px; }
+    .d20-banner-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em;
+      color: var(--or); background: var(--or-xlight); border-radius: 20px; padding: 3px 10px;
+      width: fit-content;
+    }
+    .d20-banner-title {
+      font-family: var(--font-head); font-size: 1.6rem; letter-spacing: .03em;
+      color: var(--text); line-height: 1.1; margin: 4px 0 0;
+    }
+    .d20-banner-sub { font-size: .85rem; color: var(--muted); margin-top: 4px; }
+    .d20-banner-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--or); color: #fff; font-weight: 700; font-size: .9rem;
+      padding: 11px 22px; border-radius: 10px; text-decoration: none;
+      white-space: nowrap; transition: opacity .15s;
+    }
+    .d20-banner-btn:hover { opacity: .88; }
+    @media (max-width: 600px) {
+      .d20-banner { flex-direction: column; align-items: flex-start; }
+      .d20-banner-btn { width: 100%; justify-content: center; }
+    }
+
     /* ── WOD Grid & Card ── */
     .wod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
     .wod-card {
@@ -190,12 +221,49 @@
     .footer-bottom p { font-size: .75rem; color: #666; }
 
     /* ── Responsive ── */
+    /* ── Daily 20 archive grid ── */
+    .d20-archive { display: none; }
+    .d20-archive-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+    }
+    .d20-date-card {
+      position: relative;
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.07);
+      padding: 16px; text-decoration: none; color: var(--text);
+      display: flex; flex-direction: column; gap: 8px;
+      transition: transform .15s, box-shadow .15s, border-color .15s;
+    }
+    .d20-date-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.12); border-color: var(--or); }
+    .d20-today-badge {
+      position: absolute; top: 12px; right: 12px;
+      font-size: .62rem; font-weight: 800; letter-spacing: .07em;
+      background: var(--or); color: #fff; padding: 2px 8px; border-radius: 20px;
+    }
+    .d20-dc-date { font-weight: 700; font-size: .95rem; color: var(--text); }
+    .d20-dc-fmt-badge {
+      font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em;
+      padding: 2px 9px; border-radius: 20px;
+    }
+    .d20-dc-fmt-badge.amrap   { background: #d1fae5; color: #065f46; }
+    .d20-dc-fmt-badge.emom    { background: #dbeafe; color: #1e40af; }
+    .d20-dc-fmt-badge.fortime { background: #fce7f3; color: #9d174d; }
+    .d20-dc-fmt-badge.circuit { background: var(--or-xlight); color: var(--or); }
+    .d20-dc-meta { display: flex; align-items: center; justify-content: space-between; font-size: .78rem; color: var(--muted); margin-top: 2px; }
+    .d20-dc-diff.beginner     { color: #16a34a; font-weight: 700; }
+    .d20-dc-diff.intermediate { color: #d97706; font-weight: 700; }
+    .d20-dc-diff.advanced     { color: var(--or); font-weight: 700; }
+    .d20-dc-arrow { font-size: .78rem; color: var(--muted); margin-top: auto; padding-top: 4px; }
+
     @media (max-width: 700px) {
       .page-header-inner { padding: 20px 16px 0; }
       .main { padding: 20px 16px 48px; }
       .page-title { font-size: 2.2rem; }
       .cat-tab { padding: 11px 14px; font-size: .82rem; }
       .wod-grid { grid-template-columns: 1fr; }
+      .d20-archive-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
     }
   </style>
 
@@ -272,6 +340,7 @@
       <button class="cat-tab" data-cat="games">Games <span class="tab-count" id="cnt-games">0</span></button>
       <button class="cat-tab" data-cat="partner">Partner <span class="tab-count" id="cnt-partner">0</span></button>
       <button class="cat-tab" data-cat="benchmark">Benchmark <span class="tab-count" id="cnt-benchmark">0</span></button>
+      <button class="cat-tab" data-cat="daily20">The Daily 20 <span class="tab-count" id="cnt-daily20">90</span></button>
     </div>
 
   </div>
@@ -295,6 +364,9 @@
   </div>
 
   <div class="wod-grid" id="wod-grid"></div>
+  <div class="d20-archive" id="d20-archive">
+    <div class="d20-archive-grid" id="d20-archive-grid"></div>
+  </div>
   <div class="empty-state" id="empty-state">
     <div class="empty-icon">🔍</div>
     <p class="empty-title">NO WORKOUTS FOUND</p>
@@ -498,11 +570,58 @@ function updateTabCounts() {
   });
 }
 
+// ── Daily 20 archive ─────────────────────────────────────────────────────────
+const D20_FMT  = { 0:'Circuit', 1:'AMRAP', 2:'For Time', 3:'EMOM', 4:'AMRAP', 5:'For Time', 6:'Circuit' };
+const D20_DIFF = { 0:'Beginner', 1:'Intermediate', 2:'Advanced', 3:'Intermediate', 4:'Advanced', 5:'Advanced', 6:'Intermediate' };
+const D20_BODY = { 0:'Core', 1:'Full Body', 2:'Lower Body', 3:'Upper Body', 4:'Cardio', 5:'Full Body', 6:'Legs & Glutes' };
+const D20_FMT_CLS = { 'AMRAP':'amrap', 'EMOM':'emom', 'For Time':'fortime', 'Circuit':'circuit' };
+
+let d20Built = false;
+function buildD20Archive() {
+  if (d20Built) return;
+  d20Built = true;
+  const cards = [];
+  const today = new Date();
+  for (let i = 0; i < 90; i++) {
+    const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+    const dow     = d.getDay();
+    const dateStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    const label   = d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+    const fmt     = D20_FMT[dow];
+    const diff    = D20_DIFF[dow];
+    const body    = D20_BODY[dow];
+    const cls     = D20_FMT_CLS[fmt] || 'circuit';
+    const link    = i === 0 ? '/daily-wod.html' : '/daily-wod.html?date=' + dateStr;
+    cards.push(
+      '<a class="d20-date-card" href="' + link + '">' +
+        (i === 0 ? '<div class="d20-today-badge">TODAY</div>' : '') +
+        '<div class="d20-dc-date">' + label + '</div>' +
+        '<div class="d20-dc-fmt"><span class="d20-dc-fmt-badge ' + cls + '">' + fmt + '</span></div>' +
+        '<div class="d20-dc-meta">' +
+          '<span>' + body + '</span>' +
+          '<span class="d20-dc-diff ' + diff.toLowerCase() + '">' + diff + '</span>' +
+        '</div>' +
+        '<div class="d20-dc-arrow">View WOD →</div>' +
+      '</a>'
+    );
+  }
+  document.getElementById('d20-archive-grid').innerHTML = cards.join('');
+}
+
 function render() {
+  const isD20 = activeCategory === 'daily20';
+  document.getElementById('wod-grid').style.display    = isD20 ? 'none' : '';
+  document.getElementById('empty-state').style.display = isD20 ? 'none' : '';
+  document.getElementById('d20-archive').style.display = isD20 ? '' : 'none';
+  updateTabCounts();
+  if (isD20) {
+    document.getElementById('shown-count').textContent = 90;
+    buildD20Archive();
+    return;
+  }
   const list  = filteredWods();
   const grid  = document.getElementById('wod-grid');
   const empty = document.getElementById('empty-state');
-  updateTabCounts();
   document.getElementById('shown-count').textContent = list.length;
   if (list.length === 0) {
     grid.innerHTML = '';
@@ -574,7 +693,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // ?cat= URL param — used by nav dropdown links e.g. /workouts.html?cat=hero
   const params   = new URLSearchParams(location.search);
   const catParam = params.get('cat');
-  if (catParam && CAT_ORDER.includes(catParam)) {
+  const validCats = [...CAT_ORDER, 'daily20'];
+  if (catParam && validCats.includes(catParam)) {
     activeCategory = catParam;
     document.querySelectorAll('[data-cat]').forEach(t =>
       t.classList.toggle('active', t.dataset.cat === catParam));

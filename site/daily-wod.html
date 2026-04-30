@@ -559,12 +559,23 @@
   }
 
   function buildDailyTimerUrl(wod) {
-    const fmtMap = { amrap: 'amrap', emom: 'emom', fortime: 'fortime', circuit: 'fortime' };
-    const mode = fmtMap[wod.format] || 'fortime';
+    const modeMap  = { amrap: 'amrap', emom: 'emom', fortime: 'fortime', circuit: 'fortime' };
+    const labelMap = { amrap: 'AMRAP', emom: 'EMOM', fortime: 'For Time', circuit: 'Circuit' };
+    const mode     = modeMap[wod.format] || 'fortime';
+    const fmtLabel = labelMap[wod.format] || 'Circuit';
     const duration = wod.duration || 20;
-    const p = new URLSearchParams({ mode, duration, ref: 'daily-wod' });
-    if (wod.title) p.set('name', wod.title);
-    return `/timer.html?${p.toString()}`;
+    const name     = encodeURIComponent(wod.title || 'Daily 20');
+    const fmtEnc   = encodeURIComponent(fmtLabel);
+    // Build moves list from row data so the timer whiteboard shows the WOD
+    const movePairs = (wod.rows || []).map(function(r) {
+      const mv  = r.movement || r.name || '';
+      const rep = String(r.reps || r.duration || '');
+      return rep + ':' + mv;
+    });
+    const movesStr = movePairs.length
+      ? '&moves=' + encodeURIComponent(movePairs.join(','))
+      : '';
+    return '/timer.html?wod=' + name + '&format=' + fmtEnc + '&time=' + duration + movesStr + '&mode=' + mode;
   }
 
   function launchDailyTimer() {
