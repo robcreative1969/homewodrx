@@ -329,6 +329,13 @@ const Nav = {
     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
   </svg>
 </a>
+
+<a href="/contact.html" class="desk-feedback-btn" aria-label="Send feedback">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  </svg>
+  Feedback
+</a>
 `;
   },
 
@@ -392,6 +399,20 @@ const Nav = {
         }
       }
     });
+
+    // Suppress Sentry's default feedback widget on portrait mobile.
+    // CSS alone doesn't catch it because Sentry injects it async with inline styles.
+    if (window.innerWidth <= 767) {
+      const hideSentry = () => {
+        const el = document.getElementById('sentry-feedback');
+        if (el) el.style.setProperty('display', 'none', 'important');
+      };
+      hideSentry();
+      // Watch for Sentry injecting it after page load
+      new MutationObserver(hideSentry).observe(document.body, { childList: true });
+      setTimeout(hideSentry, 800);
+      setTimeout(hideSentry, 2500);
+    }
 
     // Close on Escape
     document.addEventListener('keydown', (e) => {
