@@ -82,11 +82,13 @@ const Nav = {
     const isStretch = ['stretch','stretchbuilder','stretches','stretch-movement','stretch-routines','stretch-routine'].includes(activePage);
     const isShop    = activePage === 'shop';
     const isBlog    = activePage === 'blog';
+    const isProfile = ['profile','myworkouts','settings'].includes(activePage);
 
     const wA  = isWorkout ? ' active' : '';
     const sA  = isStretch ? ' active' : '';
     const shA = isShop    ? ' active' : '';
     const bA  = isBlog    ? ' active' : '';
+    const pA  = isProfile ? ' active' : '';
 
     return `<nav class="site-nav">
 <div class="nav-inner">
@@ -255,6 +257,66 @@ const Nav = {
     </div>
   </div>
 </div>
+
+<div class="mobile-top-bar">
+  <a href="/" class="nav-logo">
+    <img src="/HomeWODRx-logo-black-red-040626.png" alt="HomeWODrx" class="nav-logo-img" style="height:28px;">
+  </a>
+  <a href="/search.html" style="color:var(--text);display:flex;align-items:center;">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  </a>
+</div>
+
+<nav class="mobile-tab-bar" role="navigation" aria-label="Mobile navigation">
+  <div class="tab-items">
+
+    <a href="/workouts.html" class="tab-item${wA}" aria-label="Train">
+      <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+        <circle cx="12" cy="15.5" r="7"/>
+        <path d="M9.2 11.5C8.8 8.2 9.6 3.5 12 3.5C14.4 3.5 15.2 8.2 14.8 11.5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      Train
+    </a>
+
+    <a href="/stretches.html" class="tab-item${sA}" aria-label="Stretch">
+      <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+        <circle cx="12" cy="3.5" r="2.5"/>
+        <line x1="12" y1="6" x2="12" y2="16" stroke="currentColor" stroke-width="4" stroke-linecap="round" fill="none"/>
+        <line x1="10" y1="9" x2="4" y2="4" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <line x1="14" y1="9" x2="20" y2="4" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <line x1="11" y1="16" x2="9" y2="22" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+        <line x1="13" y1="16" x2="15" y2="22" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+      </svg>
+      Stretch
+    </a>
+
+    <a href="/shop.html" class="tab-item${shA}" aria-label="Shop">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="5" y="9" width="14" height="13" rx="2" fill="currentColor"/>
+        <path d="M9 9V6.5a3 3 0 0 1 6 0V9" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="butt"/>
+      </svg>
+      Shop
+    </a>
+
+    <a href="/blog.html" class="tab-item${bA}" aria-label="Blog">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="currentColor" d="M18 3H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4l2 2 2-2h4a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/>
+        <line x1="8" y1="9" x2="16" y2="9" stroke="white" stroke-width="1.75" stroke-linecap="round"/>
+        <line x1="8" y1="13" x2="13" y2="13" stroke="white" stroke-width="1.75" stroke-linecap="round"/>
+      </svg>
+      Blog
+    </a>
+
+    <a href="/profile.html" class="tab-item${pA}" aria-label="Profile">
+      <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+        <circle cx="12" cy="7" r="4.5"/>
+        <path d="M3 21c0-5 4-8.5 9-8.5S21 16 21 21H3z"/>
+      </svg>
+      Profile
+    </a>
+
+  </div>
+</nav>
 `;
   },
 
