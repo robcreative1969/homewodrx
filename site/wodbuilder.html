@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+  <!-- Sentry Error Monitoring -->
+  <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WOD Builder — Build a Custom Workout | HomeWodRX</title>
+<meta name="description" content="Generate a custom workout in seconds. Choose your equipment, experience level, body focus, and time — HomeWodRX builds the perfect WOD for you.">
+<meta property="og:title" content="WOD Builder — Build a Custom Workout | HomeWodRX">
+<meta property="og:description" content="Build a custom workout based on your equipment, time, and fitness level. Free WOD builder for functional fitness athletes.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://homewodrx.com/wodbuilder">
+<meta property="og:image" content="https://homewodrx.com/images/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="WOD Builder — HomeWodRX">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://homewodrx.com/images/og-default.png">
+<link rel="canonical" href="https://homewodrx.com/wodbuilder">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+<!-- Supabase CDN (only loads when configured) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+/* ── LIGHT DESIGN COMPATIBILITY VARS ────────────────────────
+   Map dark-theme aliases to light tokens so all inline styles
+   and component CSS resolve correctly without an HTML rewrite. */
+:root{
+  --card:#fff; --dk2:var(--bg,#f3f3f3);
+  --bd:var(--border,#e5e5e5); --tx:var(--text,#1a1a1a);
+  --mu:var(--muted,#666); --orl:var(--or,#C41212); --r:var(--radius,10px);
+}
+/* ── PAGE LAYOUT ─────────────────────────────────────────── */
+/* page-header and page-title come from style.css; override padding for tab-flush bottom */
+.page-header { padding-bottom: 0; }
+.page-title-row { margin-bottom: 18px; }
+.page-wrap { max-width: 1200px; margin: 0 auto; padding: 28px 24px 80px; }
+@media(max-width:767px){ .page-wrap { padding: 20px 14px 60px; } }
+
+.section{background:var(--card);border:1.5px solid var(--bd);border-radius:var(--r);padding:24px;margin-top:20px}
+.slabel{font-size:10px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
+.stitle{font-size:16px;font-weight:700;margin-bottom:14px;color:var(--tx)}
+
+/* equipment grid */
+.eq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(115px,1fr));gap:9px}
+.eq-card{background:var(--white,#fff);border:1.5px solid var(--bd);border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .15s;user-select:none;color:var(--tx)}
+.eq-card:hover{border-color:var(--or);background:rgba(196,18,18,.04)}
+.eq-card.sel{border-color:var(--or);background:rgba(196,18,18,.08);box-shadow:0 0 0 1px var(--or)}
+.eq-card .icon{font-size:24px;margin-bottom:5px;display:block}
+.eq-card .name{font-size:11px;font-weight:700}
+
+/* body focus */
+.bf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:9px}
+.bf-card{background:var(--white,#fff);border:1.5px solid var(--bd);border-radius:10px;padding:12px 10px;text-align:center;cursor:pointer;transition:all .15s;user-select:none;color:var(--tx)}
+.bf-card:hover{border-color:var(--or);background:rgba(196,18,18,.04)}
+.bf-card.sel{border-color:var(--or);background:rgba(196,18,18,.08)}
+.bf-card .icon{font-size:20px;margin-bottom:4px;display:block}
+.bf-card .name{font-size:12px;font-weight:700;margin-bottom:2px;display:block}
+.bf-card .sub{font-size:10px;color:var(--muted,#666);display:block}
+
+/* pills */
+.pill-group{display:flex;flex-wrap:wrap;gap:8px}
+.pill{background:var(--white,#fff);border:1.5px solid var(--bd);border-radius:50px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;user-select:none;color:var(--tx)}
+.pill:hover{border-color:var(--or);color:var(--or)}
+.pill.sel{border-color:var(--or);background:var(--or);color:#fff}
+
+/* slider */
+.slider-row{display:flex;align-items:center;gap:14px;margin-top:8px}
+.sval{font-size:28px;font-weight:900;color:var(--or);min-width:70px;text-align:center}
+.sval small{font-size:11px;color:var(--muted,#666);font-weight:400;display:block}
+input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:8px;background:var(--bd);border-radius:6px;outline:none;cursor:pointer;overflow:visible}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;background:var(--or);border-radius:50%;cursor:pointer;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;background:var(--or);border-radius:50%;cursor:pointer;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radius:6px}
+
+/* generate button */
+.gen-btn{display:block;width:100%;margin-top:24px;padding:16px;background:var(--or);color:#fff;font-size:16px;font-weight:800;border:none;border-radius:var(--r);cursor:pointer;letter-spacing:.3px;transition:all .2s}
+.gen-btn:hover{background:var(--orl);transform:translateY(-1px);box-shadow:0 6px 20px rgba(196,18,18,.35)}
+.gen-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.gen-btn .sp{display:none;width:18px;height:18px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}
+.gen-btn.loading .bt{display:none}
+.gen-btn.loading .sp{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* workout result */
+#workout-result{display:none;margin-top:26px}
+.res-hdr{background:linear-gradient(135deg,var(--or) 0%,#8b0000 100%);border-radius:var(--r) var(--r) 0 0;padding:26px 30px}
+.res-hdr h2{font-family:var(--font-head,'Bebas Neue',sans-serif);font-size:2.4rem;letter-spacing:.03em;color:#fff;margin-bottom:4px}
+.res-hdr .rsub{color:rgba(255,255,255,.8);font-size:.9rem;margin-top:3px}
+.res-meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.chip{background:rgba(255,255,255,.15);color:rgba(255,255,255,.9);font-size:.78rem;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.02em}
+.res-body{background:var(--white,#fff);border:1.5px solid var(--bd);border-top:none;border-radius:0 0 var(--r) var(--r);padding:26px 30px}
+.wdesc{background:var(--bg,#f3f3f3);border:1px solid var(--border,#e5e5e5);padding:12px 16px;border-radius:8px;font-size:.9rem;line-height:1.7;margin-bottom:20px;color:var(--text,#1a1a1a)}
+.mov-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px}
+.mov-table th{padding:9px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--muted,#666);text-transform:uppercase;letter-spacing:1px;border-bottom:1.5px solid var(--bd);background:var(--bg,#f3f3f3)}
+.mov-table td{padding:11px 12px;border-bottom:1px solid var(--bd);vertical-align:top}
+.mov-table tr:last-child td{border-bottom:none}
+.mov-table tr:hover td{background:rgba(0,0,0,.02)}
+.mname{font-weight:700;font-size:14px;color:var(--tx)}
+.mname a{color:var(--tx);text-decoration:none}
+.mname a:hover{color:var(--or)}
+.mtip{font-size:11px;color:var(--muted,#666);margin-top:2px}
+.rbadge{background:rgba(196,18,18,.1);color:var(--or);font-weight:800;font-size:13px;padding:3px 11px;border-radius:20px;display:inline-block;border:1px solid rgba(196,18,18,.3)}
+.score-box{background:var(--bg,#f3f3f3);border:1.5px solid var(--bd);border-radius:9px;padding:16px;margin-bottom:18px}
+.score-box h4{font-size:11px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.score-box p{font-size:13px;line-height:1.6;color:var(--tx)}
+.res-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}
+.abtn{flex:1;min-width:110px;padding:11px 14px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;font-family:inherit}
+.abtn.pri{background:var(--or);color:#fff}
+.abtn.pri:hover{background:var(--or-dark,#a00e0e)}
+.abtn.sec{background:var(--white,#fff);color:var(--tx);border:1.5px solid var(--bd)}
+.abtn.sec:hover{border-color:var(--or);color:var(--or)}
+.abtn.gho{background:transparent;color:var(--muted,#666);border:1.5px solid var(--bd)}
+.abtn.gho:hover{color:var(--tx);border-color:#aaa}
+.warmup-cool{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+@media(max-width:500px){.warmup-cool{grid-template-columns:1fr}}
+.wc-card{background:var(--bg,#f3f3f3);border:1.5px solid var(--bd);border-radius:9px;padding:14px}
+.wc-card h4{font-size:11px;font-weight:700;color:var(--muted,#666);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.wc-card li{font-size:12px;padding:2px 0;list-style:none;display:flex;align-items:center;gap:7px;color:var(--tx)}
+.wc-card li::before{content:'›';color:var(--or);font-weight:700}
+
+/* modals */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--white,#fff);border:1.5px solid var(--bd);border-radius:16px;padding:32px;width:100%;max-width:460px;position:relative;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted,#666);font-size:20px;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:all .15s}
+.modal-close:hover{background:var(--bd);color:var(--tx)}
+.modal h2{font-size:22px;font-weight:900;margin-bottom:6px;color:var(--tx)}
+.msub{color:var(--muted,#666);font-size:13px;margin-bottom:20px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--muted,#666);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.field input,.field textarea,.field select{width:100%;background:var(--bg,#f3f3f3);border:1.5px solid var(--bd);border-radius:8px;padding:10px 12px;color:var(--tx);font-size:14px;outline:none;font-family:inherit;transition:border-color .15s}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--or)}
+.field textarea{min-height:80px;resize:vertical}
+.modal-btn{width:100%;padding:13px;background:var(--or);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;margin-top:4px;transition:all .2s;font-family:inherit}
+.modal-btn:hover{background:var(--or-dark,#a00e0e)}
+.modal-link{text-align:center;margin-top:12px;font-size:13px;color:var(--muted,#666)}
+.modal-link a{color:var(--or);cursor:pointer;text-decoration:none}
+.modal-recovery{display:flex;justify-content:center;gap:16px;margin-top:10px;font-size:12px}
+.modal-recovery a{color:var(--muted,#666);text-decoration:none;cursor:pointer}
+.modal-recovery a:hover{color:var(--or);text-decoration:underline}
+.modal-error{background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.4);color:#E74C3C;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
+.modal-error.vis{display:block}
+.modal-success{background:rgba(39,174,96,.1);border:1px solid rgba(39,174,96,.4);color:#27AE60;border-radius:7px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
+.modal-success.vis{display:block}
+
+
+.lb-table{width:100%;border-collapse:collapse;font-size:13px}
+.lb-table th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--muted,#666);text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--bd);background:var(--dk2)}
+.lb-table td{padding:12px 14px;border-bottom:1px solid var(--bd)}
+.lb-table tr:hover td{background:rgba(255,255,255,.02)}
+.rank-badge{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0}
+.rank-1{background:gold;color:#333}
+.rank-2{background:#C0C0C0;color:#333}
+.rank-3{background:#CD7F32;color:#fff}
+.rank-other{background:var(--dk2);color:var(--muted,#666)}
+.lb-user{display:flex;align-items:center;gap:10px}
+.lb-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+.lb-score{font-weight:800;color:var(--orl)}
+
+/* badge chips */
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.3px}
+.badge-or{background:rgba(196,18,18,.2);color:var(--or);border:1px solid rgba(196,18,18,.4)}
+.badge-bl{background:rgba(52,152,219,.2);color:#5dade2;border:1px solid rgba(52,152,219,.3)}
+.badge-gr{background:rgba(39,174,96,.2);color:#58d68d;border:1px solid rgba(39,174,96,.3)}
+.badge-pu{background:rgba(155,89,182,.2);color:#c39bd3;border:1px solid rgba(155,89,182,.3)}
+.badge-mu{background:var(--dk2);color:var(--muted,#666);border:1px solid var(--bd)}
+
+/* toast */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 18px;font-size:14px;font-weight:600;box-shadow:0 8px 32px rgba(0,0,0,.4);transform:translateY(80px);opacity:0;transition:all .3s;z-index:9999;max-width:320px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{border-color:rgba(39,174,96,.5);color:#58d68d}
+.toast.error{border-color:rgba(231,76,60,.5);color:#e74c3c}
+.toast.info{border-color:var(--or);color:var(--orl)}
+/* print-area: hidden on screen, only visible when printing */
+#print-area{display:none}
+@media print{
+  body > *{display:none!important}
+  #print-area{display:block!important;font-family:system-ui,Arial,sans-serif;color:#000;background:#fff;padding:0;margin:0}
+  #print-area .ph{display:flex;align-items:center;justify-content:space-between;padding-bottom:12px;margin-bottom:20px;border-bottom:3px solid #C41212}
+  #print-area .ph img{height:48px;width:auto}
+  #print-area .ph .ph-url{font-size:11px;color:#666;text-align:right;line-height:1.4}
+  #print-area .pt{font-size:26px;font-weight:900;margin:0 0 4px;color:#000}
+  #print-area .ps{font-size:13px;color:#555;margin-bottom:10px}
+  #print-area .pm{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  #print-area .pm span{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;border:1px solid #ccc;color:#333;background:#f4f4f4}
+  #print-area .pdesc{font-size:13px;color:#444;margin-bottom:16px;line-height:1.5}
+  #print-area table{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:13px}
+  #print-area table th{background:#222;color:#fff;padding:8px 10px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+  #print-area table td{padding:8px 10px;border-bottom:1px solid #ddd;color:#000;vertical-align:top}
+  #print-area table tr:last-child td{border-bottom:none}
+  #print-area .pscore{border:1px solid #ccc;background:#f8f8f8;border-radius:6px;padding:12px 14px;margin-bottom:18px}
+  #print-area .pscore h4{font-size:10px;font-weight:800;color:#C41212;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+  #print-area .pscore p{font-size:13px;color:#222;margin:0;line-height:1.5}
+  #print-area .pwc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px}
+  #print-area .pwc-card{border:1px solid #ddd;border-radius:6px;padding:12px 14px}
+  #print-area .pwc-card h4{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;color:#444}
+  #print-area .pwc-card ul{margin:0;padding-left:16px}
+  #print-area .pwc-card li{font-size:12px;color:#333;margin-bottom:3px;line-height:1.4}
+  #print-area .pfoot{margin-top:20px;padding-top:10px;border-top:1px solid #ddd;font-size:10px;color:#999;text-align:center}
+}
+
+/* ── MODE TOGGLE (tab style, inside page-header) ─────────────── */
+.mode-toggle{display:flex;gap:0;border-bottom:1px solid var(--border,#e5e5e5);margin-top:8px}
+.mode-tab{padding:12px 22px;background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;font-size:.95rem;font-weight:700;color:var(--muted,#666);font-family:inherit;transition:color .15s,border-color .15s;white-space:nowrap;margin-bottom:-1px}
+.mode-tab:hover{color:var(--text,#1a1a1a)}
+.mode-tab.active{color:var(--or,#C41212);border-bottom-color:var(--or,#C41212)}
+.tab-badge{background:rgba(34,197,94,.1);color:#16a34a;border:1px solid rgba(34,197,94,.3);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:6px;vertical-align:middle;white-space:nowrap}
+
+/* ── CYO BUILDER ─────────────────────────────────────────────── */
+.cyo-mov-builder{border:1.5px solid var(--bd);border-radius:10px;background:var(--bg,#f3f3f3);overflow:visible}
+.cyo-mov-search-wrap{padding:12px;position:relative}
+.cyo-mov-search-wrap input{width:100%;background:var(--white,#fff);border:1.5px solid var(--bd);border-radius:8px;padding:11px 14px;color:var(--tx);font-size:14px;outline:none;box-sizing:border-box;transition:border-color .15s}
+.cyo-mov-search-wrap input:focus{border-color:var(--or)}
+.cyo-mov-dropdown{position:absolute;top:calc(100% - 4px);left:12px;right:12px;background:var(--white,#fff);border:1.5px solid var(--or);border-radius:10px;z-index:400;max-height:340px;overflow-y:auto;display:none;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.cyo-mov-dropdown.open{display:block}
+.cyo-mov-dd-item{padding:11px 16px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--tx)}
+.cyo-mov-dd-item:last-child{border-bottom:none}
+.cyo-mov-dd-item:hover{background:rgba(196,18,18,.06);color:var(--or)}
+.cyo-mov-dd-item .dd-cat{font-size:10px;color:var(--muted,#666);flex-shrink:0}
+/* browse mode */
+.cyo-browse-cats{display:flex;flex-wrap:wrap;gap:5px;padding:10px 12px;border-bottom:1px solid var(--bd);background:var(--bg,#f3f3f3);position:sticky;top:0;z-index:1}
+.cyo-cat-chip{background:var(--white,#fff);border:1.5px solid var(--bd);border-radius:20px;padding:4px 11px;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted,#666);transition:all .15s;white-space:nowrap;font-family:inherit}
+.cyo-cat-chip:hover{border-color:var(--or);color:var(--or)}
+.cyo-cat-chip.active{background:rgba(196,18,18,.1);border-color:var(--or);color:var(--or)}
+.cyo-browse-count{font-size:10px;color:var(--muted,#666);padding:6px 16px 2px;font-style:italic}
+.cyo-browse-more{padding:10px 16px;font-size:11px;color:var(--muted,#666);text-align:center;border-top:1px solid var(--bd);font-style:italic}
+.cyo-mov-list{padding:4px 12px 12px}
+.cyo-mov-empty{padding:24px;text-align:center;color:var(--muted,#666);font-size:13px;font-style:italic}
+.cyo-mov-count{font-size:11px;color:var(--muted,#666);padding:4px 0 10px}
+.cyo-mov-row{display:flex;align-items:center;gap:8px;background:var(--white,#fff);border:1.5px solid var(--bd);border-radius:9px;padding:11px 14px;margin-bottom:7px;transition:border-color .15s}
+.cyo-mov-row:hover{border-color:var(--or)}
+.cyo-mov-row-num{font-size:12px;font-weight:900;color:var(--or);min-width:18px;text-align:center}
+.cyo-mov-row-name{font-size:14px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--tx)}
+.cyo-mov-row input{background:var(--bg,#f3f3f3);border:1.5px solid var(--bd);border-radius:7px;padding:7px 10px;color:var(--tx);font-size:13px;outline:none;font-family:inherit;transition:border-color .15s}
+.cyo-mov-row input:focus{border-color:var(--or)}
+.cyo-mov-row-reps{width:100px;min-width:100px;text-align:center}
+.cyo-mov-row-tip{flex:1;min-width:80px}
+.cyo-mov-row-tip::placeholder{color:var(--muted,#666)}
+.cyo-mov-row-del{background:none;border:none;color:#e74c3c;font-size:20px;cursor:pointer;padding:2px 5px;opacity:.4;transition:opacity .15s;line-height:1;flex-shrink:0}
+.cyo-mov-row-del:hover{opacity:1}
+.cyo-gate{text-align:center;padding:48px 24px}
+.cyo-gate .g-icon{font-size:52px;margin-bottom:16px}
+.cyo-gate h3{font-size:22px;font-weight:900;margin-bottom:8px;color:var(--tx)}
+.cyo-gate p{color:var(--muted,#666);font-size:14px;max-width:360px;margin:0 auto 20px}
+.cyo-gate-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+</style>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-HZM475VDN3');
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body data-nav-init="true" data-active-page="wodbuilder">
+
+<div id="toast" class="toast"></div>
+
+<!-- PAGE HEADER (white panel with title + mode tabs) -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="page-title-row">
+      <div>
+        <div class="page-title">Smart WOD Builder</div>
+        <div class="page-subtitle" style="font-size:.95rem;color:var(--muted,#666);line-height:1.5;max-width:520px">Generate a custom workout in seconds, or build your own from scratch</div>
+      </div>
+    </div>
+    <div class="mode-toggle">
+      <button class="mode-tab active" id="mode-btn-generate" onclick="setGenMode('generate')">Smart WOD Builder</button>
+      <button class="mode-tab" id="mode-btn-create" onclick="setGenMode('create')">Create Your Own <span class="tab-badge" id="cyo-free-badge">Free Account</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<main>
+<!-- ═══ GENERATOR ══════════════════════════════════════════════ -->
+<div class="page-wrap">
+
+  <!-- ── GENERATE MODE ─────────────────────────────────────── -->
+  <div id="gen-mode-generate">
+
+  <!-- Equipment -->
+  <div class="section">
+    <div class="slabel">Step 1</div>
+    <div class="stitle">What are you working with?</div>
+    <div class="eq-grid" id="eq-grid">
+      <label class="eq-card" data-val="bodyweight"><span class="name">Bodyweight</span></label>
+      <label class="eq-card" data-val="pullupbar"><span class="name">Pull-up Bar</span></label>
+      <label class="eq-card" data-val="kettlebell"><span class="name">Kettlebell</span></label>
+      <label class="eq-card" data-val="dumbbells"><span class="name">Dumbbells</span></label>
+      <label class="eq-card" data-val="barbell"><span class="name">Barbell</span></label>
+      <label class="eq-card" data-val="resistancebands"><span class="name">Bands</span></label>
+      <label class="eq-card" data-val="jumprope"><span class="name">Jump Rope</span></label>
+      <label class="eq-card" data-val="box"><span class="name">Plyo Box</span></label>
+      <label class="eq-card" data-val="medicineball"><span class="name">Med Ball</span></label>
+      <label class="eq-card" data-val="rings"><span class="name">Rings</span></label>
+      <label class="eq-card" data-val="slamball"><span class="name">Slam Ball</span></label>
+      <label class="eq-card" data-val="treadmill"><span class="name">Treadmill</span></label>
+      <label class="eq-card" data-val="running"><span class="name">Running</span></label>
+      <label class="eq-card" data-val="rower"><span class="name">Rower</span></label>
+      <label class="eq-card" data-val="airbike"><span class="name">Air Bike</span></label>
+    </div>
+  </div>
+
+  <!-- Body Focus -->
+  <div class="section">
+    <div class="slabel">Step 2</div>
+    <div class="stitle">What do you want to target? <span style="font-size:12px;font-weight:500;color:var(--muted,#666);margin-left:6px">— select one or more</span></div>
+    <div class="bf-grid" id="bf-grid">
+      <label class="bf-card sel" data-val="full-body" data-exclusive="true"><span class="name">Full Body</span><span class="sub">All muscle groups</span></label>
+      <label class="bf-card" data-val="upper-body"><span class="name">Upper Body</span><span class="sub">Push + Pull</span></label>
+      <label class="bf-card" data-val="lower-body"><span class="name">Lower Body</span><span class="sub">Legs + Hips</span></label>
+      <label class="bf-card" data-val="core"><span class="name">Core</span><span class="sub">Abs + Stability</span></label>
+      <label class="bf-card" data-val="push"><span class="name">Push</span><span class="sub">Chest · Triceps · Shoulders</span></label>
+      <label class="bf-card" data-val="pull"><span class="name">Pull</span><span class="sub">Back · Biceps</span></label>
+      <label class="bf-card" data-val="legs-glutes"><span class="name">Legs & Glutes</span><span class="sub">Posterior Chain</span></label>
+      <label class="bf-card" data-val="cardio"><span class="name">Cardio</span><span class="sub">Conditioning</span></label>
+    </div>
+  </div>
+
+  <!-- Experience -->
+  <div class="section">
+    <div class="slabel">Step 3</div>
+    <div class="stitle">Experience level</div>
+    <div class="pill-group" id="level-group">
+      <label class="pill" data-val="beginner">Beginner</label>
+      <label class="pill sel" data-val="intermediate">Intermediate</label>
+      <label class="pill" data-val="advanced">Advanced</label>
+    </div>
+  </div>
+
+  <!-- Format -->
+  <div class="section">
+    <div class="slabel">Step 4</div>
+    <div class="stitle">Workout format</div>
+    <div class="pill-group" id="format-group">
+      <label class="pill sel" data-val="any">Surprise Me</label>
+      <label class="pill" data-val="amrap">AMRAP</label>
+      <label class="pill" data-val="emom">EMOM</label>
+      <label class="pill" data-val="fortime">For Time</label>
+      <label class="pill" data-val="circuit">Circuit</label>
+    </div>
+  </div>
+
+  <!-- Duration -->
+  <div class="section">
+    <div class="slabel">Step 5</div>
+    <div class="stitle">How long do you have?</div>
+    <div class="slider-row">
+      <div class="sval"><span id="dur-val">20</span><small>min</small></div>
+      <div style="flex:1">
+        <input type="range" id="dur-slider" min="10" max="60" step="5" value="20" style="width:100%" oninput="document.getElementById('dur-val').textContent=this.value">
+        <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:0.75rem;color:var(--text-muted,#888);padding:0 2px">
+          <span>10 min</span><span>60 min</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="gen-btn" id="gen-btn" onclick="generateWorkout()">
+    <span class="bt">Generate My Workout</span>
+    <div class="sp"></div>
+  </button>
+
+  <!-- Result -->
+  <div id="workout-result">
+    <div class="res-hdr">
+      <h2 id="wod-title"></h2>
+      <div class="rsub" id="wod-sub"></div>
+      <div class="res-meta" id="wod-meta"></div>
+    </div>
+    <div class="res-body">
+      <div class="wdesc" id="wod-desc"></div>
+      <table class="mov-table">
+        <thead><tr><th>Movement</th><th>Reps / Time</th><th>Coaching Tip</th></tr></thead>
+        <tbody id="wod-movements"></tbody>
+      </table>
+      <div class="score-box">
+        <h4>Scoring</h4>
+        <p id="wod-scoring"></p>
+      </div>
+      <div class="res-actions" id="wod-actions">
+        <button class="abtn pri" onclick="openLogResult()">Log Result</button>
+        <button class="abtn sec" onclick="openSaveWorkout()">Save Workout</button>
+        <button class="abtn sec" onclick="generateWorkout()">Regenerate</button>
+        <button class="abtn gho" onclick="printWorkout()">Print WOD</button>
+        <button class="abtn gho" id="nominate-btn" onclick="nominateWorkout()">Nominate as Featured</button>
+      </div>
+      <div class="warmup-cool">
+        <div class="wc-card"><h4>Warm-Up (do first)</h4><ul id="warmup-list"></ul></div>
+        <div class="wc-card"><h4>Cool-Down</h4><ul id="cooldown-list"></ul></div>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /gen-mode-generate -->
+
+  <!-- ── CREATE YOUR OWN MODE ──────────────────────────────── -->
+  <div id="gen-mode-create" style="display:none">
+
+    <!-- Gate: shown when not logged in -->
+    <div id="cyo-gate" class="section" style="display:none">
+      <div class="cyo-gate">
+        <div class="g-icon" style="font-size:52px;margin-bottom:16px">+</div>
+        <h3>Create Your Own WOD</h3>
+        <p>Build custom workouts from scratch using our full movement library, then save them to your profile. Free with an account.</p>
+        <div class="cyo-gate-btns">
+          <button class="abtn pri" style="flex:unset;padding:12px 24px" onclick="openAuthModal('signup')">Create Free Account</button>
+          <button class="abtn sec" style="flex:unset;padding:12px 24px" onclick="openAuthModal('login')">Log In</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Builder: shown when logged in -->
+    <div id="cyo-builder" style="display:none">
+
+      <div class="section">
+        <div class="slabel">Workout Details</div>
+        <div class="stitle">Name your workout</div>
+        <input type="text" id="cyo-title" placeholder="e.g. Monday Grinder, Leg Day Special…" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-size:15px;outline:none;margin-bottom:12px;box-sizing:border-box;transition:border-color .15s" onfocus="this.style.borderColor='var(--or)'" onblur="this.style.borderColor='var(--border)'">
+        <textarea id="cyo-desc" placeholder="What's this workout about? Scaling notes, intent, who it's for…" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-size:13px;outline:none;min-height:70px;resize:vertical;box-sizing:border-box;font-family:inherit;transition:border-color .15s" onfocus="this.style.borderColor='var(--or)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+      </div>
+
+      <div class="section">
+        <div class="slabel">Step 1</div>
+        <div class="stitle">What equipment is needed?</div>
+        <div class="eq-grid" id="cyo-eq-grid">
+          <label class="eq-card" data-val="bodyweight" onclick="this.classList.toggle('sel')"><span class="name">Bodyweight</span></label>
+          <label class="eq-card" data-val="pullupbar" onclick="this.classList.toggle('sel')"><span class="name">Pull-up Bar</span></label>
+          <label class="eq-card" data-val="kettlebell" onclick="this.classList.toggle('sel')"><span class="name">Kettlebell</span></label>
+          <label class="eq-card" data-val="dumbbells" onclick="this.classList.toggle('sel')"><span class="name">Dumbbells</span></label>
+          <label class="eq-card" data-val="barbell" onclick="this.classList.toggle('sel')"><span class="name">Barbell</span></label>
+          <label class="eq-card" data-val="resistancebands" onclick="this.classList.toggle('sel')"><span class="name">Bands</span></label>
+          <label class="eq-card" data-val="jumprope" onclick="this.classList.toggle('sel')"><span class="name">Jump Rope</span></label>
+          <label class="eq-card" data-val="box" onclick="this.classList.toggle('sel')"><span class="name">Plyo Box</span></label>
+          <label class="eq-card" data-val="medicineball" onclick="this.classList.toggle('sel')"><span class="name">Med Ball</span></label>
+          <label class="eq-card" data-val="rings" onclick="this.classList.toggle('sel')"><span class="name">Rings</span></label>
+          <label class="eq-card" data-val="slamball" onclick="this.classList.toggle('sel')"><span class="name">Slam Ball</span></label>
+          <label class="eq-card" data-val="treadmill" onclick="this.classList.toggle('sel')"><span class="name">Treadmill</span></label>
+          <label class="eq-card" data-val="running" onclick="this.classList.toggle('sel')"><span class="name">Running</span></label>
+          <label class="eq-card" data-val="rower" onclick="this.classList.toggle('sel')"><span class="name">Rower</span></label>
+          <label class="eq-card" data-val="airbike" onclick="this.classList.toggle('sel')"><span class="name">Air Bike</span></label>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="slabel">Step 2</div>
+        <div class="stitle">Workout format</div>
+        <div class="pill-group" id="cyo-format-group">
+          <label class="pill sel" data-val="AMRAP">AMRAP</label>
+          <label class="pill" data-val="EMOM">EMOM</label>
+          <label class="pill" data-val="For Time">For Time</label>
+          <label class="pill" data-val="Circuit">Circuit</label>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="slabel">Step 3</div>
+        <div class="stitle">Duration & difficulty</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
+          <div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Time cap — <strong id="cyo-dur-val" style="color:var(--or)">20</strong> min</div>
+            <input type="range" id="cyo-duration" min="5" max="90" step="5" value="20" style="width:100%;accent-color:var(--or)" oninput="document.getElementById('cyo-dur-val').textContent=this.value">
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted,#666);margin-top:4px"><span>5 min</span><span>90 min</span></div>
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--muted,#666);margin-bottom:8px">Experience level</div>
+            <div class="pill-group" id="cyo-level-group">
+              <label class="pill" data-val="beginner">Beginner</label>
+              <label class="pill sel" data-val="intermediate">Intermediate</label>
+              <label class="pill" data-val="advanced">Advanced</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="slabel">Step 4</div>
+        <div class="stitle">Add your movements</div>
+        <div class="cyo-mov-builder">
+          <div class="cyo-mov-search-wrap">
+            <input type="text" id="cyo-mov-search" placeholder="Search movement library…" autocomplete="off" oninput="cyoSearchMovements()" onfocus="cyoSearchMovements()">
+            <div class="cyo-mov-dropdown" id="cyo-mov-dropdown"></div>
+          </div>
+          <div id="cyo-mov-list"><div class="cyo-mov-empty">No movements yet — click above to browse or search the library.</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="slabel">Step 5</div>
+        <div class="stitle">Scoring</div>
+        <input type="text" id="cyo-scoring" placeholder="e.g. Total rounds + reps completed, Time to finish, Max load" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-size:14px;outline:none;box-sizing:border-box;transition:border-color .15s" onfocus="this.style.borderColor='var(--or)'" onblur="this.style.borderColor='var(--border)'">
+      </div>
+
+      <!-- Save options -->
+      <div class="section" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <label style="font-size:14px;cursor:pointer;display:flex;align-items:center;gap:7px;color:var(--text)"><input type="checkbox" id="cyo-public" style="accent-color:var(--or)"> Share with community</label>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="abtn sec" style="flex:unset" onclick="cyoReset()">Start Over</button>
+          <button class="abtn pri" style="flex:unset" id="cyo-save-btn" onclick="cyoSave()">Save Workout</button>
+        </div>
+      </div>
+      <div id="cyo-alert" style="display:none;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.4);color:#e74c3c;border-radius:8px;padding:12px 16px;font-size:13px;margin-top:8px"></div>
+
+    </div><!-- /cyo-builder -->
+  </div><!-- /gen-mode-create -->
+
+</div><!-- /page-wrap -->
+
+</main>
+
+<!-- ═══ MODAL: AUTH ═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="auth-modal">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('auth-modal')">✕</button>
+  <h2 id="auth-title">Welcome Back</h2>
+  <p class="msub" id="auth-sub">Sign in to save workouts and track results.</p>
+  <div id="auth-error" class="modal-error"></div>
+  <div id="auth-success" class="modal-success"></div>
+  <div id="login-form">
+    <div class="field"><label>Email</label><input type="email" id="li-email" placeholder="you@email.com"></div>
+    <div class="field"><label>Password</label><input type="password" id="li-pass" placeholder="Your password" onkeydown="if(event.key==='Enter')submitLogin()"></div>
+    <button class="modal-btn" onclick="submitLogin()">Sign In →</button>
+    <p class="modal-link">No account? <a onclick="switchAuthTab('signup')">Sign up free</a></p>
+    <div class="modal-recovery">
+      <a href="/login.html">Forgot password?</a>
+      <a href="/login.html">Forgot email?</a>
+    </div>
+  </div>
+  <div id="signup-form" style="display:none">
+    <div class="field"><label>Username</label><input type="text" id="su-user" placeholder="e.g. firebreather_rob" maxlength="20"></div>
+    <div class="field"><label>Email</label><input type="email" id="su-email" placeholder="you@email.com"></div>
+    <div class="field"><label>Password</label><input type="password" id="su-pass" placeholder="Min 6 characters" onkeydown="if(event.key==='Enter')submitSignup()"></div>
+    <button class="modal-btn" onclick="submitSignup()">Create Account →</button>
+    <p class="modal-link">Already have one? <a onclick="switchAuthTab('login')">Log in</a></p>
+  </div>
+</div>
+</div>
+
+<!-- ═══ MODAL: LOG RESULT ═════════════════════════════════════ -->
+<div class="modal-overlay" id="result-modal">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('result-modal')">✕</button>
+  <h2>Log Your Result</h2>
+  <p class="msub" id="result-modal-sub">Record your score for this workout</p>
+  <div id="result-error" class="modal-error"></div>
+  <div class="field"><label id="score-label">Score</label><input type="text" id="result-score" placeholder="e.g. 8 rounds + 12 reps"></div>
+  <div class="field"><label>Was this Rx?</label>
+    <select id="result-rx">
+      <option value="yes">Yes — as written</option>
+      <option value="no">No — scaled</option>
+    </select>
+  </div>
+  <div class="field"><label>Notes (optional)</label><textarea id="result-notes" placeholder="Scaling notes, how it felt, PRs..."></textarea></div>
+  <div class="field">
+    <label>Share workout publicly?</label>
+    <select id="result-public">
+      <option value="no">No — keep it private</option>
+      <option value="yes">Yes — share with community</option>
+    </select>
+  </div>
+  <button class="modal-btn" onclick="submitResult()">Submit Result →</button>
+</div>
+</div>
+
+<!-- ═══ MODAL: SAVE WORKOUT ═══════════════════════════════════ -->
+<div class="modal-overlay" id="save-modal">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('save-modal')">✕</button>
+  <h2>Save Workout</h2>
+  <p class="msub">Give your workout a name and save it.</p>
+  <div id="save-error" class="modal-error"></div>
+  <div class="field"><label>Workout Name</label><input type="text" id="save-name" placeholder="e.g. My Monday Grind"></div>
+  <div class="field"><label>Description (optional)</label><textarea id="save-desc" placeholder="What's the intent? Tips for athletes?"></textarea></div>
+  <div class="field"><label>Make it public?</label>
+    <select id="save-public">
+      <option value="no">No — keep it private</option>
+      <option value="yes">Yes — share with community</option>
+    </select>
+  </div>
+  <button class="modal-btn" onclick="submitSave()">Save Workout →</button>
+</div>
+</div>
+
+<!-- ═══ SCRIPTS ════════════════════════════════════════════════ -->
+<script src="/js/config.js"></script>
+<script src="/js/db.js"></script>
+<script src="/js/benchmarks.js"></script>
+<script src="/js/nav.js"></script>
+<script>
+
+// ── MOVEMENT DATABASE ─────────────────────────────────────────
+// Exposed as MOVEMENT_DB for daily-wod.js compatibility
+const MOVEMENT_DB = {
+  bodyweight:[
+    {name:"Air Squats",tip:"Heels down, knees track toes",b:[15,20],i:[20,25],a:[25,30],tags:["lower"]},
+    {name:"Push-Ups",tip:"Rigid plank, chest to floor",b:[8,12],i:[15,20],a:[20,30],tags:["push"]},
+    {name:"Sit-Ups",tip:"Anchor feet, full range of motion",b:[15,20],i:[20,25],a:[25,30],tags:["core"]},
+    {name:"Burpees",tip:"Step out if needed — keep moving",b:[5,8],i:[10,12],a:[15,20],tags:["full","cardio"]},
+    {name:"Lunges",tip:"Front knee over ankle, torso upright",b:[10,12],i:[16,20],a:[20,24],tags:["lower"]},
+    {name:"Mountain Climbers",tip:"Hips level, drive knees in fast",b:[16,20],i:[24,30],a:[30,40],tags:["core","cardio"]},
+    {name:"Jump Squats",tip:"Land soft, absorb through the hips",b:[8,10],i:[12,15],a:[15,20],tags:["lower","cardio"]},
+    {name:"Plank Hold",tip:"Neutral spine, squeeze glutes",b:["30s"],i:["45s"],a:["60s"],timed:true,tags:["core"]},
+    {name:"Superman Hold",tip:"Squeeze glutes and upper back at top",b:["20s"],i:["35s"],a:["50s"],timed:true,tags:["pull","core"]},
+    {name:"High Knees",tip:"Drive knees to hip height, pump arms",b:[30],i:[40],a:[50],tags:["cardio"]},
+    {name:"Glute Bridges",tip:"Drive hips high, squeeze at top",b:[15,20],i:[20,25],a:[25,30],tags:["lower","legs-glutes"]},
+    {name:"Tricep Dips",tip:"Use chair — straight legs = harder",b:[10,12],i:[12,15],a:[15,20],tags:["push"]},
+    {name:"V-Ups",tip:"Meet hands to feet at the top",b:[8,10],i:[12,15],a:[15,20],tags:["core"]},
+    {name:"Hollow Hold",tip:"Lower back pressed into floor",b:["20s"],i:["35s"],a:["50s"],timed:true,tags:["core"]},
+    {name:"Broad Jumps",tip:"Max distance each rep, stick the landing",b:[5],i:[8],a:[10],tags:["lower","cardio"]},
+    {name:"Bear Crawl",tip:"10m out+back = 1 rep, hips level",b:[3],i:[5],a:[7],tags:["full","cardio"]},
+    {name:"Lateral Lunges",tip:"Sit back into the working hip",b:[10,12],i:[14,16],a:[18,22],tags:["lower","legs-glutes"]},
+    {name:"Inchworms",tip:"Walk hands out to plank, walk back",b:[6,8],i:[8,10],a:[10,12],tags:["full"]},
+    {name:"Single-Leg Glute Bridges",tip:"Drive through heel, keep hips level",b:[10,12],i:[12,15],a:[15,20],tags:["lower","legs-glutes"]},
+    {name:"Dive Bomber Push-Ups",tip:"Swoop low, push forward and up",b:[6,8],i:[10,12],a:[12,15],tags:["push","full"]},
+  ],
+  pullupbar:[
+    {name:"Pull-Ups",tip:"Full hang to chin over bar",b:[3,5],i:[7,10],a:[10,15],tags:["pull"]},
+    {name:"Hanging Knee Raises",tip:"Control the descent, no swinging",b:[8,10],i:[12,15],a:[15,20],tags:["core"]},
+    {name:"Dead Hang",tip:"Active shoulders — no passive shrugging",b:["20s"],i:["35s"],a:["50s"],timed:true,tags:["pull"]},
+    {name:"Toes-to-Bar",tip:"Kip if needed, control the swing",b:[3,5],i:[7,10],a:[12,15],tags:["core","pull"]},
+    {name:"Chin-Ups",tip:"Supinated grip — palms face you",b:[3,5],i:[8,10],a:[12,15],tags:["pull"]},
+    {name:"Scapular Pull-Ups",tip:"Arms straight — retract shoulder blades",b:[8,10],i:[10,12],a:[12,15],tags:["pull"]},
+    {name:"L-Sit Hang",tip:"Compress the abs, legs parallel to floor",b:["10s"],i:["20s"],a:["30s"],timed:true,tags:["core"]},
+  ],
+  kettlebell:[
+    {name:"Kettlebell Swings",tip:"Hip hinge — not a squat. Snap hips!",b:[10,15],i:[15,20],a:[20,30],tags:["full","lower","cardio"]},
+    {name:"Goblet Squats",tip:"Elbows inside knees at the bottom",b:[10,12],i:[12,15],a:[15,20],tags:["lower"]},
+    {name:"KB Deadlifts",tip:"Neutral spine — push the floor away",b:[10,12],i:[12,15],a:[15,20],tags:["lower","legs-glutes"]},
+    {name:"KB Press",tip:"Stack wrist over elbow over shoulder",b:[8,10],i:[10,12],a:[12,15],tags:["push"]},
+    {name:"KB Bent-Over Row",tip:"Brace core, pull elbow past hip",b:[8,10],i:[10,12],a:[12,15],tags:["pull"]},
+    {name:"KB Clean",tip:"Guide the bell — don't muscle it up",b:[5,8],i:[8,10],a:[10,12],tags:["full"]},
+    {name:"KB Snatch",tip:"Punch through at the top",b:[3,5],i:[5,8],a:[8,10],tags:["full","cardio"]},
+    {name:"KB Turkish Get-Up",tip:"Slow is smooth — 1 rep = full up/down",b:[2,3],i:[3,4],a:[4,5],tags:["full"]},
+    {name:"KB Farmer Carry",tip:"20m out+back = 1 rep, shoulders packed",b:[3,4],i:[4,5],a:[5,6],tags:["full","core"]},
+    {name:"KB Sumo Deadlift High Pull",tip:"Wide stance, elbows high at top",b:[10,12],i:[12,15],a:[15,20],tags:["full","lower"]},
+    {name:"KB Single-Leg Deadlift",tip:"Hinge at hip, soft knee, back flat",b:[8,10],i:[10,12],a:[12,15],tags:["lower","legs-glutes"]},
+  ],
+  dumbbells:[
+    {name:"DB Thrusters",tip:"Squat then drive overhead — one motion",b:[8,10],i:[12,15],a:[15,20],tags:["full","push"]},
+    {name:"DB Deadlifts",tip:"Hip hinge, flat back throughout",b:[10,12],i:[12,15],a:[15,20],tags:["lower"]},
+    {name:"DB Bent-Over Rows",tip:"90° torso, pull to lower ribs",b:[10,12],i:[12,15],a:[12,15],tags:["pull"]},
+    {name:"DB Shoulder Press",tip:"Press in a slight forward arc",b:[8,10],i:[10,12],a:[12,15],tags:["push"]},
+    {name:"DB Lunges",tip:"Front knee stays over ankle",b:[10,12],i:[14,16],a:[18,20],tags:["lower"]},
+    {name:"DB Romanian DL",tip:"Hinge until hamstrings load, then drive",b:[10,12],i:[12,15],a:[15,20],tags:["lower","legs-glutes"]},
+    {name:"DB Renegade Rows",tip:"Full plank — hips level throughout",b:[6,8],i:[8,10],a:[10,12],tags:["pull","core"]},
+    {name:"DB Floor Press",tip:"Upper arm at 45°, pause at bottom",b:[10,12],i:[12,15],a:[15,20],tags:["push"]},
+    {name:"DB Clean & Press",tip:"Power from the hip, press at top",b:[6,8],i:[8,10],a:[10,12],tags:["full","push"]},
+    {name:"DB Lateral Raises",tip:"Lead with elbows — slight lean forward",b:[10,12],i:[12,15],a:[15,20],tags:["push"]},
+    {name:"DB Single-Leg RDL",tip:"Hinge at hip, soft knee, back flat",b:[8,10],i:[10,12],a:[12,15],tags:["lower","legs-glutes"]},
+  ],
+  barbell:[
+    {name:"Back Squat",tip:"Break at hips and knees together",b:[5,8],i:[8,10],a:[10,15],tags:["lower"]},
+    {name:"Deadlift",tip:"Bar over mid-foot, shoulders over bar",b:[3,5],i:[5,8],a:[8,10],tags:["lower","legs-glutes"]},
+    {name:"Barbell Thruster",tip:"Front rack → squat → push press — one motion",b:[5,8],i:[10,12],a:[15,21],tags:["full","push"]},
+    {name:"Power Clean",tip:"Triple extension — jump and catch",b:[3,5],i:[5,8],a:[8,10],tags:["full"]},
+    {name:"Overhead Press",tip:"Bar in front, press up and slightly back",b:[5,8],i:[8,10],a:[10,12],tags:["push"]},
+    {name:"Bent-Over Row",tip:"45° torso — pull to lower ribs",b:[5,8],i:[8,10],a:[10,12],tags:["pull"]},
+    {name:"Front Squat",tip:"Elbows high, stay upright",b:[5,8],i:[8,10],a:[10,15],tags:["lower"]},
+    {name:"Sumo Deadlift",tip:"Wide stance, toes out, vertical shins",b:[3,5],i:[5,8],a:[8,10],tags:["lower","legs-glutes"]},
+  ],
+  resistancebands:[
+    {name:"Banded Squats",tip:"Band above knees — push knees out",b:[15,20],i:[20,25],a:[25,30],tags:["lower"]},
+    {name:"Banded Pull-Aparts",tip:"Arms straight — squeeze shoulder blades",b:[15,20],i:[20,25],a:[25,30],tags:["pull"]},
+    {name:"Banded Hip Thrusts",tip:"Band across hips, drive through heels",b:[15,20],i:[20,25],a:[25,30],tags:["lower","legs-glutes"]},
+    {name:"Banded Face Pulls",tip:"Pull to nose, elbows high and wide",b:[15,20],i:[20,25],a:[25,30],tags:["pull"]},
+    {name:"Banded Rows",tip:"Anchor low — row to chest",b:[12,15],i:[15,20],a:[20,25],tags:["pull"]},
+    {name:"Banded Chest Press",tip:"Anchor behind — press forward",b:[12,15],i:[15,20],a:[20,25],tags:["push"]},
+    {name:"Banded Deadlift",tip:"Stand on band, maintain neutral spine",b:[12,15],i:[15,20],a:[20,25],tags:["lower"]},
+  ],
+  jumprope:[
+    {name:"Single Unders",tip:"Wrists do the work — keep elbows in",b:[30,40],i:[50,60],a:[80,100],tags:["cardio"]},
+    {name:"Double Unders",tip:"One big jump, two rope passes",b:[10,15],i:[20,30],a:[40,50],tags:["cardio"]},
+    {name:"Jump Rope Intervals",tip:"Max effort for set time",b:["30s"],i:["45s"],a:["60s"],timed:true,tags:["cardio"]},
+  ],
+  box:[
+    {name:"Box Jumps",tip:"Land in athletic stance — stand fully",b:[6,8],i:[10,12],a:[12,15],tags:["lower","cardio"]},
+    {name:"Step-Ups",tip:"Drive through the heel on top of box",b:[10,12],i:[14,16],a:[18,20],tags:["lower"]},
+    {name:"Box Dips",tip:"Straight legs = harder, bent = easier",b:[10,12],i:[12,15],a:[15,20],tags:["push"]},
+    {name:"Box Pike Push-Ups",tip:"Hands on box, hips high — hits shoulders",b:[6,8],i:[10,12],a:[12,15],tags:["push"]},
+  ],
+  medicineball:[
+    {name:"Wall Balls",tip:"Squat deep — drive ball to target",b:[8,10],i:[12,15],a:[20,30],tags:["full","lower"]},
+    {name:"MB Slams",tip:"Full extension up, slam with intent",b:[8,10],i:[12,15],a:[15,20],tags:["full","cardio"]},
+    {name:"MB Russian Twists",tip:"Feet up — rotate fully side to side",b:[16,20],i:[20,24],a:[24,30],tags:["core"]},
+    {name:"MB Squat & Press",tip:"Squat deep, press overhead at the top",b:[8,10],i:[12,15],a:[15,20],tags:["full","push"]},
+    {name:"MB Clean",tip:"Scoop from floor — catch at chest",b:[8,10],i:[10,12],a:[12,15],tags:["full"]},
+  ],
+  rings:[
+    {name:"Ring Rows",tip:"Adjust angle to change difficulty",b:[8,10],i:[12,15],a:[15,20],tags:["pull"]},
+    {name:"Ring Push-Ups",tip:"Rings just off floor — turn out at top",b:[6,8],i:[10,12],a:[15,20],tags:["push"]},
+    {name:"Ring Dips",tip:"Straight arm position at top — turn out",b:[3,5],i:[7,10],a:[10,15],tags:["push"]},
+    {name:"Ring Muscle-Ups",tip:"Pull to waist then punch over rings",b:[1,2],i:[3,5],a:[5,8],tags:["full","pull"]},
+  ],
+  slamball:[
+    {name:"Ball Slams",tip:"Full extension overhead — slam with full force, no bounce",b:[8,10],i:[12,15],a:[15,20],tags:["full","cardio"]},
+    {name:"Overhead Slam",tip:"Arms fully locked out overhead, drive ball into floor",b:[6,8],i:[10,12],a:[12,15],tags:["full","cardio"]},
+    {name:"Rotational Ball Slams",tip:"Rotate from the hips — alternate sides each rep",b:[8,10],i:[10,12],a:[12,15],tags:["core","cardio"]},
+    {name:"Slam Ball Squat",tip:"Hold at chest, squat below parallel — use the load to pull you into depth",b:[10,12],i:[12,15],a:[15,20],tags:["lower"]},
+    {name:"Slam Ball Over-the-Shoulder",tip:"Alternate sides each rep — drive from the hip, not the lower back",b:[6],i:[8],a:[10],tags:["full","cardio"]},
+    {name:"Slam Ball Clean",tip:"Scoop from the floor with a hip drive — catch at chest height, elbows high",b:[6],i:[8],a:[10],tags:["full"]},
+    {name:"Bear Hug Ball Carry",tip:"20m out+back = 1 rep — squeeze ball tight, core braced",b:[3,4],i:[4,5],a:[5,6],tags:["full","core"]},
+  ],
+  treadmill:[
+    {name:"Treadmill Run",tip:"Comfortable pace — keep a conversational effort",b:["400m"],i:["800m"],a:["1 mile"],tags:["cardio"]},
+    {name:"Sprint Intervals",tip:"Max effort — push the speed, recover between rounds",b:["20s"],i:["30s"],a:["45s"],timed:true,tags:["cardio"]},
+    {name:"Incline Walk",tip:"Set 8–12% incline, no handrail — targets glutes and lungs",b:["3 min"],i:["5 min"],a:["7 min"],timed:true,tags:["cardio","lower"]},
+    {name:"Treadmill Run (Short)",tip:"Fast but controlled — build into your pace",b:["200m"],i:["400m"],a:["800m"],tags:["cardio"]},
+  ],
+  rower:[
+    {name:"Row for Calories",tip:"Drive through heels first — then hips, then arms. Link the chain.",b:["10 cal"],i:["15 cal"],a:["20 cal"],tags:["full","cardio"]},
+    {name:"Row for Meters",tip:"Settle into a pace — damper 4–5, target 1:50–2:00/500m",b:["250m"],i:["500m"],a:["1000m"],tags:["full","cardio"]},
+    {name:"Row Sprints",tip:"All out — aim for sub-1:45/500m. Full recovery between efforts.",b:["30s"],i:["45s"],a:["60s"],timed:true,tags:["cardio"]},
+    {name:"Easy Row",tip:"Aerobic pace — you should be able to hold a conversation",b:["500m"],i:["1000m"],a:["2000m"],tags:["cardio"]},
+    {name:"Row Intervals",tip:"Work-to-rest 1:1 — max effort on the work piece",b:["200m"],i:["500m"],a:["1000m"],tags:["full","cardio"]},
+  ],
+  airbike:[
+    {name:"Air Bike for Calories",tip:"Push AND pull the handles — legs and arms together for max output",b:["10 cal"],i:["15 cal"],a:["20 cal"],tags:["full","cardio"]},
+    {name:"Air Bike Sprint",tip:"All out for the full interval — the harder you push, the harder it gets",b:["20s"],i:["30s"],a:["45s"],timed:true,tags:["full","cardio"]},
+    {name:"Air Bike Steady State",tip:"Aim for 60–70% effort — sustainable, not survival mode",b:["3 min"],i:["5 min"],a:["8 min"],timed:true,tags:["cardio"]},
+    {name:"Air Bike Intervals",tip:"Max RPM on work, slow spin recovery — don't stop pedaling",b:["10 cal"],i:["20 cal"],a:["30 cal"],tags:["full","cardio"]},
+  ],
+  running:[
+    {name:"400m Run",tip:"Settle into pace — push hard the last 100m",b:["400m"],i:["400m"],a:["400m"],tags:["full","cardio"]},
+    {name:"800m Run",tip:"Aerobic pace for the first 600m, kick the last 200",b:["400m"],i:["800m"],a:["800m"],tags:["full","cardio"]},
+    {name:"1 Mile Run",tip:"Don't go out too hot — negative split if you can",b:["800m"],i:["1 mile"],a:["1 mile"],tags:["full","cardio"]},
+    {name:"200m Run",tip:"Sprint effort — drive the knees, stay relaxed",b:["200m"],i:["200m"],a:["200m"],tags:["full","cardio"]},
+    {name:"Run Sprints",tip:"Max effort — pump the arms, high knees",b:["20s"],i:["30s"],a:["45s"],timed:true,tags:["full","cardio"]},
+  ],
+};
+
+const WARMUP = ["30s jumping jacks","20 arm circles each direction","10 hip circles each direction","10 leg swings each side","30s cat-cow","10 world's greatest stretch each side","30s high knees easy","8 inchworms"];
+const COOLDOWN = ["60s down-dog stretch","30s figure-4 glute stretch each side","30s hip flexor stretch each side","60s chest opener","30s hamstring stretch each side","30s child's pose","60s pigeon stretch each side"];
+
+// ── STATE ─────────────────────────────────────────────────────
+let currentWorkout = null;
+let communityWorkouts = [];
+let myWorkouts = [];
+let commFilters = { fmt: 'all', lvl: 'all', q: '' };
+let currentUser = null;
+
+// ── INIT ──────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+  // nav is auto-inited via data-nav-init="true"
+  currentUser = await db.getUser();
+  // Hide "Free Account" badge for logged-in users
+  const badge = document.getElementById('cyo-free-badge');
+  if (badge) badge.style.display = currentUser ? 'none' : '';
+  setupEquipmentGrid();
+  setupBodyFocusGrid();
+  setupPillGroups();
+  // Support /generator#create to open CYO mode directly (from nav dropdown)
+  if (window.location.hash === '#create') setGenMode('create');
+});
+
+// ── SELECTION HELPERS ─────────────────────────────────────────
+function setupEquipmentGrid() {
+  document.querySelectorAll('#eq-grid .eq-card').forEach(card => {
+    card.addEventListener('click', () => card.classList.toggle('sel'));
+  });
+}
+function setupBodyFocusGrid() {
+  document.querySelectorAll('#bf-grid .bf-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const isSelected = card.classList.contains('sel');
+      const isExclusive = card.getAttribute('data-exclusive') === 'true'; // "Full Body"
+      const selectedCount = document.querySelectorAll('#bf-grid .bf-card.sel').length;
+
+      if (isExclusive) {
+        // Clicking "Full Body": select it and deselect everything else
+        document.querySelectorAll('#bf-grid .bf-card').forEach(c => c.classList.remove('sel'));
+        card.classList.add('sel');
+      } else {
+        // Clicking a specific focus: deselect "Full Body", then toggle this card
+        document.querySelectorAll('#bf-grid .bf-card[data-exclusive]').forEach(c => c.classList.remove('sel'));
+        if (isSelected && selectedCount === 1) {
+          // Last specific item — revert to Full Body instead of leaving nothing selected
+          document.querySelector('#bf-grid .bf-card[data-exclusive]').classList.add('sel');
+          card.classList.remove('sel');
+        } else {
+          card.classList.toggle('sel');
+        }
+      }
+    });
+  });
+}
+function setupPillGroups() {
+  ['level-group','format-group'].forEach(id => {
+    document.querySelectorAll(`#${id} .pill`).forEach(p => {
+      p.addEventListener('click', () => {
+        document.querySelectorAll(`#${id} .pill`).forEach(x => x.classList.remove('sel'));
+        p.classList.add('sel');
+      });
+    });
+  });
+}
+function getSelected(gridId, attr) {
+  return [...document.querySelectorAll(`#${gridId} .sel`)].map(c => c.getAttribute(attr));
+}
+
+// ── GENERATOR ─────────────────────────────────────────────────
+function generateWorkout() {
+  const equipment = getSelected('eq-grid','data-val');
+  if (!equipment.length) { showToast('Select at least one equipment option.','error'); return; }
+
+  const bodyFocuses = getSelected('bf-grid','data-val');
+  if (!bodyFocuses.length) bodyFocuses.push('full-body');
+  const level = document.querySelector('#level-group .sel')?.getAttribute('data-val') || 'intermediate';
+  const formatPref = document.querySelector('#format-group .sel')?.getAttribute('data-val') || 'any';
+  const duration = parseInt(document.getElementById('dur-slider').value);
+
+  const btn = document.getElementById('gen-btn');
+  btn.classList.add('loading'); btn.disabled = true;
+
+  setTimeout(() => {
+    const workout = buildWorkout(equipment, bodyFocuses, level, formatPref, duration);
+    currentWorkout = workout;
+    renderWorkout(workout);
+    btn.classList.remove('loading'); btn.disabled = false;
+    document.getElementById('workout-result').scrollIntoView({ behavior:'smooth', block:'start' });
+  }, 600);
+}
+
+function buildWorkout(equipment, bodyFocuses, level, formatPref, duration) {
+  const pool = buildPool(equipment, level, bodyFocuses);
+  const formats = formatPref === 'any' ? ['amrap','emom','fortime','circuit'] : [formatPref];
+  const format = formats[Math.floor(Math.random() * formats.length)];
+
+  let workout;
+  if (format === 'amrap')        workout = genAMRAP(pool, level, duration, bodyFocuses);
+  else if (format === 'emom')    workout = genEMOM(pool, level, duration, bodyFocuses);
+  else if (format === 'fortime') workout = genForTime(pool, level);
+  else                           workout = genCircuit(pool, level, duration, bodyFocuses);
+
+  return { ...workout, equipment, bodyFocus: bodyFocuses, level, duration, generatedAt: new Date().toISOString() };
+}
+
+function buildPool(equipment, level, bodyFocuses) {
+  // Tag each movement with _eq so the guarantee logic can enforce equipment representation
+  let moves = (MOVEMENT_DB.bodyweight || []).map(m => ({ ...m, _eq: 'bodyweight' }));
+  equipment.forEach(eq => { if (eq !== 'bodyweight' && MOVEMENT_DB[eq]) moves.push(...MOVEMENT_DB[eq].map(m => ({ ...m, _eq: eq }))); });
+  if (level === 'beginner') moves = moves.filter(m => !/(muscle.up|snatch|toes.to.bar|double under|turkish)/i.test(m.name));
+  if (level === 'intermediate') moves = moves.filter(m => !/(muscle.up)/i.test(m.name));
+
+  const BF_TAGS = {
+    'full-body': null, 'upper-body': ['push','pull'], 'lower-body': ['lower','legs-glutes'],
+    'core': ['core'], 'push': ['push'], 'pull': ['pull'],
+    'legs-glutes': ['lower','legs-glutes'], 'cardio': ['cardio','full'],
+  };
+  // Build unified tag set across all selected focuses; null means include everything
+  const focuses = Array.isArray(bodyFocuses) ? bodyFocuses : [bodyFocuses];
+  let tags = null;
+  if (!focuses.includes('full-body')) {
+    const tagSet = new Set();
+    focuses.forEach(bf => { const t = BF_TAGS[bf]; if (t) t.forEach(tag => tagSet.add(tag)); });
+    if (tagSet.size) tags = [...tagSet];
+  }
+  if (tags) {
+    // Apply body-focus tag filter to ALL movements (bodyweight and equipment alike)
+    // The guarantee logic below still ensures each equipment type gets at least one rep
+    const filtered = moves.filter(m => m.tags && m.tags.some(t => tags.includes(t)));
+    if (filtered.length >= 3) moves = filtered;
+  }
+  return moves;
+}
+
+function balancedPick(pool, count) {
+  const buckets = { lower:[], push:[], pull:[], core:[], full:[], other:[] };
+  pool.forEach(m => {
+    const t = m.tags || [];
+    if (t.includes('full'))       buckets.full.push(m);
+    else if (t.includes('lower')) buckets.lower.push(m);
+    else if (t.includes('push'))  buckets.push.push(m);
+    else if (t.includes('pull'))  buckets.pull.push(m);
+    else if (t.includes('core'))  buckets.core.push(m);
+    else buckets.other.push(m);
+  });
+  const order = count >= 5 ? ['lower','push','pull','core','full']
+              : count === 4 ? ['lower','push','pull','core']
+              : count === 3 ? ['lower','push','core']
+              : ['lower','push'];
+  const result = [];
+  order.forEach(cat => {
+    const bk = [...buckets[cat]];
+    if (bk.length) {
+      const idx = Math.floor(Math.random() * bk.length);
+      result.push(bk[idx]);
+      bk.splice(idx,1);
+      buckets[cat] = bk;
+    }
+  });
+  while (result.length < count) {
+    const rem = Object.values(buckets).flat().filter(m => !result.includes(m));
+    if (!rem.length) break;
+    result.push(rem[Math.floor(Math.random() * rem.length)]);
+  }
+
+  // Guarantee at least one movement per non-bodyweight equipment type selected
+  const equipTypes = [...new Set(pool.filter(m => m._eq && m._eq !== 'bodyweight').map(m => m._eq))];
+  equipTypes.forEach(eq => {
+    if (result.some(m => m._eq === eq)) return; // already represented
+    const candidates = pool.filter(m => m._eq === eq && !result.includes(m));
+    if (!candidates.length) return;
+    // For equipment where calories are the primary metric (air bike, rower), prefer cal-based movements
+    const calBased = candidates.filter(m => {
+      const r = m.b || m.i || m.a;
+      const first = Array.isArray(r) ? r[0] : r;
+      return typeof first === 'string' && first.includes('cal');
+    });
+    const pickPool = calBased.length ? calBased : candidates;
+    const pick = pickPool[Math.floor(Math.random() * pickPool.length)];
+    // Prefer swapping a bodyweight movement that shares a muscle tag for balance
+    const eqTags = pick.tags || [];
+    let swapIdx = result.findIndex(m => m._eq === 'bodyweight' && m.tags && m.tags.some(t => eqTags.includes(t)));
+    if (swapIdx === -1) swapIdx = result.findIndex(m => m._eq === 'bodyweight'); // any bodyweight
+    if (swapIdx === -1) swapIdx = result.length - 1; // last resort
+    result[swapIdx] = pick;
+  });
+
+  return result;
+}
+
+function getReps(m, level) {
+  const r = m[level === 'beginner' ? 'b' : level === 'intermediate' ? 'i' : 'a'];
+  if (Array.isArray(r)) return r[0] + (Math.random() > .5 && r[1] ? '-' + r[1] : '');
+  return r;
+}
+// Returns true for movements whose reps are distance/time/calories (not a plain count)
+function isTimedOrDistance(m) {
+  if (m.timed) return true;
+  const r = m.b || m.i || m.a;
+  if (!r) return false;
+  const first = Array.isArray(r) ? r[0] : r;
+  return typeof first === 'string';
+}
+// Returns true if a movement can realistically be completed within ~1 minute (EMOM-safe)
+function isEmomSafe(m, level) {
+  if (!isTimedOrDistance(m)) return true;
+  const key = level === 'beginner' ? 'b' : level === 'intermediate' ? 'i' : 'a';
+  const r = m[key] || m.b;
+  const val = String(Array.isArray(r) ? r[0] : (r || ''));
+  if (/mile|km/i.test(val)) return false;                          // always too long
+  if (/\d+\s*min/.test(val)) return false;                        // minute-based = too long
+  const mMatch = val.match(/^(\d+)\s*m$/);
+  if (mMatch && parseInt(mMatch[1]) > 200) return false;          // >200m run/row too long
+  const calMatch = val.match(/(\d+)\s*cal/);
+  if (calMatch && parseInt(calMatch[1]) > 20) return false;       // >20 cal too long for 1 min
+  return true;
+}
+
+function genAMRAP(pool, level, duration, bodyFocus) {
+  const count = duration <= 15 ? 3 : duration <= 25 ? 4 : 5;
+  const sel = balancedPick(pool, count);
+  return {
+    title: `${duration}-Minute AMRAP`,
+    format: 'AMRAP',
+    description: `Complete as many rounds as possible in ${duration} minutes. Pace yourself — consistent rounds from start to finish beat a blazing first half.`,
+    rows: sel.map(m => ({ movement: m.name, reps: String(getReps(m, level)), tip: m.tip })),
+    scoring: `Record total rounds + reps completed (e.g. "8 rounds + 12 reps").`,
+    scoring_type: 'rounds_reps'
+  };
+}
+function genEMOM(pool, level, duration, bodyFocus) {
+  // Filter out movements that can't realistically fit within 1 minute
+  const emomPool = pool.filter(m => isEmomSafe(m, level));
+  const usePool = emomPool.length >= 3 ? emomPool : pool; // fallback if too few remain
+  const movCount = Math.min(4, Math.max(2, Math.floor(duration / 4)));
+  const sel = balancedPick(usePool, movCount);
+  return {
+    title: `${duration}-Minute EMOM`,
+    format: 'EMOM',
+    description: `Every Minute On the Minute for ${duration} minutes. Start the prescribed work at the top of each minute; rest for whatever time remains.`,
+    rows: sel.map((m, i) => ({ movement: m.name, reps: `Min ${i+1} (repeat): ${getReps(m, level)}${isTimedOrDistance(m) ? '' : ' reps'}`, tip: m.tip })),
+    scoring: `Track whether you complete each minute before the next starts. Adjust reps if you're consistently missing.`,
+    scoring_type: 'rounds_reps'
+  };
+}
+function genForTime(pool, level) {
+  const schemes = { beginner:[15,12,9], intermediate:[21,15,9], advanced:[30,20,10] };
+  const scheme = schemes[level];
+  const sel = balancedPick(pool, 3);
+  const allCardio = sel.every(m => isTimedOrDistance(m));
+  if (allCardio) {
+    return {
+      title: 'Cardio Chipper',
+      format: 'For Time',
+      description: `Complete all work as fast as possible. Attack each machine — no pacing, no resting between efforts.`,
+      rows: sel.map(m => ({ movement: m.name, reps: String(getReps(m, level)), tip: m.tip })),
+      scoring: `Record your total finish time.`,
+      scoring_type: 'time'
+    };
+  }
+  return {
+    title: `For Time — ${scheme.join('-')}`,
+    format: 'For Time',
+    description: `Complete all reps as fast as possible using the ${scheme.join('-')} rep scheme. Push the pace — this is a sprint, not a jog.`,
+    rows: sel.map(m => ({ movement: m.name, reps: isTimedOrDistance(m) ? String(getReps(m, level)) : scheme.join(' – ') + ' reps', tip: m.tip })),
+    scoring: `Record your total finish time. Aim to move continuously.`,
+    scoring_type: 'time'
+  };
+}
+function genCircuit(pool, level, duration, bodyFocus) {
+  const movCount = duration <= 15 ? 4 : duration <= 30 ? 5 : 6;
+  const rounds = duration <= 15 ? 3 : duration <= 30 ? 4 : 5;
+  const sel = balancedPick(pool, movCount);
+  return {
+    title: `${rounds}-Round Circuit`,
+    format: 'Circuit',
+    description: `Complete all ${movCount} movements back-to-back with minimal rest. Rest 60 seconds between rounds. ${rounds} rounds total.`,
+    rows: sel.map(m => ({ movement: m.name, reps: String(getReps(m, level)), tip: m.tip })),
+    scoring: `Record total time and round splits.`,
+    scoring_type: 'time'
+  };
+}
+
+function renderWorkout(w) {
+  document.getElementById('wod-title').textContent = w.title;
+  document.getElementById('wod-sub').textContent = `Generated for you · ${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}`;
+  document.getElementById('wod-meta').innerHTML =
+    `<span class="chip">${cap(w.level)}</span>
+     <span class="chip">${(Array.isArray(w.bodyFocus)?w.bodyFocus:w.bodyFocus.split(',')).map(bf=>cap(bf.replace('-',' '))).join(' + ')}</span>
+     <span class="chip">${w.duration} min</span>
+     <span class="chip">${w.equipment.map(e=>cap(e)).join(' + ')}</span>`;
+  document.getElementById('wod-desc').textContent = w.description;
+  document.getElementById('wod-movements').innerHTML = w.rows.map(r => `
+    <tr>
+      <td><div class="mname"><a href="/movements/${slugify(r.movement)}">${r.movement}</a></div>${r.tip ? `<div class="mtip">💡 ${r.tip}</div>` : ''}</td>
+      <td><span class="rbadge">${r.reps}</span></td>
+      <td style="color:var(--muted,#666);font-size:12px">${r.tip || ''}</td>
+    </tr>`).join('');
+  document.getElementById('wod-scoring').textContent = w.scoring;
+
+  // warmup / cooldown
+  const wu = shuffle([...WARMUP]).slice(0,5);
+  const cd = shuffle([...COOLDOWN]).slice(0,4);
+  document.getElementById('warmup-list').innerHTML = wu.map(i => `<li>${i}</li>`).join('');
+  document.getElementById('cooldown-list').innerHTML = cd.map(i => `<li>${i}</li>`).join('');
+
+  document.getElementById('workout-result').style.display = 'block';
+}
+
+
+// ── MODALS ────────────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function openAuthModal(mode = 'login', context = '') {
+  switchAuthTab(mode, context);
+  openModal('auth-modal');
+}
+function switchAuthTab(tab, context = '') {
+  let title, sub;
+  if (tab === 'login') {
+    if (context === 'log') {
+      title = 'Sign In to Log Result';
+      sub = 'Sign in to record your score and track your progress.';
+    } else if (context === 'save') {
+      title = 'Sign In to Save Workout';
+      sub = 'Create a free account to save workouts and build your library.';
+    } else {
+      title = 'Sign In';
+      sub = 'Sign in to save workouts and track results.';
+    }
+  } else {
+    title = 'Create Account';
+    sub = 'Join the HomeWODrx community — it\'s free.';
+  }
+  document.getElementById('auth-title').textContent = title;
+  document.getElementById('auth-sub').textContent = sub;
+  document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('signup-form').style.display = tab === 'signup' ? 'block' : 'none';
+  document.getElementById('auth-error').classList.remove('vis');
+  document.getElementById('auth-success').classList.remove('vis');
+}
+
+async function submitLogin() {
+  const email = document.getElementById('li-email').value.trim();
+  const pass = document.getElementById('li-pass').value;
+  const errEl = document.getElementById('auth-error');
+  if (!email || !pass) { errEl.textContent = 'Please fill in all fields.'; errEl.classList.add('vis'); return; }
+  const { user, error } = await db.signIn(email, pass);
+  if (error) { errEl.textContent = error.message || 'Sign in failed.'; errEl.classList.add('vis'); return; }
+  currentUser = user;
+  closeModal('auth-modal');
+  showToast('Welcome back! 👋','success');
+  // Refresh nav
+  location.reload();
+}
+
+async function submitSignup() {
+  const username = document.getElementById('su-user').value.trim();
+  const email = document.getElementById('su-email').value.trim();
+  const pass = document.getElementById('su-pass').value;
+  const errEl = document.getElementById('auth-error');
+  if (!username || !email || !pass) { errEl.textContent = 'Please fill in all fields.'; errEl.classList.add('vis'); return; }
+  if (pass.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.classList.add('vis'); return; }
+  const { user, error } = await db.signUp(email, pass, username);
+  if (error) { errEl.textContent = error.message || 'Sign up failed.'; errEl.classList.add('vis'); return; }
+  currentUser = user;
+  closeModal('auth-modal');
+  showToast('Account created! Welcome to HomeWODrx 🔥','success');
+  location.reload();
+}
+
+function openLogResult() {
+  if (!currentUser) { openAuthModal('login', 'log'); return; }
+  if (!currentWorkout) return;
+  const fmt = currentWorkout.format || '';
+  const label = fmt.toLowerCase().includes('time') ? 'Time (mm:ss)' : 'Rounds + Reps';
+  const ph = fmt.toLowerCase().includes('time') ? 'e.g. 7:42' : 'e.g. 8 rounds + 12 reps';
+  document.getElementById('score-label').textContent = label;
+  document.getElementById('result-score').placeholder = ph;
+  document.getElementById('result-modal-sub').textContent = `Log your score for: ${currentWorkout.title}`;
+  document.getElementById('result-error').classList.remove('vis');
+  document.getElementById('result-score').value = '';
+  document.getElementById('result-notes').value = '';
+  openModal('result-modal');
+}
+
+async function submitResult() {
+  const score = document.getElementById('result-score').value.trim();
+  const notes = document.getElementById('result-notes').value.trim();
+  const isPublic = document.getElementById('result-public').value === 'yes';
+  const isRx = document.getElementById('result-rx').value === 'yes';
+  const errEl = document.getElementById('result-error');
+  if (!score) { errEl.textContent = 'Please enter a score.'; errEl.classList.add('vis'); return; }
+
+  // Save workout first if it has no ID
+  let workoutId = currentWorkout.id;
+  if (!workoutId) {
+    const { data } = await db.saveWorkout({
+      user_id: currentUser.id,
+      username: currentUser.email?.split('@')[0] || 'user',
+      title: currentWorkout.title,
+      format: currentWorkout.format,
+      duration: currentWorkout.duration,
+      level: currentWorkout.level,
+      body_focus: Array.isArray(currentWorkout.bodyFocus) ? currentWorkout.bodyFocus.join(',') : currentWorkout.bodyFocus,
+      equipment: currentWorkout.equipment,
+      movements: currentWorkout.rows,
+      scoring: currentWorkout.scoring,
+      scoring_type: currentWorkout.scoring_type || 'rounds_reps',
+      is_public: isPublic
+    });
+    workoutId = data?.id;
+  }
+
+  const result = {
+    user_id: currentUser.id,
+    username: currentUser.email?.split('@')[0] || 'user',
+    workout_id: workoutId,
+    score_display: score,
+    is_rx: isRx,
+    notes,
+    date: new Date().toISOString().split('T')[0]
+  };
+
+  const { error } = await db.saveResult(result);
+  if (error) { errEl.textContent = error.message; errEl.classList.add('vis'); return; }
+  closeModal('result-modal');
+  showToast('Result logged! 🎉','success');
+}
+
+function openSaveWorkout() {
+  if (!currentUser) { openAuthModal('login', 'save'); return; }
+  if (!currentWorkout) return;
+  document.getElementById('save-name').value = currentWorkout.title;
+  document.getElementById('save-desc').value = currentWorkout.description || '';
+  document.getElementById('save-error').classList.remove('vis');
+  openModal('save-modal');
+}
+
+async function submitSave() {
+  const name = document.getElementById('save-name').value.trim();
+  const desc = document.getElementById('save-desc').value.trim();
+  const isPublic = document.getElementById('save-public').value === 'yes';
+  const errEl = document.getElementById('save-error');
+  if (!name) { errEl.textContent = 'Please enter a workout name.'; errEl.classList.add('vis'); return; }
+
+  const { data, error } = await db.saveWorkout({
+    user_id: currentUser.id,
+    username: currentUser.email?.split('@')[0] || 'user',
+    title: name,
+    description: desc,
+    format: currentWorkout.format,
+    duration: currentWorkout.duration,
+    level: currentWorkout.level,
+    body_focus: currentWorkout.bodyFocus,
+    equipment: currentWorkout.equipment,
+    movements: currentWorkout.rows,
+    scoring: currentWorkout.scoring,
+    scoring_type: currentWorkout.scoring_type || 'rounds_reps',
+    is_public: isPublic
+  });
+
+  if (error) { errEl.textContent = error.message; errEl.classList.add('vis'); return; }
+  currentWorkout = { ...currentWorkout, id: data?.id };
+  closeModal('save-modal');
+  showToast(isPublic ? 'Submitted for community review! We\'ll approve it shortly. 🔍' : 'Workout saved! 💾','success');
+}
+
+function openCommResultModal(workoutId, title, format) {
+  if (!currentUser) { openAuthModal('login', 'log'); return; }
+  const w = communityWorkouts.find(x => x.id === workoutId) || myWorkouts.find(x => x.id === workoutId);
+  if (!w) return;
+  currentWorkout = w;
+  openLogResult();
+}
+
+function printWorkout() {
+  if (!currentWorkout) { showToast('Generate a workout first.','error'); return; }
+  const w = currentWorkout;
+
+  // Build movement rows
+  const rows = (w.rows || []).map(r => `
+    <tr>
+      <td><strong>${escHtml(r.movement||r.name||'')}</strong></td>
+      <td>${escHtml(r.reps||r.time||'')}</td>
+      <td style="color:#555">${escHtml(r.tip||'')}</td>
+    </tr>`).join('');
+
+  // Build chips
+  const chips = [
+    w.format && `<span>${escHtml(w.format)}</span>`,
+    w.duration && `<span>${w.duration} min</span>`,
+    w.level && `<span>${cap(w.level)}</span>`,
+    ...(w.equipment||[]).map(e=>`<span>${cap(e)}</span>`)
+  ].filter(Boolean).join('');
+
+  // Build warmup/cooldown lists
+  const wuList = (w.warmup||[]).map(x=>`<li>${escHtml(x)}</li>`).join('') ||
+    document.querySelectorAll('#warmup-list li').length
+      ? [...document.querySelectorAll('#warmup-list li')].map(li=>`<li>${li.textContent}</li>`).join('')
+      : '';
+  const cdList = (w.cooldown||[]).map(x=>`<li>${escHtml(x)}</li>`).join('') ||
+    [...document.querySelectorAll('#cooldown-list li')].map(li=>`<li>${li.textContent}</li>`).join('');
+
+  const wc = (wuList || cdList) ? `
+    <div class="pwc">
+      <div class="pwc-card"><h4>🔥 Warm-Up (do first)</h4><ul>${wuList}</ul></div>
+      <div class="pwc-card"><h4>🧊 Cool-Down</h4><ul>${cdList}</ul></div>
+    </div>` : '';
+
+  const printArea = document.getElementById('print-area');
+  printArea.innerHTML = `
+    <div class="ph">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABLAAAAE4CAMAAAB8JPrvAAABgFBMVEVJAAA1AAAtAABBAAAlAAA5AAAEAAAxAAC4AADsv78dAAC2AACyAACwAACuAACqAACoAAApAACmAACiAADou7vlv7+gAADjv7/hv7/fv7/dv7+eAADbv7/Zv7/Xv7/Vv7/Tv7/Rv7/Pv7/Nv7/Mv7+aAADKv7/Iv7/Gv7/Ev7/Cv7+YAACWAADqv7+SAACQAAAVAACOAAAhAACKAACIAACEAACCAACAAAC0AAB8AAB6AACsAAB4AAB0AACkAAByAABwAAAZAADAv7+cAABsAABqAABoAACUAABkAAANAABiAACMAABgAACGAABcAABaAABYAABUAAB2AABSAAARAABQAABuAABMAAB+AABmAABGAABEAABeAAA+AAA8AABWAABOAAAIAAAwMDBAQEC/v79/f3/uv7/LPz/v7+8QEBDPz8+fn59gYGAgICDf39/77+++EBBwcHDUYGD239/km5vDICCvr69QUFCPj4/be3vyz8/QUFC6AAD///8AAAD///913E00AAAAgHRSTlP/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////ADgFS2cAAAAJcEhZcwAACxMAAAsTAQCanBgAAAT1aVRYdFhNTDpjb20uYWRvYmUueG1wAAAAAAA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/PiA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJBZG9iZSBYTVAgQ29yZSAxMC4wLWMwMDAgNzkuZDIwZTQ2NjMwLCAyMDI1LzEyLzA5LTAyOjExOjIzICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjcuNCAoTWFjaW50b3NoKSIgeG1wOkNyZWF0ZURhdGU9IjIwMjYtMDQtMDZUMTY6MDg6MzgtMDQ6MDAiIHhtcDpNb2RpZnlEYXRlPSIyMDI2LTA0LTA2VDE2OjEwOjUwLTA0OjAwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDI2LTA0LTA2VDE2OjEwOjUwLTA0OjAwIiBkYzpmb3JtYXQ9ImltYWdlL3BuZyIgcGhvdG9zaG9wOkNvbG9yTW9kZT0iMiIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozMzVjNWQ2Ni1lODZiLTRlOWQtYWJmZC0wY2JjYzUwMDY2YmQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MzM1YzVkNjYtZTg2Yi00ZTlkLWFiZmQtMGNiY2M1MDA2NmJkIiB4bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ9InhtcC5kaWQ6MzM1YzVkNjYtZTg2Yi00ZTlkLWFiZmQtMGNiY2M1MDA2NmJkIj4gPHhtcE1NOkhpc3Rvcnk+IDxyZGY6U2VxPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0iY3JlYXRlZCIgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDozMzVjNWQ2Ni1lODZiLTRlOWQtYWJmZC0wY2JjYzUwMDY2YmQiIHN0RXZ0OndoZW49IjIwMjYtMDQtMDZUMTY6MDg6MzgtMDQ6MDAiIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkFkb2JlIFBob3Rvc2hvcCAyNy40IChNYWNpbnRvc2gpIi8+IDwvcmRmOlNlcT4gPC94bXBNTTpIaXN0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" alt="HomeWODrx">
+      <div class="ph-url">homewodrx.com<br>Your Home Gym WOD Generator</div>
+    </div>
+    <div class="pt">${escHtml(w.title||'Generated Workout')}</div>
+    <div class="ps">${escHtml(w.description||'')}</div>
+    <div class="pm">${chips}</div>
+    <table>
+      <thead><tr><th>Movement</th><th>Reps / Time</th><th>Coaching Tip</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="pscore">
+      <h4>📊 Scoring</h4>
+      <p>${escHtml(w.scoring||document.getElementById('wod-scoring').textContent||'')}</p>
+    </div>
+    ${wc}
+    <div class="pfoot">Generated at homewodrx.com · ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div>
+  `;
+  // Give browser one paint cycle to render injected HTML before opening print dialog
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      window.print();
+      setTimeout(() => { printArea.innerHTML = ''; }, 500);
+    });
+  });
+}
+
+async function nominateWorkout() {
+  if (!currentUser) { openAuthModal(); return; }
+  if (!currentWorkout) return;
+  showToast('Workout submitted for Featured WOD consideration! ⭐','info');
+  // In production, this would upsert to workouts table with nomination_pending=true
+  if (supabaseClient && currentWorkout.id) {
+    await supabaseClient.from('workouts').update({ nomination_pending: true }).eq('id', currentWorkout.id);
+  }
+}
+
+async function nominateFromDetail(workoutId) {
+  if (!currentUser) { openAuthModal(); return; }
+  showToast('Workout submitted for Featured WOD consideration! ⭐','info');
+  if (supabaseClient) {
+    await supabaseClient.from('workouts').update({ nomination_pending: true }).eq('id', workoutId);
+  }
+}
+
+// ── DEMO DATA ─────────────────────────────────────────────────
+function getDemoWorkouts() {
+  return [
+    {id:"sw1",username:"firebreather_k",title:"The Inferno",format:"AMRAP",duration:20,level:"advanced",body_focus:"full-body",equipment:["kettlebell","pullupbar"],is_public:true,created_at:"2026-03-18",description:"A relentless 20-min grind combining kettlebell power with gymnastics.",movements:[{movement:"Kettlebell Swings",reps:"15",tip:"Hip snap"},{movement:"Pull-Ups",reps:"7",tip:"Strict or kipping"},{movement:"Goblet Squats",reps:"10",tip:"Elbows in"},{movement:"Mountain Climbers",reps:"20",tip:"Hips level"}],scoring:"Count total rounds + reps.",scoring_type:"rounds_reps",result_count:4},
+    {id:"sw2",username:"rxrunner",title:"Morning Grind",format:"Circuit",duration:30,level:"intermediate",body_focus:"full-body",equipment:["dumbbells"],is_public:true,created_at:"2026-03-19",description:"4 rounds of functional dumbbell work for a solid 30-min morning session.",movements:[{movement:"DB Thrusters",reps:"12",tip:"One fluid motion"},{movement:"DB Bent-Over Rows",reps:"12",tip:"Row to lower ribs"},{movement:"DB Romanian DL",reps:"15",tip:"Load the hamstrings"},{movement:"Burpees",reps:"8",tip:"Step out if needed"}],scoring:"4 rounds for time. Rest 60s between rounds.",scoring_type:"time",result_count:3},
+    {id:"sw3",username:"no_excuses_jen",title:"No Excuses",format:"AMRAP",duration:15,level:"beginner",body_focus:"full-body",equipment:["bodyweight"],is_public:true,created_at:"2026-03-20",description:"Zero equipment. Zero excuses. Perfect for travel.",movements:[{movement:"Air Squats",reps:"15"},{movement:"Push-Ups",reps:"10"},{movement:"Sit-Ups",reps:"12"},{movement:"Jump Squats",reps:"8"}],scoring:"Total rounds + reps in 15 min.",scoring_type:"rounds_reps",result_count:3},
+    {id:"sw4",username:"coach_dmac",title:"KB Destroyer",format:"EMOM",duration:24,level:"intermediate",body_focus:"full-body",equipment:["kettlebell"],is_public:true,created_at:"2026-03-21",description:"6 exercises, 4 rounds EMOM. Earn your rest.",movements:[{movement:"Kettlebell Swings",reps:"Min 1: 15 reps"},{movement:"Goblet Squats",reps:"Min 2: 12 reps"},{movement:"KB Press",reps:"Min 3: 10 each"},{movement:"Mountain Climbers",reps:"Min 4: 30 reps"}],scoring:"Track each minute — finish or fail.",scoring_type:"rounds_reps",result_count:0},
+    {id:"sw5",username:"wod_wombat",title:"The 21-15-9",format:"For Time",duration:12,level:"intermediate",body_focus:"full-body",equipment:["barbell","pullupbar"],is_public:true,created_at:"2026-03-22",description:"A classic rep scheme. Simple structure, brutal execution.",movements:[{movement:"Barbell Thruster",reps:"21 – 15 – 9"},{movement:"Pull-Ups",reps:"21 – 15 – 9"}],scoring:"Time to complete all rounds.",scoring_type:"time",result_count:3},
+    {id:"sw6",username:"strongmom_pdx",title:"Legs & Lungs",format:"Circuit",duration:25,level:"intermediate",body_focus:"lower-body",equipment:["bodyweight","jumprope"],is_public:true,created_at:"2026-03-23",description:"Posterior chain meets cardio. 5 rounds, keep moving.",movements:[{movement:"Single Unders",reps:"50"},{movement:"Lunges",reps:"20"},{movement:"Glute Bridges",reps:"20"},{movement:"Jump Squats",reps:"12"}],scoring:"5 rounds for time.",scoring_type:"time",result_count:0},
+  ];
+}
+
+// ── UTILITIES ─────────────────────────────────────────────────
+function showToast(msg, type = 'info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => { t.classList.remove('show'); }, 3500);
+}
+function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+// ══════════════════════════════════════════════════════════════
+// MODE TOGGLE
+// ══════════════════════════════════════════════════════════════
+function setGenMode(mode) {
+  const isGenerate = mode === 'generate';
+  document.getElementById('gen-mode-generate').style.display = isGenerate ? '' : 'none';
+  document.getElementById('gen-mode-create').style.display = isGenerate ? 'none' : '';
+  document.getElementById('mode-btn-generate').classList.toggle('active', isGenerate);
+  document.getElementById('mode-btn-create').classList.toggle('active', !isGenerate);
+  if (!isGenerate) cyoInit();
+}
+
+// ══════════════════════════════════════════════════════════════
+// CREATE YOUR OWN — builder
+// ══════════════════════════════════════════════════════════════
+let cyoMovements = [];
+let cyoDropdownResults = [];
+let cyoAllMovements = [];
+let cyoMovSearchTimer = null;
+
+function cyoInit() {
+  // Show gate for logged-out users, builder for logged-in
+  const isAuthed = !!currentUser;
+  document.getElementById('cyo-gate').style.display = isAuthed ? 'none' : '';
+  document.getElementById('cyo-builder').style.display = isAuthed ? '' : 'none';
+  // Hide "Free Account" badge for logged-in users
+  const badge = document.getElementById('cyo-free-badge');
+  if (badge) badge.style.display = isAuthed ? 'none' : '';
+  // Load movements for logged-in users
+  if (isAuthed && !cyoAllMovements.length) cyoLoadMovements();
+  // Wire up pill groups (single-select)
+  ['cyo-format-group', 'cyo-level-group'].forEach(groupId => {
+    document.querySelectorAll('#' + groupId + ' .pill').forEach(p => {
+      p.onclick = () => {
+        document.querySelectorAll('#' + groupId + ' .pill').forEach(x => x.classList.remove('sel'));
+        p.classList.add('sel');
+        if (groupId === 'cyo-format-group') cyoUpdateScoring();
+      };
+    });
+  });
+  // Also update scoring when duration slider changes
+  const durSlider = document.getElementById('cyo-duration');
+  if (durSlider) durSlider.addEventListener('input', cyoUpdateScoring);
+  // Set initial scoring text
+  cyoUpdateScoring();
+}
+
+function cyoUpdateScoring() {
+  const field = document.getElementById('cyo-scoring');
+  if (!field) return;
+  const format = cyoGetPill('cyo-format-group') || 'AMRAP';
+  const dur = document.getElementById('cyo-duration')?.value || 20;
+  const defaults = {
+    'AMRAP':    `${dur}-minute AMRAP — count total rounds + reps completed`,
+    'EMOM':     `${dur}-minute EMOM — complete each movement every minute on the minute`,
+    'For Time': `For time — fastest time to complete all reps wins`,
+    'Circuit':  `${dur} minutes — count total rounds completed`,
+  };
+  field.value = defaults[format] || '';
+}
+
+async function cyoLoadMovements() {
+  if (cyoAllMovements.length) return;
+  if (!supabaseClient) { setTimeout(cyoLoadMovements, 400); return; }
+  const { data } = await supabaseClient.from('movements').select('name,slug,category').order('name');
+  if (data) cyoAllMovements = data;
+}
+
+let cyoBrowseCategory = 'All';
+
+function cyoSearchMovements() {
+  clearTimeout(cyoMovSearchTimer);
+  cyoMovSearchTimer = setTimeout(() => {
+    const q = document.getElementById('cyo-mov-search').value.trim().toLowerCase();
+    const dd = document.getElementById('cyo-mov-dropdown');
+    if (!q) {
+      cyoShowBrowseMode(dd);
+      return;
+    }
+    // Search mode
+    const matches = cyoAllMovements.filter(m => m.name.toLowerCase().includes(q)).slice(0, 15);
+    cyoDropdownResults = matches;
+    if (!matches.length) {
+      dd.innerHTML = '<div class="cyo-mov-dd-item" style="color:var(--muted,#666);cursor:default">No movements found</div>';
+      dd.classList.add('open'); return;
+    }
+    dd.innerHTML = matches.map((m, i) =>
+      `<div class="cyo-mov-dd-item" onclick="cyoAddMovement(${i})"><span>${m.name}</span><span class="dd-cat">${m.category || ''}</span></div>`
+    ).join('');
+    dd.classList.add('open');
+  }, 120);
+}
+
+function cyoShowBrowseMode(dd) {
+  if (!cyoAllMovements.length) {
+    dd.innerHTML = '<div class="cyo-mov-dd-item" style="color:var(--muted,#666);cursor:default">Loading movement library…</div>';
+    dd.classList.add('open');
+    // Retry once loaded
+    setTimeout(() => {
+      if (cyoAllMovements.length && dd.classList.contains('open')) cyoShowBrowseMode(dd);
+    }, 500);
+    return;
+  }
+  // Build sorted unique category list
+  const cats = ['All', ...new Set(cyoAllMovements.map(m => m.category).filter(Boolean).sort())];
+  // Filter by selected category
+  const filtered = cyoBrowseCategory === 'All'
+    ? cyoAllMovements
+    : cyoAllMovements.filter(m => m.category === cyoBrowseCategory);
+  const shown = filtered.slice(0, 18);
+  cyoDropdownResults = shown;
+  dd.innerHTML =
+    `<div class="cyo-browse-cats">${cats.map(c =>
+      `<button class="cyo-cat-chip${c === cyoBrowseCategory ? ' active' : ''}" onclick="event.stopPropagation();cyoSetBrowseCategory('${c.replace(/'/g, "\\'")}')">${c}</button>`
+    ).join('')}</div>` +
+    `<div class="cyo-browse-count">${filtered.length} movement${filtered.length !== 1 ? 's' : ''}${cyoBrowseCategory !== 'All' ? ' in ' + cyoBrowseCategory : ''}</div>` +
+    shown.map((m, i) =>
+      `<div class="cyo-mov-dd-item" onclick="cyoAddMovement(${i})"><span>${m.name}</span><span class="dd-cat">${m.category || ''}</span></div>`
+    ).join('') +
+    (filtered.length > 18 ? `<div class="cyo-browse-more">+${filtered.length - 18} more — type to search</div>` : '');
+  dd.classList.add('open');
+}
+
+function cyoSetBrowseCategory(cat) {
+  cyoBrowseCategory = cat;
+  const dd = document.getElementById('cyo-mov-dropdown');
+  cyoShowBrowseMode(dd);
+}
+
+function cyoAddMovement(idx) {
+  const m = cyoDropdownResults[idx];
+  if (!m) return;
+  cyoMovements.push({ name: m.name, slug: m.slug || '', reps: '', tip: '' });
+  document.getElementById('cyo-mov-search').value = '';
+  const dd = document.getElementById('cyo-mov-dropdown');
+  dd.classList.remove('open'); dd.innerHTML = ''; cyoDropdownResults = [];
+  cyoRenderMovements();
+}
+function cyoRemoveMovement(idx) { cyoMovements.splice(idx, 1); cyoRenderMovements(); }
+
+function cyoRenderMovements() {
+  const list = document.getElementById('cyo-mov-list');
+  if (!cyoMovements.length) {
+    list.innerHTML = '<div class="cyo-mov-empty">No movements yet — click above to browse or search the library.</div>'; return;
+  }
+  list.innerHTML = '<div class="cyo-mov-count">' + cyoMovements.length + ' movement' + (cyoMovements.length !== 1 ? 's' : '') + ' — fill in reps/time for each</div>' +
+    cyoMovements.map((m, i) => `<div class="cyo-mov-row">
+      <span class="cyo-mov-row-num">${i + 1}</span>
+      <span class="cyo-mov-row-name" title="${m.name}">${m.name}</span>
+      <input class="cyo-mov-row-reps" type="text" placeholder="Reps / time" value="${m.reps}" oninput="cyoMovements[${i}].reps=this.value">
+      <input class="cyo-mov-row-tip" type="text" placeholder="Coaching tip (optional)" value="${m.tip}" oninput="cyoMovements[${i}].tip=this.value">
+      <button class="cyo-mov-row-del" onclick="cyoRemoveMovement(${i})" title="Remove">×</button>
+    </div>`).join('');
+}
+
+function cyoGetEquipment() {
+  return [...document.querySelectorAll('#cyo-eq-grid .eq-card.sel')].map(c => c.dataset.val);
+}
+function cyoGetPill(groupId) {
+  const el = document.querySelector('#' + groupId + ' .pill.sel');
+  return el ? el.dataset.val : '';
+}
+
+function cyoReset() {
+  if (!confirm('Start over? This will clear your workout.')) return;
+  cyoMovements = [];
+  cyoRenderMovements();
+  document.getElementById('cyo-title').value = '';
+  document.getElementById('cyo-desc').value = '';
+  document.getElementById('cyo-duration').value = 20;
+  document.getElementById('cyo-dur-val').textContent = 20;
+  document.getElementById('cyo-public').checked = false;
+  document.getElementById('cyo-alert').style.display = 'none';
+  document.querySelectorAll('#cyo-eq-grid .eq-card').forEach((c, i) => c.classList.toggle('sel', i === 0));
+  document.querySelectorAll('#cyo-format-group .pill').forEach((p, i) => p.classList.toggle('sel', i === 0));
+  document.querySelectorAll('#cyo-level-group .pill').forEach((p, i) => p.classList.toggle('sel', i === 1));
+  cyoUpdateScoring(); // restore default scoring text for reset format/duration
+}
+
+function cyoShowAlert(msg) {
+  const el = document.getElementById('cyo-alert');
+  el.textContent = msg; el.style.display = '';
+  setTimeout(() => { el.style.display = 'none'; }, 4000);
+}
+
+async function cyoSave() {
+  if (!currentUser) { openAuthModal('login', 'save'); return; }
+  const title = document.getElementById('cyo-title').value.trim();
+  if (!title) { cyoShowAlert('Please give your workout a name.'); return; }
+  if (!cyoMovements.length) { cyoShowAlert('Add at least one movement.'); return; }
+  const missing = cyoMovements.filter(m => !m.reps.trim());
+  if (missing.length) { cyoShowAlert('Set reps/time for: ' + missing.map(m => m.name).join(', ')); return; }
+
+  const format = cyoGetPill('cyo-format-group') || 'AMRAP';
+  const level = cyoGetPill('cyo-level-group') || 'intermediate';
+  const duration = parseInt(document.getElementById('cyo-duration').value) || 20;
+  const equipment = cyoGetEquipment();
+  const description = document.getElementById('cyo-desc').value.trim();
+  const scoring = document.getElementById('cyo-scoring').value.trim();
+  const isPublic = document.getElementById('cyo-public').checked;
+  const movements = cyoMovements.map(m => ({ name: m.name, reps: m.reps.trim(), tip: m.tip.trim() }));
+
+  const btn = document.getElementById('cyo-save-btn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  const { data, error } = await db.saveWorkout({
+    title, format, duration, level, body_focus: 'full-body',
+    equipment, description, movements, scoring,
+    is_public: isPublic, is_manual: true,
+    user_id: currentUser.id,
+    username: currentUser.email?.split('@')[0] || 'user'
+  });
+
+  btn.disabled = false; btn.textContent = '💾 Save Workout';
+  if (error) { cyoShowAlert('Error saving: ' + error.message); return; }
+
+  showToast(isPublic ? 'Submitted for community review! We\'ll approve it shortly. 🔍' : 'Workout saved to My Workouts! 💾', 'success');
+  cyoReset();
+}
+
+// Close CYO dropdown on outside click
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.cyo-mov-search-wrap')) {
+    const dd = document.getElementById('cyo-mov-dropdown');
+    if (dd) { dd.classList.remove('open'); dd.innerHTML = ''; cyoDropdownResults = []; }
+  }
+});
+
+// Preload movements when user logs in; re-init CYO if it's the active mode
+document.addEventListener('authStateChange', () => {
+  if (currentUser && !cyoAllMovements.length) cyoLoadMovements();
+  // Hide "Free Account" badge once the user is logged in
+  const badge = document.getElementById('cyo-free-badge');
+  if (badge) badge.style.display = currentUser ? 'none' : '';
+  if (document.getElementById('gen-mode-create').style.display !== 'none') cyoInit();
+});
+
+function slugify(s) { return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function formatDate(d) {
+  if (!d) return '';
+  try { return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+  catch(e) { return d; }
+}
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+</script>
+<script src="/js/footer.js"></script>
+<!-- Print-only area: hidden on screen, populated by printWorkout() -->
+<div id="print-area" aria-hidden="true"></div>
+</body>
+</html>

@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<!-- Sentry Error Monitoring -->
+<script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Smart Stretch Builder — Build a Custom Mobility Routine | HomeWodRX</title>
+<meta name="description" content="Generate a personalized stretching and mobility routine in seconds. Choose your focus area, duration, and modality — HomeWodRX builds the perfect stretch session for you."/>
+<meta property="og:title" content="Smart Stretch Builder — Custom Mobility Routines | HomeWodRX"/>
+<meta property="og:description" content="Build a personalized stretch session based on your body's needs, time available, and flexibility level. Free mobility generator for home athletes."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://homewodrx.com/stretchbuilder"/>
+<meta property="og:image" content="https://homewodrx.com/images/og-default.png"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+<meta property="og:image:alt" content="Smart Stretch Builder — HomeWodRX"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://homewodrx.com/images/og-default.png"/>
+<link rel="canonical" href="https://homewodrx.com/stretchbuilder"/>
+<link rel="icon" type="image/x-icon" href="/favicon.ico"/>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/css/style.css"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HZM475VDN3');
+</script>
+<!-- Vercel Analytics -->
+<script defer src="/_vercel/insights/script.js"></script>
+<script src="/js/config.js"></script>
+<script src="/js/db.js"></script>
+<script src="/js/nav.js"></script>
+<script src="/js/stretch-db.js"></script>
+
+<style>
+/* ── PAGE-SPECIFIC VARS ──────────────────────────────────────────── */
+:root {
+  --gr: #1a472a;
+  --gr-mid: #2d6a4f;
+  --gr-light: #f0f7f3;
+  --gr-border: #c8e0d4;
+}
+
+/* ── PAGE LAYOUT ─────────────────────────────────────────────── */
+.page-header {
+  background: var(--white, #fff);
+  border-bottom: 1px solid var(--border, #e5e5e5);
+  padding: 32px 24px 28px;
+}
+.page-header-inner { max-width: 1200px; margin: 0 auto; }
+.page-title {
+  font-family: var(--font-head, 'Bebas Neue', sans-serif);
+  font-size: 3rem; letter-spacing: .04em;
+  line-height: 1; color: var(--text, #1a1a1a); margin-bottom: 6px;
+}
+.page-subtitle { font-size: .95rem; color: var(--muted, #666); max-width: 480px; line-height: 1.5; }
+
+.page-wrap { max-width: 1200px; margin: 0 auto; padding: 28px 24px 80px; }
+
+/* ── CONFIG GRID ─────────────────────────────────────────────── */
+.config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+
+/* ── CONFIG CARD ─────────────────────────────────────────────── */
+.config-card {
+  background: var(--white, #fff); border: 1px solid var(--border, #e5e5e5);
+  border-radius: var(--radius, 10px); padding: 24px;
+}
+.step-label {
+  font-size: .72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--gr); margin-bottom: 4px;
+}
+.step-title { font-size: 1.1rem; font-weight: 700; color: var(--text, #1a1a1a); margin-bottom: 4px; }
+.step-hint { font-size: .9rem; color: var(--muted, #666); margin-bottom: 18px; line-height: 1.5; }
+
+/* ── FOCUS GRID ──────────────────────────────────────────────── */
+.focus-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 8px; }
+.focus-card {
+  background: var(--bg, #f3f3f3); border: 2px solid var(--border, #e5e5e5); border-radius: 9px;
+  padding: 14px 12px; text-align: center; cursor: pointer;
+  transition: all .15s; user-select: none;
+}
+.focus-card:hover { border-color: var(--gr); background: var(--gr-light); }
+.focus-card.sel { border-color: var(--gr); background: var(--gr-light); }
+.focus-card .focus-name { font-size: .9rem; font-weight: 700; color: var(--text, #1a1a1a); display: block; margin-bottom: 3px; }
+.focus-card .focus-sub { font-size: .78rem; color: var(--muted, #666); display: block; }
+.focus-card.sel .focus-name { color: var(--gr); }
+.focus-card.sel .focus-sub { color: #4a7a5e; }
+
+/* ── MODALITY GRID ───────────────────────────────────────────── */
+.mod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+.mod-card {
+  background: var(--bg, #f3f3f3); border: 2px solid var(--border, #e5e5e5); border-radius: 9px;
+  padding: 16px; cursor: pointer; transition: all .15s; user-select: none;
+}
+.mod-card:hover { border-color: var(--gr); background: var(--gr-light); }
+.mod-card.sel { border-color: var(--gr); background: var(--gr-light); }
+.mod-card .m-name { font-size: .95rem; font-weight: 700; color: var(--text, #1a1a1a); display: block; margin-bottom: 4px; }
+.mod-card .m-desc { font-size: .82rem; color: var(--muted, #666); line-height: 1.4; }
+.mod-card.sel .m-name { color: var(--gr); }
+
+/* ── PILL GROUP ──────────────────────────────────────────────── */
+.pill-group { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill {
+  background: var(--bg, #f3f3f3); border: 2px solid var(--border, #e5e5e5); border-radius: 50px;
+  padding: 9px 22px; font-size: .9rem; font-weight: 600; cursor: pointer;
+  transition: all .15s; user-select: none;
+  font-family: var(--font-body, 'Barlow', sans-serif); color: var(--text, #1a1a1a);
+}
+.pill:hover { border-color: var(--gr); color: var(--gr); background: var(--gr-light); }
+.pill.sel { border-color: var(--gr); background: var(--gr); color: #fff; }
+
+/* ── GENERATE BUTTON ─────────────────────────────────────────── */
+.gen-btn {
+  display: block; width: 100%; margin-top: 6px; padding: 17px;
+  background: var(--gr); color: #fff; font-size: 1.05rem; font-weight: 700;
+  border: none; border-radius: var(--radius, 10px); cursor: pointer;
+  letter-spacing: .03em; transition: all .2s;
+  font-family: var(--font-body, 'Barlow', sans-serif);
+}
+.gen-btn:hover { background: var(--gr-mid); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,71,42,.25); }
+.gen-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; box-shadow: none; }
+.gen-btn .sp { display: none; width: 18px; height: 18px; border: 3px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; margin: 0 auto; }
+.gen-btn.loading .bt { display: none; }
+.gen-btn.loading .sp { display: block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── RESULT HEADER ───────────────────────────────────────────── */
+.result-hdr {
+  background: linear-gradient(135deg, var(--gr) 0%, #0d2b1a 100%);
+  border-radius: var(--radius, 10px) var(--radius, 10px) 0 0; padding: 26px 30px;
+}
+.result-eyebrow {
+  font-size: .75rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .1em; color: rgba(255,255,255,.6); margin-bottom: 6px;
+}
+.result-hdr h2 {
+  font-family: var(--font-head, 'Bebas Neue', sans-serif); font-size: 2.6rem; color: #fff;
+  letter-spacing: .03em; line-height: 1; margin-bottom: 5px;
+}
+.result-sub { color: rgba(255,255,255,.8); font-size: .95rem; margin-bottom: 14px; }
+.result-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.chip {
+  background: rgba(255,255,255,.15); color: rgba(255,255,255,.9);
+  font-size: .78rem; font-weight: 700; padding: 4px 12px;
+  border-radius: 20px; letter-spacing: .02em;
+}
+
+/* ── RESULT BODY ─────────────────────────────────────────────── */
+.result-body {
+  background: var(--white, #fff); border: 1px solid var(--border, #e5e5e5); border-top: none;
+  border-radius: 0 0 var(--radius, 10px) var(--radius, 10px); padding: 26px 30px;
+}
+
+/* ── SESSION NOTE ────────────────────────────────────────────── */
+.session-note {
+  background: var(--gr-light); border: 1px solid var(--gr-border);
+  border-radius: 8px;
+  padding: 14px 20px; margin-bottom: 24px;
+  font-size: .925rem; color: #2a5a3a; line-height: 1.6;
+}
+
+/* ── STRETCH LIST ────────────────────────────────────────────── */
+.str-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+.str-row {
+  background: var(--bg, #f3f3f3); border: 1px solid var(--border, #e5e5e5); border-radius: 10px;
+  padding: 16px 20px; display: grid; grid-template-columns: 28px 1fr auto;
+  align-items: start; gap: 14px; transition: border-color .15s;
+}
+.str-row:hover { border-color: var(--gr-border); }
+.str-num {
+  font-size: 1.1rem; font-weight: 900; color: var(--gr);
+  text-align: center; padding-top: 2px;
+}
+.str-info { min-width: 0; }
+.str-name { font-size: 1rem; font-weight: 700; color: var(--text, #1a1a1a); margin-bottom: 4px; }
+.str-name a { color: var(--text, #1a1a1a); text-decoration: none; }
+.str-name a:hover { color: var(--gr); text-decoration: underline; }
+.str-tip { font-size: .85rem; color: var(--muted, #666); line-height: 1.5; margin-bottom: 8px; }
+.str-badges { display: flex; flex-wrap: wrap; gap: 5px; }
+.sbadge {
+  font-size: .7rem; font-weight: 700; padding: 2px 9px; border-radius: 12px;
+  letter-spacing: .02em;
+}
+.sbadge-hold { background: rgba(26,71,42,.1); color: var(--gr); border: 1px solid var(--gr-border); }
+.sbadge-mod  { background: rgba(52,152,219,.08); color: #2980b9; border: 1px solid rgba(52,152,219,.2); }
+.sbadge-sides { background: rgba(52,152,219,.08); color: #2980b9; border: 1px solid rgba(52,152,219,.2); }
+.sbadge-pnf  { background: rgba(168,85,247,.1); color: #7c3aed; border: 1px solid rgba(168,85,247,.25); }
+.str-hold {
+  text-align: right; white-space: nowrap; flex-shrink: 0;
+}
+.hold-val { font-size: 1.3rem; font-weight: 900; color: var(--gr); display: block; line-height: 1; }
+.hold-label { font-size: .72rem; color: var(--muted, #666); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+
+/* ── RESULT ACTIONS ──────────────────────────────────────────── */
+.result-actions { display: flex; gap: 9px; flex-wrap: wrap; margin-bottom: 0; }
+.rbtn {
+  flex: 1; min-width: 110px; padding: 12px 16px; border-radius: 8px;
+  font-size: .875rem; font-weight: 700; cursor: pointer; border: none;
+  transition: all .15s; display: flex; align-items: center; justify-content: center;
+  gap: 7px; text-decoration: none; font-family: var(--font-body, 'Barlow', sans-serif);
+}
+.rbtn.pri { background: var(--gr); color: #fff; }
+.rbtn.pri:hover { background: var(--gr-mid); }
+.rbtn.sec { background: var(--bg, #f3f3f3); color: var(--text, #1a1a1a); border: 1.5px solid var(--border, #e5e5e5); }
+.rbtn.sec:hover { border-color: var(--gr); color: var(--gr); }
+
+/* ── WOD PAIRING ─────────────────────────────────────────────── */
+.wod-pairing {
+  border: 1px solid var(--border, #e5e5e5); border-radius: var(--radius, 10px); overflow: hidden;
+  margin-top: 24px;
+}
+.wod-pairing-hdr {
+  background: #fdf2f2; border-bottom: 1px solid #f5c6c6;
+  padding: 18px 24px; display: flex; align-items: center; gap: 18px;
+}
+.wod-pairing-badge {
+  background: var(--or, #C41212); color: #fff; border-radius: 9px;
+  padding: 10px 14px; font-size: .72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .08em; white-space: nowrap;
+  flex-shrink: 0; text-align: center; line-height: 1.4;
+}
+.wod-pairing-badge span { display: block; font-family: var(--font-head, 'Bebas Neue', sans-serif); font-size: 1.6rem; letter-spacing: .04em; font-weight: 400; }
+.wod-pairing-text h3 {
+  font-family: var(--font-head, 'Bebas Neue', sans-serif); font-size: 1.8rem; letter-spacing: .03em;
+  color: #a00e0e; line-height: 1; margin-bottom: 4px;
+}
+.wod-pairing-text p { font-size: .9rem; color: #a04040; }
+.wod-pairing-body { background: var(--white, #fff); padding: 20px 24px; }
+.wod-pairing-body p { font-size: .925rem; color: var(--text, #1a1a1a); line-height: 1.6; margin-bottom: 16px; }
+.wod-pairing-cta { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.wod-pairing-btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px;
+  background: var(--or, #C41212); color: #fff; border: none; border-radius: 8px;
+  font-size: .925rem; font-weight: 700; cursor: pointer;
+  font-family: var(--font-body, 'Barlow', sans-serif);
+  text-decoration: none; transition: background .15s;
+}
+.wod-pairing-btn:hover { background: #a00e0e; }
+
+/* ── TOAST ───────────────────────────────────────────────────── */
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--white, #fff); border: 1px solid var(--border, #e5e5e5); border-radius: 10px; padding: 14px 18px; font-size: .875rem; font-weight: 600; box-shadow: 0 8px 32px rgba(0,0,0,.15); transform: translateY(80px); opacity: 0; transition: all .3s; z-index: 9999; max-width: 320px; }
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { border-color: rgba(39,174,96,.4); color: #16a34a; }
+.toast.error { border-color: rgba(196,18,18,.3); color: var(--or, #C41212); }
+
+/* ── PRINT ───────────────────────────────────────────────────── */
+#print-area { display: none; }
+@media print {
+  body > * { display: none !important; }
+  #print-area { display: block !important; font-family: system-ui, Arial, sans-serif; color: #000; background: #fff; padding: 0; margin: 0; }
+  #print-area .ph { display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px; margin-bottom: 18px; border-bottom: 3px solid #C41212; }
+  #print-area .ph img { height: 44px; width: auto; }
+  #print-area .ph .ph-url { font-size: 11px; color: #666; text-align: right; line-height: 1.4; }
+  #print-area .pt { font-size: 24px; font-weight: 900; margin: 0 0 4px; }
+  #print-area .ps { font-size: 13px; color: #555; margin-bottom: 14px; }
+  #print-area .pm { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 18px; }
+  #print-area .pm span { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px; border: 1px solid #ccc; color: #333; background: #f4f4f4; }
+  #print-area table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  #print-area table th { background: #222; color: #fff; padding: 8px 10px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+  #print-area table td { padding: 9px 10px; border-bottom: 1px solid #ddd; color: #000; vertical-align: top; }
+  #print-area table tr:last-child td { border-bottom: none; }
+  #print-area .pfoot { margin-top: 20px; padding-top: 10px; border-top: 1px solid #ddd; font-size: 10px; color: #999; text-align: center; }
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .config-grid { grid-template-columns: 1fr; }
+  .focus-grid { grid-template-columns: repeat(2, 1fr); }
+  .mod-grid { grid-template-columns: 1fr; }
+  .str-row { grid-template-columns: 28px 1fr; }
+  .str-hold { grid-column: 2; }
+  .result-hdr, .result-body { padding: 20px; }
+  .wod-pairing-hdr { flex-direction: column; align-items: flex-start; }
+  .page-header { padding: 20px 16px 16px; }
+  .page-wrap { padding: 20px 16px 80px; }
+}
+</style>
+</head>
+<body data-nav-init="true" data-active-page="stretchbuilder">
+
+<div id="toast" class="toast"></div>
+<div id="print-area"></div>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="page-title">Stretch Builder</div>
+    <div class="page-subtitle">Build a personalized stretch and mobility routine in seconds. Choose your focus area, duration, and style.</div>
+  </div>
+</div>
+
+<main>
+<div class="page-wrap">
+
+  <!-- Row 1: Focus + Modality -->
+  <div class="config-grid">
+
+    <div class="config-card">
+      <div class="step-label">Step 1</div>
+      <div class="step-title">What area do you want to target?</div>
+      <div class="step-hint">Pick one area for a targeted session, or choose <strong>Full Body</strong> to hit everything.</div>
+      <div class="focus-grid" id="focus-grid">
+        <!-- injected by JS from STRETCH_FOCUS -->
+      </div>
+    </div>
+
+    <div class="config-card">
+      <div class="step-label">Step 2</div>
+      <div class="step-title">What type of stretching?</div>
+      <div class="step-hint">Select one or more. Mix types for variety, or keep it focused — Static works well for cooldowns, Dynamic for warm-ups.</div>
+      <div class="mod-grid" id="mod-grid">
+        <div class="mod-card" data-mod="static">
+          <span class="m-name">Static</span>
+          <span class="m-desc">Hold-based stretches, 20–60 seconds each — the classic cooldown</span>
+        </div>
+        <div class="mod-card" data-mod="dynamic">
+          <span class="m-name">Dynamic / Mobility</span>
+          <span class="m-desc">Movement-based flows — great for warm-ups or active recovery</span>
+        </div>
+        <div class="mod-card" data-mod="pnf">
+          <span class="m-name">PNF / Deep Tissue</span>
+          <span class="m-desc">Contract-relax technique for maximum flexibility gains</span>
+        </div>
+        <div class="mod-card" data-mod="yoga">
+          <span class="m-name">Yoga-Inspired</span>
+          <span class="m-desc">Familiar poses athletes know — pigeon, downward dog, warriors</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end row 1 -->
+
+  <!-- Row 2: Duration + Level -->
+  <div class="config-grid">
+
+    <div class="config-card">
+      <div class="step-label">Step 3</div>
+      <div class="step-title">How long do you have?</div>
+      <div class="step-hint">The builder will fill your session with the right number of stretches to fit this window, including time to switch sides.</div>
+      <div class="pill-group" id="duration-group">
+        <div class="pill" data-val="5">5 min</div>
+        <div class="pill" data-val="10">10 min</div>
+        <div class="pill" data-val="15">15 min</div>
+        <div class="pill" data-val="20">20 min</div>
+      </div>
+    </div>
+
+    <div class="config-card">
+      <div class="step-label">Step 4</div>
+      <div class="step-title">Your flexibility level</div>
+      <div class="step-hint">Sets hold times and which stretches are included. Beginner avoids advanced poses; Advanced uses longer holds and deeper variations.</div>
+      <div class="pill-group" id="level-group">
+        <div class="pill" data-val="b">Beginner</div>
+        <div class="pill" data-val="i">Intermediate</div>
+        <div class="pill" data-val="a">Advanced</div>
+      </div>
+    </div>
+
+  </div><!-- end row 2 -->
+
+  <!-- GENERATE BUTTON -->
+  <button class="gen-btn" id="gen-btn" onclick="handleGenerate()">
+    <span class="bt">Build My Stretch Session</span>
+    <span class="sp"></span>
+  </button>
+
+  <!-- RESULT -->
+  <div id="stretch-result" style="display:none; margin-top: 28px;">
+
+    <div class="result-hdr">
+      <div class="result-eyebrow" id="res-eyebrow">Stretch Builder</div>
+      <h2 id="res-title">Your Stretch Session</h2>
+      <div class="result-sub" id="res-sub"></div>
+      <div class="result-chips" id="res-chips"></div>
+    </div>
+
+    <div class="result-body">
+      <div class="session-note">
+        Move through these stretches in order. Breathe steadily — exhale into each stretch and resist the urge to bounce. For bilateral movements, complete both sides before moving on.
+      </div>
+
+      <div class="str-list" id="str-list"></div>
+
+      <div class="result-actions">
+        <button class="rbtn pri" onclick="handleGenerate()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.15-4.74"/></svg>
+          Regenerate
+        </button>
+        <button class="rbtn sec" onclick="copySession()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy Session
+        </button>
+        <button class="rbtn sec" onclick="printSession()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Print
+        </button>
+      </div>
+
+      <!-- WOD PAIRING -->
+      <div class="wod-pairing">
+        <div class="wod-pairing-hdr">
+          <div class="wod-pairing-badge">Daily<span>20</span>Train</div>
+          <div class="wod-pairing-text">
+            <h3>Ready to Train?</h3>
+            <p>Build a workout to go with your stretch session — or grab today's Daily 20</p>
+          </div>
+        </div>
+        <div class="wod-pairing-body">
+          <p>A complete training day takes about 30 minutes: 20 minutes of work, 10 minutes of recovery. Today's Daily 20 is already queued up and ready to go.</p>
+          <div class="wod-pairing-cta">
+            <a href="/wodbuilder" class="wod-pairing-btn">Build a Workout →</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- end stretch-result -->
+
+</div>
+</main>
+
+<script>
+// ── Helpers ───────────────────────────────────────────────────────
+function slugify(name) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  buildFocusGrid();
+  setupPillGroups();
+  setupModCards();
+});
+
+// ── Build focus area grid ─────────────────────────────────────
+function buildFocusGrid() {
+  const grid = document.getElementById('focus-grid');
+  STRETCH_FOCUS.forEach(f => {
+    const card = document.createElement('div');
+    card.className = 'focus-card';
+    card.dataset.id = f.id;
+    card.innerHTML = `
+      <span class="focus-name">${f.label}</span>
+      <span class="focus-sub">${f.desc}</span>`;
+    card.addEventListener('click', () => {
+      if (f.id === 'full') {
+        grid.querySelectorAll('.focus-card').forEach(c => c.classList.remove('sel'));
+        card.classList.add('sel');
+      } else {
+        grid.querySelector('[data-id="full"]')?.classList.remove('sel');
+        card.classList.toggle('sel');
+        if (!grid.querySelector('.focus-card.sel')) card.classList.add('sel');
+      }
+    });
+    grid.appendChild(card);
+  });
+}
+
+// ── Pill groups (single-select per group) ─────────────────────
+function setupPillGroups() {
+  ['duration-group', 'level-group'].forEach(id => {
+    const group = document.getElementById(id);
+    group.querySelectorAll('.pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        group.querySelectorAll('.pill').forEach(p => p.classList.remove('sel'));
+        pill.classList.add('sel');
+      });
+    });
+  });
+}
+
+// ── Modality cards (multi-select, keep ≥1) ────────────────────
+function setupModCards() {
+  document.querySelectorAll('.mod-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const sel = document.querySelectorAll('.mod-card.sel');
+      if (card.classList.contains('sel') && sel.length === 1) return;
+      card.classList.toggle('sel');
+    });
+  });
+}
+
+// ── Read selections ───────────────────────────────────────────
+function getSelections() {
+  const focusAreas = [...document.querySelectorAll('#focus-grid .focus-card.sel')].map(c => c.dataset.id);
+  const durPill = document.querySelector('#duration-group .pill.sel');
+  const duration = durPill ? parseInt(durPill.dataset.val) : null;
+  const modalities = [...document.querySelectorAll('.mod-card.sel')].map(c => c.dataset.mod);
+  const lvlPill = document.querySelector('#level-group .pill.sel');
+  const level = lvlPill ? lvlPill.dataset.val : null;
+  return { focusAreas, duration, modalities, level };
+}
+
+// ── Generate ──────────────────────────────────────────────────
+function handleGenerate() {
+  const btn = document.getElementById('gen-btn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  setTimeout(() => {
+    try {
+      const prefs = getSelections();
+      if (!prefs.focusAreas.length) { showToast('Pick a focus area first (Step 1)', 'error'); btn.classList.remove('loading'); btn.disabled = false; return; }
+      if (!prefs.duration)          { showToast('Choose a session duration (Step 3)', 'error'); btn.classList.remove('loading'); btn.disabled = false; return; }
+      if (!prefs.modalities.length) { showToast('Pick at least one stretching type (Step 2)', 'error'); btn.classList.remove('loading'); btn.disabled = false; return; }
+      if (!prefs.level)             { showToast('Choose your flexibility level (Step 4)', 'error'); btn.classList.remove('loading'); btn.disabled = false; return; }
+
+      const { stretches, estimatedMinutes } = generateStretchSession(prefs);
+      if (!stretches || stretches.length === 0) {
+        showToast('No stretches match your selections — try broadening your choices', 'error');
+        btn.classList.remove('loading'); btn.disabled = false; return;
+      }
+      renderResult(stretches, estimatedMinutes, prefs);
+    } catch(e) {
+      console.error(e);
+      showToast('Something went wrong — please try again', 'error');
+    }
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }, 500);
+}
+
+// ── Render result ─────────────────────────────────────────────
+let lastSession = null;
+
+function renderResult(stretches, estimatedMinutes, prefs) {
+  lastSession = { stretches, estimatedMinutes, prefs };
+
+  const levelLabels = { b: 'Beginner', i: 'Intermediate', a: 'Advanced' };
+  const modLabels = { static: 'Static', dynamic: 'Dynamic', pnf: 'PNF', yoga: 'Yoga' };
+  const focusObj = {};
+  STRETCH_FOCUS.forEach(f => { focusObj[f.id] = f.label; });
+
+  const focusLabel = prefs.focusAreas.includes('full') ? 'Full Body' :
+    prefs.focusAreas.map(f => focusObj[f] || f).join(' & ');
+
+  document.getElementById('res-eyebrow').textContent = `Stretch Builder — ${levelLabels[prefs.level]} · ${prefs.duration} min`;
+  document.getElementById('res-title').textContent = `${focusLabel} Session`;
+  document.getElementById('res-sub').textContent = `${stretches.length} stretches · ~${estimatedMinutes} minutes · ${prefs.modalities.map(m => modLabels[m]).join(' + ')}`;
+
+  document.getElementById('res-chips').innerHTML = [
+    `<span class="chip">${prefs.duration} min</span>`,
+    `<span class="chip">${focusLabel}</span>`,
+    `<span class="chip">${levelLabels[prefs.level]}</span>`,
+    ...prefs.modalities.map(m => `<span class="chip">${modLabels[m]}</span>`)
+  ].join('');
+
+  const list = document.getElementById('str-list');
+  list.innerHTML = stretches.map((s, i) => {
+    const holdStr = buildHoldStr(s, prefs.level);
+    const holdLabel = s.timedOrReps === 'reps' || (s.reps && !s.hold) ? 'reps' : 'each side';
+    const sidesStr = s.sides ? `<span class="sbadge sbadge-sides">Each Side</span>` : '';
+    const modBadge = `<span class="sbadge sbadge-mod">${modLabels[s.modality]}</span>`;
+    const pnfBadge = s.pnfNote ? `<span class="sbadge sbadge-pnf">Contract-Relax</span>` : '';
+    return `
+      <div class="str-row">
+        <div class="str-num">${i + 1}</div>
+        <div class="str-info">
+          <div class="str-name"><a href="/stretches/${slugify(s.name)}">${s.name}</a></div>
+          <div class="str-tip">${s.tip}</div>
+          <div class="str-badges">
+            <span class="sbadge sbadge-hold">${holdStr}</span>
+            ${sidesStr}${modBadge}${pnfBadge}
+          </div>
+          ${s.pnfNote ? `<div style="font-size:.75rem;color:var(--muted,#666);margin-top:5px;font-style:italic">${s.pnfNote}</div>` : ''}
+        </div>
+        <div class="str-hold">
+          <span class="hold-val">${holdStr.replace(' hold', '').replace(' reps', '')}</span>
+          <span class="hold-label">${s.sides ? 'each side' : (s.reps ? 'reps' : 'hold')}</span>
+        </div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('stretch-result').style.display = 'block';
+  document.getElementById('stretch-result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  buildPrintArea(stretches, estimatedMinutes, prefs, focusLabel, levelLabels, modLabels);
+}
+
+function buildHoldStr(s, level) {
+  if (s.timedOrReps === 'reps' || (s.reps && !s.hold)) {
+    const r = s.reps ? s.reps[level] : 10;
+    return `${r} reps`;
+  }
+  if (s.hold) {
+    const h = s.hold[level];
+    return `${h}s hold`;
+  }
+  return '';
+}
+
+// ── Print area ────────────────────────────────────────────────
+function buildPrintArea(stretches, estimatedMinutes, prefs, focusLabel, levelLabels, modLabels) {
+  const pa = document.getElementById('print-area');
+  const rows = stretches.map((s, i) => {
+    const holdStr = buildHoldStr(s, prefs.level);
+    const sides = s.sides ? ' (each side)' : '';
+    return `<tr>
+      <td style="font-weight:700;width:22px">${i + 1}</td>
+      <td style="font-weight:700">${s.name}</td>
+      <td>${holdStr}${sides}</td>
+      <td style="color:#555">${s.tip}</td>
+    </tr>`;
+  }).join('');
+  pa.innerHTML = `
+    <div class="ph">
+      <img src="https://homewodrx.com/HomeWODRx-logo-black-red-040626.png" alt="HomeWodRX">
+      <div class="ph-url">homewodrx.com/stretchbuilder<br>Smart Stretch Builder</div>
+    </div>
+    <div class="pt">${focusLabel} Stretch Session</div>
+    <div class="ps">~${estimatedMinutes} min · ${levelLabels[prefs.level]} · ${prefs.modalities.map(m => modLabels[m]).join(', ')}</div>
+    <table>
+      <thead><tr><th>#</th><th>Stretch</th><th>Duration</th><th>Coaching Tip</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="pfoot">Generated at homewodrx.com/stretchbuilder · HomeWodRX © ${new Date().getFullYear()}</div>`;
+}
+
+// ── Copy session ──────────────────────────────────────────────
+function copySession() {
+  if (!lastSession) return;
+  const { stretches, estimatedMinutes, prefs } = lastSession;
+  const levelLabels = { b: 'Beginner', i: 'Intermediate', a: 'Advanced' };
+  const lines = [`HomeWodRX Stretch Session (~${estimatedMinutes} min · ${levelLabels[prefs.level]})`, ''];
+  stretches.forEach((s, i) => {
+    const h = buildHoldStr(s, prefs.level);
+    const side = s.sides ? ' (each side)' : '';
+    lines.push(`${i + 1}. ${s.name} — ${h}${side}`);
+    lines.push(`   Tip: ${s.tip}`);
+    if (s.pnfNote) lines.push(`   ${s.pnfNote}`);
+    lines.push('');
+  });
+  lines.push('Generated at homewodrx.com/stretchbuilder');
+  navigator.clipboard.writeText(lines.join('\n'))
+    .then(() => showToast('Session copied to clipboard!', 'success'))
+    .catch(() => showToast('Could not copy — try again', 'error'));
+}
+
+// ── Print ─────────────────────────────────────────────────────
+function printSession() { window.print(); }
+
+// ── Toast ─────────────────────────────────────────────────────
+function showToast(msg, type = 'info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type}`;
+  void t.offsetWidth;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+</script>
+<script src="/js/footer.js"></script>
+</body>
+</html>
