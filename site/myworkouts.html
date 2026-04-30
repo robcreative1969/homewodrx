@@ -537,7 +537,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   var today = new Date();
   document.getElementById('log-date').value = today.toISOString().split('T')[0];
 
-  var { data: { session } } = await supabase.auth.getSession();
+  var { data: { session } } = await supabaseClient.auth.getSession();
 
   if (!session) {
     document.getElementById('view-loggedout').style.display = 'block';
@@ -547,7 +547,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   var userId = session.user.id;
 
   /* Load user_workouts joined with latest result for each */
-  var { data: workouts, error } = await supabase
+  var { data: workouts, error } = await supabaseClient
     .from('user_workouts')
     .select('*, results(id, score, is_rx, notes, logged_at)')
     .eq('user_id', userId)
@@ -798,7 +798,7 @@ async function submitLog() {
   var date  = document.getElementById('log-date').value;
   var notes = document.getElementById('log-notes').value.trim();
 
-  var { error } = await supabase.from('results').insert({
+  var { error } = await supabaseClient.from('results').insert({
     user_workout_id: logTargetId,
     score:      score  || null,
     is_rx:      logIsRx,
@@ -822,7 +822,7 @@ function closeDeleteModal() {
 }
 async function confirmDelete() {
   if (!deleteTargetId) return;
-  var { error } = await supabase.from('results').delete().eq('id', deleteTargetId);
+  var { error } = await supabaseClient.from('results').delete().eq('id', deleteTargetId);
   if (error) { console.error('Delete error:', error); return; }
   closeDeleteModal();
   window.location.reload();
