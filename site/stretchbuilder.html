@@ -215,12 +215,10 @@
 
 /* ── WOD PAIRING ─────────────────────────────────────────────── */
 .wod-pairing {
-  border: 1px solid var(--border, #e5e5e5); border-radius: var(--radius, 10px); overflow: hidden;
-  margin-top: 24px;
-}
-.wod-pairing-hdr {
-  background: #fdf2f2; border-bottom: 1px solid #f5c6c6;
-  padding: 18px 24px; display: flex; align-items: center; gap: 18px;
+  background: var(--white, #fff);
+  border: 1px solid var(--border, #e5e5e5); border-radius: var(--radius, 10px);
+  padding: 20px 24px; margin-top: 24px;
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
 }
 .wod-pairing-badge {
   background: var(--or, #C41212); color: #fff; border-radius: 9px;
@@ -229,22 +227,26 @@
   flex-shrink: 0; text-align: center; line-height: 1.4;
 }
 .wod-pairing-badge span { display: block; font-family: var(--font-head, 'Bebas Neue', sans-serif); font-size: 1.6rem; letter-spacing: .04em; font-weight: 400; }
+.wod-pairing-text { flex: 1; min-width: 180px; }
 .wod-pairing-text h3 {
-  font-family: var(--font-head, 'Bebas Neue', sans-serif); font-size: 1.8rem; letter-spacing: .03em;
-  color: #a00e0e; line-height: 1; margin-bottom: 4px;
+  font-family: var(--font-head, 'Bebas Neue', sans-serif); font-size: 1.6rem; letter-spacing: .03em;
+  color: var(--text, #1a1a1a); line-height: 1; margin-bottom: 4px;
 }
-.wod-pairing-text p { font-size: .9rem; color: #a04040; }
-.wod-pairing-body { background: var(--white, #fff); padding: 20px 24px; }
-.wod-pairing-body p { font-size: .925rem; color: var(--text, #1a1a1a); line-height: 1.6; margin-bottom: 16px; }
-.wod-pairing-cta { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.wod-pairing-text p { font-size: .9rem; color: var(--muted, #666); margin: 0; line-height: 1.5; }
+.wod-pairing-cta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; flex-shrink: 0; }
 .wod-pairing-btn {
-  display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px;
+  display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px;
   background: var(--or, #C41212); color: #fff; border: none; border-radius: 8px;
-  font-size: .925rem; font-weight: 700; cursor: pointer;
+  font-size: .9rem; font-weight: 700; cursor: pointer;
   font-family: var(--font-body, 'Barlow', sans-serif);
-  text-decoration: none; transition: background .15s;
+  text-decoration: none; transition: background .15s; white-space: nowrap;
 }
 .wod-pairing-btn:hover { background: #a00e0e; }
+.wod-pairing-btn.sec {
+  background: var(--bg, #f3f3f3); color: var(--text, #1a1a1a);
+  border: 1.5px solid var(--border, #e5e5e5);
+}
+.wod-pairing-btn.sec:hover { border-color: var(--or, #C41212); color: var(--or, #C41212); background: var(--bg, #f3f3f3); }
 
 /* ── TOAST ───────────────────────────────────────────────────── */
 .toast { position: fixed; bottom: 24px; right: 24px; background: var(--white, #fff); border: 1px solid var(--border, #e5e5e5); border-radius: 10px; padding: 14px 18px; font-size: .875rem; font-weight: 600; box-shadow: 0 8px 32px rgba(0,0,0,.15); transform: translateY(80px); opacity: 0; transition: all .3s; z-index: 9999; max-width: 320px; }
@@ -279,7 +281,7 @@
   .str-row { grid-template-columns: 28px 1fr; }
   .str-hold { grid-column: 2; }
   .result-hdr, .result-body { padding: 20px; }
-  .wod-pairing-hdr { flex-direction: column; align-items: flex-start; }
+  .wod-pairing { flex-direction: column; align-items: flex-start; }
   .page-header { padding: 20px 16px 16px; }
   .page-wrap { padding: 20px 16px 80px; }
 }
@@ -407,18 +409,14 @@
 
       <!-- WOD PAIRING -->
       <div class="wod-pairing">
-        <div class="wod-pairing-hdr">
-          <div class="wod-pairing-badge">Daily<span>20</span>Train</div>
-          <div class="wod-pairing-text">
-            <h3>Ready to Train?</h3>
-            <p>Build a workout to go with your stretch session — or grab today's Daily 20</p>
-          </div>
+        <div class="wod-pairing-badge">Daily<span>20</span>Train</div>
+        <div class="wod-pairing-text">
+          <h3>Ready to Train?</h3>
+          <p>Pair this session with a workout — grab today's Daily 20 or build your own.</p>
         </div>
-        <div class="wod-pairing-body">
-          <p>A complete training day takes about 30 minutes: 20 minutes of work, 10 minutes of recovery. Today's Daily 20 is already queued up and ready to go.</p>
-          <div class="wod-pairing-cta">
-            <a href="/wodbuilder" class="wod-pairing-btn">Build a Workout →</a>
-          </div>
+        <div class="wod-pairing-cta">
+          <a href="/daily-wod" class="wod-pairing-btn sec">Today's Daily 20 →</a>
+          <a href="/wodbuilder" class="wod-pairing-btn">Build a Workout →</a>
         </div>
       </div>
 
