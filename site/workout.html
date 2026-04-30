@@ -203,6 +203,17 @@
 .scale-mv { font-weight: 600; flex: 1; }
 .scale-rx { color: var(--or); font-weight: 700; font-size: .8rem; white-space: nowrap; }
 
+/* ── Round separator ── */
+.wod-round-sep { list-style: none; text-align: center; font-size: .78rem; color: var(--muted); font-style: italic; font-weight: 600; letter-spacing: .04em; padding: 6px 0 8px; }
+
+/* ── Movement standards table ── */
+.standards-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+.standards-table th { padding: 6px 10px; text-align: left; font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); border-bottom: 2px solid var(--border); }
+.standards-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
+.standards-table tr:last-child td { border-bottom: none; }
+.standards-table .std-mv { font-weight: 600; }
+.standards-table .std-rx { color: var(--or); font-weight: 700; }
+
 /* ── Equipment chips ── */
 .equip-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .equip-chips-wrap { display: flex; flex-wrap: wrap; gap: 9px; }
@@ -795,48 +806,58 @@ function buildWodHeroCardHTML(w) {
   };
   var scoreLabel = scoringLabels[w.scoring_type] || w.format || 'Complete';
 
-  var movementsHtml = (w.movements || []).map(function(m) {
-    var mvSlug  = m.slug || slugify(m.name || '');
-    var loadHtml = (m.rx_men || m.rx_women)
-      ? '<span class="wod-load">' + escHtml(m.rx_men || '') + (m.rx_women ? ' / ' + m.rx_women : '') + '</span>'
-      : '';
-    return '<li class="wod-move-row">' +
-      (m.reps
-        ? '<span class="wod-reps">' + escHtml(String(m.reps)) + '</span>'
-        : '<span class="wod-reps" style="font-size:.9rem;color:var(--muted)">—</span>') +
-      '<a class="wod-move-link" href="/movements/' + mvSlug + '">' + escHtml(m.name || '') + '</a>' +
-      loadHtml +
-    '</li>';
-  }).join('');
+  // Detect multi-round format e.g. "21 – 15 – 9" or "21-15-9"
+  var movements = w.movements || [];
+  var firstRepsStr = movements.length ? String(movements[0].reps || '') : '';
+  var roundNums = firstRepsStr.match(/\d+/g);
+  var isMultiRound = roundNums && roundNums.length > 1;
 
-  // Stats row
-  var stats = [];
-  if (w.format) stats.push({ label:'Format', val: w.format });
-  var dur = w.duration_estimate || w.duration;
-  if (dur) {
-    var dm = String(dur).match(/\d+/);
-    stats.push({ label:'Time Cap', val: dm ? dm[0] + ' min' : String(dur) });
+  var movementsHtml;
+  if (isMultiRound) {
+    // Expand into per-round rows with separators
+    movementsHtml = roundNums.map(function(rep, ri) {
+      var rowsForRound = movements.map(function(m) {
+        var mvSlug   = m.slug || slugify(m.name || '');
+        var loadHtml = (ri === 0 && (m.rx_men || m.rx_women))
+          ? '<span class="wod-load">' + escHtml(m.rx_men || '') + (m.rx_women ? ' / ' + m.rx_women : '') + '</span>'
+          : '';
+        return '<li class="wod-move-row">' +
+          '<span class="wod-reps">' + rep + '</span>' +
+          '<a class="wod-move-link" href="/movements/' + mvSlug + '">' + escHtml(m.name || '') + '</a>' +
+          loadHtml +
+        '</li>';
+      }).join('');
+      // After round 1 only, insert a separator listing remaining rounds
+      var sep = (ri === 0 && roundNums.length > 1)
+        ? '<li class="wod-round-sep">— then ' + roundNums.slice(1).join(', then ') + ' —</li>'
+        : '';
+      return rowsForRound + sep;
+    }).join('');
+  } else {
+    movementsHtml = movements.map(function(m) {
+      var mvSlug   = m.slug || slugify(m.name || '');
+      var loadHtml = (m.rx_men || m.rx_women)
+        ? '<span class="wod-load">' + escHtml(m.rx_men || '') + (m.rx_women ? ' / ' + m.rx_women : '') + '</span>'
+        : '';
+      return '<li class="wod-move-row">' +
+        (m.reps
+          ? '<span class="wod-reps">' + escHtml(String(m.reps)) + '</span>'
+          : '<span class="wod-reps" style="font-size:.9rem;color:var(--muted)">—</span>') +
+        '<a class="wod-move-link" href="/movements/' + mvSlug + '">' + escHtml(m.name || '') + '</a>' +
+        loadHtml +
+      '</li>';
+    }).join('');
   }
-  if (w.difficulty) stats.push({ label:'Level', val: cap(w.difficulty) });
-  if (catLabel && isBm) stats.push({ label:'Category', val: catLabel });
-  if (w.movements && w.movements.length) stats.push({ label:'Movements', val: String(w.movements.length) });
 
-  var statsHtml = stats.length
-    ? '<div class="wod-stats-grid">' +
-        stats.map(function(s) {
-          return '<div class="wod-stat">' +
-            '<span class="wod-stat-label">' + escHtml(s.label) + '</span>' +
-            '<span class="wod-stat-val">' + escHtml(s.val) + '</span>' +
-          '</div>';
-        }).join('') +
-      '</div>'
-    : '';
+  // Score note: use full scoring_notes text if present, otherwise just label
+  var scoreNoteHtml = w.scoring_notes
+    ? '<div class="wod-score-note"><strong>Score:</strong> ' + escHtml(scoreLabel) + ' &mdash; ' + escHtml(w.scoring_notes) + '</div>'
+    : '<div class="wod-score-note"><strong>Score:</strong> ' + escHtml(scoreLabel) + '</div>';
 
   return '<div class="wod-hero-card">' +
     (catBadge ? '<div class="wod-hero-eyebrow">' + catBadge + '</div>' : '') +
     '<ul class="wod-move-list">' + movementsHtml + '</ul>' +
-    '<div class="wod-score-note">Score: ' + escHtml(scoreLabel) + '</div>' +
-    statsHtml +
+    scoreNoteHtml +
   '</div>';
 }
 
@@ -909,9 +930,10 @@ function buildMetaStackHTML(w, isBm) {
 // RENDER BENCHMARK LAYOUT
 // ─────────────────────────────────────────────────────────────────────────────
 function renderBenchmarkLayout(w) {
-  var name     = w.name || 'WOD';
-  var category = w.category || '';
-  var catLabel = CAT_LABELS[category] || cap(category);
+  var name      = w.name || 'WOD';
+  var category  = w.category || '';
+  var catLabel  = CAT_LABELS[category] || cap(category);
+  var movements = w.movements || [];
 
   // Equipment chips
   var equip      = (w.equipment || []).filter(function(e) { return SKIP_EQUIPMENT.indexOf(e) === -1; });
@@ -953,8 +975,12 @@ function renderBenchmarkLayout(w) {
     }
   }
 
-  // Coaching tips
-  var tips = Array.isArray(w.coaching_tips) ? w.coaching_tips : (w.coaching_tips ? [String(w.coaching_tips)] : []);
+  // Coaching tips — use w.coaching_tips if present, fall back to w.tips
+  var tipsArr = Array.isArray(w.coaching_tips) ? w.coaching_tips
+              : (w.coaching_tips ? [String(w.coaching_tips)]
+              : (Array.isArray(w.tips) ? w.tips
+              : (w.tips ? [String(w.tips)] : [])));
+  var tips = tipsArr;
   var tipsHtml = tips.map(function(t, i) {
     return '<li><span class="tip-num">' + (i + 1) + '</span> <span>' + escHtml(t) + '</span></li>';
   }).join('');
@@ -987,32 +1013,70 @@ function renderBenchmarkLayout(w) {
 
   // Scoring note
   var scoringNoteHtml = (w.scoring_notes || w.scoring)
-    ? '<div class="scoring-note"><strong>Scoring</strong>' + escHtml(w.scoring_notes || w.scoring) + '</div>'
+    ? '<div class="scoring-note" style="margin-top:12px;font-size:.85rem;color:var(--muted);line-height:1.6"><strong style="color:var(--text)">Scoring: </strong>' + escHtml(w.scoring_notes || w.scoring) + '</div>'
     : '';
 
   // Meta row items for page-header
-  var metaItems = [];
-  if (catLabel) metaItems.push(catLabel + ' WOD');
-  if (w.format) metaItems.push(w.format);
+  var repsLabel = '';
+  var movements = w.movements || [];
+  if (movements.length) {
+    var firstRepsRaw = String(movements[0].reps || '');
+    var rNums = firstRepsRaw.match(/\d+/g);
+    repsLabel = rNums ? rNums.join('–') : firstRepsRaw;
+  }
   var dur = w.duration_estimate || w.duration;
-  if (dur) { var dm2 = String(dur).match(/\d+/); metaItems.push(dm2 ? dm2[0] + ' min' : String(dur)); }
-  if (w.difficulty) metaItems.push(cap(w.difficulty));
-  var metaHtml = metaItems.map(function(item) {
-    return '<span class="wod-ph-meta-item">' + escHtml(item) + '</span>';
-  }).join('');
+  var durStr = dur ? String(dur) : '';
+  var metaHtml =
+    (repsLabel ? '<span class="wod-ph-meta-item">' + escHtml(repsLabel) + '</span>' : '') +
+    (w.format ? '<span class="wod-ph-meta-item">' + escHtml(w.format) + '</span>' : '') +
+    (durStr ? '<span class="wod-ph-meta-item">Time Cap: ' + escHtml(durStr) + '</span>' : '') +
+    (w.difficulty ? '<span class="wod-ph-meta-item">' + escHtml(cap(w.difficulty)) + '</span>' : '');
+
+  var subCatLabel = catLabel ? catLabel + ' WODs' : 'WODs';
+  var subCatHref  = catLabel ? '/workouts.html?category=' + encodeURIComponent(category) : '/workouts.html';
 
   var pageHeaderHtml =
     '<div class="page-header">' +
       '<div class="page-header-inner">' +
         '<nav class="breadcrumb" aria-label="Breadcrumb">' +
           '<a href="/">Home</a><span>›</span>' +
-          '<a href="/workouts.html">WODs</a><span>›</span>' +
+          '<a href="/workouts.html">Workouts</a><span>›</span>' +
+          '<a href="' + subCatHref + '">' + escHtml(subCatLabel) + '</a><span>›</span>' +
           escHtml(name) +
         '</nav>' +
         '<div class="wod-ph-title">' + escHtml(name) + '</div>' +
         (metaHtml ? '<div class="wod-ph-meta">' + metaHtml + '</div>' : '') +
       '</div>' +
     '</div>';
+
+  // Movement standards table (from movements rx data)
+  var hasMvStandards = movements.some(function(m) { return m.rx_men || m.rx_women; });
+  var standardsCard = '';
+  if (hasMvStandards) {
+    var stdRows = movements.map(function(m) {
+      if (!m.rx_men && !m.rx_women) return '';
+      return '<tr>' +
+        '<td class="std-mv">' + escHtml(m.name || '') + '</td>' +
+        '<td class="std-rx">' + escHtml(m.rx_men || '—') + '</td>' +
+        '<td class="std-rx">' + escHtml(m.rx_women || '—') + '</td>' +
+      '</tr>';
+    }).filter(Boolean).join('');
+    standardsCard =
+      '<div class="bc span3">' +
+        '<div class="bc-head">&#9650; Movement Standards</div>' +
+        '<table class="standards-table">' +
+          '<thead><tr><th>Movement</th><th>Men Rx</th><th>Women Rx</th></tr></thead>' +
+          '<tbody>' + stdRows + '</tbody>' +
+        '</table>' +
+        (scalingHtml ? '<div style="margin-top:14px"><div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px">Scaling</div>' + scalingHtml + '</div>' : '') +
+      '</div>';
+  } else if (scalingHtml) {
+    standardsCard =
+      '<div class="bc span3">' +
+        '<div class="bc-head">&#9137; Scaling Options</div>' +
+        scalingHtml +
+      '</div>';
+  }
 
   var pageWrapHtml =
     '<div class="page-wrap">' +
@@ -1021,7 +1085,7 @@ function renderBenchmarkLayout(w) {
           buildWodHeroCardHTML(w) +
           (equip.length || w.equipment
             ? '<div class="equip-below-wb">' +
-                '<span class="equip-below-label">Equipment</span>' +
+                '<span class="equip-below-label">Equipment Needed</span>' +
                 '<div class="equip-chips">' + equipChips + '</div>' +
               '</div>'
             : '') +
@@ -1031,43 +1095,32 @@ function renderBenchmarkLayout(w) {
 
       '<div class="bento">' +
 
-        // About
-        '<div class="bc span3">' +
+        // About — full width span6
+        '<div class="bc span6">' +
           '<div class="bc-head">&#8505; About ' + escHtml(name) + '</div>' +
           '<div class="about-text">' + escHtml(w.description || 'A classic benchmark workout.') + '</div>' +
           scoringNoteHtml +
         '</div>' +
 
-        videoCard +
-
-        (scalingHtml
-          ? '<div class="bc span3">' +
-              '<div class="bc-head">&#9137; Scaling Options</div>' +
-              scalingHtml +
-            '</div>'
-          : '') +
+        // Movement Standards (span3) + Coaching Cues (span3)
+        standardsCard +
 
         (tips.length
           ? '<div class="bc span3">' +
-              '<div class="bc-head">&#9679; Coaching Tips</div>' +
+              '<div class="bc-head">&#9679; Coaching Cues</div>' +
               '<ul class="tip-list">' + tipsHtml + '</ul>' +
             '</div>'
           : '') +
+
+        videoCard +
 
         (faqs.length
           ? '<div class="bc span6"><div class="bc-head">FAQ &mdash; ' + escHtml(name) + '</div>' + faqHtml + '</div>'
           : '') +
 
-        // Equipment in bento (full detail)
-        '<div class="bc span3">' +
-          '<div class="bc-head">&#128722; Equipment</div>' +
-          '<p class="equip-section-note">Shop the gear for this WOD &darr;</p>' +
-          '<div class="equip-chips-wrap">' + equipChips + '</div>' +
-        '</div>' +
-
-        // Related WODs (async)
-        '<div class="bc span3" id="related-wods-card">' +
-          '<div class="bc-head">Related WODs</div>' +
+        // You Might Also Like — full width span6
+        '<div class="bc span6" id="related-wods-card">' +
+          '<div class="bc-head">YOU MIGHT ALSO LIKE</div>' +
           '<div id="related-wods-container"><div style="color:var(--muted);font-size:.85rem">Loading&hellip;</div></div>' +
         '</div>' +
 
@@ -1201,13 +1254,13 @@ function renderRelatedWorkouts(container, w) {
 
     var related = BENCHMARKS.filter(function(b) {
       return b.slug && b.slug !== currentSlug && (b.name || '').toLowerCase() !== currentName && (category ? b.category === category : true);
-    }).slice(0, 3);
+    }).slice(0, 5);
 
-    if (related.length < 3) {
+    if (related.length < 5) {
       var others = BENCHMARKS.filter(function(b) {
         return b.slug && b.slug !== currentSlug && (b.name || '').toLowerCase() !== currentName &&
                !related.some(function(r) { return r.slug === b.slug; });
-      }).slice(0, 3 - related.length);
+      }).slice(0, 5 - related.length);
       related = related.concat(others);
     }
 

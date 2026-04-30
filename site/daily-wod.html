@@ -184,6 +184,12 @@
   let currentWod = null;
   let leaderboardPeriod = 'day';
 
+  // Local date string (YYYY-MM-DD) — avoids UTC offset returning "tomorrow" in US timezones
+  function localDateStr() {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+
   // ── Amazon Affiliate ──────────────────────────────────────
   const AFFILIATE_TAG = 'homewodrx0f-20';
   const EQUIPMENT_LINKS = {
@@ -223,7 +229,7 @@
 
   async function loadDailyWod() {
     const params = new URLSearchParams(window.location.search);
-    const dateStr = params.get('date') || new Date().toISOString().split('T')[0];
+    const dateStr = params.get('date') || localDateStr();
     try {
       const wod = await DailyWOD.generate(dateStr);
       currentWod = wod;
@@ -417,7 +423,7 @@
       w.bodyFocus && `<span>${cap(w.bodyFocus)}</span>`,
     ].filter(Boolean).join('');
     const scoring = w.scoring ? `<div class="pscore"><h4>📊 Scoring</h4><p>${escH(w.scoring)}</p></div>` : '';
-    const dateStr = new URLSearchParams(window.location.search).get('date') || new Date().toISOString().split('T')[0];
+    const dateStr = new URLSearchParams(window.location.search).get('date') || localDateStr();
     const dateFmt = new Date(dateStr+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
     const pa = document.getElementById('print-area');
     pa.innerHTML = `
@@ -472,7 +478,7 @@
   }
 
   async function loadLeaderboard(period, dateStr) {
-    dateStr = dateStr || new Date().toISOString().split('T')[0];
+    dateStr = dateStr || localDateStr();
     leaderboardPeriod = period;
     var card      = document.getElementById('leaderboard-card');
     var container = document.getElementById('leaderboard-table');
@@ -531,7 +537,7 @@
     const score = document.getElementById('result-score').value;
     const notes = document.getElementById('result-notes').value;
     const isRx  = document.getElementById('result-rx').checked;
-    const dateStr = new URLSearchParams(window.location.search).get('date') || new Date().toISOString().split('T')[0];
+    const dateStr = new URLSearchParams(window.location.search).get('date') || localDateStr();
     if (!score) {
       const errEl = document.getElementById('result-error');
       errEl.textContent = 'Please enter your score.';
@@ -549,7 +555,7 @@
         score_seconds: null,
         is_rx: isRx,
         notes: notes,
-        date: new Date().toISOString().split('T')[0]
+        date: localDateStr()
       };
       const { error } = await db.saveResult(result);
       if (error) throw error;
