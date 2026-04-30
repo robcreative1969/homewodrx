@@ -49,155 +49,10 @@
     button { font-family: var(--font-body); cursor: pointer; }
 
     /* ═══════════════════════════════════════
-       NAV  (classes injected by nav.js)
-    ═══════════════════════════════════════ */
-    .site-nav {
-      position: sticky; top: 0; z-index: 1000;
-      background: var(--white); border-bottom: 2px solid var(--or);
-      height: var(--nav-h); display: flex; align-items: center;
-      padding: 0 28px; gap: 4px;
-    }
-    .nav-logo {
-      text-decoration: none; display: flex; align-items: center; margin-right: 18px; flex-shrink: 0;
-    }
-    .nav-logo-img { height: 36px; width: auto; }
-    .nav-items  { display: flex; align-items: center; gap: 2px; flex: 1; }
-    .nav-dd     { position: relative; }
-    .nav-btn {
-      display: flex; align-items: center; gap: 6px;
-      padding: 8px 14px; background: none; border: none; cursor: pointer;
-      font-size: .9rem; font-weight: 600; color: var(--text);
-      border-radius: 8px; transition: background .15s, color .15s;
-      white-space: nowrap; font-family: var(--font-body); text-decoration: none;
-    }
-    .nav-btn:hover, .nav-dd.open > .nav-btn, .nav-btn.active { background: var(--or-xlight); color: var(--or); }
-    .nav-btn svg.chev { width: 14px; height: 14px; transition: transform .2s; flex-shrink: 0; opacity: .5; }
-    .nav-dd.open .nav-btn svg.chev { transform: rotate(180deg); opacity: 1; }
-    .dd-panel {
-      display: none; position: absolute; top: calc(100% + 10px); left: 0;
-      min-width: 260px; background: var(--white); border-radius: 12px;
-      box-shadow: var(--shadow-lg); border: 1px solid var(--border); padding: 8px; z-index: 1100;
-    }
-    .dd-panel-right { right: 0; left: auto; }
-    .nav-dd.open .dd-panel { display: block; }
-    .dd-panel a {
-      display: flex; align-items: flex-start; gap: 12px;
-      padding: 10px 12px; border-radius: 8px;
-      text-decoration: none; color: var(--text); transition: background .12s, color .12s;
-    }
-    .dd-panel a:hover { background: var(--or-xlight); color: var(--or); }
-    .dl strong { display: block; font-size: .875rem; font-weight: 600; line-height: 1.3; }
-    .dl small  { font-size: .75rem; color: var(--muted); line-height: 1.3; }
-    .dd-div    { height: 1px; background: var(--border); margin: 6px 4px; }
-    .dd-section-label {
-      padding: 6px 12px 3px; font-size: .68rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .07em; color: var(--muted2);
-    }
-    .dd-footer {
-      display: block; text-align: center; padding: 7px 12px 5px;
-      font-size: .78rem; font-weight: 700; color: var(--or);
-      text-decoration: none; border-radius: 8px; transition: background .12s;
-    }
-    .dd-footer:hover { background: var(--or-xlight); }
-    .dd-post {
-      display: flex; flex-direction: column; gap: 2px;
-      padding: 9px 12px; border-radius: 8px;
-      text-decoration: none; color: var(--text); transition: background .12s;
-    }
-    .dd-post:hover { background: var(--or-xlight); }
-    .dd-post-tag { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
-    .dd-post-title { font-size: .84rem; font-weight: 600; line-height: 1.35; }
-    .dd-post:hover .dd-post-title { color: var(--or); }
-    .nav-end   { display: flex; align-items: center; gap: 10px; margin-left: auto; }
-    .nav-search-btn {
-      width: 36px; height: 36px; border: 1.5px solid var(--border); background: none;
-      border-radius: 8px; display: flex; align-items: center; justify-content: center;
-      cursor: pointer; color: var(--muted); transition: border-color .15s, color .15s;
-      text-decoration: none;
-    }
-    .nav-search-btn:hover { border-color: var(--or); color: var(--or); }
-    .nav-cta {
-      padding: 9px 18px; background: var(--or); color: #fff; border: none;
-      border-radius: 8px; font-size: .875rem; font-weight: 700;
-      cursor: pointer; transition: background .15s; white-space: nowrap;
-    }
-    .nav-cta:hover { background: var(--or-dark); }
-    .nav-hamburger {
-      display: none; width: 36px; height: 36px; padding: 0;
-      background: none; border: 1.5px solid var(--border); border-radius: 8px;
-      align-items: center; justify-content: center;
-      cursor: pointer; color: var(--text); transition: border-color .15s, color .15s;
-    }
-    .nav-hamburger:hover { border-color: var(--or); color: var(--or); }
-    .ham-icon-open  { width: 18px; height: 18px; display: block; }
-    .ham-icon-close { width: 18px; height: 18px; display: none; }
-    .nav-hamburger.open .ham-icon-open  { display: none; }
-    .nav-hamburger.open .ham-icon-close { display: block; }
-    .ham-panel {
-      display: none; position: fixed; top: var(--nav-h); left: 0; right: 0; bottom: 0;
-      background: var(--white); overflow-y: auto;
-      z-index: 999; border-top: 1px solid var(--border); padding: 8px 0 32px;
-    }
-    .ham-panel.open { display: block; }
-    .ham-section { padding: 4px 20px 12px; }
-    .ham-section-title {
-      font-size: .68rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .08em; color: var(--muted2); padding: 12px 0 6px;
-    }
-    .ham-links { display: flex; flex-direction: column; gap: 1px; }
-    .ham-link {
-      display: block; padding: 9px 10px; border-radius: 8px;
-      font-size: .9rem; font-weight: 600; color: var(--text);
-      text-decoration: none; transition: background .12s, color .12s;
-    }
-    .ham-link:hover { background: var(--or-xlight); color: var(--or); }
-    .ham-divider { height: 1px; background: var(--border); margin: 4px 20px; }
-    .dd-panel-wide { min-width: 520px; }
-    .dd-cols { display: grid; grid-template-columns: 1fr 1fr; }
-    .dd-col-right { border-left: 1px solid var(--border); }
-
-    /* Avatar dropdown */
-    .nav-avatar {
-      width: 34px; height: 34px; border-radius: 50%;
-      background: var(--or); color: #fff;
-      font-family: var(--font-head); font-size: 15px; letter-spacing: .04em;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; user-select: none;
-      border: 2px solid transparent; transition: border-color .15s;
-    }
-    .nav-avatar:hover { border-color: var(--or-dark); }
-    .avatar-dd-user {
-      display: flex; align-items: center; gap: 10px;
-      padding: 8px 12px 12px;
-    }
-    .avatar-dd-initials {
-      width: 38px; height: 38px; border-radius: 50%;
-      background: var(--or); color: #fff;
-      font-family: var(--font-head); font-size: 17px;
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .avatar-dd-info { display: flex; flex-direction: column; gap: 2px; }
-    .avatar-dd-name { font-size: .875rem; font-weight: 700; }
-    .avatar-dd-handle { font-size: .75rem; color: var(--muted); }
-    .avatar-dd-logout { color: #c00; }
-    .avatar-dd-logout:hover { background: rgba(196,0,0,.06) !important; }
-    .di {
-      width: 28px; height: 28px; border-radius: 6px; background: var(--bg);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; color: var(--muted);
-    }
-
-    @media (max-width: 800px) {
-      .nav-items, .nav-search-btn { display: none; }
-      .nav-hamburger { display: flex; }
-      .site-nav { padding: 0 16px; }
-    }
-
-    /* ═══════════════════════════════════════
        AUTH PAGE
     ═══════════════════════════════════════ */
     .auth-wrap {
-      min-height: calc(100vh - var(--nav-h));
+      min-height: 100vh;
       display: flex; align-items: center; justify-content: center;
       padding: 48px 16px;
     }
@@ -208,9 +63,16 @@
     }
     .auth-logo {
       display: flex; align-items: center; justify-content: center;
-      text-decoration: none; margin-bottom: 2rem;
+      text-decoration: none; margin-bottom: .75rem;
     }
     .auth-logo-img { height: 40px; width: auto; }
+    .auth-back-link {
+      display: block; text-align: center;
+      font-size: .8rem; color: var(--muted); text-decoration: none;
+      margin-bottom: 1.75rem; transition: color .15s;
+    }
+    .auth-back-link:hover { color: var(--or); }
+    .auth-back-link svg { width: 12px; height: 12px; vertical-align: middle; margin-right: 3px; }
     .auth-title {
       font-family: var(--font-head); font-size: 2.2rem; letter-spacing: .04em;
       text-align: center; margin-bottom: 0.4rem; line-height: 1;
@@ -301,15 +163,16 @@
   </script>
   <script defer src="/_vercel/insights/script.js"></script>
 </head>
-<body data-nav-init="true" data-active-page="">
-
-  <!-- Nav injected by nav.js -->
+<body>
 
   <main class="auth-wrap">
     <div class="auth-card">
 
       <a class="auth-logo" href="/">
         <img src="/HomeWODRx-logo-black-red-040626.png" alt="HomeWODrx" class="auth-logo-img">
+      </a>
+      <a class="auth-back-link" href="/">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>Back to HomeWodRX
       </a>
 
       <!-- ── LOGIN VIEW ── -->
