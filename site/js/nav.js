@@ -13,12 +13,31 @@
 const Nav = {
 
   async init(activePage = '') {
-    // Render nav immediately — no waiting on auth network call
+    // Render nav immediately — both auth states hidden to prevent flash
     document.body.insertAdjacentHTML('afterbegin', this.render(activePage));
     this.attachEventListeners();
     this.loadSearchScript();
 
-    // Auth check happens async — updates avatar/state once resolved
+    // Sync pre-check: if we know the user was logged in last visit, show
+    // avatar placeholder instantly so there's no guest→avatar flash
+    const cachedAuth = localStorage.getItem('hwrx_authed');
+    const cachedInitial = localStorage.getItem('hwrx_initial') || '?';
+    const cachedName    = localStorage.getItem('hwrx_name')    || 'Athlete';
+    const cachedHandle  = localStorage.getItem('hwrx_handle')  || '@athlete';
+    if (cachedAuth === '1') {
+      const $ = id => document.getElementById(id);
+      if ($('avatar-initials'))    $('avatar-initials').textContent    = cachedInitial;
+      if ($('avatar-initials-dd')) $('avatar-initials-dd').textContent = cachedInitial;
+      if ($('avatar-name-dd'))     $('avatar-name-dd').textContent     = cachedName;
+      if ($('avatar-handle-dd'))   $('avatar-handle-dd').textContent   = cachedHandle;
+      if ($('nav-auth'))           $('nav-auth').style.display         = 'flex';
+    } else {
+      // Show guest buttons right away — no session cached
+      const guestEl = document.getElementById('nav-guest');
+      if (guestEl) guestEl.style.display = 'flex';
+    }
+
+    // Async Supabase verify — corrects state if cache is stale
     await this.ensureSupabase();
     const currentUser = await db.getUser();
     if (currentUser) db.updateLastSeen();
@@ -147,8 +166,8 @@ const Nav = {
     <a href="/search.html" class="nav-search-btn" title="Search">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </a>
-    <!-- Guest state -->
-    <div id="nav-guest" style="display:flex;align-items:center;gap:8px;">
+    <!-- Guest state (hidden until auth check resolves) -->
+    <div id="nav-guest" style="display:none;align-items:center;gap:8px;">
       <a href="/login.html" class="nav-btn" style="padding:8px 12px;">Log In</a>
       <a href="/signup.html" class="nav-cta" style="text-decoration:none;display:flex;align-items:center;">Sign Up Free</a>
     </div>
@@ -239,22 +258,42 @@ const Nav = {
 `;
   },
 
-  // Populate the injected nav with auth state after login check
+  // Populate the injected nav with verified auth state
   updateAuth(currentUser, profileUsername) {
-    if (!currentUser) return;
+    const $ = id => document.getElementById(id);
+
+    if (!currentUser) {
+      // Confirmed logged out — clear cache and show guest buttons
+      localStorage.removeItem('hwrx_authed');
+      localStorage.removeItem('hwrx_initial');
+      localStorage.removeItem('hwrx_name');
+      localStorage.removeItem('hwrx_handle');
+      if ($('nav-auth'))  $('nav-auth').style.display  = 'none';
+      if ($('nav-guest')) $('nav-guest').style.display = 'flex';
+      return;
+    }
+
+    // Logged in — build display values
     const displayName = profileUsername
       || currentUser.user_metadata?.full_name
       || currentUser.email?.split('@')[0]
       || 'Athlete';
     const initial = (displayName.charAt(0) || '?').toUpperCase();
     const handle  = '@' + (currentUser.email?.split('@')[0] || displayName.toLowerCase());
-    const $       = id => document.getElementById(id);
+
+    // Update DOM
     if ($('avatar-initials'))    $('avatar-initials').textContent    = initial;
     if ($('avatar-initials-dd')) $('avatar-initials-dd').textContent = initial;
     if ($('avatar-name-dd'))     $('avatar-name-dd').textContent     = displayName;
     if ($('avatar-handle-dd'))   $('avatar-handle-dd').textContent   = handle;
     if ($('nav-guest'))          $('nav-guest').style.display        = 'none';
     if ($('nav-auth'))           $('nav-auth').style.display         = 'flex';
+
+    // Cache for instant display on next page load
+    localStorage.setItem('hwrx_authed',  '1');
+    localStorage.setItem('hwrx_initial', initial);
+    localStorage.setItem('hwrx_name',    displayName);
+    localStorage.setItem('hwrx_handle',  handle);
   },
 
   getAvatarColor(userId) {
@@ -318,6 +357,10 @@ function togHam() {
 
 async function doSignOut(e) {
   e.preventDefault();
+  localStorage.removeItem('hwrx_authed');
+  localStorage.removeItem('hwrx_initial');
+  localStorage.removeItem('hwrx_name');
+  localStorage.removeItem('hwrx_handle');
   try { await db.signOut(); } catch (err) {}
   location.href = '/';
 }
