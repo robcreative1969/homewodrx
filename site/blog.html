@@ -89,40 +89,11 @@
 .featured-post {
   background: var(--white); border-radius: var(--radius-lg);
   border: 1.5px solid var(--border); box-shadow: var(--shadow);
-  overflow: hidden; display: grid; grid-template-columns: 1fr 420px;
+  overflow: hidden; display: block;
   margin-bottom: 48px; transition: box-shadow .2s;
   text-decoration: none; color: var(--text);
 }
 .featured-post:hover { box-shadow: var(--shadow-md); }
-.featured-visual {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
-  position: relative; min-height: 320px;
-  display: flex; align-items: center; justify-content: center; overflow: hidden;
-}
-.featured-visual-bg {
-  position: absolute; inset: 0;
-  background:
-    radial-gradient(ellipse 80% 80% at 30% 50%, rgba(196,18,18,.25) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 60% at 70% 30%, rgba(196,18,18,.1) 0%, transparent 60%);
-}
-.featured-visual-text {
-  position: relative; z-index: 1; text-align: center; padding: 40px;
-}
-.feat-wod-name {
-  font-family: var(--font-head); font-size: clamp(60px, 8vw, 96px);
-  color: rgba(255,255,255,.12); letter-spacing: .08em; line-height: 1;
-  user-select: none; position: absolute; bottom: 20px; right: 24px;
-}
-.feat-category-badge {
-  display: inline-block; padding: 6px 14px; border-radius: 20px;
-  background: rgba(196,18,18,.9); color: #fff;
-  font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
-  margin-bottom: 16px;
-}
-.feat-label {
-  font-family: var(--font-head); font-size: 1.5rem; color: rgba(255,255,255,.7);
-  letter-spacing: .06em;
-}
 .featured-body { padding: 36px 40px; display: flex; flex-direction: column; justify-content: space-between; }
 .feat-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
 .feat-tag {
@@ -147,9 +118,8 @@
 }
 .btn-read:hover { background: var(--or-dark); transform: translateY(-1px); }
 .btn-read svg { width: 14px; height: 14px; }
-@media (max-width: 900px) {
-  .featured-post { grid-template-columns: 1fr; }
-  .featured-visual { min-height: 200px; }
+@media (max-width: 640px) {
+  .featured-body { padding: 24px 20px; }
 }
 
 /* ── Section heading ── */
@@ -174,27 +144,6 @@
 }
 .post-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
 
-.post-card-visual {
-  height: 160px; position: relative; overflow: hidden; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-}
-.post-card-visual .card-cat-badge {
-  position: absolute; top: 12px; left: 12px;
-  font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
-  padding: 4px 10px; border-radius: 6px; color: #fff;
-}
-.post-card-visual .read-time-badge {
-  position: absolute; bottom: 12px; right: 12px;
-  font-size: .68rem; font-weight: 600; color: rgba(255,255,255,.85);
-  background: rgba(0,0,0,.35); padding: 3px 9px; border-radius: 20px;
-  backdrop-filter: blur(4px);
-}
-.vis-training  { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
-.vis-equipment { background: linear-gradient(135deg, #1e3a2f 0%, #0f2318 100%); }
-.vis-scaling   { background: linear-gradient(135deg, #2d1e3a 0%, #1a0f23 100%); }
-.vis-hero      { background: linear-gradient(135deg, #3a1e1e 0%, #231010 100%); }
-.vis-benchmark { background: linear-gradient(135deg, #1e2d3a 0%, #0f1a23 100%); }
-.vis-stretch   { background: linear-gradient(135deg, #1e3a2a 0%, #0f231a 100%); }
 
 .post-card-body { padding: 20px 20px 16px; flex: 1; display: flex; flex-direction: column; }
 .pc-tag {
@@ -306,14 +255,6 @@
 
     <!-- FEATURED POST -->
     <a class="featured-post" href="/blog/hero-wod-guide.html" data-category="wod-guides">
-      <div class="featured-visual">
-        <div class="featured-visual-bg"></div>
-        <div class="featured-visual-text">
-          <span class="feat-category-badge">WOD Guide</span>
-          <span class="feat-label">Hero WODs</span>
-        </div>
-        <div class="feat-wod-name">MURPH</div>
-      </div>
       <div class="featured-body">
         <div>
           <div class="feat-meta">
@@ -344,96 +285,72 @@
     <div class="post-grid" id="postGrid">
 
       <a class="post-card" href="/blog/how-to-scale-wods.html" data-category="training">
-        <div class="post-card-visual vis-scaling">
-          <span class="card-cat-badge" style="background:rgba(139,92,246,.8);">Training</span>
-          <span class="read-time-badge">6 min read</span>
-        </div>
         <div class="post-card-body">
           <div class="pc-tag">Training</div>
           <h3>How to Scale WODs Without Losing the Intent of the Workout</h3>
           <p>Scaling isn't cheating — it's smart training. Here's a framework for modifying any WOD while preserving its stimulus.</p>
           <div class="pc-footer">
-            <span class="pc-date">March 28, 2026</span>
+            <span class="pc-date">March 28, 2026 · 6 min read</span>
             <span class="pc-link">Read <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
           </div>
         </div>
       </a>
 
       <a class="post-card" href="/blog/best-home-gym-equipment.html" data-category="equipment">
-        <div class="post-card-visual vis-equipment">
-          <span class="card-cat-badge" style="background:rgba(16,185,129,.8);">Equipment</span>
-          <span class="read-time-badge">10 min read</span>
-        </div>
         <div class="post-card-body">
           <div class="pc-tag">Equipment</div>
           <h3>The Best Home Gym Equipment for Functional Fitness Athletes (2026)</h3>
           <p>From budget starter setups to full garage gyms — the gear that actually matters and what to buy first.</p>
           <div class="pc-footer">
-            <span class="pc-date">March 22, 2026</span>
+            <span class="pc-date">March 22, 2026 · 10 min read</span>
             <span class="pc-link">Read <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
           </div>
         </div>
       </a>
 
       <a class="post-card" href="/blog/named-benchmark-wods-guide.html" data-category="wod-guides">
-        <div class="post-card-visual vis-benchmark">
-          <span class="card-cat-badge" style="background:rgba(196,18,18,.85);">WOD Guide</span>
-          <span class="read-time-badge">7 min read</span>
-        </div>
         <div class="post-card-body">
           <div class="pc-tag">WOD Guide</div>
           <h3>Named Benchmark WODs Explained: The Girls, Heroes, and Open Tests</h3>
           <p>Why certain workouts have names — and why you should track your performance on them over time.</p>
           <div class="pc-footer">
-            <span class="pc-date">March 15, 2026</span>
+            <span class="pc-date">March 15, 2026 · 7 min read</span>
             <span class="pc-link">Read <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
           </div>
         </div>
       </a>
 
       <a class="post-card" href="/blog/weekly-training-program-home.html" data-category="programming">
-        <div class="post-card-visual vis-training">
-          <span class="card-cat-badge" style="background:rgba(245,158,11,.85);">Programming</span>
-          <span class="read-time-badge">9 min read</span>
-        </div>
         <div class="post-card-body">
           <div class="pc-tag">Programming</div>
           <h3>How to Structure a Weekly Training Program at Home</h3>
           <p>The difference between random workouts and real progress. How to balance intensity, volume, and recovery week to week.</p>
           <div class="pc-footer">
-            <span class="pc-date">March 8, 2026</span>
+            <span class="pc-date">March 8, 2026 · 9 min read</span>
             <span class="pc-link">Read <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
           </div>
         </div>
       </a>
 
       <a class="post-card" href="/blog/why-stretching-matters.html" data-category="mobility">
-        <div class="post-card-visual vis-stretch">
-          <span class="card-cat-badge" style="background:rgba(16,185,129,.8);">Mobility</span>
-          <span class="read-time-badge">5 min read</span>
-        </div>
         <div class="post-card-body">
           <div class="pc-tag">Mobility</div>
           <h3>Why Stretching Matters More Than You Think (And When to Do It)</h3>
           <p>Static vs. dynamic, pre vs. post-WOD — what the research actually says and the routine that makes a difference.</p>
           <div class="pc-footer">
-            <span class="pc-date">February 27, 2026</span>
+            <span class="pc-date">February 27, 2026 · 5 min read</span>
             <span class="pc-link">Read <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
           </div>
         </div>
       </a>
 
       <a class="post-card" href="/blog/rogue-vs-titan-home-gym.html" data-category="equipment">
-        <div class="post-card-visual vis-equipment">
-          <span class="card-cat-badge" style="background:rgba(16,185,129,.8);">Equipment</span>
-          <span class="read-time-badge">7 min read</span>
-        </div>
         <div class="post-card-body">
           <div class="pc-tag">Equipment</div>
           <h3>Rogue vs. Titan: Which Home Gym Brand Is Right for You?</h3>
           <p>Rogue or Titan? We break down the real differences in quality, price, and value so garage gym athletes can make a confident choice before they spend.</p>
           <div class="pc-footer">
-            <span class="pc-date">April 27, 2026</span>
+            <span class="pc-date">April 27, 2026 · 7 min read</span>
             <span class="pc-link">Read <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
           </div>
         </div>
