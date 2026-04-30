@@ -262,9 +262,15 @@ const Nav = {
   <a href="/" class="nav-logo">
     <img src="/HomeWODRx-logo-black-red-040626.png" alt="HomeWODrx" class="nav-logo-img" style="height:28px;">
   </a>
-  <a href="/search.html" style="color:var(--text);display:flex;align-items:center;">
-    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-  </a>
+  <div style="display:flex;align-items:center;gap:4px;">
+    <a href="/search.html" class="mob-top-btn" title="Search" aria-label="Search">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </a>
+    <button class="mob-top-btn" id="mobile-hamburger-btn" onclick="togHam()" aria-label="Open menu">
+      <svg class="ham-icon-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      <svg class="ham-icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="display:none;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
 </div>
 
 <nav class="mobile-tab-bar" role="navigation" aria-label="Mobile navigation">
@@ -370,9 +376,14 @@ const Nav = {
       if (!e.target.closest('.nav-dd')) {
         document.querySelectorAll('.nav-dd.open').forEach(d => d.classList.remove('open'));
       }
-      if (!e.target.closest('.nav-hamburger') && !e.target.closest('.ham-panel')) {
+      if (!e.target.closest('.nav-hamburger') && !e.target.closest('#mobile-hamburger-btn') && !e.target.closest('.ham-panel')) {
         document.getElementById('hamburger-btn')?.classList.remove('open');
         document.getElementById('ham-panel')?.classList.remove('open');
+        const mobBtn = document.getElementById('mobile-hamburger-btn');
+        if (mobBtn) {
+          mobBtn.querySelector('.ham-icon-open').style.display  = 'block';
+          mobBtn.querySelector('.ham-icon-close').style.display = 'none';
+        }
       }
     });
 
@@ -382,6 +393,11 @@ const Nav = {
         document.querySelectorAll('.nav-dd.open').forEach(d => d.classList.remove('open'));
         document.getElementById('hamburger-btn')?.classList.remove('open');
         document.getElementById('ham-panel')?.classList.remove('open');
+        const mobBtn = document.getElementById('mobile-hamburger-btn');
+        if (mobBtn) {
+          mobBtn.querySelector('.ham-icon-open').style.display  = 'block';
+          mobBtn.querySelector('.ham-icon-close').style.display = 'none';
+        }
       }
     });
   }
@@ -409,11 +425,16 @@ function toggleDD(id) {
 }
 
 function togHam() {
-  const btn   = document.getElementById('hamburger-btn');
-  const panel = document.getElementById('ham-panel');
-  if (!btn || !panel) return;
-  const isOpen = btn.classList.contains('open');
-  btn.classList.toggle('open', !isOpen);
+  const btn    = document.getElementById('hamburger-btn');
+  const mobBtn = document.getElementById('mobile-hamburger-btn');
+  const panel  = document.getElementById('ham-panel');
+  if (!panel) return;
+  const isOpen = panel.classList.contains('open');
+  if (btn)    btn.classList.toggle('open', !isOpen);
+  if (mobBtn) {
+    mobBtn.querySelector('.ham-icon-open').style.display  = isOpen ? 'block' : 'none';
+    mobBtn.querySelector('.ham-icon-close').style.display = isOpen ? 'none'  : 'block';
+  }
   panel.classList.toggle('open', !isOpen);
 }
 
