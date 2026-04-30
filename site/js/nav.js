@@ -324,11 +324,11 @@ const Nav = {
   </div>
 </nav>
 
-<button class="mob-feedback-btn" onclick="openFeedback()" aria-label="Send feedback" title="Send feedback">
+<a href="/contact.html" class="mob-feedback-btn" aria-label="Send feedback" title="Send feedback">
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
   </svg>
-</button>
+</a>
 `;
   },
 
@@ -442,28 +442,6 @@ function togHam() {
     mobBtn.querySelector('.ham-icon-close').style.display = isOpen ? 'none'  : 'block';
   }
   panel.classList.toggle('open', !isOpen);
-}
-
-function openFeedback() {
-  try {
-    if (window.Sentry) {
-      // Try newer SDK API
-      const fb = Sentry.getFeedback?.();
-      if (fb) {
-        if (typeof fb.openDialog === 'function')  { fb.openDialog(); return; }
-        if (typeof fb.createForm === 'function')  {
-          fb.createForm().then(f => { f.appendToDom(); f.open(); });
-          return;
-        }
-      }
-      // Fallback: click the hidden Sentry widget button directly
-      const sentryEl = document.getElementById('sentry-feedback');
-      const btn = sentryEl?.shadowRoot?.querySelector('button');
-      if (btn) { btn.click(); return; }
-    }
-  } catch (e) { /* SDK not ready */ }
-  // Last resort: mailto
-  window.location.href = 'mailto:rob@carlbloom.com?subject=HomeWodRX%20Feedback';
 }
 
 async function doSignOut(e) {
