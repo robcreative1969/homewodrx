@@ -311,6 +311,20 @@ textarea.form-input { resize:vertical; min-height:80px; line-height:1.5; }
   font-family:var(--font-body); transition:background .15s;
 }
 .btn-modal-danger:hover { background:#991b1b; }
+
+/* ── Scoring inputs ── */
+.time-row { display:flex; align-items:center; gap:8px; }
+.time-part { flex:1; text-align:center; font-size:1.1rem; font-weight:700; }
+.time-colon { font-size:1.5rem; font-weight:800; color:var(--text); flex-shrink:0; }
+.time-hint, .score-hint { font-size:.72rem; color:var(--muted2); margin-top:5px; font-style:italic; }
+.rounds-row { display:flex; align-items:center; gap:8px; }
+.rounds-row .form-input { flex:1; text-align:center; }
+.rounds-lbl { font-size:.82rem; color:var(--muted); white-space:nowrap; font-weight:600; flex-shrink:0; }
+.weight-row { display:flex; align-items:center; gap:8px; }
+.weight-row .form-input { flex:1; }
+.unit-seg { display:inline-flex; background:var(--bg); border:1.5px solid var(--border); border-radius:8px; overflow:hidden; flex-shrink:0; }
+.unit-seg-btn { padding:8px 12px; font-size:.8rem; font-weight:700; background:transparent; border:none; color:var(--muted); cursor:pointer; transition:all .15s; font-family:var(--font-body); }
+.unit-seg-btn.active { background:var(--or); color:#fff; }
   </style>
 
   <!-- Google Analytics -->
@@ -469,9 +483,51 @@ textarea.form-input { resize:vertical; min-height:80px; line-height:1.5; }
     </button>
     <h3 id="log-modal-title">Log Result</h3>
 
-    <div class="form-group">
-      <label class="form-label" for="log-score">Score / Time</label>
-      <input class="form-input" type="text" id="log-score" placeholder="e.g. 12:34 or 185 reps">
+    <!-- TIME: For Time / Circuit -->
+    <div class="form-group score-section" id="score-time" style="display:none">
+      <div class="form-label">Time (mm : ss)</div>
+      <div class="time-row">
+        <input class="form-input time-part" type="number" id="log-min" placeholder="00" min="0" max="999">
+        <span class="time-colon">:</span>
+        <input class="form-input time-part" type="number" id="log-sec" placeholder="00" min="0" max="59">
+      </div>
+      <div class="time-hint">Enter minutes and seconds — e.g. 12 : 34</div>
+    </div>
+
+    <!-- ROUNDS + REPS: AMRAP -->
+    <div class="form-group score-section" id="score-rounds_reps" style="display:none">
+      <div class="form-label">Score</div>
+      <div class="rounds-row">
+        <input class="form-input" type="number" id="log-rounds" placeholder="0" min="0">
+        <span class="rounds-lbl">rounds +</span>
+        <input class="form-input" type="number" id="log-extra-reps" placeholder="0" min="0">
+        <span class="rounds-lbl">reps</span>
+      </div>
+    </div>
+
+    <!-- REPS / TOTAL REPS -->
+    <div class="form-group score-section" id="score-reps" style="display:none">
+      <label class="form-label" for="log-reps">Total Reps</label>
+      <input class="form-input" type="number" id="log-reps" placeholder="0" min="0">
+    </div>
+
+    <!-- WEIGHT: For Load / 1RM -->
+    <div class="form-group score-section" id="score-weight" style="display:none">
+      <div class="form-label">Load</div>
+      <div class="weight-row">
+        <input class="form-input" type="number" id="log-weight" placeholder="0" min="0" step="0.5">
+        <div class="unit-seg">
+          <button type="button" class="unit-seg-btn active" id="unit-lbs" onclick="setWeightUnit('lbs')">lbs</button>
+          <button type="button" class="unit-seg-btn" id="unit-kg"  onclick="setWeightUnit('kg')">kg</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FREE TEXT: fallback for anything else -->
+    <div class="form-group score-section" id="score-free" style="display:none">
+      <label class="form-label" for="log-score-free">Score</label>
+      <input class="form-input" type="text" id="log-score-free" placeholder="e.g. 8 rounds, 12:34, or leave blank to mark complete">
+      <div class="score-hint">Leave blank to record as "Completed"</div>
     </div>
 
     <div class="form-group">
@@ -532,6 +588,8 @@ var logTargetSlug  = null; // benchmark_slug for re-logging
 var logTargetWodId = null; // workout_id for re-logging
 var deleteTargetId = null; // result id being deleted
 var logIsRx        = true;
+var logScoringType = 'free'; // active scoring type for the open modal
+var logWeightUnit  = 'lbs';  // lbs or kg
 var _cardMap       = {};   // keyed by safe ID, avoids quote-in-onclick issues
 
 /* ─── Auth init ─── */
@@ -552,7 +610,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   var [resultsResp, savedResp] = await Promise.all([
     supabaseClient.from('results').select('*').eq('user_id', userId)
       .order('date', { ascending: false }).order('created_at', { ascending: false }),
-    supabaseClient.from('workouts').select('id, title, movements, is_public, created_at').eq('user_id', userId)
+    supabaseClient.from('workouts').select('id, title, movements, is_public, scoring_type, created_at').eq('user_id', userId)
       .order('created_at', { ascending: false })
   ]);
 
@@ -580,7 +638,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   var benchmarkMap = {};
   if (slugs.length) {
     var { data: bms } = await supabaseClient
-      .from('benchmark_workouts').select('slug, name, movements, category').in('slug', slugs);
+      .from('benchmark_workouts').select('slug, name, movements, category, scoring_type').in('slug', slugs);
     if (bms) bms.forEach(function(b) { benchmarkMap[b.slug] = b; });
   }
 
@@ -590,7 +648,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   var extraIds = wodIds.filter(function(id) { return !workoutMap[id]; });
   if (extraIds.length) {
     var { data: extras } = await supabaseClient
-      .from('workouts').select('id, title, movements, is_public').in('id', extraIds);
+      .from('workouts').select('id, title, movements, is_public, scoring_type').in('id', extraIds);
     if (extras) extras.forEach(function(w) { workoutMap[w.id] = w; });
   }
 
@@ -602,17 +660,18 @@ document.addEventListener('DOMContentLoaded', async function() {
     var name = wod ? (wod.name || wod.title || 'Custom WOD')
                    : (r.benchmark_slug || 'Custom WOD');
     return {
-      _resultId:  r.id,
-      _hasResult: true,
-      wod_type:   type,
-      wod_name:   name,
-      slug:       r.benchmark_slug || null,
-      workout_id: r.workout_id || null,
-      movements:  wod ? (wod.movements || []) : [],
-      created_at: r.date || r.created_at,
-      score:      r.score_display,
-      is_rx:      r.is_rx,
-      notes:      r.notes,
+      _resultId:    r.id,
+      _hasResult:   true,
+      wod_type:     type,
+      wod_name:     name,
+      slug:         r.benchmark_slug || null,
+      workout_id:   r.workout_id || null,
+      movements:    wod ? (wod.movements || []) : [],
+      scoring_type: wod ? (wod.scoring_type || 'free') : 'free',
+      created_at:   r.date || r.created_at,
+      score:        r.score_display,
+      is_rx:        r.is_rx,
+      notes:        r.notes,
     };
   });
 
@@ -624,18 +683,19 @@ document.addEventListener('DOMContentLoaded', async function() {
     .filter(function(w) { return !loggedWorkoutIds[w.id]; })
     .map(function(w) {
       return {
-        _resultId:  null,
-        _hasResult: false,
-        wod_type:   'generated',
-        wod_name:   w.title || 'Custom WOD',
-        slug:       null,
-        workout_id: w.id,
-        movements:  w.movements || [],
-        created_at: w.created_at,
-        is_public:  w.is_public || false,
-        score:      null,
-        is_rx:      null,
-        notes:      null,
+        _resultId:    null,
+        _hasResult:   false,
+        wod_type:     'generated',
+        wod_name:     w.title || 'Custom WOD',
+        slug:         null,
+        workout_id:   w.id,
+        movements:    w.movements || [],
+        scoring_type: w.scoring_type || 'free',
+        created_at:   w.created_at,
+        is_public:    w.is_public || false,
+        score:        null,
+        is_rx:        null,
+        notes:        null,
       };
     });
 
@@ -842,7 +902,7 @@ function loadMore() {
 function openLogModalFromCard(key) {
   var w = _cardMap[key];
   if (!w) return;
-  openLogModal(w.slug || null, w.workout_id || null, w.wod_name || 'WOD');
+  openLogModal(w.slug || null, w.workout_id || null, w.wod_name || 'WOD', w.scoring_type || 'free');
 }
 function openDeleteModalFromCard(key) {
   var w = _cardMap[key];
@@ -850,18 +910,43 @@ function openDeleteModalFromCard(key) {
   openDeleteModal(w._resultId);
 }
 
+/* ─── Show the right scoring input for this WOD type ─── */
+function showScoringInputs(type) {
+  /* Map total_reps → reps so both use the same input */
+  var section = (type === 'total_reps') ? 'reps' : (type || 'free');
+  var validTypes = ['time', 'rounds_reps', 'reps', 'weight', 'free'];
+  if (validTypes.indexOf(section) === -1) section = 'free';
+
+  document.querySelectorAll('.score-section').forEach(function(el) { el.style.display = 'none'; });
+  var target = document.getElementById('score-' + section);
+  if (target) target.style.display = 'block';
+
+  /* Clear all score inputs */
+  ['log-min','log-sec','log-rounds','log-extra-reps','log-reps','log-weight','log-score-free']
+    .forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ''; });
+
+  logScoringType = section;
+}
+
+function setWeightUnit(unit) {
+  logWeightUnit = unit;
+  document.getElementById('unit-lbs').classList.toggle('active', unit === 'lbs');
+  document.getElementById('unit-kg').classList.toggle('active',  unit === 'kg');
+}
+
 /* ─── Log modal ─── */
-function openLogModal(slug, wodId, name) {
+function openLogModal(slug, wodId, name, scoringType) {
   logTargetSlug  = slug;
   logTargetWodId = wodId;
+  logWeightUnit  = 'lbs';
   document.getElementById('log-modal-title').textContent = 'Log Result — ' + name;
-  document.getElementById('log-score').value = '';
   document.getElementById('log-notes').value = '';
   logIsRx = true;
   document.getElementById('rx-yes').classList.add('selected');
   document.getElementById('rx-no').classList.remove('selected');
   var today = new Date();
   document.getElementById('log-date').value = today.toISOString().split('T')[0];
+  showScoringInputs(scoringType || 'free');
   document.getElementById('log-modal').classList.add('open');
 }
 function closeLogModal() {
@@ -874,23 +959,71 @@ function setRx(isRx) {
   document.getElementById('rx-yes').classList.toggle('selected', isRx);
   document.getElementById('rx-no').classList.toggle('selected', !isRx);
 }
+
+/* ─── Build score_display + typed fields from the active scoring input ─── */
+function readScorePayload() {
+  var payload = {};
+  if (logScoringType === 'time') {
+    var mins = parseInt(document.getElementById('log-min').value) || 0;
+    var secs = parseInt(document.getElementById('log-sec').value) || 0;
+    if (secs > 59) secs = 59;
+    var totalSecs = mins * 60 + secs;
+    if (totalSecs === 0) return null; /* require a time */
+    payload.score_seconds = totalSecs;
+    payload.score_display = mins + ':' + String(secs).padStart(2,'0');
+  } else if (logScoringType === 'rounds_reps') {
+    var rounds = parseInt(document.getElementById('log-rounds').value) || 0;
+    var xreps  = parseInt(document.getElementById('log-extra-reps').value) || 0;
+    if (rounds === 0 && xreps === 0) return null;
+    payload.score_rounds  = rounds;
+    payload.score_reps    = xreps;
+    payload.score_display = rounds + ' rounds + ' + xreps + ' reps';
+  } else if (logScoringType === 'reps') {
+    var reps = parseInt(document.getElementById('log-reps').value) || 0;
+    if (reps === 0) return null;
+    payload.score_reps    = reps;
+    payload.score_display = reps + ' reps';
+  } else if (logScoringType === 'weight') {
+    var wt = parseFloat(document.getElementById('log-weight').value) || 0;
+    if (wt === 0) return null;
+    if (logWeightUnit === 'kg') {
+      payload.score_weight  = wt;
+      payload.score_display = wt + ' kg';
+    } else {
+      payload.score_weight  = Math.round(wt / 2.20462 * 10) / 10; /* store in kg */
+      payload.score_display = wt + ' lbs';
+    }
+  } else {
+    /* free text */
+    var free = document.getElementById('log-score-free').value.trim();
+    payload.score_display = free || 'Completed';
+  }
+  return payload;
+}
+
 async function submitLog() {
   if (!logTargetSlug && !logTargetWodId) return;
-  var score = document.getElementById('log-score').value.trim();
+
+  var scorePayload = readScorePayload();
+  if (scorePayload === null) {
+    alert('Please enter a score before saving.');
+    return;
+  }
+
   var date  = document.getElementById('log-date').value;
   var notes = document.getElementById('log-notes').value.trim();
 
   var { data: { session } } = await supabaseClient.auth.getSession();
   if (!session) return;
 
-  var payload = {
-    user_id:       session.user.id,
-    username:      (session.user.user_metadata && session.user.user_metadata.full_name) || session.user.email.split('@')[0],
-    score_display: score  || null,
-    is_rx:         logIsRx,
-    date:          date   || new Date().toISOString().split('T')[0],
-    notes:         notes  || null,
-  };
+  var payload = Object.assign({
+    user_id:  session.user.id,
+    username: (session.user.user_metadata && session.user.user_metadata.full_name) || session.user.email.split('@')[0],
+    is_rx:    logIsRx,
+    date:     date || new Date().toISOString().split('T')[0],
+    notes:    notes || null,
+  }, scorePayload);
+
   if (logTargetSlug)  payload.benchmark_slug = logTargetSlug;
   if (logTargetWodId) payload.workout_id     = logTargetWodId;
 
