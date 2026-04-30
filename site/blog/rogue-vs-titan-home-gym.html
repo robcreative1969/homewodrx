@@ -2,21 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <!-- Sentry Error Monitoring -->
   <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rogue vs. Titan: Which Home Gym Brand Is Right for You? | HomeWODrx Blog</title>
   <meta name="description" content="Rogue or Titan? We break down the real differences in quality, price, and value so garage gym athletes can make a confident choice before they spend.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://homewodrx.com/blog/rogue-vs-titan-home-gym">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="HomeWodRX">
   <meta property="og:title" content="Rogue vs. Titan: Which Home Gym Brand Is Right for You? | HomeWODrx">
   <meta property="og:description" content="Rogue or Titan? We break down the real differences in quality, price, and value so garage gym athletes can make a confident choice before they spend.">
-  <meta property="og:type" content="article">
   <meta property="og:url" content="https://homewodrx.com/blog/rogue-vs-titan-home-gym">
   <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://homewodrx.com/images/og-default.png">
-  <link rel="canonical" href="https://homewodrx.com/blog/rogue-vs-titan-home-gym">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -33,7 +34,7 @@
       "@type": "BreadcrumbList",
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://homewodrx.com/" },
-        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://homewodrx.com/blog" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://homewodrx.com/blog.html" },
         { "@type": "ListItem", "position": 3, "name": "Rogue vs. Titan: Which Home Gym Brand Is Right for You?", "item": "https://homewodrx.com/blog/rogue-vs-titan-home-gym" }
       ]
     }
@@ -42,191 +43,169 @@
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="stylesheet" href="/css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="/js/config.js"></script>
-  <script src="/js/db.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-HZM475VDN3');</script>
+  <script defer src="/_vercel/insights/script.js"></script>
   <style>
-    .post-container {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 0 20px 80px;
-    }
-    .post-breadcrumb {
-      padding: 20px 0 0;
-      font-size: 13px;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-    .post-breadcrumb a { color: var(--muted); text-decoration: none; }
-    .post-breadcrumb a:hover { color: var(--or); }
-    .post-breadcrumb .sep { color: var(--border); }
-
-    .post-header {
-      padding: 28px 0 32px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 36px;
-    }
-    .post-meta {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-    }
-    .post-tag {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      padding: 4px 10px;
-      border-radius: 4px;
-      background: rgba(37,99,235,.15);
-      color: #60a5fa;
-    }
-    .post-date, .post-readtime { font-size: 13px; color: var(--muted); }
-    .post-header h1 {
-      font-size: clamp(24px, 4vw, 36px);
-      font-weight: 900;
-      line-height: 1.2;
-      margin-bottom: 16px;
-      letter-spacing: -.3px;
-    }
-    .post-header .post-intro {
-      font-size: 17px;
-      color: var(--muted);
-      line-height: 1.75;
-      margin: 0;
-    }
-
-    .post-body { font-size: 16px; line-height: 1.8; color: var(--text); }
-    .post-body h2 {
-      font-size: 22px;
-      font-weight: 800;
-      margin: 40px 0 14px;
-      border-left: 3px solid var(--or);
-      padding-left: 14px;
-    }
-    .post-body h3 { font-size: 18px; font-weight: 700; margin: 28px 0 10px; }
-    .post-body p { margin-bottom: 20px; }
-    .post-body ul, .post-body ol { margin: 0 0 20px 20px; }
-    .post-body li { margin-bottom: 8px; line-height: 1.7; }
-    .post-body strong { font-weight: 700; }
-    .post-body a { color: var(--or); text-decoration: none; font-weight: 600; }
-    .post-body a:hover { color: var(--or-dark); }
-
-    .callout {
-      background: rgba(37,99,235,.07);
-      border: 1px solid rgba(37,99,235,.25);
-      border-left: 3px solid #2563eb;
-      border-radius: 8px;
-      padding: 16px 20px;
-      margin: 28px 0;
-      font-size: 15px;
-      line-height: 1.7;
-    }
-    .callout strong { color: #60a5fa; }
-
-    /* comparison table */
-    .compare-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 28px 0;
-      font-size: 15px;
-    }
-    .compare-table th {
-      background: var(--white);
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      padding: 10px 14px;
-      border: 1px solid var(--border);
-      text-align: left;
-    }
-    .compare-table td {
-      padding: 10px 14px;
-      border: 1px solid var(--border);
-      vertical-align: top;
-      color: var(--text);
-    }
-    .compare-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
-    .compare-table .winner { color: #60a5fa; font-weight: 700; }
-
-    .post-related {
-      border-top: 1px solid var(--border);
-      padding-top: 36px;
-      margin-top: 52px;
-    }
-    .post-related h3 {
-      font-size: 16px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      color: var(--muted);
-      margin-bottom: 20px;
-    }
-    .related-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 16px;
-    }
-    .related-card {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px 18px;
-      text-decoration: none;
-      transition: border-color .15s;
-    }
-    .related-card:hover { border-color: var(--or); }
-    .related-card .r-tag {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-    .related-card h4 { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.35; }
+.article-hero{background:var(--white);border-bottom:1px solid var(--border);padding:48px 0 0}
+.article-hero-inner{max-width:1200px;margin:0 auto;padding:0 24px}
+.article-breadcrumb{display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--muted);margin-bottom:20px}
+.article-breadcrumb a{color:var(--or);font-weight:600}
+.article-breadcrumb .sep{color:var(--muted2)}
+.article-category{display:inline-flex;align-items:center;gap:6px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--or);background:rgba(196,18,18,.08);border:1px solid rgba(196,18,18,.2);padding:5px 12px;border-radius:20px;margin-bottom:18px}
+.article-hero h1{font-family:var(--font-head);font-size:clamp(32px,5.5vw,58px);letter-spacing:.04em;line-height:1.05;color:var(--text);max-width:800px;margin-bottom:18px}
+.article-hero h1 em{color:var(--or);font-style:normal}
+.article-meta{display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding-bottom:28px}
+.meta-item{display:flex;align-items:center;gap:6px;font-size:.82rem;color:var(--muted)}
+.meta-item svg{width:14px;height:14px;opacity:.6}
+.meta-divider{width:1px;height:14px;background:var(--border2)}
+.article-visual{background:linear-gradient(135deg,#1a1a2e 0%,#0f172a 50%,#1a0505 100%);height:240px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.article-visual::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 80% at 20% 50%,rgba(196,18,18,.22) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 80% 30%,rgba(196,18,18,.1) 0%,transparent 60%)}
+.article-visual-content{position:relative;z-index:1;text-align:center}
+.av-wod-name{font-family:var(--font-head);font-size:clamp(60px,12vw,130px);color:rgba(255,255,255,.06);letter-spacing:.08em;line-height:1;user-select:none;position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.av-label{font-family:var(--font-head);font-size:1.25rem;letter-spacing:.08em;color:rgba(255,255,255,.6)}
+.av-sub{font-size:.78rem;color:rgba(255,255,255,.4);margin-top:6px}
+.article-wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+.article-layout{display:grid;grid-template-columns:1fr 300px;gap:32px;padding:40px 0 80px;align-items:start}
+@media(max-width:900px){.article-layout{grid-template-columns:1fr}}
+.article-content{background:var(--white);border-radius:var(--radius-lg);border:1.5px solid var(--border);padding:40px 44px;box-shadow:var(--shadow);min-width:0}
+@media(max-width:640px){.article-content{padding:24px 20px}}
+.article-content p{font-size:1rem;line-height:1.8;color:#2a2a2a;margin-bottom:20px}
+.article-content h2{font-family:var(--font-head);font-size:clamp(24px,3.5vw,32px);letter-spacing:.04em;color:var(--text);margin:40px 0 14px;line-height:1.1}
+.article-content h2:first-child{margin-top:0}
+.article-content h3{font-size:1.05rem;font-weight:700;color:var(--text);margin:28px 0 10px}
+.article-content ul,.article-content ol{padding-left:22px;margin-bottom:20px}
+.article-content li{font-size:1rem;line-height:1.75;color:#2a2a2a;margin-bottom:6px}
+.article-content strong{font-weight:700;color:var(--text)}
+.article-content a{color:var(--or);font-weight:600}
+.article-content a:hover{text-decoration:underline}
+.article-sidebar{display:none}
+@media(min-width:901px){.article-sidebar{display:flex;flex-direction:column;gap:16px;position:sticky;top:calc(var(--nav-h) + 20px)}}
+.sidebar-card{background:var(--white);border-radius:var(--radius-lg);border:1.5px solid var(--border);box-shadow:var(--shadow);overflow:hidden}
+.sidebar-card-hdr{padding:14px 18px;border-bottom:1px solid var(--border);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.toc-list{list-style:none;padding:14px 18px;display:flex;flex-direction:column;gap:2px}
+.toc-list li a{display:block;padding:6px 10px;border-radius:6px;font-size:.82rem;color:var(--muted);font-weight:500;transition:background .12s,color .12s;text-decoration:none}
+.toc-list li a:hover{background:rgba(196,18,18,.08);color:var(--or)}
+.toc-list li a.active{background:rgba(196,18,18,.08);color:var(--or);font-weight:700}
+.sidebar-cta{background:var(--text);border-radius:var(--radius-lg);padding:22px 20px;position:relative;overflow:hidden}
+.sidebar-cta::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(196,18,18,.3) 0%,transparent 70%)}
+.scta-eyebrow{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--or);margin-bottom:8px}
+.scta-title{font-family:var(--font-head);font-size:1.3rem;letter-spacing:.04em;color:#fff;margin-bottom:8px;line-height:1.1}
+.scta-body{font-size:.8rem;color:rgba(255,255,255,.6);line-height:1.55;margin-bottom:16px}
+.scta-features{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.scta-feature{font-size:.75rem;color:rgba(255,255,255,.65);display:flex;align-items:center;gap:6px}
+.scta-feature::before{content:'✓';color:var(--or);font-weight:700;flex-shrink:0}
+.scta-btn{display:block;text-align:center;width:100%;padding:11px;background:var(--or);color:#fff;border:none;border-radius:var(--radius);font-size:.875rem;font-weight:700;cursor:pointer;transition:background .15s;text-decoration:none;font-family:var(--font-body)}
+.scta-btn:hover{background:var(--or-dark)}
+.share-card-body{padding:14px 18px;display:flex;flex-direction:column;gap:8px}
+.share-pill{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:8px;border:1.5px solid var(--border);background:none;font-family:var(--font-body);font-size:.82rem;font-weight:600;color:var(--text);cursor:pointer;transition:border-color .15s,color .15s,background .15s;text-align:left;width:100%}
+.share-pill svg{width:16px;height:16px;flex-shrink:0}
+.share-x:hover{border-color:#000;color:#000;background:#f5f5f5}
+.share-fb:hover{border-color:#1877f2;color:#1877f2;background:#f0f4ff}
+.share-wa:hover{border-color:#25d366;color:#25d366;background:#f0fdf4}
+.share-copy:hover{border-color:var(--or);color:var(--or);background:rgba(196,18,18,.06)}
+.share-pill.copied{border-color:#16a34a;color:#16a34a;background:#f0fdf4}
+.mobile-toc{display:none;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);margin-bottom:24px;overflow:hidden}
+@media(max-width:900px){.mobile-toc{display:block}}
+.mobile-toc-btn{width:100%;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:none;border:none;font-family:var(--font-body);font-size:.82rem;font-weight:700;color:var(--text);cursor:pointer;gap:8px}
+.mobile-toc-btn span{display:flex;align-items:center;gap:8px}
+.mobile-toc-label{color:var(--muted);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.mobile-toc-chev{width:16px;height:16px;transition:transform .2s;flex-shrink:0;color:var(--muted)}
+.mobile-toc.open .mobile-toc-chev{transform:rotate(180deg)}
+.mobile-toc-body{display:none;border-top:1px solid var(--border);padding:8px 12px 12px}
+.mobile-toc.open .mobile-toc-body{display:block}
+.mobile-toc-body a{display:block;padding:8px 10px;border-radius:6px;font-size:.85rem;color:var(--muted);font-weight:500;transition:background .12s,color .12s;text-decoration:none}
+.mobile-toc-body a:hover{background:rgba(196,18,18,.08);color:var(--or)}
+.related-strip{margin-top:40px;padding-top:32px;border-top:1px solid var(--border)}
+.related-strip h3{font-family:var(--font-head);font-size:1.4rem;letter-spacing:.04em;margin-bottom:16px;margin-top:0!important}
+.related-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:560px){.related-grid{grid-template-columns:1fr}}
+.rel-card{display:flex;gap:12px;padding:14px;background:var(--bg);border-radius:var(--radius);border:1.5px solid var(--border);transition:border-color .15s;text-decoration:none}
+.rel-card:hover{border-color:var(--or)}
+.rel-body{min-width:0}
+.rel-tag{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--or);margin-bottom:3px}
+.rel-title{font-size:.82rem;font-weight:700;color:var(--text);line-height:1.35}
+.rel-read{font-size:.72rem;color:var(--muted2);margin-top:3px}
+.article-footer{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:32px;margin-top:32px;border-top:1px solid var(--border);flex-wrap:wrap}
+.article-tags{display:flex;gap:6px;flex-wrap:wrap}
+.article-tag{padding:5px 12px;border-radius:20px;border:1px solid var(--border);font-size:.72rem;font-weight:600;color:var(--muted)}
+.back-to-top{position:fixed;bottom:24px;right:24px;z-index:500;width:44px;height:44px;border-radius:50%;background:var(--text);border:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow-md);opacity:0;transform:translateY(12px);transition:opacity .2s,transform .2s;pointer-events:none}
+.back-to-top.visible{opacity:1;transform:translateY(0);pointer-events:auto}
+.back-to-top:hover{background:var(--or)}
+.back-to-top svg{width:18px;height:18px}
+/* Post-specific */
+.callout{background:rgba(196,18,18,.07);border:1px solid rgba(196,18,18,.25);border-left:3px solid var(--or);border-radius:8px;padding:16px 20px;margin:28px 0;font-size:15px;line-height:1.7;color:var(--text)}
+.callout strong{color:var(--or)}
+.compare-table{width:100%;border-collapse:collapse;margin:28px 0;font-size:15px}
+.compare-table th{background:var(--white);color:var(--muted);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:10px 14px;border:1px solid var(--border);text-align:left}
+.compare-table td{padding:10px 14px;border:1px solid var(--border);vertical-align:top;color:var(--text)}
+.compare-table .winner{color:var(--or);font-weight:700}
   </style>
 </head>
 <body data-nav-init="true" data-active-page="blog">
-<main>
-  <div class="post-container">
 
-    <nav class="post-breadcrumb" aria-label="Breadcrumb">
+<div class="article-hero">
+  <div class="article-hero-inner">
+    <nav class="article-breadcrumb" aria-label="Breadcrumb">
       <a href="/">Home</a>
       <span class="sep">›</span>
-      <a href="/blog">Blog</a>
+      <a href="/blog.html">Blog</a>
       <span class="sep">›</span>
       <span>Rogue vs. Titan</span>
     </nav>
+    <div class="article-category">Equipment</div>
+    <h1>Rogue vs. Titan: <em>Which Brand</em> Is Right for You?</h1>
+    <div class="article-meta">
+      <span class="meta-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        April 27, 2026
+      </span>
+      <div class="meta-divider"></div>
+      <span class="meta-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        6 min read
+      </span>
+      <div class="meta-divider"></div>
+      <span class="meta-item">By the HomeWodRX team</span>
+    </div>
+  </div>
+  <div class="article-visual">
+    <div class="av-wod-name">ROGUE</div>
+    <div class="article-visual-content">
+      <div class="av-label">Gear Comparison</div>
+      <div class="av-sub">Which brand is right for your garage gym?</div>
+    </div>
+  </div>
+</div>
 
-    <header class="post-header">
-      <div class="post-meta">
-        <span class="post-tag">Equipment</span>
-        <span class="post-date">April 27, 2026</span>
-        <span class="post-readtime">· 6 min read</span>
+<div class="article-wrap">
+  <div class="article-layout">
+
+    <article class="article-content" id="article">
+
+      <div class="mobile-toc" id="mobileToc">
+        <button class="mobile-toc-btn" onclick="toggleMobileToc()" aria-expanded="false">
+          <span><span class="mobile-toc-label">In this article</span></span>
+          <svg class="mobile-toc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="mobile-toc-body">
+          <a href="#short-version">The Short Version</a>
+          <a href="#head-to-head">Head-to-Head by Category</a>
+          <a href="#decision-framework">Decision Framework</a>
+          <a href="#mixed-approach">The Mixed Approach</a>
+          <a href="#final-thoughts">Final Thoughts</a>
+        </div>
       </div>
-      <h1>Rogue vs. Titan: Which Home Gym Brand Is Right for You?</h1>
-      <p class="post-intro">Two brands dominate the garage gym conversation — one on reputation, one on value. Here's how to choose without second-guessing yourself for the next two years.</p>
-    </header>
-
-    <article class="post-body">
 
       <p>If you've spent more than ten minutes researching home gym equipment, you've run into this debate. Rogue Fitness and Titan Fitness sit at the top of almost every recommendation list for functional fitness training, and for good reason — both make equipment that will outlast most people's motivation to own a garage gym. But they're not interchangeable. The right pick depends on your budget, your training goals, and how much you care about domestic manufacturing and brand support.</p>
 
       <p>This isn't a takedown of either brand. It's a practical breakdown so you can make a decision and stop agonizing.</p>
 
-      <h2>The Short Version</h2>
+      <h2 id="short-version">The Short Version</h2>
 
       <p><strong>Rogue</strong> is the premium option. Equipment is largely manufactured in Columbus, Ohio. The fit and finish is excellent, the knurling on their barbells is particularly well-regarded, and their customer support has a strong reputation. You pay for all of that.</p>
 
@@ -236,43 +215,31 @@
         <strong>Rule of thumb:</strong> If you have the budget and want to buy once and never think about it again, go Rogue. If you're outfitting a full garage gym and need to spread money across multiple pieces, Titan stretches further.
       </div>
 
-      <h2>Head-to-Head by Category</h2>
+      <h2 id="head-to-head">Head-to-Head by Category</h2>
 
       <h3>Power Racks and Squat Stands</h3>
-
       <p>This is where Titan earns its reputation. Their T-3 and T-6 series racks are structurally sound, compatible with a wide range of j-cups and accessories, and priced significantly below comparable Rogue offerings. For most garage gym athletes doing barbell squats, bench press, and strict press at home, a quality Titan rack is hard to argue against at its price point.</p>
-
       <!-- AFFILIATE: update with Titan T-3/T-6 rack product link when approved -->
       <!-- AFFILIATE: update with Rogue R-3/R-4 rack product link when approved -->
-
       <p>Rogue racks are stiffer, have tighter tolerances, and the Monster series is genuinely overbuilt for a home environment (which some people love). If you're lifting seriously heavy or want Monster-compatible accessories — and you plan to keep this rack for 20 years — Rogue makes sense. If you're training at intermediate loads, Titan gets you 85–90% of the way there at 60% of the price.</p>
 
       <h3>Barbells</h3>
-
       <p>This is where Rogue's edge is most noticeable. Their barbells — especially the Ohio Bar variants — have a feel that's hard to match at a lower price. The knurling is sharp enough to grip without tearing your hands, the whip is appropriate for the movement (more on pulling bars, less on power bars), and the finish options are well thought out.</p>
-
       <!-- AFFILIATE: update with Rogue Ohio Bar / Ohio Power Bar product link when approved -->
       <!-- AFFILIATE: update with Titan barbell product link when approved -->
-
       <p>Titan's barbells are functional and adequate for most training. They're a step down in feel from Rogue, but not by enough to affect your performance — especially if you're not yet lifting at a level where barbell feel is a limiting factor. For a first barbell purchase, a quality Titan bar is a reasonable starting point.</p>
 
       <h3>Bumper Plates</h3>
-
       <p>Both brands offer bumper plates that work fine for functional fitness training. The main differences are in durometer (how hard the rubber is), shore hardness consistency across batches, and color calibration on competition-style plates. For general training — dropping a barbell from overhead, deadlifts, cleans — either brand will hold up.</p>
-
       <!-- AFFILIATE: update with bumper plate product links (Rogue HG 2.0 / Titan) when programs approved -->
-
       <p>If you're buying your first set of bumpers, Titan's economy sets or color bumpers are worth considering. If you want plates that match competition feel and spec, Rogue's calibrated or competition-grade options are the step up.</p>
 
       <h3>Accessories (Pull-up Rigs, GHDs, Plyo Boxes)</h3>
-
       <p>Rogue dominates in accessories. Their freestanding pull-up rigs, GHD machines, and specialty equipment are simply better — both in build quality and in how they feel to use. If accessories are a core part of your setup, the gap between the two brands is wider here than anywhere else.</p>
-
       <!-- AFFILIATE: update with Rogue Monster Lite rig / Titan accessory links when approved -->
-
       <p>Titan's accessory lineup is growing and improving, but it lags behind. For a basic setup — a rack with pull-up bar, a barbell, plates, and maybe a few dumbbells or kettlebells — Titan is competitive. The more specialized your setup, the more Rogue pulls ahead.</p>
 
-      <h2>The Decision Framework</h2>
+      <h2 id="decision-framework">The Decision Framework</h2>
 
       <table class="compare-table" aria-label="Rogue vs. Titan comparison">
         <thead>
@@ -282,34 +249,16 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Have a flexible budget and want to buy once</td>
-            <td class="winner">Rogue</td>
-          </tr>
-          <tr>
-            <td>Are outfitting a full gym on a tight budget</td>
-            <td class="winner">Titan</td>
-          </tr>
-          <tr>
-            <td>Care deeply about domestic manufacturing</td>
-            <td class="winner">Rogue</td>
-          </tr>
-          <tr>
-            <td>Need a solid rack and can prioritize spending on a better barbell</td>
-            <td class="winner">Titan rack + Rogue bar</td>
-          </tr>
-          <tr>
-            <td>Are buying your first barbell</td>
-            <td class="winner">Either; Titan saves money</td>
-          </tr>
-          <tr>
-            <td>Need specialized accessories (GHD, specialty bars, rigs)</td>
-            <td class="winner">Rogue</td>
-          </tr>
+          <tr><td>Have a flexible budget and want to buy once</td><td class="winner">Rogue</td></tr>
+          <tr><td>Are outfitting a full gym on a tight budget</td><td class="winner">Titan</td></tr>
+          <tr><td>Care deeply about domestic manufacturing</td><td class="winner">Rogue</td></tr>
+          <tr><td>Need a solid rack and can prioritize spending on a better barbell</td><td class="winner">Titan rack + Rogue bar</td></tr>
+          <tr><td>Are buying your first barbell</td><td class="winner">Either; Titan saves money</td></tr>
+          <tr><td>Need specialized accessories (GHD, specialty bars, rigs)</td><td class="winner">Rogue</td></tr>
         </tbody>
       </table>
 
-      <h2>The Mixed Approach</h2>
+      <h2 id="mixed-approach">The Mixed Approach</h2>
 
       <p>Many experienced garage gym athletes end up with equipment from both brands — and that's a legitimate strategy. A Titan rack as the foundation, a Rogue barbell for daily lifting, and Titan or off-brand bumper plates if cost is a concern. The brands use the same plate diameter standards, so mixing and matching is straightforward.</p>
 
@@ -319,31 +268,105 @@
         <strong>Already have your setup?</strong> Use <a href="/generator">the WOD generator</a> to build workouts around the equipment you have — no full rig required.
       </div>
 
-      <h2>Final Thoughts</h2>
+      <h2 id="final-thoughts">Final Thoughts</h2>
 
       <p>The Rogue vs. Titan debate has a reasonable answer: it depends on your budget and what you value. Neither brand makes bad equipment. Rogue costs more and delivers more. Titan costs less and delivers enough for most athletes at most training levels. Buy the best barbell your budget allows, get a structurally sound rack from either brand, and stop overthinking the rest. The goal is to train consistently — not to own the most impressive garage gym on the block.</p>
 
-      <p>Once you have your setup dialed in, check out our <a href="/workouts">workout library</a> or the <a href="/generator">Daily WOD generator</a> to put it to use. And if you're still figuring out what equipment you actually need first, our <a href="/blog/best-home-gym-equipment">home gym equipment guide</a> is the right starting point.</p>
+      <p>Once you have your setup dialed in, check out our <a href="/workouts">workout library</a> or the <a href="/generator">Daily WOD generator</a> to put it to use. And if you're still figuring out what equipment you actually need first, our <a href="/blog/best-home-gym-equipment.html">home gym equipment guide</a> is the right starting point.</p>
+
+      <div class="article-footer">
+        <div class="article-tags">
+          <span class="article-tag">Equipment</span>
+          <span class="article-tag">Rogue</span>
+          <span class="article-tag">Home Gym</span>
+          <span class="article-tag">Gear Review</span>
+        </div>
+      </div>
+
+      <div class="related-strip">
+        <h3>Keep Reading</h3>
+        <div class="related-grid">
+          <a class="rel-card" href="/blog/best-home-gym-equipment.html">
+            <div class="rel-body">
+              <div class="rel-tag">Equipment</div>
+              <div class="rel-title">Best Home Gym Equipment for Functional Fitness Training (2026 Guide)</div>
+              <div class="rel-read">7 min read</div>
+            </div>
+          </a>
+          <a class="rel-card" href="/blog/weekly-training-program-home.html">
+            <div class="rel-body">
+              <div class="rel-tag">Programming</div>
+              <div class="rel-title">How to Build Your Own Weekly Training Program at Home</div>
+              <div class="rel-read">7 min read</div>
+            </div>
+          </a>
+        </div>
+      </div>
 
     </article>
 
-    <section class="post-related">
-      <h3>More from the blog</h3>
-      <div class="related-grid">
-        <a href="/blog/best-home-gym-equipment" class="related-card">
-          <div class="r-tag">Equipment</div>
-          <h4>Best Home Gym Equipment for Functional Fitness Training (2026 Guide)</h4>
-        </a>
-        <a href="/blog/weekly-training-program-home" class="related-card">
-          <div class="r-tag">Programming</div>
-          <h4>How to Build Your Own Weekly Training Program at Home</h4>
-        </a>
+    <aside class="article-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-card-hdr">In This Article</div>
+        <ul class="toc-list" id="toc">
+          <li><a href="#short-version" class="active">The Short Version</a></li>
+          <li><a href="#head-to-head">Head-to-Head by Category</a></li>
+          <li><a href="#decision-framework">Decision Framework</a></li>
+          <li><a href="#mixed-approach">The Mixed Approach</a></li>
+          <li><a href="#final-thoughts">Final Thoughts</a></li>
+        </ul>
       </div>
-    </section>
+      <div class="sidebar-cta">
+        <div class="scta-eyebrow">Free Account</div>
+        <div class="scta-title">Train Smarter Every Day</div>
+        <div class="scta-body">Save your workouts, log results, and build your full training history — free forever.</div>
+        <div class="scta-features">
+          <div class="scta-feature">Save workouts &amp; log results</div>
+          <div class="scta-feature">Full training history</div>
+          <div class="scta-feature">Track personal bests</div>
+        </div>
+        <a href="/signup.html" class="scta-btn">Create Free Account</a>
+        <p style="font-size:.7rem;color:rgba(255,255,255,.35);margin-top:10px;text-align:center;">No credit card required</p>
+      </div>
+      <div class="sidebar-card">
+        <div class="sidebar-card-hdr">Share This Article</div>
+        <div class="share-card-body">
+          <button class="share-pill share-x" onclick="window.open('https://twitter.com/intent/tweet?url='+encodeURIComponent(location.href)+'&text='+encodeURIComponent(document.title),'_blank')">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            Share on X
+          </button>
+          <button class="share-pill share-fb" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),'_blank')">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Facebook
+          </button>
+          <button class="share-pill share-wa" onclick="window.open('https://api.whatsapp.com/send?text='+encodeURIComponent(document.title+' '+location.href),'_blank')">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            WhatsApp
+          </button>
+          <button class="share-pill share-copy" id="sidebarCopyBtn" onclick="copyLink('sidebarCopyBtn')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            Copy Link
+          </button>
+        </div>
+      </div>
+    </aside>
 
   </div>
-</main>
+</div>
 
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<script>
+function copyLink(btnId){navigator.clipboard.writeText(location.href).then(function(){var btn=document.getElementById(btnId);if(!btn)return;var orig=btn.innerHTML;btn.innerHTML=btn.innerHTML.replace('Copy Link','Copied!');btn.classList.add('copied');setTimeout(function(){btn.innerHTML=orig;btn.classList.remove('copied');},2000);});}
+function toggleMobileToc(){var toc=document.getElementById('mobileToc');var btn=toc.querySelector('.mobile-toc-btn');var isOpen=toc.classList.toggle('open');btn.setAttribute('aria-expanded',isOpen);}
+var btt=document.getElementById('backToTop');
+window.addEventListener('scroll',function(){btt.classList.toggle('visible',window.scrollY>400);},{passive:true});
+var sections=['short-version','head-to-head','decision-framework','mixed-approach','final-thoughts'];
+var tocLinks=document.querySelectorAll('#toc a');
+window.addEventListener('scroll',function(){var current=sections[0];sections.forEach(function(id){var el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<120)current=id;});tocLinks.forEach(function(link){link.classList.toggle('active',link.getAttribute('href')==='#'+current);});},{passive:true});
+</script>
 <script src="/js/nav.js"></script>
 <script src="/js/footer.js"></script>
 </body>

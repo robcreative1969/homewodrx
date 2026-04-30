@@ -8,17 +8,19 @@
 
   <title>Why Stretching Matters More Than You Think | HomeWODrx Blog</title>
   <meta name="description" content="The science behind flexibility, recovery, and injury prevention — and why a consistent stretching practice is one of the highest-ROI habits an athlete can build.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://homewodrx.com/blog/why-stretching-matters">
 
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="HomeWodRX">
   <meta property="og:title" content="Why Stretching Matters More Than You Think | HomeWODrx">
   <meta property="og:description" content="Most athletes treat stretching as optional. Here's why that's costing them performance, recovery time, and longevity in the gym.">
-  <meta property="og:type" content="article">
   <meta property="og:url" content="https://homewodrx.com/blog/why-stretching-matters">
   <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://homewodrx.com/images/og-default.png">
-  <link rel="canonical" href="https://homewodrx.com/blog/why-stretching-matters">
 
   <script type="application/ld+json">
   {
@@ -36,7 +38,7 @@
       "@type": "BreadcrumbList",
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://homewodrx.com/" },
-        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://homewodrx.com/blog" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://homewodrx.com/blog.html" },
         { "@type": "ListItem", "position": 3, "name": "Why Stretching Matters More Than You Think", "item": "https://homewodrx.com/blog/why-stretching-matters" }
       ]
     }
@@ -46,14 +48,321 @@
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="/js/config.js"></script>
-  <script src="/js/db.js"></script>
-  <!-- Google tag (gtag.js) -->
+
+  <link rel="stylesheet" href="/css/style.css">
+
+  <style>
+/* ── Article hero ── */
+.article-hero {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 48px 0 0;
+}
+.article-hero-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.article-breadcrumb {
+  display: flex; align-items: center; gap: 8px;
+  font-size: .78rem; color: var(--muted); margin-bottom: 20px;
+}
+.article-breadcrumb a { color: var(--or); font-weight: 600; }
+.article-breadcrumb .sep { color: var(--muted2); }
+.article-category {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--or); background: rgba(196,18,18,.08); border: 1px solid rgba(196,18,18,.2);
+  padding: 5px 12px; border-radius: 20px; margin-bottom: 18px;
+}
+.article-hero h1 {
+  font-family: var(--font-head); font-size: clamp(32px, 5.5vw, 58px);
+  letter-spacing: .04em; line-height: 1.05; color: var(--text);
+  max-width: 800px; margin-bottom: 18px;
+}
+.article-hero h1 em { color: var(--or); font-style: normal; }
+.article-meta {
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+  padding-bottom: 28px;
+}
+.meta-item { display: flex; align-items: center; gap: 6px; font-size: .82rem; color: var(--muted); }
+.meta-item svg { width: 14px; height: 14px; opacity: .6; }
+.meta-divider { width: 1px; height: 14px; background: var(--border2); }
+
+/* Hero visual banner */
+.article-visual {
+  background: linear-gradient(135deg, #1a1a2e 0%, #0f172a 50%, #1a0505 100%);
+  height: 240px; position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.article-visual::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 80% at 20% 50%, rgba(196,18,18,.22) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 80% 30%, rgba(196,18,18,.1) 0%, transparent 60%);
+}
+.article-visual-content { position: relative; z-index: 1; text-align: center; }
+.av-wod-name {
+  font-family: var(--font-head); font-size: clamp(60px, 12vw, 130px);
+  color: rgba(255,255,255,.06); letter-spacing: .08em; line-height: 1;
+  user-select: none; position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.av-label {
+  font-family: var(--font-head); font-size: 1.25rem; letter-spacing: .08em;
+  color: rgba(255,255,255,.6);
+}
+.av-sub { font-size: .78rem; color: rgba(255,255,255,.4); margin-top: 6px; }
+
+/* ── Article body layout ── */
+.article-wrap {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px;
+}
+.article-layout {
+  display: grid; grid-template-columns: 1fr 300px;
+  gap: 32px; padding: 40px 0 80px; align-items: start;
+}
+@media (max-width: 900px) { .article-layout { grid-template-columns: 1fr; } }
+
+/* ── Article content card ── */
+.article-content {
+  background: var(--white); border-radius: var(--radius-lg);
+  border: 1.5px solid var(--border); padding: 40px 44px;
+  box-shadow: var(--shadow); min-width: 0;
+}
+@media (max-width: 640px) { .article-content { padding: 24px 20px; } }
+
+.article-content p { font-size: 1rem; line-height: 1.8; color: #2a2a2a; margin-bottom: 20px; }
+.article-content h2 {
+  font-family: var(--font-head); font-size: clamp(24px, 3.5vw, 32px);
+  letter-spacing: .04em; color: var(--text); margin: 40px 0 14px; line-height: 1.1;
+}
+.article-content h2:first-child { margin-top: 0; }
+.article-content h3 { font-size: 1.05rem; font-weight: 700; color: var(--text); margin: 28px 0 10px; }
+.article-content ul, .article-content ol { padding-left: 22px; margin-bottom: 20px; }
+.article-content li { font-size: 1rem; line-height: 1.75; color: #2a2a2a; margin-bottom: 6px; }
+.article-content strong { font-weight: 700; color: var(--text); }
+.article-content a { color: var(--or); font-weight: 600; }
+.article-content a:hover { text-decoration: underline; }
+
+/* Callout */
+.callout {
+  background: rgba(196,18,18,.07);
+  border: 1px solid rgba(196,18,18,.25);
+  border-left: 3px solid var(--or);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 28px 0;
+  font-size: 15px;
+  line-height: 1.7;
+}
+.callout strong { color: var(--or); }
+
+/* Stretch type cards */
+.stretch-types {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 24px 0 32px;
+}
+.stretch-type-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 14px;
+  text-align: center;
+}
+.stretch-type-card .st-icon { font-size: 26px; margin-bottom: 7px; }
+.stretch-type-card .st-name { font-size: 13px; font-weight: 800; margin-bottom: 4px; }
+.stretch-type-card .st-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+/* CTA block */
+.cta-block {
+  background: linear-gradient(135deg, rgba(196,18,18,.15) 0%, rgba(139,0,0,.1) 100%);
+  border: 1px solid rgba(196,18,18,.3);
+  border-radius: 12px;
+  padding: 28px 24px;
+  text-align: center;
+  margin: 36px 0;
+}
+.cta-block h3 { font-size: 20px; font-weight: 900; margin-bottom: 8px; }
+.cta-block p { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+.cta-block a {
+  display: inline-block;
+  background: var(--or);
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background .15s;
+}
+.cta-block a:hover { background: var(--or-dark); color: #fff; }
+
+/* Article footer */
+.article-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding-top: 32px; margin-top: 32px;
+  border-top: 1px solid var(--border); flex-wrap: wrap;
+}
+.article-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.article-tag {
+  padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border);
+  font-size: .72rem; font-weight: 600; color: var(--muted);
+}
+
+/* Related posts */
+.related-strip { margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--border); }
+.related-strip h3 { font-family: var(--font-head); font-size: 1.4rem; letter-spacing: .04em; margin-bottom: 16px; margin-top: 0 !important; }
+.related-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 560px) { .related-grid { grid-template-columns: 1fr; } }
+.rel-card {
+  display: flex; gap: 12px; padding: 14px;
+  background: var(--bg); border-radius: var(--radius);
+  border: 1.5px solid var(--border); transition: border-color .15s; text-decoration: none;
+}
+.rel-card:hover { border-color: var(--or); }
+.rel-body { min-width: 0; }
+.rel-tag { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--or); margin-bottom: 3px; }
+.rel-title { font-size: .82rem; font-weight: 700; color: var(--text); line-height: 1.35; }
+.rel-read  { font-size: .72rem; color: var(--muted2); margin-top: 3px; }
+
+/* ── Sidebar ── */
+.article-sidebar { display: none; }
+@media (min-width: 901px) {
+  .article-sidebar {
+    display: flex; flex-direction: column; gap: 16px;
+    position: sticky; top: calc(var(--nav-h) + 20px);
+  }
+}
+.sidebar-card {
+  background: var(--white); border-radius: var(--radius-lg);
+  border: 1.5px solid var(--border); box-shadow: var(--shadow); overflow: hidden;
+}
+.sidebar-card-hdr {
+  padding: 14px 18px; border-bottom: 1px solid var(--border);
+  font-size: .72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--muted);
+}
+.toc-list { list-style: none; padding: 14px 18px; display: flex; flex-direction: column; gap: 2px; }
+.toc-list li a {
+  display: block; padding: 6px 10px; border-radius: 6px;
+  font-size: .82rem; color: var(--muted); font-weight: 500;
+  transition: background .12s, color .12s; text-decoration: none;
+}
+.toc-list li a:hover { background: rgba(196,18,18,.08); color: var(--or); }
+.toc-list li a.active { background: rgba(196,18,18,.08); color: var(--or); font-weight: 700; }
+
+/* Sidebar CTA */
+.sidebar-cta {
+  background: var(--text); border-radius: var(--radius-lg);
+  padding: 22px 20px; position: relative; overflow: hidden;
+}
+.sidebar-cta::before {
+  content: ''; position: absolute; top: -30px; right: -30px;
+  width: 120px; height: 120px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(196,18,18,.3) 0%, transparent 70%);
+}
+.scta-eyebrow { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--or); margin-bottom: 8px; }
+.scta-title { font-family: var(--font-head); font-size: 1.3rem; letter-spacing: .04em; color: #fff; margin-bottom: 8px; line-height: 1.1; }
+.scta-body { font-size: .8rem; color: rgba(255,255,255,.6); line-height: 1.55; margin-bottom: 16px; }
+.scta-features { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.scta-feature { font-size: .75rem; color: rgba(255,255,255,.65); display: flex; align-items: center; gap: 6px; }
+.scta-feature::before { content: '✓'; color: var(--or); font-weight: 700; flex-shrink: 0; }
+.scta-btn {
+  display: block; text-align: center; width: 100%; padding: 11px;
+  background: var(--or); color: #fff; border: none; border-radius: var(--radius);
+  font-size: .875rem; font-weight: 700; cursor: pointer; transition: background .15s;
+  text-decoration: none; font-family: var(--font-body);
+}
+.scta-btn:hover { background: var(--or-dark); }
+
+/* Sidebar share */
+.share-card-body { padding: 14px 18px; display: flex; flex-direction: column; gap: 8px; }
+.share-pill {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 14px; border-radius: 8px; border: 1.5px solid var(--border);
+  background: none; font-family: var(--font-body); font-size: .82rem; font-weight: 600;
+  color: var(--text); cursor: pointer; transition: border-color .15s, color .15s, background .15s;
+  text-align: left; width: 100%;
+}
+.share-pill svg { width: 16px; height: 16px; flex-shrink: 0; }
+.share-pill:hover        { border-color: var(--border2); }
+.share-x:hover     { border-color: #000; color: #000; background: #f5f5f5; }
+.share-fb:hover    { border-color: #1877f2; color: #1877f2; background: #f0f4ff; }
+.share-wa:hover    { border-color: #25d366; color: #25d366; background: #f0fdf4; }
+.share-copy:hover  { border-color: var(--or); color: var(--or); background: rgba(196,18,18,.06); }
+.share-pill.copied { border-color: #16a34a; color: #16a34a; background: #f0fdf4; }
+
+/* ── Mobile TOC ── */
+.mobile-toc {
+  display: none; background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 24px; overflow: hidden;
+}
+@media (max-width: 900px) { .mobile-toc { display: block; } }
+.mobile-toc-btn {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; background: none; border: none;
+  font-family: var(--font-body); font-size: .82rem; font-weight: 700;
+  color: var(--text); cursor: pointer; gap: 8px;
+}
+.mobile-toc-btn span { display: flex; align-items: center; gap: 8px; }
+.mobile-toc-label { color: var(--muted); font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
+.mobile-toc-chev { width: 16px; height: 16px; transition: transform .2s; flex-shrink: 0; color: var(--muted); }
+.mobile-toc.open .mobile-toc-chev { transform: rotate(180deg); }
+.mobile-toc-body { display: none; border-top: 1px solid var(--border); padding: 8px 12px 12px; }
+.mobile-toc.open .mobile-toc-body { display: block; }
+.mobile-toc-body a {
+  display: block; padding: 8px 10px; border-radius: 6px;
+  font-size: .85rem; color: var(--muted); font-weight: 500;
+  transition: background .12s, color .12s; text-decoration: none;
+}
+.mobile-toc-body a:hover { background: rgba(196,18,18,.08); color: var(--or); }
+
+/* ── Inline CTA (mobile only) ── */
+.inline-cta {
+  display: none; background: var(--text); border-radius: var(--radius-lg);
+  padding: 24px 22px; margin: 36px 0; position: relative; overflow: hidden;
+}
+@media (max-width: 900px) { .inline-cta { display: block; } }
+.inline-cta::before {
+  content: ''; position: absolute; top: -30px; right: -30px;
+  width: 140px; height: 140px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(196,18,18,.3) 0%, transparent 70%);
+  pointer-events: none;
+}
+.inline-cta-inner { position: relative; z-index: 1; }
+.icta-eyebrow { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--or); margin-bottom: 6px; }
+.icta-title { font-family: var(--font-head); font-size: 1.5rem; letter-spacing: .04em; color: #fff; margin-bottom: 6px; line-height: 1.1; }
+.icta-body { font-size: .85rem; color: rgba(255,255,255,.6); line-height: 1.55; margin-bottom: 16px; }
+.icta-features { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 18px; }
+.icta-feature { font-size: .78rem; color: rgba(255,255,255,.65); display: flex; align-items: center; gap: 6px; }
+.icta-feature::before { content: '✓'; color: var(--or); font-weight: 700; flex-shrink: 0; }
+.icta-btn {
+  display: block; text-align: center; width: 100%; padding: 13px;
+  background: var(--or); color: #fff; border: none; border-radius: var(--radius);
+  font-size: .9rem; font-weight: 700; cursor: pointer; transition: background .15s;
+  font-family: var(--font-body); text-decoration: none;
+}
+.icta-btn:hover { background: var(--or-dark); }
+
+/* ── Back to top ── */
+.back-to-top {
+  position: fixed; bottom: 24px; right: 24px; z-index: 500;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--text); border: none; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; box-shadow: var(--shadow-md);
+  opacity: 0; transform: translateY(12px);
+  transition: opacity .2s, transform .2s; pointer-events: none;
+}
+.back-to-top.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.back-to-top:hover { background: var(--or); }
+.back-to-top svg { width: 18px; height: 18px; }
+  </style>
+
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -61,176 +370,17 @@
     gtag('js', new Date());
     gtag('config', 'G-HZM475VDN3');
   </script>
+  <!-- Vercel Analytics -->
   <script defer src="/_vercel/insights/script.js"></script>
-  <style>
-    .post-container {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 0 20px 80px;
-    }
-    .post-breadcrumb {
-      padding: 20px 0 0;
-      font-size: 13px;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-    .post-breadcrumb a { color: var(--muted); text-decoration: none; }
-    .post-breadcrumb a:hover { color: var(--or); }
-    .post-breadcrumb .sep { color: var(--border); }
-
-    .post-header {
-      padding: 28px 0 32px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 36px;
-    }
-    .post-meta {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-    }
-    .post-tag {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      padding: 4px 10px;
-      border-radius: 4px;
-      background: rgba(5,150,105,.15);
-      color: #34d399;
-    }
-    .post-date, .post-readtime { font-size: 13px; color: var(--muted); }
-    .post-header h1 {
-      font-size: clamp(24px, 4vw, 36px);
-      font-weight: 900;
-      line-height: 1.2;
-      margin-bottom: 16px;
-      letter-spacing: -.3px;
-    }
-    .post-header .post-intro {
-      font-size: 17px;
-      color: var(--muted);
-      line-height: 1.75;
-      margin: 0;
-    }
-
-    .post-body { font-size: 16px; line-height: 1.8; color: var(--text); }
-    .post-body h2 {
-      font-size: 22px;
-      font-weight: 800;
-      margin: 40px 0 14px;
-      border-left: 3px solid var(--or);
-      padding-left: 14px;
-    }
-    .post-body h3 { font-size: 18px; font-weight: 700; margin: 28px 0 10px; }
-    .post-body p { margin-bottom: 20px; }
-    .post-body ul, .post-body ol { margin: 0 0 20px 20px; }
-    .post-body li { margin-bottom: 8px; line-height: 1.7; }
-    .post-body strong { font-weight: 700; }
-    .post-body a { color: var(--or); text-decoration: none; font-weight: 600; }
-    .post-body a:hover { color: var(--or-dark); }
-
-    .callout {
-      background: rgba(196,18,18,.07);
-      border: 1px solid rgba(196,18,18,.25);
-      border-left: 3px solid var(--or);
-      border-radius: 8px;
-      padding: 16px 20px;
-      margin: 28px 0;
-      font-size: 15px;
-      line-height: 1.7;
-    }
-    .callout strong { color: var(--or); }
-
-    /* Stretch type cards */
-    .stretch-types {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 12px;
-      margin: 24px 0 32px;
-    }
-    .stretch-type-card {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px 14px;
-      text-align: center;
-    }
-    .stretch-type-card .st-icon { font-size: 26px; margin-bottom: 7px; }
-    .stretch-type-card .st-name { font-size: 13px; font-weight: 800; margin-bottom: 4px; }
-    .stretch-type-card .st-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
-
-    /* CTA block */
-    .cta-block {
-      background: linear-gradient(135deg, rgba(196,18,18,.15) 0%, rgba(139,0,0,.1) 100%);
-      border: 1px solid rgba(196,18,18,.3);
-      border-radius: 12px;
-      padding: 28px 24px;
-      text-align: center;
-      margin: 36px 0;
-    }
-    .cta-block h3 { font-size: 20px; font-weight: 900; margin-bottom: 8px; }
-    .cta-block p { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
-    .cta-block a {
-      display: inline-block;
-      background: var(--or);
-      color: #fff;
-      padding: 12px 28px;
-      border-radius: 8px;
-      font-weight: 800;
-      font-size: 14px;
-      text-decoration: none;
-      transition: background .15s;
-    }
-    .cta-block a:hover { background: var(--or-dark); color: #fff; }
-
-    .post-related {
-      border-top: 1px solid var(--border);
-      padding-top: 36px;
-      margin-top: 52px;
-    }
-    .post-related h3 {
-      font-size: 16px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      color: var(--muted);
-      margin-bottom: 20px;
-    }
-    .related-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 16px;
-    }
-    .related-card {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px 18px;
-      text-decoration: none;
-      transition: border-color .15s;
-    }
-    .related-card:hover { border-color: var(--or); }
-    .related-card .r-tag {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-    .related-card h4 { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.35; }
-  </style>
 </head>
-<body data-nav-init="true" data-active-page="blog">
-<main>
-  <div class="post-container">
 
-    <nav class="post-breadcrumb" aria-label="Breadcrumb">
+<body data-nav-init="true" data-active-page="blog">
+
+<!-- ARTICLE HERO -->
+<div class="article-hero">
+  <div class="article-hero-inner">
+
+    <nav class="article-breadcrumb" aria-label="Breadcrumb">
       <a href="/">Home</a>
       <span class="sep">›</span>
       <a href="/blog.html">Blog</a>
@@ -238,17 +388,59 @@
       <span>Why Stretching Matters More Than You Think</span>
     </nav>
 
-    <header class="post-header">
-      <div class="post-meta">
-        <span class="post-tag">Recovery</span>
-        <span class="post-date">April 11, 2026</span>
-        <span class="post-readtime">· 7 min read</span>
-      </div>
-      <h1>Why Stretching Matters More Than You Think</h1>
-      <p class="post-intro">Most athletes treat stretching as optional — something you do if you have time left after the workout. Here's why that mindset is quietly limiting your performance, slowing your recovery, and shortening your time in the gym.</p>
-    </header>
+    <div class="article-category">Recovery</div>
 
-    <article class="post-body">
+    <h1>Why <em>Stretching</em> Matters More Than You Think</h1>
+
+    <div class="article-meta">
+      <span class="meta-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        April 11, 2026
+      </span>
+      <div class="meta-divider"></div>
+      <span class="meta-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        7 min read
+      </span>
+      <div class="meta-divider"></div>
+      <span class="meta-item">By the HomeWodRX team</span>
+    </div>
+  </div>
+
+  <div class="article-visual">
+    <div class="av-wod-name">STRETCH</div>
+    <div class="article-visual-content">
+      <div class="av-label">Recovery</div>
+      <div class="av-sub">Why flexibility is a performance investment</div>
+    </div>
+  </div>
+</div>
+
+<!-- ARTICLE BODY + SIDEBAR -->
+<div class="article-wrap">
+  <div class="article-layout">
+
+    <!-- CONTENT -->
+    <article class="article-content" id="article">
+
+      <!-- Mobile TOC -->
+      <div class="mobile-toc" id="mobileToc">
+        <button class="mobile-toc-btn" onclick="toggleMobileToc()" aria-expanded="false">
+          <span><span class="mobile-toc-label">In this article</span></span>
+          <svg class="mobile-toc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+        <div class="mobile-toc-body">
+          <a href="#skip-stretching">What Happens When You Skip It</a>
+          <a href="#performance-case">The Performance Case</a>
+          <a href="#four-types">Four Types of Stretching</a>
+          <a href="#how-much">How Much Is Enough?</a>
+          <a href="#focus-areas">Focus Areas That Matter</a>
+          <a href="#making-it-stick">Making It Stick</a>
+          <a href="#the-long-game">The Long Game</a>
+        </div>
+      </div>
 
       <p>Let's be honest. After a brutal workout, the last thing anyone wants to do is spend ten minutes doing pigeon pose. You're tired, you've already won the hard battle, and the couch is right there. Stretching gets skipped more than any other training component — and it shows.</p>
 
@@ -256,7 +448,7 @@
 
       <p>The good news is that the fix is simpler than most people expect, and the return on a consistent stretching practice is genuinely outsized relative to the time it costs.</p>
 
-      <h2>What Actually Happens When You Skip Stretching</h2>
+      <h2 id="skip-stretching">What Actually Happens When You Skip Stretching</h2>
 
       <p>When muscles are repeatedly contracted under load and never given the signal to lengthen again, they adapt. They get shorter in their resting state. Neural tension increases. The fascia — the connective tissue web surrounding every muscle — starts to lose its pliability and adheres in ways that restrict movement.</p>
 
@@ -271,7 +463,7 @@
 
       <p>None of this happens overnight. That's what makes it easy to ignore — right up until it becomes impossible to.</p>
 
-      <h2>The Performance Case (Not Just Recovery)</h2>
+      <h2 id="performance-case">The Performance Case (Not Just Recovery)</h2>
 
       <p>Stretching is almost exclusively framed as a recovery tool, but the performance argument is just as strong — and more motivating for athletes who genuinely don't care about feeling less sore.</p>
 
@@ -283,7 +475,7 @@
         <strong>The takeaway:</strong> Mobility work is strength work. Every degree of range of motion you reclaim is a degree through which you can now apply force. Stretching isn't the opposite of training — it's part of it.
       </div>
 
-      <h2>The Four Types of Stretching (and When to Use Each)</h2>
+      <h2 id="four-types">The Four Types of Stretching (and When to Use Each)</h2>
 
       <p>Not all stretching serves the same purpose. Knowing which type to reach for — and when — makes your mobility practice dramatically more effective.</p>
 
@@ -328,7 +520,7 @@
 
       <p>Pigeon pose, downward dog, warrior sequences — these are structural stretches with deep athletic roots. They tend to address the same hip, shoulder, and thoracic restrictions that high-intensity athletes accumulate, and the longer hold durations create meaningful tissue change over time. The added benefit: the breathing patterns emphasized in these positions have a measurable effect on nervous system recovery.</p>
 
-      <h2>How Much Is Enough?</h2>
+      <h2 id="how-much">How Much Is Enough?</h2>
 
       <p>The honest answer: far less than most people assume. Research suggests that as little as 5–10 minutes of targeted stretching, done consistently, produces meaningful improvements in flexibility over 4–8 weeks. The compounding effect of daily short sessions dramatically outpaces occasional long ones.</p>
 
@@ -342,7 +534,22 @@
 
       <p>The consistency matters far more than any individual session. Ten minutes every day beats an hour on Sunday.</p>
 
-      <h2>The Focus Areas That Matter Most for Functional Fitness Athletes</h2>
+      <!-- Inline CTA — mobile only -->
+      <div class="inline-cta">
+        <div class="inline-cta-inner">
+          <div class="icta-eyebrow">Free Tool</div>
+          <div class="icta-title">Build Your Stretch Session</div>
+          <div class="icta-body">Choose your focus area, duration, and modality — get a complete personalized routine in seconds.</div>
+          <div class="icta-features">
+            <div class="icta-feature">Static, dynamic &amp; PNF</div>
+            <div class="icta-feature">5–20 min routines</div>
+            <div class="icta-feature">Targeted or full body</div>
+          </div>
+          <a href="/stretch.html" class="icta-btn">Try the Stretch Generator →</a>
+        </div>
+      </div>
+
+      <h2 id="focus-areas">The Focus Areas That Matter Most for Functional Fitness Athletes</h2>
 
       <p>Whether you train at a box, a health club, or in your garage, certain areas accumulate restriction faster than others. Hips and hip flexors suffer from a double hit — compressed from sitting and then loaded in training. Thoracic spine mobility erodes quietly and limits overhead pressing, front rack positions, and rotation. Calves and ankles restrict squat depth in ways that cascade up through the kinetic chain.</p>
 
@@ -352,7 +559,7 @@
         <strong>Try this tonight:</strong> 10 minutes. Pick hip flexors, thoracic rotation, and calves. Hold each stretch for 40 seconds per side, breathe into it, and notice how different you feel in the morning. That's the return on ten minutes.
       </div>
 
-      <h2>Making It Stick</h2>
+      <h2 id="making-it-stick">Making It Stick</h2>
 
       <p>The biggest obstacle to a stretching practice isn't motivation — it's decision fatigue. When you have to think about what to do every time, the friction wins and the session gets skipped. The athletes who stretch consistently are the ones who have a repeatable structure: same time, same general focus, same sequence.</p>
 
@@ -366,7 +573,7 @@
         <a href="/stretch.html">Try the Stretch Generator →</a>
       </div>
 
-      <h2>The Long Game</h2>
+      <h2 id="the-long-game">The Long Game</h2>
 
       <p>There's a version of yourself two years from now who either has more range of motion than today, or less. Tissue quality doesn't stay static — it responds to the demands you place on it. Train hard without addressing flexibility, and the body adapts by getting tighter, more restricted, more prone to strain. Train hard and invest in mobility, and you get something rare: an athlete who gets more capable over time, not less.</p>
 
@@ -374,24 +581,146 @@
 
       <p>Start with ten minutes. Tonight. It compounds faster than you'd think.</p>
 
+      <!-- Article footer: tags -->
+      <div class="article-footer">
+        <div class="article-tags">
+          <span class="article-tag">Recovery</span>
+          <span class="article-tag">Flexibility</span>
+          <span class="article-tag">Mobility</span>
+          <span class="article-tag">Injury Prevention</span>
+        </div>
+      </div>
+
+      <!-- Related posts -->
+      <div class="related-strip">
+        <h3>Keep Reading</h3>
+        <div class="related-grid">
+          <a class="rel-card" href="/blog/how-to-scale-wods.html">
+            <div class="rel-body">
+              <div class="rel-tag">Training</div>
+              <div class="rel-title">How to Scale WODs Without Losing the Intended Stimulus</div>
+              <div class="rel-read">6 min read</div>
+            </div>
+          </a>
+          <a class="rel-card" href="/blog/hero-wod-guide.html">
+            <div class="rel-body">
+              <div class="rel-tag">Training</div>
+              <div class="rel-title">A Complete Guide to Hero WODs and Why They Matter</div>
+              <div class="rel-read">8 min read</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
     </article>
 
-    <section class="post-related">
-      <h3>More from the blog</h3>
-      <div class="related-grid">
-        <a href="/blog/how-to-scale-wods.html" class="related-card">
-          <div class="r-tag">Training</div>
-          <h4>How to Scale WODs Without Losing the Intended Stimulus</h4>
-        </a>
-        <a href="/blog/hero-wod-guide.html" class="related-card">
-          <div class="r-tag">Training</div>
-          <h4>A Complete Guide to Hero WODs and Why They Matter</h4>
-        </a>
-      </div>
-    </section>
+    <!-- SIDEBAR -->
+    <aside class="article-sidebar">
 
+      <!-- Table of Contents -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-hdr">In This Article</div>
+        <ul class="toc-list" id="toc">
+          <li><a href="#skip-stretching" class="active">What Happens When You Skip It</a></li>
+          <li><a href="#performance-case">The Performance Case</a></li>
+          <li><a href="#four-types">Four Types of Stretching</a></li>
+          <li><a href="#how-much">How Much Is Enough?</a></li>
+          <li><a href="#focus-areas">Focus Areas That Matter</a></li>
+          <li><a href="#making-it-stick">Making It Stick</a></li>
+          <li><a href="#the-long-game">The Long Game</a></li>
+        </ul>
+      </div>
+
+      <!-- Account CTA -->
+      <div class="sidebar-cta">
+        <div class="scta-eyebrow">Free Tool</div>
+        <div class="scta-title">Build Your Stretch Session</div>
+        <div class="scta-body">Choose your focus area, duration, and modality — get a complete personalized routine in seconds.</div>
+        <div class="scta-features">
+          <div class="scta-feature">Static, dynamic &amp; PNF</div>
+          <div class="scta-feature">5–20 min routines</div>
+          <div class="scta-feature">Targeted or full body</div>
+        </div>
+        <a href="/stretch.html" class="scta-btn">Try the Stretch Generator →</a>
+        <p style="font-size:.7rem;color:rgba(255,255,255,.35);margin-top:10px;text-align:center;">No account required</p>
+      </div>
+
+      <!-- Share card -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-hdr">Share This Article</div>
+        <div class="share-card-body">
+          <button class="share-pill share-x" onclick="window.open('https://twitter.com/intent/tweet?url='+encodeURIComponent(location.href)+'&text='+encodeURIComponent(document.title),'_blank')">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            Share on X
+          </button>
+          <button class="share-pill share-fb" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),'_blank')">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Facebook
+          </button>
+          <button class="share-pill share-wa" onclick="window.open('https://api.whatsapp.com/send?text='+encodeURIComponent(document.title+' '+location.href),'_blank')">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            WhatsApp
+          </button>
+          <button class="share-pill share-copy" id="sidebarCopyBtn" onclick="copyLink('sidebarCopyBtn')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            Copy Link
+          </button>
+        </div>
+      </div>
+
+    </aside>
   </div>
-</main>
+</div>
+
+<!-- Back to top -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="18 15 12 9 6 15"/>
+  </svg>
+</button>
+
+<script>
+/* Copy link */
+function copyLink(btnId) {
+  navigator.clipboard.writeText(location.href).then(function() {
+    var btn = document.getElementById(btnId || 'sidebarCopyBtn');
+    if (!btn) return;
+    var orig = btn.innerHTML;
+    btn.innerHTML = btn.innerHTML.replace('Copy Link', 'Copied!');
+    btn.classList.add('copied');
+    setTimeout(function() { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+/* Mobile TOC toggle */
+function toggleMobileToc() {
+  var toc = document.getElementById('mobileToc');
+  var btn = toc.querySelector('.mobile-toc-btn');
+  var isOpen = toc.classList.toggle('open');
+  btn.setAttribute('aria-expanded', isOpen);
+}
+
+/* Back to top visibility */
+var btt = document.getElementById('backToTop');
+window.addEventListener('scroll', function() {
+  btt.classList.toggle('visible', window.scrollY > 400);
+}, { passive: true });
+
+/* Active TOC link */
+var sections = ['skip-stretching','performance-case','four-types','how-much','focus-areas','making-it-stick','the-long-game'];
+var tocLinks = document.querySelectorAll('#toc a');
+
+window.addEventListener('scroll', function() {
+  var current = sections[0];
+  sections.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top < 120) current = id;
+  });
+  tocLinks.forEach(function(link) {
+    link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+  });
+}, { passive: true });
+</script>
 
 <script src="/js/nav.js"></script>
 <script src="/js/footer.js"></script>
