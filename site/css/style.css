@@ -435,6 +435,9 @@ section.module {
   -webkit-tap-highlight-color: transparent;
   position: relative; padding: 0 4px;
 }
+/* Hide Sentry's default feedback widget everywhere — we use our own */
+#sentry-feedback { display: none !important; }
+
 /* ── Mobile feedback button (portrait only, above tab bar) ── */
 .mob-feedback-btn {
   display: none;
@@ -448,9 +451,25 @@ section.module {
   box-shadow: 0 4px 14px rgba(196,18,18,.40);
   transition: transform .15s, box-shadow .15s;
   -webkit-tap-highlight-color: transparent;
+  text-decoration: none;
 }
 .mob-feedback-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(196,18,18,.45); }
 .mob-feedback-btn:active { transform: scale(.94); }
+
+/* ── Desktop feedback button (mirrors Sentry widget look) ── */
+.desk-feedback-btn {
+  display: flex;
+  position: fixed; bottom: 20px; right: 20px;
+  align-items: center; gap: 7px;
+  padding: 10px 16px; border-radius: 99px;
+  background: var(--or); color: #fff;
+  font-family: var(--font-body); font-size: .82rem; font-weight: 700;
+  text-decoration: none; cursor: pointer; z-index: 999;
+  box-shadow: 0 4px 14px rgba(196,18,18,.35);
+  transition: transform .15s, box-shadow .15s;
+}
+.desk-feedback-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(196,18,18,.45); color: #fff; }
+.desk-feedback-btn:active { transform: scale(.97); }
 
 /* Active indicator: absolutely-positioned top bar — doesn't affect centering */
 .tab-item::before {
@@ -822,9 +841,8 @@ section.module {
   /* Hamburger not needed in portrait — bottom tab bar is the nav */
   #mobile-hamburger-btn { display: none; }
 
-  /* Replace Sentry's default widget with our custom button */
-  #sentry-feedback      { display: none !important; }
   .mob-feedback-btn     { display: flex; }
+  .desk-feedback-btn    { display: none; }
 
   .bento-2, .bento-3, .bento-4 { grid-template-columns: 1fr; }
   .footer-inner { grid-template-columns: 1fr 1fr; }
@@ -844,7 +862,8 @@ section.module {
   .mobile-tab-bar        { display: none !important; }
   .mobile-top-bar        { display: flex; }
   #mobile-hamburger-btn  { display: flex; }   /* re-show for landscape nav */
-  .mob-feedback-btn      { display: none; }   /* Sentry default widget shows normally */
+  .mob-feedback-btn      { display: none; }
+  .desk-feedback-btn     { display: none; }
   .page-wrap, .page-wrap-sidebar { padding-bottom: 20px; }
 }
 
