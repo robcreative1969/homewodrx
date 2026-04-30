@@ -445,14 +445,7 @@ const db = {
     }
 
     if (!supabaseClient) {
-      const benchmarks = BENCHMARKS;
-      const weekNum = getISOWeekNumber(new Date());
-      const featured = benchmarks[weekNum % benchmarks.length];
-      return {
-        benchmark_slug: featured.slug,
-        workout_id: null,
-        featured_type: 'auto'
-      };
+      return null;
     }
 
     const today = new Date().toISOString().split('T')[0];
@@ -463,14 +456,7 @@ const db = {
       .single();
 
     if (!data) {
-      const benchmarks = BENCHMARKS;
-      const weekNum = getISOWeekNumber(new Date());
-      const featured = benchmarks[weekNum % benchmarks.length];
-      return {
-        benchmark_slug: featured.slug,
-        workout_id: null,
-        featured_type: 'auto'
-      };
+      return null;
     }
 
     return data;
@@ -509,33 +495,24 @@ const db = {
   // ===== BENCHMARK WORKOUTS =====
 
   async getBenchmarkBySlug(slug) {
-    if (!supabaseClient) {
-      return (typeof BENCHMARKS !== 'undefined') ? BENCHMARKS.find(b => b.slug === slug) || null : null;
-    }
+    if (!supabaseClient) return null;
     const { data, error } = await supabaseClient
       .from('benchmark_workouts')
       .select('*')
       .eq('slug', slug)
       .single();
-    if (error || !data) {
-      // Fallback to JS array
-      return (typeof BENCHMARKS !== 'undefined') ? BENCHMARKS.find(b => b.slug === slug) || null : null;
-    }
+    if (error || !data) return null;
     return data;
   },
 
   async getAllBenchmarks() {
-    if (!supabaseClient) {
-      return (typeof BENCHMARKS !== 'undefined') ? BENCHMARKS : [];
-    }
+    if (!supabaseClient) return [];
     const { data, error } = await supabaseClient
       .from('benchmark_workouts')
       .select('*')
       .order('category', { ascending: true })
       .order('name', { ascending: true });
-    if (error || !data || data.length === 0) {
-      return (typeof BENCHMARKS !== 'undefined') ? BENCHMARKS : [];
-    }
+    if (error || !data || data.length === 0) return [];
     return data;
   },
 

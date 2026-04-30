@@ -343,7 +343,7 @@ const Search = (() => {
       try {
         benchmarks = (await db.getAllBenchmarks()) || [];
       } catch (_) {
-        benchmarks = typeof BENCHMARKS !== 'undefined' ? BENCHMARKS : [];
+        benchmarks = [];
       }
 
       // 2. Movements — flatten MOVEMENT_DB (load script if needed)
