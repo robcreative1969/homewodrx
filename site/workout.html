@@ -98,6 +98,7 @@
 .wod-ph-meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; font-size: .82rem; color: var(--muted); font-weight: 500; padding-top: 14px; border-top: 1px solid var(--border); margin-top: 14px; }
 .wod-ph-meta-item { display: flex; align-items: center; gap: 5px; }
 .wod-ph-meta-item svg { width: 14px; height: 14px; flex-shrink: 0; opacity: .7; }
+.wod-ph-desc { font-size: .9rem; color: var(--muted); line-height: 1.5; margin-top: 12px; }
 
 /* ══ PAGE LAYOUT ══ */
 .page-wrap { max-width: 1200px; margin: 0 auto; padding: 28px 24px 80px; }
@@ -149,8 +150,9 @@
 .action-btn:hover { border-color: var(--or); color: var(--or); background: var(--or-xlight); }
 .action-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
 .admin-row { margin-top: 4px; }
-.admin-delete-btn { background: transparent; border: 1px solid rgba(231,76,60,.4); color: #e74c3c; border-radius: 8px; padding: 8px 14px; font-size: .82rem; font-weight: 700; cursor: pointer; width: 100%; font-family: var(--font-body); }
-.admin-delete-btn:hover { background: rgba(231,76,60,.08); }
+.admin-delete-btn { display: flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 8px; border: 1.5px solid rgba(196,18,18,.35); background: var(--white); font-size: .84rem; font-weight: 700; color: var(--or); cursor: pointer; font-family: var(--font-body); box-shadow: var(--shadow); width: 100%; transition: all .15s; }
+.admin-delete-btn:hover { border-color: var(--or); background: var(--or-xlight); }
+.admin-delete-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
 
 /* ══ SOCIAL SHARE ══ */
 .share-card { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); }
@@ -844,13 +846,14 @@ function buildWodHeroCardHTML(w) {
     // Expand into per-round rows with separators
     movementsHtml = roundNums.map(function(rep, ri) {
       var rowsForRound = movements.map(function(m) {
-        var mvSlug   = m.slug || slugify(m.name || '');
+        var mvName   = m.movement || m.name || '';
+        var mvSlug   = m.slug || slugify(mvName);
         var loadHtml = (ri === 0 && (m.rx_men || m.rx_women))
           ? '<span class="wod-load">' + escHtml(m.rx_men || '') + (m.rx_women ? ' / ' + m.rx_women : '') + '</span>'
           : '';
         return '<li class="wod-move-row">' +
           '<span class="wod-reps">' + rep + '</span>' +
-          '<a class="wod-move-link" href="/movements/' + mvSlug + '">' + escHtml(m.name || '') + '</a>' +
+          '<a class="wod-move-link" href="/movements/' + mvSlug + '">' + escHtml(mvName) + '</a>' +
           loadHtml +
         '</li>';
       }).join('');
@@ -862,7 +865,8 @@ function buildWodHeroCardHTML(w) {
     }).join('');
   } else {
     movementsHtml = movements.map(function(m) {
-      var mvSlug   = m.slug || slugify(m.name || '');
+      var mvName   = m.movement || m.name || '';
+      var mvSlug   = m.slug || slugify(mvName);
       var loadHtml = (m.rx_men || m.rx_women)
         ? '<span class="wod-load">' + escHtml(m.rx_men || '') + (m.rx_women ? ' / ' + m.rx_women : '') + '</span>'
         : '';
@@ -870,7 +874,7 @@ function buildWodHeroCardHTML(w) {
         (m.reps
           ? '<span class="wod-reps">' + escHtml(String(m.reps)) + '</span>'
           : '<span class="wod-reps" style="font-size:.9rem;color:var(--muted)">—</span>') +
-        '<a class="wod-move-link" href="/movements/' + mvSlug + '">' + escHtml(m.name || '') + '</a>' +
+        '<a class="wod-move-link" href="/movements/' + mvSlug + '">' + escHtml(mvName) + '</a>' +
         loadHtml +
       '</li>';
     }).join('');
@@ -904,7 +908,7 @@ function buildMetaStackHTML(w, isBm) {
   var ctaSub = scorePrompts[w.scoring_type] || 'Log your result and track your progress.';
 
   var adminHtml = canManageWorkout(w)
-    ? '<div class="admin-row"><button class="admin-delete-btn" onclick="deleteCurrentWorkout()">&#x1F5D1; Delete Workout</button></div>'
+    ? '<div class="admin-row"><button class="admin-delete-btn" onclick="deleteCurrentWorkout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg> Delete Workout</button></div>'
     : '';
 
   return '<div class="meta-stack">' +
@@ -1204,18 +1208,27 @@ function renderUserWodLayout(w) {
     return '<li><span class="tip-num">' + (i + 1) + '</span> <span>' + escHtml(t) + '</span></li>';
   }).join('');
 
+  var userMetaHtml = '';
+  if (w.format) userMetaHtml += '<span class="wod-ph-meta-item">' + escHtml(cap(w.format)) + '</span>';
+  var userDur = w.duration_estimate || w.duration;
+  if (userDur) {
+    var durM = String(userDur).match(/\d+/);
+    userMetaHtml += '<span class="wod-ph-meta-item">' + (durM ? durM[0] + ' min' : escHtml(String(userDur))) + '</span>';
+  }
+  var stLbls = { time: 'For Time', rounds_reps: 'AMRAP', reps: 'Max Reps', weight: 'Max Weight' };
+  if (w.scoring_type) userMetaHtml += '<span class="wod-ph-meta-item">' + escHtml(stLbls[w.scoring_type] || cap(w.scoring_type)) + '</span>';
+
   var pageHeaderHtml =
     '<div class="page-header">' +
-      '<nav class="breadcrumb-wrap" aria-label="Breadcrumb">' +
-        '<a href="/">Home</a>' +
-        '<span class="bc-sep">&rsaquo;</span>' +
-        '<a href="/myworkouts.html">My Workouts</a>' +
-        '<span class="bc-sep">&rsaquo;</span>' +
-        '<span>' + escHtml(name) + '</span>' +
-      '</nav>' +
-      '<h1 class="wod-ph-title">' + escHtml(name) + '</h1>' +
-      '<div class="wod-ph-meta">' +
-        '<span>' + escHtml(formatWodMeta(w)) + '</span>' +
+      '<div class="page-header-inner">' +
+        '<nav class="breadcrumb" aria-label="Breadcrumb">' +
+          '<a href="/">Home</a><span>›</span>' +
+          '<a href="/myworkouts.html">My Workouts</a><span>›</span>' +
+          escHtml(name) +
+        '</nav>' +
+        '<div class="wod-ph-title">' + escHtml(name) + '</div>' +
+        (userMetaHtml ? '<div class="wod-ph-meta">' + userMetaHtml + '</div>' : '') +
+        (w.description ? '<p class="wod-ph-desc">' + escHtml(w.description) + '</p>' : '') +
       '</div>' +
     '</div>';
 
