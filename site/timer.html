@@ -1166,18 +1166,24 @@ document.addEventListener('fullscreenchange', () => {
     T.wodName   = wodName;
     T.wodFormat = p.get('format') || '';
     const t = p.get('time');
-    if (t) T.durationSecs = parseInt(t) * 60;
+    const mins = t ? parseInt(t) : 20;
+    if (t) T.durationSecs = mins * 60;
     const moves = p.get('moves');
     if (moves) {
       T.wodMoves = moves.split(',').map(m => {
         const idx = m.indexOf(':');
-        return { reps: m.slice(0, idx), name: m.slice(idx+1) };
+        return { reps: m.slice(0, idx), name: decodeURIComponent(m.slice(idx+1)) };
       });
     }
     const modeRaw = (p.get('mode') || '').toLowerCase();
-    if (modeRaw.includes('amrap'))     T.mode = 'AMRAP';
-    else if (modeRaw.includes('emom')) T.mode = 'EMOM';
-    else                               T.mode = 'FOR TIME';
+    if (modeRaw.includes('amrap'))       T.mode = 'AMRAP';
+    else if (modeRaw.includes('emom'))   T.mode = 'EMOM';
+    else if (modeRaw.includes('tabata')) T.mode = 'TABATA';
+    else                                 T.mode = 'FOR TIME';
+    // Auto-navigate to config screen with the pre-selected mode
+    selectMode(T.mode);
+    // Pre-fill the duration stepper so user just hits Go
+    if (T.mode !== 'TABATA') setVal('val-duration', mins);
   } catch(e) {}
 })();
 </script>

@@ -746,11 +746,19 @@ function buildTimerUrl(w) {
   const fmt  = (w.format || '').toLowerCase();
   const raw  = w.duration_estimate || w.duration || '20';
   const mins = parseInt(String(raw).match(/\d+/)?.[0] || 20);
-  if (fmt.includes('amrap'))  return '/timer.html?mode=amrap&duration=' + mins;
-  if (fmt.includes('emom'))   return '/timer.html?mode=emom&duration=' + mins + '&interval=1';
-  if (fmt.includes('tabata')) return '/timer.html?mode=tabata';
-  if (fmt.includes('time'))   return '/timer.html?mode=fortime&cap=' + mins;
-  return '/timer.html?duration=' + mins;
+  const name = encodeURIComponent(w.name || w.title || 'WOD');
+  const fmtLabel = encodeURIComponent(w.format || '');
+  // For multi-round workouts (e.g. "21 – 15 – 9") use only the first round count
+  const movePairs = (w.movements || []).map(function(m) {
+    var reps = String(m.reps || '').match(/\d+/);
+    return (reps ? reps[0] : '') + ':' + (m.name || '');
+  });
+  const movesStr = movePairs.length ? '&moves=' + encodeURIComponent(movePairs.join(',')) : '';
+  const base = '/timer.html?wod=' + name + '&format=' + fmtLabel + '&time=' + mins + movesStr;
+  if (fmt.includes('amrap'))   return base + '&mode=amrap';
+  if (fmt.includes('emom'))    return base + '&mode=emom';
+  if (fmt.includes('tabata'))  return base + '&mode=tabata';
+  return base + '&mode=fortime';
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
