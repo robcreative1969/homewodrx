@@ -283,7 +283,7 @@
       var rep = r.reps || r.duration || '';
       var slug = mn.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
       return '<li class="wod-move-row">' +
-        '<span class="wod-reps">' + escHtml(String(rep)) + '</span>' +
+        '<span class="wod-reps">' + escHtml(formatReps(rep)) + '</span>' +
         '<a href="/movements/' + slug + '" class="wod-move-link">' + escHtml(mn) + '</a>' +
       '</li>';
     }).join('');
@@ -416,7 +416,7 @@
               var mn = r.movement || r.name || '';
               var rx = r.reps || r.duration || '';
               var load = r.load || '';
-              return '<div class="scale-row"><span class="scale-mv">' + escHtml(mn) + '</span><span class="scale-rx">' + escHtml(String(rx)) + (load ? ' · ' + load : '') + '</span></div>';
+              return '<div class="scale-row"><span class="scale-mv">' + escHtml(mn) + '</span><span class="scale-rx">' + escHtml(formatReps(rx)) + (load ? ' · ' + load : '') + '</span></div>';
             }).join('');
             return '<div class="bc span3">' +
               '<div class="bc-head"><div class="icon">' + iconScaleSvg + '</div>Scaling Options</div>' +
@@ -590,6 +590,15 @@
 
   function escHtml(s) {
     return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function formatReps(r) {
+    if (!r) return r;
+    var s = String(r);
+    // "60s" / "60S" → "60 sec"
+    s = s.replace(/(\d+)\s*s\b/gi, '$1 sec');
+    // "20m" → "20 m" (guards against "min" and "meters")
+    s = s.replace(/(\d+)\s*m\b(?!in|eters)/gi, '$1 m');
+    return s;
   }
   function cap(s) {
     return String(s||'').replace(/-/g,' ').replace(/\b\w/g, c => c.toUpperCase());
