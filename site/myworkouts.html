@@ -532,6 +532,7 @@ var logTargetSlug  = null; // benchmark_slug for re-logging
 var logTargetWodId = null; // workout_id for re-logging
 var deleteTargetId = null; // result id being deleted
 var logIsRx        = true;
+var _cardMap       = {};   // keyed by safe ID, avoids quote-in-onclick issues
 
 /* ─── Auth init ─── */
 document.addEventListener('DOMContentLoaded', async function() {
@@ -703,6 +704,7 @@ function filterCards(type, el) {
 
 /* ─── Render cards grouped by month ─── */
 function renderCards(workouts) {
+  _cardMap = {};   // reset before each render
   var container = document.getElementById('cards-container');
   var subset    = workouts.slice(0, visibleCount);
 
@@ -732,6 +734,9 @@ function renderCards(workouts) {
 
 /* ─── Build a single WOD card ─── */
 function buildCard(w) {
+  /* Use a stable, quote-safe key to look up this card's data from onclick handlers */
+  var cardKey = (w._resultId || w.workout_id || ('k' + Math.random().toString(36).slice(2)));
+  _cardMap[cardKey] = w;
   var chipClass = w.wod_type === 'benchmark' ? 'chip-red' : 'chip-blue';
   var chipLabel = w.wod_type === 'benchmark' ? 'Benchmark' : 'Generated';
 
@@ -773,11 +778,6 @@ function buildCard(w) {
     resultHtml += '</div>';
   }
 
-  var slugArg  = JSON.stringify(w.slug || null);
-  var wodIdArg = JSON.stringify(w.workout_id || null);
-  var nameArg  = JSON.stringify(w.wod_name);
-  var ridArg   = JSON.stringify(w._resultId);
-
   var html = '<div class="wod-card" data-id="' + esc(String(w._resultId || w.workout_id)) + '" data-type="' + w.wod_type + '">';
 
   html += '<div class="wod-card-top">';
@@ -810,9 +810,9 @@ function buildCard(w) {
 
   html += '<div class="wod-card-foot">';
   var logLabel = w._hasResult ? 'Log Again' : 'Log Result';
-  html += '<button class="btn-card-action btn-log-again" onclick="openLogModal(' + slugArg + ',' + wodIdArg + ',' + nameArg + ')">' + logLabel + '</button>';
+  html += '<button class="btn-card-action btn-log-again" onclick="openLogModalFromCard(\'' + cardKey + '\')">' + logLabel + '</button>';
   if (w._hasResult) {
-    html += '<button class="btn-card-action btn-delete-result" onclick="openDeleteModal(' + ridArg + ')">Delete</button>';
+    html += '<button class="btn-card-action btn-delete-result" onclick="openDeleteModalFromCard(\'' + cardKey + '\')">Delete</button>';
   }
   html += '</div>';
 
@@ -836,6 +836,18 @@ function loadMore() {
     ? allWorkouts
     : allWorkouts.filter(function(w){ return w.wod_type === currentType; });
   renderCards(filtered);
+}
+
+/* ─── Card-keyed wrappers (avoid quote-in-onclick issues) ─── */
+function openLogModalFromCard(key) {
+  var w = _cardMap[key];
+  if (!w) return;
+  openLogModal(w.slug || null, w.workout_id || null, w.wod_name || 'WOD');
+}
+function openDeleteModalFromCard(key) {
+  var w = _cardMap[key];
+  if (!w || !w._resultId) return;
+  openDeleteModal(w._resultId);
 }
 
 /* ─── Log modal ─── */
