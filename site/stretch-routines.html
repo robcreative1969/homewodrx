@@ -46,12 +46,12 @@
 <script src="/js/db.js"></script>
 <script src="/js/nav.js"></script>
 <style>
-/* ── PAGE HERO ────────────────────────────────────────── */
-.page-hero-white{background:var(--white);border-bottom:1.5px solid var(--border);padding:32px 0 24px;margin-bottom:0}
-.page-hero-inner{max-width:1200px;margin:0 auto;padding:0 24px}
-.page-hero-title{font-family:var(--font-head);font-size:2.6rem;letter-spacing:.04em;line-height:1;margin-bottom:8px;color:var(--text)}
-.page-hero-sub{font-size:1rem;color:var(--muted);line-height:1.55;max-width:640px;margin:0}
-@media(max-width:600px){.page-hero-white{padding:22px 0 18px}.page-hero-title{font-size:2rem}}
+/* ── PAGE HEADER ─────────────────────────────────────── */
+.page-header{background:var(--white);border-bottom:1px solid var(--border);padding:28px 0 24px}
+.page-header-inner{max-width:1200px;margin:0 auto;padding:0 24px}
+.page-title{font-family:var(--font-head);font-size:3rem;letter-spacing:.04em;line-height:1;color:var(--text)}
+.page-sub{font-size:.9rem;color:var(--muted);margin-top:6px;max-width:580px;line-height:1.6}
+@media(max-width:600px){.page-title{font-size:2.2rem}}
 
 /* ── ROUTINES GRID ───────────────────────────────────── */
 .routines-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;}
@@ -92,16 +92,11 @@
 </head>
 <body data-nav-init="true" data-active-page="stretch">
 
-<!-- FULL-WIDTH PAGE HERO -->
-<div class="page-hero-white">
-  <div class="page-hero-inner">
-    <nav class="breadcrumb" aria-label="Breadcrumb">
-      <a href="/">Home</a><span>›</span>
-      <a href="/stretch">Stretch</a><span>›</span>
-      Routines
-    </nav>
-    <h1 class="page-hero-title">Stretch Routines</h1>
-    <p class="page-hero-sub">Curated, step-by-step mobility sequences built for functional fitness athletes — from pre-WOD warm-ups to targeted recovery work.</p>
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <h1 class="page-title">STRETCH ROUTINES</h1>
+    <p class="page-sub">Curated, step-by-step mobility sequences built for functional fitness athletes — from pre-WOD warm-ups to targeted recovery work.</p>
   </div>
 </div>
 

@@ -37,35 +37,11 @@
   <!-- Page-specific styles -->
   <style>
 /* ── Page Hero ── */
-.page-hero {
-  background: var(--white); border-bottom: 1px solid var(--border);
-  padding: 52px 24px 44px; position: relative; overflow: hidden;
-}
-.page-hero::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse 70% 80% at 50% -10%, rgba(196,18,18,.05) 0%, transparent 65%);
-  pointer-events: none;
-}
-.hero-inner { max-width: 1200px; margin: 0 auto; position: relative; }
-.hero-eyebrow {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--or-xlight); border: 1px solid rgba(196,18,18,.25);
-  padding: 5px 14px; border-radius: 20px;
-  font-size: .72rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
-  color: var(--or); margin-bottom: 18px;
-}
-.page-hero h1 {
-  font-family: var(--font-head);
-  font-size: clamp(52px, 8vw, 88px);
-  line-height: .95; letter-spacing: .04em; color: var(--text);
-  margin-bottom: 16px;
-}
-.page-hero h1 span { color: var(--or); }
-.hero-sub {
-  font-size: clamp(16px, 2vw, 18px); color: var(--muted);
-  max-width: 540px; line-height: 1.65;
-}
+.page-header { background: var(--white); border-bottom: 1px solid var(--border); }
+.page-header-inner { max-width: 1200px; margin: 0 auto; padding: 28px 24px 24px; }
+.page-title { font-family: var(--font-head); font-size: 3rem; letter-spacing: .04em; line-height: 1; color: var(--text); }
+.page-sub { font-size: .9rem; color: var(--muted); margin-top: 6px; max-width: 520px; line-height: 1.6; }
+@media (max-width: 600px) { .page-title { font-size: 2.2rem; } }
 
 /* ── Layout wrap ── */
 .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
@@ -181,7 +157,7 @@
 
 @media (max-width: 600px) {
   .gear-grid { grid-template-columns: 1fr 1fr; }
-  .page-hero { padding: 36px 16px 32px; }
+  .page-header-inner { padding: 20px 16px; }
   .filter-bar { padding: 16px; position: static; }
   .shop-body { padding: 28px 0 60px; }
   .wrap { padding: 0 16px; }
@@ -206,12 +182,11 @@
 
 <body data-nav-init="true" data-active-page="shop">
 
-<!-- ── PAGE HERO ────────────────────────────────────────────── -->
-<div class="page-hero">
-  <div class="hero-inner">
-    <div class="hero-eyebrow">Curated Gear</div>
-    <h1>GEAR THAT <span>PERFORMS</span></h1>
-    <p class="hero-sub">Curated equipment, apparel, and supplements for functional fitness athletes — hand-picked across every budget and training style.</p>
+<!-- ── PAGE HEADER ──────────────────────────────────────────── -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <h1 class="page-title">SHOP</h1>
+    <p class="page-sub">Equipment, apparel, and supplements for functional fitness athletes — hand-picked across every budget and training style.</p>
   </div>
 </div>
 

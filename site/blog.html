@@ -42,21 +42,12 @@
 /* ── Page header ── */
 .page-header {
   background: var(--white); border-bottom: 1px solid var(--border);
-  padding: 52px 0 44px;
+  padding: 28px 0 24px;
 }
-.page-header-inner {
-  display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap;
-}
-.page-header-eyebrow {
-  font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
-  color: var(--or); margin-bottom: 10px;
-}
-.page-header h1 {
-  font-family: var(--font-head); font-size: clamp(40px, 6vw, 64px);
-  letter-spacing: .04em; line-height: 1; color: var(--text); margin-bottom: 12px;
-}
-.page-header h1 span { color: var(--or); }
-.page-header-sub { font-size: 1rem; color: var(--muted); max-width: 460px; line-height: 1.65; }
+.page-header-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.page-title { font-family: var(--font-head); font-size: 3rem; letter-spacing: .04em; line-height: 1; color: var(--text); }
+.page-sub { font-size: .9rem; color: var(--muted); margin-top: 6px; max-width: 500px; line-height: 1.6; }
+@media (max-width: 600px) { .page-title { font-size: 2.2rem; } }
 
 /* ── Filter bar ── */
 .filter-bar {
@@ -224,14 +215,9 @@
 
 <!-- PAGE HEADER -->
 <div class="page-header">
-  <div class="wrap">
-    <div class="page-header-inner">
-      <div>
-        <div class="page-header-eyebrow">Training Knowledge</div>
-        <h1>The <span>Blog</span></h1>
-        <p class="page-header-sub">WOD guides, scaling strategies, home gym builds, and everything in between — written for athletes who train outside the box.</p>
-      </div>
-    </div>
+  <div class="page-header-inner">
+    <h1 class="page-title">BLOG</h1>
+    <p class="page-sub">WOD guides, scaling strategies, home gym builds, and everything in between — written for athletes who train outside the box.</p>
   </div>
 </div>
 

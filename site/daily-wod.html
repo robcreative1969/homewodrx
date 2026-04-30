@@ -262,7 +262,9 @@
     try {
       const wod = await DailyWOD.generate(dateStr);
       currentWod = wod;
-      renderDailyWod(wod, dateStr);
+      let allBenchmarks = [];
+      try { allBenchmarks = (await db.getAllBenchmarks()) || []; } catch(e) {}
+      renderDailyWod(wod, dateStr, allBenchmarks);
       document.title = 'Daily 20 – ' + dateStr + ' – HomeWodRx';
     } catch (err) {
       console.error('Error loading daily WOD:', err);
@@ -271,7 +273,7 @@
     }
   }
 
-  function renderDailyWod(wod, dateStr) {
+  function renderDailyWod(wod, dateStr, allBenchmarks) {
     var formatted = new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
     var fmtLabel  = {'amrap':'AMRAP','emom':'EMOM','fortime':'For Time','circuit':'Circuit'}[wod.format] || (wod.format||'').toUpperCase();
     var rows      = wod.rows || [];
@@ -466,7 +468,7 @@
             var badgeMap = { girl: 'rb-girl', hero: 'rb-hero', open: 'rb-open', games: 'rb-games', partner: 'rb-partner', benchmark: 'rb-benchmark' };
             var catLabels = { girl:'Girl', hero:'Hero', open:'Open', games:'Games', partner:'Partner', benchmark:'Benchmark' };
             var relCards = '';
-            var _allBM = await db.getAllBenchmarks();
+            var _allBM = allBenchmarks || [];
             if (_allBM && _allBM.length) {
               var picks = _allBM.filter(function(b) { return b.slug; }).slice(0, 5);
               relCards = picks.map(function(b) {
