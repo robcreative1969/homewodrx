@@ -1597,6 +1597,19 @@ function cyoAddMovement(idx) {
 }
 function cyoRemoveMovement(idx) { cyoMovements.splice(idx, 1); cyoRenderMovements(); }
 
+function cyoRepsPlaceholder(name) {
+  const n = (name || '').toLowerCase();
+  if (/carry|farmer|sandbag|suitcase|yoke|atlas/.test(n))    return 'e.g. 4 × 20m';
+  if (/run|sprint|jog|walk/.test(n))                          return 'e.g. 400m';
+  if (/row(?!ing)|rowing/.test(n))                            return 'e.g. 500m or 20 cal';
+  if (/bike|cycle|assault|echo/.test(n))                      return 'e.g. 20 cal or 0.5 mile';
+  if (/ski\s*erg|skierg/.test(n))                             return 'e.g. 500m or 20 cal';
+  if (/swim|lap/.test(n))                                     return 'e.g. 100m';
+  if (/hold|plank|l-sit|hang/.test(n))                        return 'e.g. 30s';
+  if (/lunge/.test(n))                                        return 'e.g. 20 or 50ft';
+  return 'e.g. 15';
+}
+
 function cyoRenderMovements() {
   const list = document.getElementById('cyo-mov-list');
   if (!cyoMovements.length) {
@@ -1606,7 +1619,7 @@ function cyoRenderMovements() {
     cyoMovements.map((m, i) => `<div class="cyo-mov-row">
       <span class="cyo-mov-row-num">${i + 1}</span>
       <span class="cyo-mov-row-name" title="${m.name}">${m.name}</span>
-      <input class="cyo-mov-row-reps" type="text" placeholder="Reps / time" value="${m.reps}" oninput="cyoMovements[${i}].reps=this.value">
+      <input class="cyo-mov-row-reps" type="text" placeholder="${cyoRepsPlaceholder(m.name)}" value="${m.reps}" oninput="cyoMovements[${i}].reps=this.value">
       <input class="cyo-mov-row-tip" type="text" placeholder="Coaching tip (optional)" value="${m.tip}" oninput="cyoMovements[${i}].tip=this.value">
       <button class="cyo-mov-row-del" onclick="cyoRemoveMovement(${i})" title="Remove">×</button>
     </div>`).join('');
