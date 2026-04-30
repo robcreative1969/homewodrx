@@ -367,7 +367,11 @@ const DailyWOD = {
       title: `Daily 20: EMOM`,
       format: 'emom',
       description: `Every Minute On the Minute for ${duration} minutes. Complete the designated work at the top of each minute; rest whatever remains.`,
-      rows: sel.map((m, i) => ({ movement: m.name, reps: `Min ${i+1} (repeat): ${this._getReps(m, level)} reps`, tip: m.tip, _eq: m._eq })),
+      rows: sel.map((m, i) => {
+        const raw = this._getReps(m, level);
+        const unit = /[a-zA-Z]/.test(String(raw)) ? '' : ' reps';
+        return { movement: m.name, reps: `Min ${i+1} (repeat): ${raw}${unit}`, tip: m.tip, _eq: m._eq };
+      }),
       scoring: 'Track whether you finish each minute before the next starts.'
     };
   },

@@ -49,7 +49,7 @@ const MOVEMENT_DB = {
     {name:"KB Clean",tip:"Guide the bell — don't muscle it up",b:[5,8],i:[8,10],a:[10,12],tags:["full"]},
     {name:"KB Snatch",tip:"Punch through at the top",b:[3,5],i:[5,8],a:[8,10],tags:["full","cardio"]},
     {name:"KB Turkish Get-Up",tip:"Slow is smooth — 1 rep = full up/down",b:[2,3],i:[3,4],a:[4,5],tags:["full"]},
-    {name:"KB Farmer Carry",tip:"20m out+back = 1 rep, shoulders packed",b:[3,4],i:[4,5],a:[5,6],tags:["full","core"]},
+    {name:"KB Farmer Carry",tip:"Shoulders packed, head up — 20m out+back = 1 length",b:["3 × 20m"],i:["4 × 20m"],a:["5 × 20m"],tags:["full","core"]},
     {name:"KB Sumo Deadlift High Pull",tip:"Wide stance, elbows high at top",b:[10,12],i:[12,15],a:[15,20],tags:["full","lower"]},
     {name:"KB Single-Leg Deadlift",tip:"Hinge at hip, soft knee, back flat",b:[8,10],i:[10,12],a:[12,15],tags:["lower","legs-glutes"]},
   ],
