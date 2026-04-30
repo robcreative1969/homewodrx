@@ -299,6 +299,37 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
 .rbtn.sec:hover{border-color:var(--or,#C41212);color:var(--or,#C41212)}
 .wc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
 .wc-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted,#666);margin-bottom:12px;display:block}
+.stretch-pairing {
+  background: var(--white, #fff);
+  border: 1px solid var(--border, #e5e5e5); border-radius: var(--radius, 10px);
+  padding: 20px 24px; margin-top: 16px;
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+}
+.stretch-pairing-badge {
+  background: #1a6b3a; color: #fff; border-radius: 9px;
+  padding: 10px 14px; font-size: .72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .08em; white-space: nowrap;
+  flex-shrink: 0; text-align: center; line-height: 1.4;
+}
+.stretch-pairing-badge span { display: block; font-family: var(--font-head, 'Bebas Neue', sans-serif); font-size: 1.6rem; letter-spacing: .04em; font-weight: 400; }
+.stretch-pairing-text { flex: 1; min-width: 180px; }
+.stretch-pairing-text h3 { font-family: var(--font-head, 'Bebas Neue', sans-serif); font-size: 1.6rem; letter-spacing: .03em; color: var(--text, #1a1a1a); line-height: 1; margin-bottom: 4px; }
+.stretch-pairing-text p { font-size: .9rem; color: var(--muted, #666); margin: 0; line-height: 1.5; }
+.stretch-pairing-cta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; flex-shrink: 0; }
+.stretch-pairing-btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px;
+  background: #1a6b3a; color: #fff; border: none; border-radius: 8px;
+  font-size: .9rem; font-weight: 700; cursor: pointer;
+  font-family: var(--font-body, 'Barlow', sans-serif);
+  text-decoration: none; transition: background .15s; white-space: nowrap;
+}
+.stretch-pairing-btn:hover { background: #145530; }
+.stretch-pairing-btn.sec {
+  background: var(--bg, #f3f3f3); color: var(--text, #1a1a1a);
+  border: 1.5px solid var(--border, #e5e5e5);
+}
+.stretch-pairing-btn.sec:hover { border-color: #1a6b3a; color: #1a6b3a; background: var(--bg, #f3f3f3); }
+@media(max-width:760px){ .stretch-pairing { flex-direction: column; align-items: flex-start; } }
 @media(max-width:760px){.config-grid{grid-template-columns:1fr}.wc-grid{grid-template-columns:1fr}.result-hdr,.result-body{padding:20px}}
 </style>
   <!-- Google tag (gtag.js) -->
@@ -466,6 +497,20 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
         <button class="rbtn sec" id="nominate-btn" onclick="nominateWorkout()">Nominate as Featured</button>
       </div>
     </div>
+
+    <!-- STRETCH PAIRING -->
+    <div class="stretch-pairing">
+      <div class="stretch-pairing-badge">Daily<span>10</span>Stretch</div>
+      <div class="stretch-pairing-text">
+        <h3>Don't Skip Recovery</h3>
+        <p>Finish your training day right — do a quick stretch session or build your own routine.</p>
+      </div>
+      <div class="stretch-pairing-cta">
+        <a href="/stretchbuilder" class="stretch-pairing-btn sec">Build a Stretch →</a>
+        <a href="/daily-wod" class="stretch-pairing-btn">Today's Daily 10 →</a>
+      </div>
+    </div>
+
   </div>
 
   </div><!-- /gen-mode-generate -->
