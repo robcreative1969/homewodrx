@@ -463,6 +463,37 @@ function buildWorkoutsData() {
 }
 
 // ─────────────────────────────────────────
+// SEARCH HELPERS
+// ─────────────────────────────────────────
+function normStr(s) {
+  return String(s || '').toLowerCase().replace(/[-\s']+/g, '');
+}
+
+const ACRONYMS = {
+  't2b':'toes to bar','ttb':'toes to bar','hspu':'handstand push ups',
+  'c2b':'chest to bar pull ups','ctb':'chest to bar pull ups',
+  'mu':'muscle ups','bmu':'bar muscle ups','rmu':'ring muscle ups',
+  'du':'double unders','dus':'double unders',
+  'kbs':'kettlebell swings','rkbs':'russian kettlebell swings','akbs':'american kettlebell swings',
+  'ohs':'overhead squat','s2oh':'shoulder to overhead','stoh':'shoulder to overhead',
+  'ghd':'ghd sit ups','wb':'wall balls','wbs':'wall balls',
+  'dl':'deadlift','pc':'power clean','ps':'power snatch','sn':'snatch',
+  'fs':'front squat','bs':'back squat','pp':'push press',
+  'pj':'push jerk','sj':'split jerk','cj':'clean and jerk',
+  'bj':'box jumps','bjs':'box jumps','rdl':'romanian deadlift',
+};
+
+function expandQuery(q) {
+  return String(q || '').trim().toLowerCase()
+    .split(/\s+/).map(w => ACRONYMS[w] || w).join(' ');
+}
+
+function strMatch(text, q) {
+  const low = String(text || '').toLowerCase();
+  return low.includes(q) || normStr(text).includes(normStr(q));
+}
+
+// ─────────────────────────────────────────
 // FILTERING & SORTING
 // ─────────────────────────────────────────
 function matchesEquip(w) {
@@ -477,11 +508,11 @@ function filteredWods() {
   if (activeEquip    !== 'all') list = list.filter(matchesEquip);
   if (activeType     !== 'all') list = list.filter(w => w.type === activeType);
   if (searchQuery) {
-    const q = searchQuery.toLowerCase();
+    const q = searchQuery;
     list = list.filter(w =>
-      w.name.toLowerCase().includes(q) ||
-      w.movements.some(m => (m.name || '').toLowerCase().includes(q)) ||
-      w.type.toLowerCase().includes(q)
+      strMatch(w.name, q) ||
+      w.movements.some(m => strMatch(m.name, q)) ||
+      strMatch(w.type, q)
     );
   }
   list.sort((a, b) => {
@@ -546,9 +577,9 @@ function updateTabCounts() {
     if (!matchesEquip(w)) return false;
     if (activeType !== 'all' && w.type !== activeType) return false;
     if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      return w.name.toLowerCase().includes(q) ||
-             w.movements.some(m => (m.name || '').toLowerCase().includes(q));
+      const q = searchQuery;
+      return strMatch(w.name, q) ||
+             w.movements.some(m => strMatch(m.name, q));
     }
     return true;
   });
@@ -727,7 +758,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let searchTimer;
   document.getElementById('search').addEventListener('input', e => {
     clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => { searchQuery = e.target.value.trim(); render(); }, 180);
+    searchTimer = setTimeout(() => { searchQuery = expandQuery(e.target.value); render(); }, 180);
   });
 
   // Sort

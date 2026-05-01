@@ -864,6 +864,57 @@ const state = {
 let WORKOUTS = [], MOVEMENTS = [], STRETCHES = [];
 
 // ─────────────────────────────────────────────
+// SEARCH HELPERS — normalize & acronym expansion
+// ─────────────────────────────────────────────
+
+// Strip hyphens, spaces, apostrophes so "pullup" matches "Pull-Ups", etc.
+function normStr(s) {
+  return String(s || '').toLowerCase().replace(/[-\s']+/g, '');
+}
+
+const ACRONYMS = {
+  't2b':  'toes to bar',
+  'ttb':  'toes to bar',
+  'hspu': 'handstand push ups',
+  'c2b':  'chest to bar pull ups',
+  'ctb':  'chest to bar pull ups',
+  'mu':   'muscle ups',
+  'bmu':  'bar muscle ups',
+  'rmu':  'ring muscle ups',
+  'du':   'double unders',
+  'dus':  'double unders',
+  'kbs':  'kettlebell swings',
+  'rkbs': 'russian kettlebell swings',
+  'akbs': 'american kettlebell swings',
+  'ohs':  'overhead squat',
+  's2oh': 'shoulder to overhead',
+  'stoh': 'shoulder to overhead',
+  'ghd':  'ghd sit ups',
+  'wb':   'wall balls',
+  'wbs':  'wall balls',
+  'dl':   'deadlift',
+  'pc':   'power clean',
+  'ps':   'power snatch',
+  'sn':   'snatch',
+  'fs':   'front squat',
+  'bs':   'back squat',
+  'pp':   'push press',
+  'pj':   'push jerk',
+  'sj':   'split jerk',
+  'cj':   'clean and jerk',
+  'bj':   'box jumps',
+  'bjs':  'box jumps',
+  'rdl':  'romanian deadlift',
+};
+
+function expandQuery(q) {
+  return String(q || '').trim().toLowerCase()
+    .split(/\s+/)
+    .map(w => ACRONYMS[w] || w)
+    .join(' ');
+}
+
+// ─────────────────────────────────────────────
 // SEARCH LOGIC
 // ─────────────────────────────────────────────
 function scoreWod(w, q) {
@@ -885,8 +936,11 @@ function scoreWod(w, q) {
 
 function textMatch(text, q) {
   if (!q) return true;
-  const low = text.toLowerCase();
-  return q.toLowerCase().split(/\s+/).every(t => low.includes(t));
+  const low  = text.toLowerCase();
+  const norm = normStr(text);
+  return q.toLowerCase().split(/\s+/).every(t => {
+    return low.includes(t) || norm.includes(normStr(t));
+  });
 }
 
 function applyWodFilters(w) {
@@ -1020,7 +1074,7 @@ function emptyState(icon, title, msg, suggestions=[]) {
 
 function suggest(term) {
   const input = document.getElementById('search-input');
-  input.value = term; state.query = term;
+  input.value = term; state.query = expandQuery(term);
   document.getElementById('search-clear').style.display = 'block';
   render(); input.focus();
 }
@@ -1213,14 +1267,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   const qp = new URLSearchParams(location.search).get('q');
   if (qp) {
     document.getElementById('search-input').value = qp;
-    state.query = qp;
+    state.query = expandQuery(qp);
     document.getElementById('search-clear').style.display = 'block';
   }
 
   // Search input
   let debounce;
   document.getElementById('search-input').addEventListener('input', e => {
-    state.query = e.target.value;
+    state.query = expandQuery(e.target.value);
     document.getElementById('search-clear').style.display = state.query ? 'block' : 'none';
     clearTimeout(debounce);
     debounce = setTimeout(render, 180);
