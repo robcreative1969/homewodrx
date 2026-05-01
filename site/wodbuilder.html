@@ -207,49 +207,6 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
   #print-area .pfoot{margin-top:20px;padding-top:10px;border-top:1px solid #ddd;font-size:10px;color:#999;text-align:center}
 }
 
-/* ── MODE TOGGLE (tab style, inside page-header) ─────────────── */
-.mode-toggle{display:flex;gap:0;border-bottom:1px solid var(--border,#e5e5e5);margin-top:8px}
-.mode-tab{padding:12px 22px;background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;font-size:.95rem;font-weight:700;color:var(--muted,#666);font-family:inherit;transition:color .15s,border-color .15s;white-space:nowrap;margin-bottom:-1px}
-.mode-tab:hover{color:var(--text,#1a1a1a)}
-.mode-tab.active{color:var(--or,#C41212);border-bottom-color:var(--or,#C41212)}
-.tab-badge{background:rgba(34,197,94,.1);color:#16a34a;border:1px solid rgba(34,197,94,.3);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:6px;vertical-align:middle;white-space:nowrap}
-
-/* ── CYO BUILDER ─────────────────────────────────────────────── */
-.cyo-mov-builder{border:1.5px solid var(--bd);border-radius:10px;background:var(--bg,#f3f3f3);overflow:visible}
-.cyo-mov-search-wrap{padding:12px;position:relative}
-.cyo-mov-search-wrap input{width:100%;background:var(--white,#fff);border:1.5px solid var(--bd);border-radius:8px;padding:11px 14px;color:var(--tx);font-size:14px;outline:none;box-sizing:border-box;transition:border-color .15s}
-.cyo-mov-search-wrap input:focus{border-color:var(--or)}
-.cyo-mov-dropdown{position:absolute;top:calc(100% - 4px);left:12px;right:12px;background:var(--white,#fff);border:1.5px solid var(--or);border-radius:10px;z-index:400;max-height:340px;overflow-y:auto;display:none;box-shadow:0 8px 24px rgba(0,0,0,.12)}
-.cyo-mov-dropdown.open{display:block}
-.cyo-mov-dd-item{padding:11px 16px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--tx)}
-.cyo-mov-dd-item:last-child{border-bottom:none}
-.cyo-mov-dd-item:hover{background:rgba(196,18,18,.06);color:var(--or)}
-.cyo-mov-dd-item .dd-cat{font-size:10px;color:var(--muted,#666);flex-shrink:0}
-/* browse mode */
-.cyo-browse-cats{display:flex;flex-wrap:wrap;gap:5px;padding:10px 12px;border-bottom:1px solid var(--bd);background:var(--bg,#f3f3f3);position:sticky;top:0;z-index:1}
-.cyo-cat-chip{background:var(--white,#fff);border:1.5px solid var(--bd);border-radius:20px;padding:4px 11px;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted,#666);transition:all .15s;white-space:nowrap;font-family:inherit}
-.cyo-cat-chip:hover{border-color:var(--or);color:var(--or)}
-.cyo-cat-chip.active{background:rgba(196,18,18,.1);border-color:var(--or);color:var(--or)}
-.cyo-browse-count{font-size:10px;color:var(--muted,#666);padding:6px 16px 2px;font-style:italic}
-.cyo-browse-more{padding:10px 16px;font-size:11px;color:var(--muted,#666);text-align:center;border-top:1px solid var(--bd);font-style:italic}
-.cyo-mov-list{padding:4px 12px 12px}
-.cyo-mov-empty{padding:24px;text-align:center;color:var(--muted,#666);font-size:13px;font-style:italic}
-.cyo-mov-count{font-size:11px;color:var(--muted,#666);padding:4px 0 10px}
-.cyo-mov-row{display:flex;align-items:center;gap:8px;background:var(--white,#fff);border:1.5px solid var(--bd);border-radius:9px;padding:11px 14px;margin-bottom:7px;transition:border-color .15s}
-.cyo-mov-row:hover{border-color:var(--or)}
-.cyo-mov-row-num{font-size:12px;font-weight:900;color:var(--or);min-width:18px;text-align:center}
-.cyo-mov-row-name{font-size:14px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--tx)}
-.cyo-mov-row input{background:var(--bg,#f3f3f3);border:1.5px solid var(--bd);border-radius:7px;padding:7px 10px;color:var(--tx);font-size:13px;outline:none;font-family:inherit;transition:border-color .15s}
-.cyo-mov-row input:focus{border-color:var(--or)}
-.cyo-mov-row-reps{width:100px;min-width:100px;text-align:center}
-.cyo-mov-row-tip{flex:1;min-width:80px}
-.cyo-mov-row-tip::placeholder{color:var(--muted,#666)}
-.cyo-mov-row-del{background:none;border:none;color:#e74c3c;font-size:20px;cursor:pointer;padding:2px 5px;opacity:.4;transition:opacity .15s;line-height:1;flex-shrink:0}
-.cyo-mov-row-del:hover{opacity:1}
-.cyo-gate{text-align:center;padding:60px 24px;background:var(--white,#fff);border:1px solid var(--border,#e5e5e5);border-radius:var(--radius,10px)}
-.cyo-gate h3{font-family:var(--font-head,'Bebas Neue',sans-serif);font-size:2rem;letter-spacing:.03em;color:var(--text,#1a1a1a);margin-bottom:10px}
-.cyo-gate p{font-size:.95rem;color:var(--muted,#666);max-width:400px;margin:0 auto 24px;line-height:1.6}
-.cyo-gate-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 
 /* ── PROTOTYPE CONFIG CLASSES ─────────────────────────── */
 .config-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
@@ -353,12 +310,8 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
     <div class="page-title-row">
       <div>
         <div class="page-title">Smart WOD Builder</div>
-        <div class="page-subtitle" style="font-size:.95rem;color:var(--muted,#666);line-height:1.5;max-width:520px">Generate a custom workout in seconds, or build your own from scratch</div>
+        <div class="page-subtitle" style="font-size:.95rem;color:var(--muted,#666);line-height:1.5;max-width:520px">Tell us your equipment, time, and goals — get a custom WOD in seconds</div>
       </div>
-    </div>
-    <div class="mode-toggle">
-      <button class="mode-tab active" id="mode-btn-generate" onclick="setGenMode('generate')">Smart WOD Builder</button>
-      <button class="mode-tab" id="mode-btn-create" onclick="setGenMode('create')">Create Your Own <span class="tab-badge" id="cyo-free-badge">Free Account</span></button>
     </div>
   </div>
 </div>
@@ -368,8 +321,7 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
 <!-- ═══ GENERATOR ══════════════════════════════════════════════ -->
 <div class="page-wrap">
 
-  <!-- GENERATE MODE -->
-  <div id="gen-mode-generate">
+  <!-- SMART WOD BUILDER -->
 
   <!-- Row 1: Equipment (full width) -->
   <div class="config-grid full">
@@ -514,138 +466,6 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
 
   </div>
 
-  </div><!-- /gen-mode-generate -->
-
-  <!-- CREATE YOUR OWN MODE -->
-  <div id="gen-mode-create" style="display:none">
-
-    <!-- Gate: shown when not logged in -->
-    <div id="cyo-gate" style="display:none">
-      <div class="cyo-gate">
-        <h3>Create Your Own WOD</h3>
-        <p>Build custom workouts from scratch using our full movement library, then save them to your profile. Free with an account.</p>
-        <div class="cyo-gate-btns">
-          <button class="rbtn pri" style="flex:unset;padding:12px 28px" onclick="openAuthModal('signup')">Create Free Account</button>
-          <button class="rbtn sec" style="flex:unset;padding:12px 28px" onclick="openAuthModal('login')">Log In</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Builder: shown when logged in -->
-    <div id="cyo-builder" style="display:none">
-
-      <!-- Workout Details -->
-      <div class="config-grid full" style="margin-bottom:14px">
-        <div class="config-card">
-          <div class="step-label">Workout Details</div>
-          <div class="step-title">Name your workout</div>
-          <div class="step-hint">Give it a name and optional description — scaling notes, intent, who it's for.</div>
-          <input type="text" id="cyo-title" placeholder="e.g. Monday Grinder, Leg Day Special…" style="width:100%;background:var(--bg,#f3f3f3);border:1.5px solid var(--border,#e5e5e5);border-radius:8px;padding:11px 14px;color:var(--text,#1a1a1a);font-size:15px;outline:none;margin-bottom:12px;box-sizing:border-box;transition:border-color .15s;font-family:inherit" onfocus="this.style.borderColor='var(--or)'" onblur="this.style.borderColor='var(--border)'">
-          <textarea id="cyo-desc" placeholder="What's this workout about? Scaling notes, intent, who it's for…" style="width:100%;background:var(--bg,#f3f3f3);border:1.5px solid var(--border,#e5e5e5);border-radius:8px;padding:11px 14px;color:var(--text,#1a1a1a);font-size:13px;outline:none;min-height:70px;resize:vertical;box-sizing:border-box;font-family:inherit;transition:border-color .15s" onfocus="this.style.borderColor='var(--or)'" onblur="this.style.borderColor='var(--border)'"></textarea>
-        </div>
-      </div>
-
-      <!-- Equipment -->
-      <div class="config-grid full" style="margin-bottom:14px">
-        <div class="config-card">
-          <div class="step-label">Step 1</div>
-          <div class="step-title">What equipment is needed?</div>
-          <div class="step-hint">Select all equipment your workout requires.</div>
-          <div class="eq-grid" id="cyo-eq-grid">
-            <div class="eq-card" data-val="bodyweight" onclick="this.classList.toggle('sel')"><span class="eq-name">Bodyweight</span></div>
-            <div class="eq-card" data-val="pullupbar" onclick="this.classList.toggle('sel')"><span class="eq-name">Pull-up Bar</span></div>
-            <div class="eq-card" data-val="kettlebell" onclick="this.classList.toggle('sel')"><span class="eq-name">Kettlebell</span></div>
-            <div class="eq-card" data-val="dumbbells" onclick="this.classList.toggle('sel')"><span class="eq-name">Dumbbells</span></div>
-            <div class="eq-card" data-val="barbell" onclick="this.classList.toggle('sel')"><span class="eq-name">Barbell</span></div>
-            <div class="eq-card" data-val="resistancebands" onclick="this.classList.toggle('sel')"><span class="eq-name">Bands</span></div>
-            <div class="eq-card" data-val="jumprope" onclick="this.classList.toggle('sel')"><span class="eq-name">Jump Rope</span></div>
-            <div class="eq-card" data-val="box" onclick="this.classList.toggle('sel')"><span class="eq-name">Plyo Box</span></div>
-            <div class="eq-card" data-val="medicineball" onclick="this.classList.toggle('sel')"><span class="eq-name">Med Ball</span></div>
-            <div class="eq-card" data-val="rings" onclick="this.classList.toggle('sel')"><span class="eq-name">Rings</span></div>
-            <div class="eq-card" data-val="slamball" onclick="this.classList.toggle('sel')"><span class="eq-name">Slam Ball</span></div>
-            <div class="eq-card" data-val="running" onclick="this.classList.toggle('sel')"><span class="eq-name">Running</span></div>
-            <div class="eq-card" data-val="rower" onclick="this.classList.toggle('sel')"><span class="eq-name">Rower</span></div>
-            <div class="eq-card" data-val="airbike" onclick="this.classList.toggle('sel')"><span class="eq-name">Air Bike</span></div>
-            <div class="eq-card" data-val="treadmill" onclick="this.classList.toggle('sel')"><span class="eq-name">Treadmill</span></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Format + Duration + Level -->
-      <div class="config-grid" style="margin-bottom:14px">
-        <div class="config-card">
-          <div class="step-label">Step 2</div>
-          <div class="step-title">Workout format</div>
-          <div class="step-hint">Choose the structure that fits your goal.</div>
-          <div class="format-grid" id="cyo-format-group">
-            <div class="format-card pill sel" data-val="AMRAP"><span class="format-name">AMRAP</span><span class="format-desc">As many rounds as possible in the time cap</span></div>
-            <div class="format-card pill" data-val="EMOM"><span class="format-name">EMOM</span><span class="format-desc">Every minute on the minute, one movement per minute</span></div>
-            <div class="format-card pill" data-val="For Time"><span class="format-name">For Time</span><span class="format-desc">Complete all work as fast as possible</span></div>
-            <div class="format-card pill" data-val="Circuit"><span class="format-name">Circuit</span><span class="format-desc">Fixed sets and reps, continuous movement flow</span></div>
-          </div>
-        </div>
-
-        <div style="display:flex;flex-direction:column;gap:14px">
-          <div class="config-card">
-            <div class="step-label">Step 3</div>
-            <div class="step-title">Duration</div>
-            <div class="step-hint">Time cap — <strong id="cyo-dur-val" style="color:var(--or,#C41212)">20</strong> min</div>
-            <input type="range" id="cyo-duration" min="5" max="90" step="5" value="20" style="width:100%;accent-color:var(--or,#C41212)" oninput="document.getElementById('cyo-dur-val').textContent=this.value;cyoUpdateScoring()">
-            <div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted,#666);margin-top:6px"><span>5 min</span><span>90 min</span></div>
-          </div>
-          <div class="config-card">
-            <div class="step-label">Step 4</div>
-            <div class="step-title">Experience level</div>
-            <div class="step-hint">Guides suggested scaling and complexity.</div>
-            <div class="pill-group" id="cyo-level-group">
-              <div class="pill" data-val="beginner">Beginner</div>
-              <div class="pill sel" data-val="intermediate">Intermediate</div>
-              <div class="pill" data-val="advanced">Advanced</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Add Movements -->
-      <div class="config-grid full" style="margin-bottom:14px">
-        <div class="config-card">
-          <div class="step-label">Step 5</div>
-          <div class="step-title">Add your movements</div>
-          <div class="step-hint">Search or browse the full movement library. Drag to reorder.</div>
-          <div class="cyo-mov-builder">
-            <div class="cyo-mov-search-wrap">
-              <input type="text" id="cyo-mov-search" placeholder="Search movement library…" autocomplete="off" oninput="cyoSearchMovements()" onfocus="cyoSearchMovements()">
-              <div class="cyo-mov-dropdown" id="cyo-mov-dropdown"></div>
-            </div>
-            <div id="cyo-mov-list"><div class="cyo-mov-empty">No movements yet — click above to browse or search the library.</div></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Scoring -->
-      <div class="config-grid full" style="margin-bottom:14px">
-        <div class="config-card">
-          <div class="step-label">Step 6</div>
-          <div class="step-title">Scoring</div>
-          <div class="step-hint">How will athletes record their result?</div>
-          <input type="text" id="cyo-scoring" placeholder="e.g. Total rounds + reps completed, Time to finish, Max load" style="width:100%;background:var(--bg,#f3f3f3);border:1.5px solid var(--border,#e5e5e5);border-radius:8px;padding:11px 14px;color:var(--text,#1a1a1a);font-size:14px;outline:none;box-sizing:border-box;transition:border-color .15s;font-family:inherit" onfocus="this.style.borderColor='var(--or)'" onblur="this.style.borderColor='var(--border)'">
-        </div>
-      </div>
-
-      <!-- Save row -->
-      <div class="config-card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-        <label style="font-size:.9rem;cursor:pointer;display:flex;align-items:center;gap:8px;color:var(--text,#1a1a1a)">
-          <input type="checkbox" id="cyo-public" style="accent-color:var(--or,#C41212);width:16px;height:16px"> Share with community
-        </label>
-        <div style="display:flex;gap:10px">
-          <button class="rbtn sec" style="flex:unset" onclick="cyoReset()">Start Over</button>
-          <button class="rbtn pri" style="flex:unset" id="cyo-save-btn" onclick="cyoSave()">Save Workout</button>
-        </div>
-      </div>
-      <div id="cyo-alert" style="display:none;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.4);color:#e74c3c;border-radius:8px;padding:12px 16px;font-size:.875rem;margin-top:8px"></div>
-
-    </div><!-- /cyo-builder -->
-  </div><!-- /gen-mode-create -->
 
 </div><!-- /page-wrap -->
 
@@ -884,14 +704,9 @@ let currentUser = null;
 document.addEventListener('DOMContentLoaded', async () => {
   // nav is auto-inited via data-nav-init="true"
   currentUser = await db.getUser();
-  // Hide "Free Account" badge for logged-in users
-  const badge = document.getElementById('cyo-free-badge');
-  if (badge) badge.style.display = currentUser ? 'none' : '';
   setupEquipmentGrid();
   setupBodyFocusGrid();
   setupPillGroups();
-  // Support /generator#create to open CYO mode directly (from nav dropdown)
-  if (window.location.hash === '#create') setGenMode('create');
 });
 
 // ── SELECTION HELPERS ─────────────────────────────────────────
@@ -1456,255 +1271,7 @@ function showToast(msg, type = 'info') {
   setTimeout(() => { t.classList.remove('show'); }, 3500);
 }
 function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
-// ══════════════════════════════════════════════════════════════
-// MODE TOGGLE
-// ══════════════════════════════════════════════════════════════
-function setGenMode(mode) {
-  const isGenerate = mode === 'generate';
-  document.getElementById('gen-mode-generate').style.display = isGenerate ? '' : 'none';
-  document.getElementById('gen-mode-create').style.display = isGenerate ? 'none' : '';
-  document.getElementById('mode-btn-generate').classList.toggle('active', isGenerate);
-  document.getElementById('mode-btn-create').classList.toggle('active', !isGenerate);
-  if (!isGenerate) cyoInit();
-}
 
-// ══════════════════════════════════════════════════════════════
-// CREATE YOUR OWN — builder
-// ══════════════════════════════════════════════════════════════
-let cyoMovements = [];
-let cyoDropdownResults = [];
-let cyoAllMovements = [];
-let cyoMovSearchTimer = null;
-
-function cyoInit() {
-  // Show gate for logged-out users, builder for logged-in
-  const isAuthed = !!currentUser;
-  document.getElementById('cyo-gate').style.display = isAuthed ? 'none' : '';
-  document.getElementById('cyo-builder').style.display = isAuthed ? '' : 'none';
-  // Hide "Free Account" badge for logged-in users
-  const badge = document.getElementById('cyo-free-badge');
-  if (badge) badge.style.display = isAuthed ? 'none' : '';
-  // Load movements for logged-in users
-  if (isAuthed && !cyoAllMovements.length) cyoLoadMovements();
-  // Wire up pill groups (single-select)
-  ['cyo-format-group', 'cyo-level-group'].forEach(groupId => {
-    document.querySelectorAll('#' + groupId + ' .pill').forEach(p => {
-      p.onclick = () => {
-        document.querySelectorAll('#' + groupId + ' .pill').forEach(x => x.classList.remove('sel'));
-        p.classList.add('sel');
-        if (groupId === 'cyo-format-group') cyoUpdateScoring();
-      };
-    });
-  });
-  // Also update scoring when duration slider changes
-  const durSlider = document.getElementById('cyo-duration');
-  if (durSlider) durSlider.addEventListener('input', cyoUpdateScoring);
-  // Set initial scoring text
-  cyoUpdateScoring();
-}
-
-function cyoUpdateScoring() {
-  const field = document.getElementById('cyo-scoring');
-  if (!field) return;
-  const format = cyoGetPill('cyo-format-group') || 'AMRAP';
-  const dur = document.getElementById('cyo-duration')?.value || 20;
-  const defaults = {
-    'AMRAP':    `${dur}-minute AMRAP — count total rounds + reps completed`,
-    'EMOM':     `${dur}-minute EMOM — complete each movement every minute on the minute`,
-    'For Time': `For time — fastest time to complete all reps wins`,
-    'Circuit':  `${dur} minutes — count total rounds completed`,
-  };
-  field.value = defaults[format] || '';
-}
-
-async function cyoLoadMovements() {
-  if (cyoAllMovements.length) return;
-  if (!supabaseClient) { setTimeout(cyoLoadMovements, 400); return; }
-  const { data } = await supabaseClient.from('movements').select('name,slug,category').order('name');
-  if (data) cyoAllMovements = data;
-}
-
-let cyoBrowseCategory = 'All';
-
-function cyoSearchMovements() {
-  clearTimeout(cyoMovSearchTimer);
-  cyoMovSearchTimer = setTimeout(() => {
-    const q = document.getElementById('cyo-mov-search').value.trim().toLowerCase();
-    const dd = document.getElementById('cyo-mov-dropdown');
-    if (!q) {
-      cyoShowBrowseMode(dd);
-      return;
-    }
-    // Search mode
-    const matches = cyoAllMovements.filter(m => m.name.toLowerCase().includes(q)).slice(0, 15);
-    cyoDropdownResults = matches;
-    if (!matches.length) {
-      dd.innerHTML = '<div class="cyo-mov-dd-item" style="color:var(--muted,#666);cursor:default">No movements found</div>';
-      dd.classList.add('open'); return;
-    }
-    dd.innerHTML = matches.map((m, i) =>
-      `<div class="cyo-mov-dd-item" onclick="cyoAddMovement(${i})"><span>${m.name}</span><span class="dd-cat">${m.category || ''}</span></div>`
-    ).join('');
-    dd.classList.add('open');
-  }, 120);
-}
-
-function cyoShowBrowseMode(dd) {
-  if (!cyoAllMovements.length) {
-    dd.innerHTML = '<div class="cyo-mov-dd-item" style="color:var(--muted,#666);cursor:default">Loading movement library…</div>';
-    dd.classList.add('open');
-    // Retry once loaded
-    setTimeout(() => {
-      if (cyoAllMovements.length && dd.classList.contains('open')) cyoShowBrowseMode(dd);
-    }, 500);
-    return;
-  }
-  // Build sorted unique category list
-  const cats = ['All', ...new Set(cyoAllMovements.map(m => m.category).filter(Boolean).sort())];
-  // Filter by selected category
-  const filtered = cyoBrowseCategory === 'All'
-    ? cyoAllMovements
-    : cyoAllMovements.filter(m => m.category === cyoBrowseCategory);
-  const shown = filtered.slice(0, 18);
-  cyoDropdownResults = shown;
-  dd.innerHTML =
-    `<div class="cyo-browse-cats">${cats.map(c =>
-      `<button class="cyo-cat-chip${c === cyoBrowseCategory ? ' active' : ''}" onclick="event.stopPropagation();cyoSetBrowseCategory('${c.replace(/'/g, "\\'")}')">${c}</button>`
-    ).join('')}</div>` +
-    `<div class="cyo-browse-count">${filtered.length} movement${filtered.length !== 1 ? 's' : ''}${cyoBrowseCategory !== 'All' ? ' in ' + cyoBrowseCategory : ''}</div>` +
-    shown.map((m, i) =>
-      `<div class="cyo-mov-dd-item" onclick="cyoAddMovement(${i})"><span>${m.name}</span><span class="dd-cat">${m.category || ''}</span></div>`
-    ).join('') +
-    (filtered.length > 18 ? `<div class="cyo-browse-more">+${filtered.length - 18} more — type to search</div>` : '');
-  dd.classList.add('open');
-}
-
-function cyoSetBrowseCategory(cat) {
-  cyoBrowseCategory = cat;
-  const dd = document.getElementById('cyo-mov-dropdown');
-  cyoShowBrowseMode(dd);
-}
-
-function cyoAddMovement(idx) {
-  const m = cyoDropdownResults[idx];
-  if (!m) return;
-  cyoMovements.push({ name: m.name, slug: m.slug || '', reps: '', tip: '' });
-  document.getElementById('cyo-mov-search').value = '';
-  const dd = document.getElementById('cyo-mov-dropdown');
-  dd.classList.remove('open'); dd.innerHTML = ''; cyoDropdownResults = [];
-  cyoRenderMovements();
-}
-function cyoRemoveMovement(idx) { cyoMovements.splice(idx, 1); cyoRenderMovements(); }
-
-function cyoRepsPlaceholder(name) {
-  const n = (name || '').toLowerCase();
-  if (/carry|farmer|sandbag|suitcase|yoke|atlas/.test(n))    return 'e.g. 4 × 20m';
-  if (/run|sprint|jog|walk/.test(n))                          return 'e.g. 400m';
-  if (/row(?!ing)|rowing/.test(n))                            return 'e.g. 500m or 20 cal';
-  if (/bike|cycle|assault|echo/.test(n))                      return 'e.g. 20 cal or 0.5 mile';
-  if (/ski\s*erg|skierg/.test(n))                             return 'e.g. 500m or 20 cal';
-  if (/swim|lap/.test(n))                                     return 'e.g. 100m';
-  if (/hold|plank|l-sit|hang/.test(n))                        return 'e.g. 30s';
-  if (/lunge/.test(n))                                        return 'e.g. 20 or 50ft';
-  return 'e.g. 15';
-}
-
-function cyoRenderMovements() {
-  const list = document.getElementById('cyo-mov-list');
-  if (!cyoMovements.length) {
-    list.innerHTML = '<div class="cyo-mov-empty">No movements yet — click above to browse or search the library.</div>'; return;
-  }
-  list.innerHTML = '<div class="cyo-mov-count">' + cyoMovements.length + ' movement' + (cyoMovements.length !== 1 ? 's' : '') + ' — fill in reps/time for each</div>' +
-    cyoMovements.map((m, i) => `<div class="cyo-mov-row">
-      <span class="cyo-mov-row-num">${i + 1}</span>
-      <span class="cyo-mov-row-name" title="${m.name}">${m.name}</span>
-      <input class="cyo-mov-row-reps" type="text" placeholder="${cyoRepsPlaceholder(m.name)}" value="${m.reps}" oninput="cyoMovements[${i}].reps=this.value">
-      <input class="cyo-mov-row-tip" type="text" placeholder="Coaching tip (optional)" value="${m.tip}" oninput="cyoMovements[${i}].tip=this.value">
-      <button class="cyo-mov-row-del" onclick="cyoRemoveMovement(${i})" title="Remove">×</button>
-    </div>`).join('');
-}
-
-function cyoGetEquipment() {
-  return [...document.querySelectorAll('#cyo-eq-grid .eq-card.sel')].map(c => c.dataset.val);
-}
-function cyoGetPill(groupId) {
-  const el = document.querySelector('#' + groupId + ' .pill.sel');
-  return el ? el.dataset.val : '';
-}
-
-function cyoReset() {
-  if (!confirm('Start over? This will clear your workout.')) return;
-  cyoMovements = [];
-  cyoRenderMovements();
-  document.getElementById('cyo-title').value = '';
-  document.getElementById('cyo-desc').value = '';
-  document.getElementById('cyo-duration').value = 20;
-  document.getElementById('cyo-dur-val').textContent = 20;
-  document.getElementById('cyo-public').checked = false;
-  document.getElementById('cyo-alert').style.display = 'none';
-  document.querySelectorAll('#cyo-eq-grid .eq-card').forEach((c, i) => c.classList.toggle('sel', i === 0));
-  document.querySelectorAll('#cyo-format-group .pill').forEach((p, i) => p.classList.toggle('sel', i === 0));
-  document.querySelectorAll('#cyo-level-group .pill').forEach((p, i) => p.classList.toggle('sel', i === 1));
-  cyoUpdateScoring(); // restore default scoring text for reset format/duration
-}
-
-function cyoShowAlert(msg) {
-  const el = document.getElementById('cyo-alert');
-  el.textContent = msg; el.style.display = '';
-  setTimeout(() => { el.style.display = 'none'; }, 4000);
-}
-
-async function cyoSave() {
-  if (!currentUser) { openAuthModal('login', 'save'); return; }
-  const title = document.getElementById('cyo-title').value.trim();
-  if (!title) { cyoShowAlert('Please give your workout a name.'); return; }
-  if (!cyoMovements.length) { cyoShowAlert('Add at least one movement.'); return; }
-  const missing = cyoMovements.filter(m => !m.reps.trim());
-  if (missing.length) { cyoShowAlert('Set reps/time for: ' + missing.map(m => m.name).join(', ')); return; }
-
-  const format = cyoGetPill('cyo-format-group') || 'AMRAP';
-  const level = cyoGetPill('cyo-level-group') || 'intermediate';
-  const duration = parseInt(document.getElementById('cyo-duration').value) || 20;
-  const equipment = cyoGetEquipment();
-  const description = document.getElementById('cyo-desc').value.trim();
-  const scoring = document.getElementById('cyo-scoring').value.trim();
-  const isPublic = document.getElementById('cyo-public').checked;
-  const movements = cyoMovements.map(m => ({ name: m.name, reps: m.reps.trim(), tip: m.tip.trim() }));
-
-  const btn = document.getElementById('cyo-save-btn');
-  btn.disabled = true; btn.textContent = 'Saving…';
-
-  const { data, error } = await db.saveWorkout({
-    title, format, duration, level, body_focus: 'full-body',
-    equipment, description, movements, scoring,
-    is_public: isPublic, is_manual: true,
-    user_id: currentUser.id,
-    username: currentUser.email?.split('@')[0] || 'user'
-  });
-
-  btn.disabled = false; btn.textContent = '💾 Save Workout';
-  if (error) { cyoShowAlert('Error saving: ' + error.message); return; }
-
-  showToast(isPublic ? 'Submitted for community review! We\'ll approve it shortly. 🔍' : 'Workout saved to My Workouts! 💾', 'success');
-  cyoReset();
-}
-
-// Close CYO dropdown on outside click
-document.addEventListener('click', function(e) {
-  if (!e.target.closest('.cyo-mov-search-wrap')) {
-    const dd = document.getElementById('cyo-mov-dropdown');
-    if (dd) { dd.classList.remove('open'); dd.innerHTML = ''; cyoDropdownResults = []; }
-  }
-});
-
-// Preload movements when user logs in; re-init CYO if it's the active mode
-document.addEventListener('authStateChange', () => {
-  if (currentUser && !cyoAllMovements.length) cyoLoadMovements();
-  // Hide "Free Account" badge once the user is logged in
-  const badge = document.getElementById('cyo-free-badge');
-  if (badge) badge.style.display = currentUser ? 'none' : '';
-  if (document.getElementById('gen-mode-create').style.display !== 'none') cyoInit();
-});
 
 function slugify(s) { return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
 function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
