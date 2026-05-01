@@ -258,6 +258,9 @@
     .d20-dc-diff.intermediate { color: #d97706; font-weight: 700; }
     .d20-dc-diff.advanced     { color: var(--or); font-weight: 700; }
     .d20-dc-arrow { font-size: .78rem; color: var(--muted); margin-top: auto; padding-top: 4px; }
+    .d20-focus-rows { display: flex; flex-direction: column; gap: 3px; margin: 4px 0 2px; }
+    .d20-focus-row { display: flex; gap: 8px; align-items: baseline; font-size: .82rem; color: var(--text); }
+    .d20-fr-label { font-weight: 700; color: var(--or); min-width: 54px; font-size: .74rem; text-transform: uppercase; letter-spacing: .03em; flex-shrink: 0; }
 
     @media (max-width: 700px) {
       .page-header-inner { padding: 20px 16px 0; }
@@ -342,7 +345,7 @@
       <button class="cat-tab" data-cat="games">Games <span class="tab-count" id="cnt-games">0</span></button>
       <button class="cat-tab" data-cat="partner">Partner <span class="tab-count" id="cnt-partner">0</span></button>
       <button class="cat-tab" data-cat="benchmark">Benchmark <span class="tab-count" id="cnt-benchmark">0</span></button>
-      <button class="cat-tab" data-cat="daily20">The Daily 20 <span class="tab-count" id="cnt-daily20">90</span></button>
+      <button class="cat-tab" data-cat="daily20">Daily 20 <span class="tab-count" id="cnt-daily20">90</span></button>
     </div>
 
   </div>
@@ -367,6 +370,10 @@
 
   <div class="wod-grid" id="wod-grid"></div>
   <div class="d20-archive" id="d20-archive">
+    <div id="d20-archive-header" style="display:none; margin: 28px 0 12px; padding-top: 24px; border-top: 1px solid var(--border);">
+      <h2 style="font-family:var(--font-head); font-size:1.6rem; letter-spacing:.04em; color:var(--text); margin:0 0 2px;">DAILY 20 ARCHIVE</h2>
+      <p style="font-size:.84rem; color:var(--muted); margin:0;">Last 90 days — algorithmically generated 20-min workouts</p>
+    </div>
     <div class="d20-archive-grid" id="d20-archive-grid"></div>
   </div>
   <div class="empty-state" id="empty-state">
@@ -583,7 +590,24 @@ function updateTabCounts() {
     }
     return true;
   });
-  document.getElementById('cnt-all').textContent = base.length;
+
+  // Compute D20 count (filter by search if active)
+  let d20Count = 90;
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    d20Count = 0;
+    const today = new Date();
+    for (let i = 0; i < 90; i++) {
+      const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+      const dow = d.getDay();
+      const label = d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+      const searchable = (label + ' ' + D20_FMT[dow] + ' ' + D20_BODY[dow] + ' ' + D20_DIFF[dow]).toLowerCase();
+      if (searchable.includes(q)) d20Count++;
+    }
+  }
+
+  document.getElementById('cnt-all').textContent = base.length + d20Count;
+  document.getElementById('cnt-daily20').textContent = d20Count;
   CAT_ORDER.forEach(c => {
     const el = document.getElementById('cnt-' + c);
     if (el) el.textContent = base.filter(w => w.cat === c).length;
@@ -596,10 +620,8 @@ const D20_DIFF = { 0:'Beginner', 1:'Intermediate', 2:'Advanced', 3:'Intermediate
 const D20_BODY = { 0:'Core', 1:'Full Body', 2:'Lower Body', 3:'Upper Body', 4:'Cardio', 5:'Full Body', 6:'Legs & Glutes' };
 const D20_FMT_CLS = { 'AMRAP':'amrap', 'EMOM':'emom', 'For Time':'fortime', 'Circuit':'circuit' };
 
-let d20Built = false;
-function buildD20Archive() {
-  if (d20Built) return;
-  d20Built = true;
+// buildD20Archive — accepts optional search query, returns count of matched cards
+function buildD20Archive(q) {
   const cards = [];
   const today = new Date();
   for (let i = 0; i < 90; i++) {
@@ -612,41 +634,68 @@ function buildD20Archive() {
     const body    = D20_BODY[dow];
     const cls     = D20_FMT_CLS[fmt] || 'circuit';
     const link    = i === 0 ? '/daily-wod.html' : '/daily-wod.html?date=' + dateStr;
+
+    // Filter by search query against date label, format, body focus, difficulty
+    if (q) {
+      const searchable = (label + ' ' + fmt + ' ' + body + ' ' + diff).toLowerCase();
+      if (!searchable.includes(q.toLowerCase())) continue;
+    }
+
     cards.push(
       '<a class="d20-date-card" href="' + link + '">' +
         (i === 0 ? '<div class="d20-today-badge">TODAY</div>' : '') +
         '<div class="d20-dc-date">' + label + '</div>' +
         '<div class="d20-dc-fmt"><span class="d20-dc-fmt-badge ' + cls + '">' + fmt + '</span></div>' +
-        '<div class="d20-dc-meta">' +
-          '<span>' + body + '</span>' +
-          '<span class="d20-dc-diff ' + diff.toLowerCase() + '">' + diff + '</span>' +
+        '<div class="d20-focus-rows">' +
+          '<div class="d20-focus-row"><span class="d20-fr-label">Focus</span><span>' + body + '</span></div>' +
+          '<div class="d20-focus-row"><span class="d20-fr-label">Level</span><span class="d20-dc-diff ' + diff.toLowerCase() + '">' + diff + '</span></div>' +
+          '<div class="d20-focus-row"><span class="d20-fr-label">Duration</span><span>20 min</span></div>' +
         '</div>' +
         '<div class="d20-dc-arrow">View WOD →</div>' +
       '</a>'
     );
   }
-  document.getElementById('d20-archive-grid').innerHTML = cards.join('');
+  document.getElementById('d20-archive-grid').innerHTML = cards.length
+    ? cards.join('')
+    : '<p style="color:var(--muted);grid-column:1/-1;padding:20px 0;font-size:.9rem;">No Daily 20 workouts match your search.</p>';
+  return cards.length;
 }
 
 function render() {
   const isD20 = activeCategory === 'daily20';
-  document.getElementById('wod-grid').style.display    = isD20 ? 'none' : '';
-  document.getElementById('empty-state').style.display = isD20 ? 'none' : '';
-  document.getElementById('d20-archive').style.display = isD20 ? 'block' : 'none';
+  const isAll = activeCategory === 'all';
+  const showD20 = isD20 || isAll;
+
+  document.getElementById('wod-grid').style.display         = isD20 ? 'none' : '';
+  document.getElementById('d20-archive').style.display      = showD20 ? 'block' : 'none';
+  document.getElementById('d20-archive-header').style.display = isAll ? 'block' : 'none';
+
   updateTabCounts();
+
   if (isD20) {
-    document.getElementById('shown-count').textContent = 90;
-    buildD20Archive();
+    const d20Count = buildD20Archive(searchQuery);
+    document.getElementById('shown-count').textContent = d20Count;
+    document.getElementById('empty-state').style.display = 'none';
     return;
   }
+
   const list  = filteredWods();
   const grid  = document.getElementById('wod-grid');
   const empty = document.getElementById('empty-state');
-  document.getElementById('shown-count').textContent = list.length;
+
+  let totalShown = list.length;
+  if (isAll) {
+    totalShown += buildD20Archive(searchQuery);
+  }
+
+  document.getElementById('shown-count').textContent = totalShown;
+
   if (list.length === 0) {
     grid.innerHTML = '';
-    empty.classList.add('visible');
+    empty.style.display = (!isAll || totalShown === 0) ? '' : 'none';
+    if (!isAll || totalShown === 0) empty.classList.add('visible');
   } else {
+    empty.style.display = 'none';
     empty.classList.remove('visible');
     grid.innerHTML = list.map(buildCard).join('');
   }
