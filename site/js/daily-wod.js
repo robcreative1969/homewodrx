@@ -273,8 +273,10 @@ const DailyWOD = {
       const key = eq === 'dumbbell' ? 'dumbbells' : eq; // normalize singular→plural
       if (eq !== 'bodyweight' && mdb[key]) moves.push(...mdb[key].map(m => ({ ...m, _eq: eq })));
     });
-    if (level === 'beginner') moves = moves.filter(m => !/(muscle.up|snatch|toes.to.bar|double under|turkish)/i.test(m.name));
-    if (level === 'intermediate') moves = moves.filter(m => !/(muscle.up)/i.test(m.name));
+    // Muscle-ups are too elite for general home athletes — exclude at all difficulty levels
+    moves = moves.filter(m => !/(muscle.up)/i.test(m.name));
+    if (level === 'beginner') moves = moves.filter(m => !/(snatch|toes.to.bar|double under|turkish)/i.test(m.name));
+    if (level === 'intermediate') moves = moves.filter(m => !/(snatch|toes.to.bar|double under)/i.test(m.name));
 
     const BF_TAGS = {
       'full-body': null,
@@ -377,18 +379,18 @@ const DailyWOD = {
   },
 
   _genForTime(pool, level, rng) {
-    const schemes = {
-      beginner: [15,12,9], intermediate: [21,15,9], advanced: [30,20,10]
-    };
-    const scheme = schemes[level];
+    // Rounds scale with difficulty — advanced gets one extra round, not more reps per movement
+    const rounds = level === 'advanced' ? 4 : 3;
     const sel = this._balancedPick(pool, 3, rng);
     return {
       title: `Daily 20: For Time`,
       format: 'fortime',
       timeCap: 20,
-      description: `Complete all rounds for time using the ${scheme.join('-')} rep scheme. 20-minute time cap — if you hit the cap, record your reps completed.`,
-      rows: sel.map(m => ({ movement: m.name, reps: scheme.join(' – ') + ' reps', tip: m.tip, _eq: m._eq })),
-      scoring: 'Record your finish time. If you hit the 20-min cap, record rounds + reps completed.'
+      rounds,
+      description: `Complete ${rounds} rounds for time. 20-minute time cap — if you hit the cap, record your reps completed.`,
+      // Use each movement's calibrated rep count (b/i/a), not a blanket scheme
+      rows: sel.map(m => ({ movement: m.name, reps: String(this._getReps(m, level)), tip: m.tip, _eq: m._eq })),
+      scoring: `Record your finish time (${rounds} rounds). If you hit the 20-min cap, record rounds + reps completed.`
     };
   },
 
