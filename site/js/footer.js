@@ -228,7 +228,8 @@
         border-color: var(--or, #C41212);
         background: rgba(196,18,18,0.1);
       }
-      .fb-type-chip .fb-chip-icon { font-size: 16px; display: block; margin-bottom: 3px; }
+      .fb-type-chip .fb-chip-icon { display: flex; justify-content: center; margin-bottom: 3px; }
+      .fb-type-chip .fb-chip-icon svg { width: 16px; height: 16px; stroke: currentColor; }
       #fb-textarea {
         width: 100%; box-sizing: border-box;
         background: var(--bg, #f3f3f3); border: 1.5px solid var(--border, #e5e5e5);
@@ -265,7 +266,8 @@
       #fb-success {
         display:none; text-align:center; padding: 8px 0;
       }
-      #fb-success .fb-ok-icon { font-size:32px; margin-bottom:8px; }
+      #fb-success .fb-ok-icon { margin-bottom:8px; display:flex; justify-content:center; }
+      #fb-success .fb-ok-icon svg { width:36px; height:36px; stroke:#16a34a; }
       #fb-success p { font-size:14px; color:var(--text,#1a1a1a); font-weight:700; margin:0 0 4px; }
       #fb-success small { font-size:12px; color:var(--muted,#666); }
 
@@ -290,7 +292,7 @@
         #fb-modal .fb-sub { font-size: 11px; margin-bottom: 8px; }
         .fb-types { gap: 6px; margin-bottom: 8px; }
         .fb-type-chip { padding: 5px 4px; font-size: 11px; }
-        .fb-type-chip .fb-chip-icon { font-size: 13px; margin-bottom: 1px; }
+        .fb-type-chip .fb-chip-icon svg { width: 13px; height: 13px; }
         #fb-textarea { min-height: 52px; padding: 7px 10px; margin-bottom: 6px; font-size: 12px; }
         #fb-email-input { padding: 6px 10px; margin-bottom: 8px; font-size: 12px; }
         #fb-send-btn { padding: 8px; font-size: 12px; }
@@ -316,13 +318,13 @@
 
         <div class="fb-types">
           <button class="fb-type-chip fb-active" data-type="general">
-            <span class="fb-chip-icon">💬</span>General
+            <span class="fb-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>General
           </button>
           <button class="fb-type-chip" data-type="bug">
-            <span class="fb-chip-icon">🐛</span>Bug
+            <span class="fb-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 2 1.88 1.88"/><path d="M14.12 3.88 16 2"/><path d="M9 7.13v-1a3.003 3.003 0 1 1 6 0v1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6z"/><path d="M12 20v-9"/><path d="M6.53 9C4.6 8.8 3 7.1 3 5"/><path d="M6 13H2"/><path d="M3 21c0-2.1 1.7-3.9 4-4"/><path d="M20.97 5c0 2.1-1.6 3.8-3.5 4"/><path d="M22 13h-4"/><path d="M17 17c2.3.1 4 1.9 4 4"/></svg></span>Bug
           </button>
           <button class="fb-type-chip" data-type="feature">
-            <span class="fb-chip-icon">💡</span>Idea
+            <span class="fb-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span>Idea
           </button>
         </div>
 
@@ -337,7 +339,7 @@
         </div>
 
         <div id="fb-success">
-          <div class="fb-ok-icon">🎉</div>
+          <div class="fb-ok-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></div>
           <p>Thanks — message received!</p>
           <small>Your feedback helps make HomeWODrx better.</small>
         </div>

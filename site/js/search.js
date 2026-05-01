@@ -100,10 +100,15 @@ const Search = (() => {
         border-bottom: 1px solid rgba(255,255,255,0.07);
       }
       #srch-input-row .srch-mag {
-        font-size: 1.05rem;
         opacity: 0.45;
         flex-shrink: 0;
-        line-height: 1;
+        display: flex;
+        align-items: center;
+      }
+      #srch-input-row .srch-mag svg {
+        width: 17px;
+        height: 17px;
+        stroke: var(--text-primary, #EAEAF0);
       }
       #srch-input {
         flex: 1;
@@ -171,12 +176,15 @@ const Search = (() => {
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.85rem;
         flex-shrink: 0;
       }
+      .srch-icon svg { width: 15px; height: 15px; }
       .srch-icon-bm   { background: rgba(196, 18, 18, 0.15); }
+      .srch-icon-bm svg { stroke: rgba(196, 18, 18, 0.8); }
       .srch-icon-mv   { background: rgba(80, 200, 120, 0.12); }
+      .srch-icon-mv svg { stroke: rgba(40, 160, 80, 0.9); }
       .srch-icon-wod  { background: rgba(100, 160, 255, 0.12); }
+      .srch-icon-wod svg { stroke: rgba(80, 130, 220, 0.9); }
       .srch-text { flex: 1; min-width: 0; }
       .srch-name {
         font-size: 0.92rem;
@@ -296,7 +304,7 @@ const Search = (() => {
     el.innerHTML = `
       <div id="srch-modal">
         <div id="srch-input-row">
-          <span class="srch-mag" aria-hidden="true">🔍</span>
+          <span class="srch-mag" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></span>
           <input id="srch-input"
                  type="search"
                  autocomplete="off"
@@ -451,7 +459,7 @@ const Search = (() => {
         _results.push(href);
         html += `
           <a href="${href}" class="srch-item" role="option" tabindex="-1">
-            <div class="srch-icon srch-icon-bm" aria-hidden="true">⚡</div>
+            <div class="srch-icon srch-icon-bm" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
             <div class="srch-text">
               <div class="srch-name">${esc(b.name)}</div>
               <div class="srch-meta">${esc(meta)}</div>
@@ -469,7 +477,7 @@ const Search = (() => {
         _results.push(href);
         html += `
           <a href="${href}" class="srch-item" role="option" tabindex="-1">
-            <div class="srch-icon srch-icon-mv" aria-hidden="true">💪</div>
+            <div class="srch-icon srch-icon-mv" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5a4.5 4.5 0 0 0 0 9h11a2.5 2.5 0 0 0 0-5h-.5a4 4 0 0 0-4-4H6.5Z"/></svg></div>
             <div class="srch-text">
               <div class="srch-name">${esc(m.name)}</div>
               <div class="srch-meta">${esc(meta)}</div>
@@ -489,7 +497,7 @@ const Search = (() => {
         _results.push(href);
         html += `
           <a href="${href}" class="srch-item" role="option" tabindex="-1">
-            <div class="srch-icon srch-icon-wod" aria-hidden="true">🏋️</div>
+            <div class="srch-icon srch-icon-wod" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 5v14"/><path d="M18 5v14"/><path d="M2 9h4"/><path d="M2 15h4"/><path d="M18 9h4"/><path d="M18 15h4"/><path d="M6 12h12"/></svg></div>
             <div class="srch-text">
               <div class="srch-name">${esc(w.title)}</div>
               <div class="srch-meta">${esc(meta)}</div>
