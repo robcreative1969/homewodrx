@@ -31,7 +31,51 @@ const Search = (() => {
 
   // Collapse hyphens and spaces so "pushup" / "push-up" / "push up" all match
   function normalize(str) {
-    return String(str).toLowerCase().replace(/[-\s]+/g, '');
+    return String(str).toLowerCase().replace(/[-\s']+/g, '');
+  }
+
+  // Common CrossFit/functional-fitness acronyms → canonical search term
+  const ACRONYMS = {
+    't2b':  'toes to bar',
+    'ttb':  'toes to bar',
+    'hspu': 'handstand push ups',
+    'c2b':  'chest to bar pull ups',
+    'ctb':  'chest to bar pull ups',
+    'mu':   'muscle ups',
+    'bmu':  'bar muscle ups',
+    'rmu':  'ring muscle ups',
+    'du':   'double unders',
+    'dus':  'double unders',
+    'kbs':  'kettlebell swings',
+    'rkbs': 'russian kettlebell swings',
+    'akbs': 'american kettlebell swings',
+    'ohs':  'overhead squat',
+    's2oh': 'shoulder to overhead',
+    'stoh': 'shoulder to overhead',
+    'ghd':  'ghd sit ups',
+    'wb':   'wall balls',
+    'wbs':  'wall balls',
+    'dl':   'deadlift',
+    'pc':   'power clean',
+    'ps':   'power snatch',
+    'sn':   'snatch',
+    'fs':   'front squat',
+    'bs':   'back squat',
+    'pp':   'push press',
+    'pj':   'push jerk',
+    'sj':   'split jerk',
+    'cj':   'clean and jerk',
+    'bj':   'box jumps',
+    'bjs':  'box jumps',
+    'rdl':  'romanian deadlift',
+  };
+
+  // Expand any acronym words in a query string
+  function expandQuery(q) {
+    return q.trim().toLowerCase()
+      .split(/\s+/)
+      .map(w => ACRONYMS[w] || w)
+      .join(' ');
   }
 
   function esc(str) {
@@ -418,7 +462,7 @@ const Search = (() => {
   let _currentQuery = '';
 
   function applyFilter(q, data) {
-    _currentQuery = q.trim().toLowerCase();
+    _currentQuery = expandQuery(q);
     if (!_currentQuery) return { benchmarks: [], movements: [], workouts: [] };
     return {
       benchmarks: filterSet(data.benchmarks, b =>
