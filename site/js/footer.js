@@ -125,7 +125,6 @@
             <ul>
               <li><a href="/daily-wod.html">The Daily 20</a></li>
               <li><a href="/wodbuilder.html">Smart WOD Builder</a></li>
-              <li><a href="/wodbuilder.html#create">Create Your Own</a></li>
               <li><a href="/timer.html">WOD Timer</a></li>
               <li><a href="/movements.html">Movement Library</a></li>
             </ul>

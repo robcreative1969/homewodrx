@@ -114,7 +114,6 @@ const Nav = {
             <div class="dd-section-label">Train</div>
             <a href="/daily-wod.html"><div class="dl"><strong>The Daily 20</strong><small>Today's free auto-generated WOD</small></div></a>
             <a href="/wodbuilder.html"><div class="dl"><strong>Smart WOD Builder</strong><small>Custom workout in seconds</small></div></a>
-            <a href="/wodbuilder.html#create"><div class="dl"><strong>Create Your Own</strong><small>Build movement by movement</small></div></a>
             <div class="dd-div"></div>
             <a href="/timer.html"><div class="dl"><strong>WOD Timer</strong><small>AMRAP, EMOM, For Time &amp; more</small></div></a>
             <a href="/movements.html"><div class="dl"><strong>Movement Library</strong><small>200+ movements with demos</small></div></a>
@@ -221,7 +220,6 @@ const Nav = {
       <a href="/workouts.html?cat=partner" class="ham-link">Partner WODs</a>
       <a href="/daily-wod.html" class="ham-link">The Daily 20</a>
       <a href="/wodbuilder.html" class="ham-link">Smart WOD Builder</a>
-      <a href="/wodbuilder.html#create" class="ham-link">Create Your Own</a>
       <a href="/timer.html" class="ham-link">WOD Timer</a>
       <a href="/movements.html" class="ham-link">Movement Library</a>
     </div>
