@@ -196,7 +196,8 @@
     /* ── Empty state ── */
     .empty-state { text-align: center; padding: 80px 24px; display: none; }
     .empty-state.visible { display: block; }
-    .empty-icon { font-size: 3rem; margin-bottom: 16px; opacity: .4; }
+    .empty-icon { margin-bottom: 16px; opacity: .4; display: flex; justify-content: center; }
+    .empty-icon svg { width: 48px; height: 48px; }
     .empty-title { font-family: var(--font-head); font-size: 1.8rem; letter-spacing: .04em; margin-bottom: 8px; }
     .empty-sub { font-size: .9rem; color: var(--muted); }
     .empty-clear {
@@ -369,7 +370,7 @@
     <div class="d20-archive-grid" id="d20-archive-grid"></div>
   </div>
   <div class="empty-state" id="empty-state">
-    <div class="empty-icon">🔍</div>
+    <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
     <p class="empty-title">NO WORKOUTS FOUND</p>
     <p class="empty-sub">Try a different search term, category, or equipment filter.</p>
     <button class="empty-clear" onclick="clearAllFilters()">Clear all filters</button>

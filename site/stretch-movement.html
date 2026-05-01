@@ -213,7 +213,8 @@
   border-radius: 8px; padding: 16px 18px;
   display: flex; gap: 12px; align-items: flex-start;
 }
-.pnf-callout-icon { font-size: 1.25rem; flex-shrink: 0; line-height: 1.4; }
+.pnf-callout-icon { flex-shrink: 0; display: flex; align-items: flex-start; padding-top: 2px; }
+.pnf-callout-icon svg { width: 20px; height: 20px; stroke: #7c3aed; }
 .pnf-callout-label { font-weight: 700; color: #7c3aed; font-size: .82rem; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 5px; }
 .pnf-callout-text { font-size: .9rem; line-height: 1.65; color: #444; }
 
@@ -356,7 +357,7 @@
             <p class="sides-note" id="sides-note"></p>
           </div>
           <div class="pnf-callout" id="pnf-callout" style="display:none;">
-            <div class="pnf-callout-icon">🧠</div>
+            <div class="pnf-callout-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg></div>
             <div>
               <div class="pnf-callout-label">Contract-Relax Technique</div>
               <p class="pnf-callout-text" id="pnf-text"></p>
@@ -778,7 +779,7 @@ async function renderStretchPage() {
 
   // ── Share buttons ─────────────────────────────────────────────
   const shareUrl = encodeURIComponent(window.location.href);
-  const shareTitle = encodeURIComponent(displayName + ' stretch guide — HomeWodRX 🧘');
+  const shareTitle = encodeURIComponent(displayName + ' stretch guide — HomeWodRX');
   document.getElementById('share-x').onclick = () => window.open(`https://twitter.com/intent/tweet?text=${shareTitle}&url=${shareUrl}`, '_blank', 'width=600,height=400');
   document.getElementById('share-fb').onclick = () => window.open(`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`, '_blank', 'width=600,height=400');
   document.getElementById('share-wa').onclick = () => window.open(`https://wa.me/?text=${shareTitle}%20${shareUrl}`, '_blank');

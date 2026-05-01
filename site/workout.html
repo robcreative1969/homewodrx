@@ -572,7 +572,7 @@
     </div>
     <div class="wod-modal-body">
       <div id="result-error" class="wod-modal-error"></div>
-      <div id="result-pr-hint" class="wod-modal-pr-hint">🏆 New PR! Great work!</div>
+      <div id="result-pr-hint" class="wod-modal-pr-hint">New PR! Great work!</div>
       <!-- Dynamic score fields injected here by buildScoreFields(scoringType) -->
       <div id="result-score-fields"></div>
       <div class="wod-modal-field">
@@ -1181,7 +1181,14 @@ function renderBenchmarkLayout(w) {
   if (movements.length) {
     var firstRepsRaw = String(movements[0].reps || '');
     var rNums = firstRepsRaw.match(/\d+/g);
-    repsLabel = rNums ? rNums.join('–') : firstRepsRaw;
+    if (rNums && rNums.length === 1) {
+      // Single number = rounds — add label so "4 For Time" doesn't look like a format name
+      repsLabel = rNums[0] + ' Rounds';
+    } else if (rNums && rNums.length > 1) {
+      repsLabel = rNums.join('–');
+    } else {
+      repsLabel = firstRepsRaw;
+    }
   }
   var dur = w.duration_estimate || w.duration;
   var durStr = dur ? String(dur) : '';
@@ -1696,7 +1703,7 @@ async function submitResult() {
     if (res && res.error) throw res.error;
     closeResultModal();
     showPRCelebration(score, w.name || w.title || 'WOD');
-    showWorkoutToast('Result logged! 🏋️', 'success');
+    showWorkoutToast('Result logged!', 'success');
     setTimeout(function() { loadMyHistory(); }, 600);
   } catch(e) {
     if (errEl) { errEl.textContent = (e && e.message) || 'Error saving result. Please try again.'; errEl.style.display = 'block'; }
@@ -1809,7 +1816,7 @@ function showPRCelebration(score, wodName) {
   var el = document.createElement('div');
   el.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:16px;padding:32px 40px;text-align:center;z-index:10000;box-shadow:0 8px 40px rgba(0,0,0,.25);animation:popIn .35s ease-out;max-width:340px;width:90%';
   el.innerHTML =
-    '<div style="font-size:3rem;margin-bottom:12px">🏆</div>' +
+    '<div style="margin-bottom:12px;display:flex;justify-content:center"><svg viewBox="0 0 24 24" fill="none" stroke="var(--or)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="52" height="52"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></div>' +
     '<div style="font-family:var(--font-head);font-size:2.5rem;color:var(--or);line-height:1;margin-bottom:8px">NEW PR!</div>' +
     '<div style="font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:4px">' + escHtml(wodName) + '</div>' +
     '<div style="font-size:1.4rem;font-weight:800;color:var(--text)">' + escHtml(score) + '</div>' +

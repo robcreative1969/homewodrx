@@ -190,7 +190,8 @@
 /* ── EMPTY STATE ──────────────────────────────────────────────────── */
 .no-results { text-align: center; padding: 60px 24px; display: none; }
 .no-results.visible { display: block; }
-.no-results-icon { font-size: 2.5rem; margin-bottom: 12px; opacity: .4; }
+.no-results-icon { margin-bottom: 12px; opacity: .4; display: flex; justify-content: center; }
+.no-results-icon svg { width: 40px; height: 40px; }
 .no-results-title {
   font-family: var(--font-head, 'Bebas Neue', sans-serif);
   font-size: 1.8rem; letter-spacing: .04em; color: var(--text, #1a1a1a); margin-bottom: 6px;
@@ -275,7 +276,7 @@
   <div id="sections-root"></div>
 
   <div class="no-results" id="no-results">
-    <div class="no-results-icon">🔍</div>
+    <div class="no-results-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
     <p class="no-results-title">NO STRETCHES FOUND</p>
     <p class="no-results-sub">Try a different modality, target area, or search term.</p>
     <button class="no-results-clear" onclick="clearFilters()">Clear filters</button>

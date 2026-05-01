@@ -1045,7 +1045,7 @@ async function submitLogin() {
   if (error) { errEl.textContent = error.message || 'Sign in failed.'; errEl.classList.add('vis'); return; }
   currentUser = user;
   closeModal('auth-modal');
-  showToast('Welcome back! 👋','success');
+  showToast('Welcome back!','success');
   // Refresh nav
   location.reload();
 }
@@ -1061,7 +1061,7 @@ async function submitSignup() {
   if (error) { errEl.textContent = error.message || 'Sign up failed.'; errEl.classList.add('vis'); return; }
   currentUser = user;
   closeModal('auth-modal');
-  showToast('Account created! Welcome to HomeWODrx 🔥','success');
+  showToast('Account created! Welcome to HomeWODrx','success');
   location.reload();
 }
 
@@ -1121,7 +1121,7 @@ async function submitResult() {
   const { error } = await db.saveResult(result);
   if (error) { errEl.textContent = error.message; errEl.classList.add('vis'); return; }
   closeModal('result-modal');
-  showToast('Result logged! 🎉','success');
+  showToast('Result logged!','success');
 }
 
 function openSaveWorkout() {
@@ -1159,7 +1159,7 @@ async function submitSave() {
   if (error) { errEl.textContent = error.message; errEl.classList.add('vis'); return; }
   currentWorkout = { ...currentWorkout, id: data?.id };
   closeModal('save-modal');
-  showToast(isPublic ? 'Submitted for community review! We\'ll approve it shortly. 🔍' : 'Workout saved! 💾','success');
+  showToast(isPublic ? 'Submitted for community review! We\'ll approve it shortly.' : 'Workout saved!','success');
 }
 
 function openCommResultModal(workoutId, title, format) {
@@ -1200,8 +1200,8 @@ function printWorkout() {
 
   const wc = (wuList || cdList) ? `
     <div class="pwc">
-      <div class="pwc-card"><h4>🔥 Warm-Up (do first)</h4><ul>${wuList}</ul></div>
-      <div class="pwc-card"><h4>🧊 Cool-Down</h4><ul>${cdList}</ul></div>
+      <div class="pwc-card"><h4>Warm-Up (do first)</h4><ul>${wuList}</ul></div>
+      <div class="pwc-card"><h4>Cool-Down</h4><ul>${cdList}</ul></div>
     </div>` : '';
 
   const printArea = document.getElementById('print-area');
@@ -1218,7 +1218,7 @@ function printWorkout() {
       <tbody>${rows}</tbody>
     </table>
     <div class="pscore">
-      <h4>📊 Scoring</h4>
+      <h4>Scoring</h4>
       <p>${escHtml(w.scoring||document.getElementById('wod-scoring').textContent||'')}</p>
     </div>
     ${wc}
@@ -1236,7 +1236,7 @@ function printWorkout() {
 async function nominateWorkout() {
   if (!currentUser) { openAuthModal(); return; }
   if (!currentWorkout) return;
-  showToast('Workout submitted for Featured WOD consideration! ⭐','info');
+  showToast('Workout submitted for Featured WOD consideration!','info');
   // In production, this would upsert to workouts table with nomination_pending=true
   if (supabaseClient && currentWorkout.id) {
     await supabaseClient.from('workouts').update({ nomination_pending: true }).eq('id', currentWorkout.id);
@@ -1245,7 +1245,7 @@ async function nominateWorkout() {
 
 async function nominateFromDetail(workoutId) {
   if (!currentUser) { openAuthModal(); return; }
-  showToast('Workout submitted for Featured WOD consideration! ⭐','info');
+  showToast('Workout submitted for Featured WOD consideration!','info');
   if (supabaseClient) {
     await supabaseClient.from('workouts').update({ nomination_pending: true }).eq('id', workoutId);
   }

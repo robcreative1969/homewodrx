@@ -534,7 +534,7 @@
       w.difficulty && `<span>${cap(w.difficulty)}</span>`,
       w.bodyFocus && `<span>${cap(w.bodyFocus)}</span>`,
     ].filter(Boolean).join('');
-    const scoring = w.scoring ? `<div class="pscore"><h4>📊 Scoring</h4><p>${escH(w.scoring)}</p></div>` : '';
+    const scoring = w.scoring ? `<div class="pscore"><h4>Scoring</h4><p>${escH(w.scoring)}</p></div>` : '';
     const dateStr = new URLSearchParams(window.location.search).get('date') || localDateStr();
     const dateFmt = new Date(dateStr+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
     const pa = document.getElementById('print-area');
@@ -696,7 +696,7 @@
       document.getElementById('result-notes').value = '';
       document.getElementById('result-rx').checked = false;
       document.getElementById('result-error').style.display = 'none';
-      showToast('Result logged! 🏋️', 'success');
+      showToast('Result logged!', 'success');
       loadLeaderboard(leaderboardPeriod, dateStr);
     } catch (e) {
       const errEl = document.getElementById('result-error');

@@ -139,7 +139,7 @@
 }
 
 .bc-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
-.bc-head .icon{font-size:1.15rem;}
+.bc-head .icon{display:flex;align-items:center;}.bc-head .icon svg{width:18px;height:18px;stroke:var(--or);}
 .bc-head h2{font-family:var(--font-head);font-size:1.25rem;letter-spacing:.04em;}
 .bc p{font-size:.93rem;line-height:1.65;color:#444;margin-bottom:10px;}
 .bc p:last-child{margin-bottom:0;}
@@ -295,25 +295,25 @@
 
       <!-- ABOUT -->
       <div class="bc span6" id="about-card">
-        <div class="bc-head"><div class="icon">📖</div><h2>About This Routine</h2></div>
+        <div class="bc-head"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><h2>About This Routine</h2></div>
         <p id="about-text"></p>
       </div>
 
       <!-- BENEFITS -->
       <div class="bc span6" id="benefits-card">
-        <div class="bc-head"><div class="icon">✅</div><h2>Why This Routine Works</h2></div>
+        <div class="bc-head"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></div><h2>Why This Routine Works</h2></div>
         <ul class="benefits-list" id="benefits-list"></ul>
       </div>
 
       <!-- STEP-BY-STEP SEQUENCE -->
       <div class="bc span6">
-        <div class="bc-head"><div class="icon">▶️</div><h2>Step-by-Step Sequence</h2></div>
+        <div class="bc-head"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><h2>Step-by-Step Sequence</h2></div>
         <div class="steps-list" id="steps-list"></div>
       </div>
 
       <!-- RELATED ROUTINES -->
       <div class="bc span6">
-        <div class="bc-head"><div class="icon">📚</div><h2>More Routines</h2></div>
+        <div class="bc-head"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg></div><h2>More Routines</h2></div>
         <div class="related-grid" id="related-grid"></div>
       </div>
 
@@ -339,7 +339,7 @@ function ytEmbed(ytId, stepName) {
       + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="3"/><polygon points="10 8 16 12 10 16 10 8"/></svg>'
       + '<span>No video available yet</span>'
       + '<a href="https://www.youtube.com/results?search_query=' + q + '" class="yt-search-link" target="_blank" rel="noopener">'
-      + '🔎 Search on YouTube</a></div></div>';
+      + 'Search on YouTube</a></div></div>';
   }
   var thumb = 'https://img.youtube.com/vi/' + ytId + '/hqdefault.jpg';
   var uid = 'yt-' + ytId;
@@ -425,8 +425,8 @@ function render() {
   document.getElementById('meta-chips').innerHTML =
     '<span class="meta-chip chip-dur">⏱ ' + r.duration + ' min</span>'
     + '<span class="meta-chip chip-lvl' + (isInt ? ' int' : '') + '">● ' + r.levelLabel + '</span>'
-    + '<span class="meta-chip chip-mod">' + r.modalityIcon + ' ' + r.modality + '</span>'
-    + r.focus.map(function(f) { return '<span class="meta-chip chip-focus">🎯 ' + f + '</span>'; }).join('');
+    + '<span class="meta-chip chip-mod">' + r.modality + '</span>'
+    + r.focus.map(function(f) { return '<span class="meta-chip chip-focus">' + f + '</span>'; }).join('');
 
   // Share
   document.getElementById('share-whatsapp').href =
