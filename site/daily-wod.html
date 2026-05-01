@@ -60,6 +60,7 @@
 .wod-move-link { display: table-cell; font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color .15s; padding: 7px 0; border-bottom: 1px solid #f3f3f3; vertical-align: middle; }
 .wod-move-link:hover { color: var(--or); }
 .wod-load { font-size: .82rem; color: var(--muted); font-weight: 500; margin-left: 8px; white-space: nowrap; }
+.wod-format-desc { font-size: .88rem; color: var(--muted); margin: 0 0 14px; line-height: 1.5; }
 .wod-score-note { font-size: .82rem; color: var(--muted); padding: 10px 0 0; }
 
 /* ══ META STACK ══ */
@@ -358,6 +359,7 @@
         '<div class="hero-row">' +
           '<div class="hero-left">' +
             '<div class="wod-hero-card">' +
+              (wod.description ? '<p class="wod-format-desc">' + escHtml(wod.description) + '</p>' : '') +
               '<ul class="wod-move-list">' + movesHtml + '</ul>' +
               '<div class="wod-score-note">Score: ' + escHtml(scoreNote) + '</div>' +
             '</div>' +
