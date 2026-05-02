@@ -172,26 +172,21 @@
     .card-movements .mov-line:last-child { border-bottom: none; }
     .card-movements .mov-reps { font-family: var(--font-head); font-size: 1rem; color: var(--or); flex-shrink: 0; line-height: 1; }
     .card-movements .mov-name { color: var(--text); flex: 1; }
-    .card-movements .mov-more { color: var(--muted); font-size: .78rem; font-style: italic; }
+    .card-movements .mov-weight { font-size: .72rem; color: var(--muted); font-style: italic; font-weight: 500; margin-left: 3px; }
+    .card-movements .mov-line.rest-line { border-bottom: none; border-top: 1px solid var(--border); margin-top: 2px; padding-top: 6px; }
+    .card-movements .rest-icon { font-size: .72rem; color: var(--muted2); flex-shrink: 0; }
+    .card-movements .rest-text { font-size: .78rem; color: var(--muted); font-style: italic; flex: 1; }
     .card-footer {
       padding: 10px 18px 14px; border-top: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
     }
     .card-stat { display: flex; align-items: center; gap: 5px; font-size: .78rem; color: var(--muted); font-weight: 600; }
-    .equip-chips { display: flex; gap: 5px; flex-wrap: wrap; }
-    .equip-chip {
-      font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
-      padding: 3px 8px; border-radius: 5px; background: var(--bg); color: var(--muted);
+    .card-cta {
+      font-size: .8rem; font-weight: 700; color: var(--or);
+      display: flex; align-items: center; gap: 4px; white-space: nowrap;
+      transition: opacity .15s;
     }
-    .equip-chip.barbell    { background: #fde8e8; color: #c41212; }
-    .equip-chip.bodyweight { background: #e8f5e9; color: #2e7d32; }
-    .equip-chip.pullUpBar  { background: #e8f0fe; color: #1565c0; }
-    .equip-chip.dumbbell   { background: #e0f2f1; color: #00695c; }
-    .equip-chip.kettlebell { background: #fce4ec; color: #c2185b; }
-    .equip-chip.jumpRope   { background: #f3e8ff; color: #7b1fa2; }
-    .equip-chip.rings      { background: #fff8e1; color: #f57f17; }
-    .card-arrow { color: var(--muted); transition: color .15s; flex-shrink: 0; }
-    .wod-card:hover .card-arrow { color: var(--or); }
+    .wod-card:hover .card-cta { opacity: .75; }
 
     /* ── Empty state ── */
     .empty-state { text-align: center; padding: 80px 24px; display: none; }
@@ -542,19 +537,20 @@ const ARROW_SVG = `<svg class="card-arrow" width="16" height="16" viewBox="0 0 2
 
 function buildMovHtml(movements) {
   if (!movements || !movements.length) return '';
-  const shown = movements.slice(0, 4);
-  let html = shown.map(m => {
+  return movements.map(m => {
+    // Rest period line
+    if (m.isRest) {
+      const label = m.note ? `${m.reps} rest ${m.note}` : `${m.reps} rest between rounds`;
+      return `<div class="mov-line rest-line"><span class="rest-icon">⏸</span><span class="rest-text">${label}</span></div>`;
+    }
     const reps = m.reps ? `<span class="mov-reps">${m.reps}</span>` : '';
-    return `<div class="mov-line">${reps}<span class="mov-name">${m.name}</span></div>`;
+    // Build weight string from rx_men / rx_women
+    let weight = '';
+    if (m.rx_men && m.rx_women) weight = `<span class="mov-weight">(${m.rx_men} / ${m.rx_women})</span>`;
+    else if (m.rx_men)          weight = `<span class="mov-weight">(${m.rx_men})</span>`;
+    else if (m.rx_women)        weight = `<span class="mov-weight">(${m.rx_women})</span>`;
+    return `<div class="mov-line">${reps}<span class="mov-name">${m.name}${weight}</span></div>`;
   }).join('');
-  if (movements.length > 4)
-    html += `<div class="mov-line mov-more">+${movements.length - 4} more</div>`;
-  return html;
-}
-
-function buildEquipHtml(equip) {
-  return equip.filter(e => EQUIP_LABELS[e]).slice(0, 3)
-    .map(e => `<span class="equip-chip ${e}">${EQUIP_LABELS[e]}</span>`).join('');
 }
 
 function buildCard(w) {
@@ -572,9 +568,8 @@ function buildCard(w) {
         <div class="card-movements">${buildMovHtml(w.movements)}</div>
       </div>
       <div class="card-footer">
-        <div class="card-stat">${CLOCK_SVG} ${w.dur}</div>
-        <div class="equip-chips">${buildEquipHtml(w.equip)}</div>
-        ${ARROW_SVG}
+        <span class="card-stat">${CLOCK_SVG} ${w.dur}</span>
+        <span class="card-cta">View Workout →</span>
       </div>
     </a>`;
 }
