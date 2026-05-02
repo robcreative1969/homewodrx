@@ -2207,8 +2207,8 @@ async function loadWorkout() {
 
   try {
     var w;
-    // Pre-load all benchmarks for related-WOD rendering
-    db.getAllBenchmarks().then(function(bms) { window._ALL_BENCHMARKS = bms || []; });
+    // Pre-load all benchmarks for related-WOD rendering (must await so they're ready before render)
+    try { window._ALL_BENCHMARKS = (await db.getAllBenchmarks()) || []; } catch(e) { window._ALL_BENCHMARKS = []; }
 
     if (slug) {
       // Fetch from Supabase first to get all fields (youtube_url, tips, scoring_notes, etc.)
