@@ -162,6 +162,7 @@
     .cat-badge.games     { background: #fff3e0; color: #e65100; }
     .cat-badge.partner   { background: #e8f5e9; color: #2e7d32; }
     .cat-badge.benchmark { background: #eceff1; color: #37474f; }
+    .cat-badge.daily20   { background: #e0f2fe; color: #0369a1; }
     .wod-type-badge {
       font-size: .66rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
       padding: 2px 8px; border-radius: 20px; background: var(--bg); color: var(--muted);
@@ -226,40 +227,29 @@
     .d20-archive { display: none; }
     .d20-archive-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
     }
     .d20-date-card {
       position: relative;
       background: var(--white); border: 1.5px solid var(--border);
       border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.07);
-      padding: 16px; text-decoration: none; color: var(--text);
-      display: flex; flex-direction: column; gap: 8px;
+      text-decoration: none; color: var(--text);
+      display: flex; flex-direction: column; overflow: hidden;
       transition: transform .15s, box-shadow .15s, border-color .15s;
     }
-    .d20-date-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.12); border-color: var(--or); }
+    .d20-date-card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,.11); border-color: var(--or); }
     .d20-today-badge {
-      position: absolute; top: 12px; right: 12px;
+      position: absolute; top: 14px; right: 14px;
       font-size: .62rem; font-weight: 800; letter-spacing: .07em;
       background: var(--or); color: #fff; padding: 2px 8px; border-radius: 20px;
     }
-    .d20-dc-date { font-weight: 700; font-size: .95rem; color: var(--text); }
-    .d20-dc-fmt-badge {
-      font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em;
-      padding: 2px 9px; border-radius: 20px;
-    }
-    .d20-dc-fmt-badge.amrap   { background: #d1fae5; color: #065f46; }
-    .d20-dc-fmt-badge.emom    { background: #dbeafe; color: #1e40af; }
-    .d20-dc-fmt-badge.fortime { background: #fce7f3; color: #9d174d; }
-    .d20-dc-fmt-badge.circuit { background: var(--or-xlight); color: var(--or); }
-    .d20-dc-meta { display: flex; align-items: center; justify-content: space-between; font-size: .78rem; color: var(--muted); margin-top: 2px; }
-    .d20-dc-diff.beginner     { color: #16a34a; font-weight: 700; }
-    .d20-dc-diff.intermediate { color: #d97706; font-weight: 700; }
-    .d20-dc-diff.advanced     { color: var(--or); font-weight: 700; }
-    .d20-dc-arrow { font-size: .78rem; color: var(--muted); margin-top: auto; padding-top: 4px; }
-    .d20-focus-rows { display: flex; flex-direction: column; gap: 3px; margin: 4px 0 2px; }
-    .d20-focus-row { display: flex; gap: 8px; align-items: baseline; font-size: .82rem; color: var(--text); }
-    .d20-fr-label { font-weight: 700; color: var(--or); min-width: 54px; font-size: .74rem; text-transform: uppercase; letter-spacing: .03em; flex-shrink: 0; }
+    .d20-dc-diff.beginner     { color: #16a34a; font-weight: 600; }
+    .d20-dc-diff.intermediate { color: #d97706; font-weight: 600; }
+    .d20-dc-diff.advanced     { color: var(--or); font-weight: 600; }
+    .d20-meta-rows { display: flex; flex-direction: column; gap: 6px; }
+    .d20-meta-row { display: flex; gap: 8px; align-items: baseline; font-size: .86rem; }
+    .d20-meta-label { font-weight: 700; color: var(--muted); min-width: 58px; font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; flex-shrink: 0; }
 
     @media (max-width: 700px) {
       .page-header-inner { padding: 20px 16px 0; }
@@ -267,7 +257,7 @@
       .page-title { font-size: 2.2rem; }
       .cat-tab { padding: 11px 14px; font-size: .82rem; }
       .wod-grid { grid-template-columns: 1fr; }
-      .d20-archive-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+      .d20-archive-grid { grid-template-columns: 1fr; }
     }
   </style>
 
@@ -618,7 +608,6 @@ function updateTabCounts() {
 const D20_FMT  = { 0:'Circuit', 1:'AMRAP', 2:'For Time', 3:'EMOM', 4:'AMRAP', 5:'For Time', 6:'Circuit' };
 const D20_DIFF = { 0:'Beginner', 1:'Intermediate', 2:'Advanced', 3:'Intermediate', 4:'Advanced', 5:'Advanced', 6:'Intermediate' };
 const D20_BODY = { 0:'Core', 1:'Full Body', 2:'Lower Body', 3:'Upper Body', 4:'Cardio', 5:'Full Body', 6:'Legs & Glutes' };
-const D20_FMT_CLS = { 'AMRAP':'amrap', 'EMOM':'emom', 'For Time':'fortime', 'Circuit':'circuit' };
 
 // buildD20Archive — accepts optional search query, returns count of matched cards
 function buildD20Archive(q) {
@@ -632,8 +621,8 @@ function buildD20Archive(q) {
     const fmt     = D20_FMT[dow];
     const diff    = D20_DIFF[dow];
     const body    = D20_BODY[dow];
-    const cls     = D20_FMT_CLS[fmt] || 'circuit';
     const link    = i === 0 ? '/daily-wod.html' : '/daily-wod.html?date=' + dateStr;
+    const scheme  = '20 MIN ' + fmt.toUpperCase();
 
     // Filter by search query against date label, format, body focus, difficulty
     if (q) {
@@ -642,16 +631,26 @@ function buildD20Archive(q) {
     }
 
     cards.push(
-      '<a class="d20-date-card" href="' + link + '">' +
+      '<a class="d20-date-card wod-card" href="' + link + '">' +
         (i === 0 ? '<div class="d20-today-badge">TODAY</div>' : '') +
-        '<div class="d20-dc-date">' + label + '</div>' +
-        '<div class="d20-dc-fmt"><span class="d20-dc-fmt-badge ' + cls + '">' + fmt + '</span></div>' +
-        '<div class="d20-focus-rows">' +
-          '<div class="d20-focus-row"><span class="d20-fr-label">Focus</span><span>' + body + '</span></div>' +
-          '<div class="d20-focus-row"><span class="d20-fr-label">Level</span><span class="d20-dc-diff ' + diff.toLowerCase() + '">' + diff + '</span></div>' +
-          '<div class="d20-focus-row"><span class="d20-fr-label">Duration</span><span>20 min</span></div>' +
+        '<div class="card-head">' +
+          '<h2 class="card-name">' + label + '</h2>' +
+          '<div class="card-badges">' +
+            '<span class="cat-badge daily20">Daily 20</span>' +
+            '<span class="wod-type-badge">' + fmt + '</span>' +
+          '</div>' +
         '</div>' +
-        '<div class="d20-dc-arrow">View WOD →</div>' +
+        '<div class="card-body">' +
+          '<div class="card-scheme">' + scheme + '</div>' +
+          '<div class="d20-meta-rows">' +
+            '<div class="d20-meta-row"><span class="d20-meta-label">Focus</span><span>' + body + '</span></div>' +
+            '<div class="d20-meta-row"><span class="d20-meta-label">Level</span><span class="d20-dc-diff ' + diff.toLowerCase() + '">' + diff + '</span></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="card-footer">' +
+          '<span class="card-stat">' + CLOCK_SVG + ' 20 min</span>' +
+          '<span class="card-cta">View WOD →</span>' +
+        '</div>' +
       '</a>'
     );
   }
