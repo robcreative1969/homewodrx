@@ -516,6 +516,16 @@
   color: #E74C3C; border-radius: 7px; padding: 10px 14px;
   font-size: 13px; margin-bottom: 14px; display: none;
 }
+/* ── Warm-Up / Cool-Down prep rows ── */
+.prep-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 9px 0; border-bottom: 1px solid var(--border);
+  text-decoration: none; color: inherit; font-size: .875rem; gap: 8px;
+}
+.prep-row:last-child { border-bottom: none; }
+.prep-row:hover .prep-name { color: var(--or); }
+.prep-name { font-weight: 500; }
+.prep-reps { color: var(--muted); font-size: .78rem; white-space: nowrap; flex-shrink: 0; }
 </style>
 
 <!-- ── FOOTER ── -->
@@ -1284,6 +1294,16 @@ function renderBenchmarkLayout(w) {
           ? '<div class="bc span3"><div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><circle cx="10" cy="10" r="8"/><path d="M10 14v-1"/><path d="M10 10c0-1.5 2-2.5 2-4a2 2 0 00-4 0"/></svg></div>Frequently Asked</div>' + faqHtml + '</div>'
           : '') +
 
+        // Warm-Up + Cool-Down (async, hidden until loaded)
+        '<div class="bc span3" id="warmup-card" style="display:none">' +
+          '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M13 2L3 14h9l-1 4 10-12h-9l1-4z"/></svg></div>Warm-Up</div>' +
+          '<div id="warmup-container"></div>' +
+        '</div>' +
+        '<div class="bc span3" id="cooldown-card" style="display:none">' +
+          '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M12 21c-4.5-2.5-8-7-8-11a8 8 0 0116 0c0 4-3.5 8.5-8 11z"/></svg></div>Cool-Down</div>' +
+          '<div id="cooldown-container"></div>' +
+        '</div>' +
+
         // You Might Also Like — full width span6
         '<div class="bc span6" id="related-wods-card">' +
           '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><rect x="2" y="2" width="7" height="7" rx="1"/><rect x="11" y="2" width="7" height="7" rx="1"/><rect x="2" y="11" width="7" height="7" rx="1"/><rect x="11" y="11" width="7" height="7" rx="1"/></svg></div>You Might Also Like</div>' +
@@ -1302,6 +1322,7 @@ function renderBenchmarkLayout(w) {
   document.getElementById('workout-main').innerHTML = pageHeaderHtml + pageWrapHtml;
   renderRelatedWorkouts(document.getElementById('related-wods-container'), w);
   loadMyHistory();
+  loadWarmupCooldown(w);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1399,6 +1420,16 @@ function renderUserWodLayout(w) {
           '<div class="equip-chips-wrap">' + equipChips + '</div>' +
         '</div>' +
 
+        // Warm-Up + Cool-Down (async, hidden until loaded)
+        '<div class="bc span3" id="warmup-card" style="display:none">' +
+          '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M13 2L3 14h9l-1 4 10-12h-9l1-4z"/></svg></div>Warm-Up</div>' +
+          '<div id="warmup-container"></div>' +
+        '</div>' +
+        '<div class="bc span3" id="cooldown-card" style="display:none">' +
+          '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M12 21c-4.5-2.5-8-7-8-11a8 8 0 0116 0c0 4-3.5 8.5-8 11z"/></svg></div>Cool-Down</div>' +
+          '<div id="cooldown-container"></div>' +
+        '</div>' +
+
         '<div class="bc span6" id="related-wods-card">' +
           '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><rect x="2" y="2" width="7" height="7" rx="1"/><rect x="11" y="2" width="7" height="7" rx="1"/><rect x="2" y="11" width="7" height="7" rx="1"/><rect x="11" y="11" width="7" height="7" rx="1"/></svg></div>You Might Also Like</div>' +
           '<div id="related-wods-container"><div style="color:var(--muted);font-size:.85rem">Loading&hellip;</div></div>' +
@@ -1415,6 +1446,83 @@ function renderUserWodLayout(w) {
   document.getElementById('workout-main').innerHTML = pageHeaderHtml + pageWrapHtml;
   renderRelatedWorkouts(document.getElementById('related-wods-container'), w);
   loadMyHistory();
+  loadWarmupCooldown(w);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// WARM-UP / COOL-DOWN
+// ─────────────────────────────────────────────────────────────────────────────
+async function loadWarmupCooldown(w) {
+  var warmupCard      = document.getElementById('warmup-card');
+  var cooldownCard    = document.getElementById('cooldown-card');
+  var warmupContainer = document.getElementById('warmup-container');
+  var cooldownContainer = document.getElementById('cooldown-container');
+  if (!warmupContainer && !cooldownContainer) return;
+  if (!supabaseClient) return;
+
+  try {
+    // Clean WOD movement names (strip parenthetical qualifiers e.g. "Push-Ups (Spades)" → "Push-Ups")
+    var wodMovNames = (w.movements || []).map(function(m) {
+      return (m.name || '').replace(/\s*\([^)]*\)\s*/g, '').trim();
+    }).filter(Boolean);
+    if (!wodMovNames.length) return;
+
+    // Fetch muscle_groups for the WOD's movements
+    var movRes = await supabaseClient
+      .from('movements')
+      .select('name, muscle_groups')
+      .in('name', wodMovNames);
+    if (movRes.error || !movRes.data || !movRes.data.length) return;
+
+    // Aggregate unique muscle group tags (exclude 'full' — too generic for targeting)
+    var muscleSet = {};
+    movRes.data.forEach(function(m) {
+      (m.muscle_groups || []).forEach(function(mg) { if (mg !== 'full') muscleSet[mg] = true; });
+    });
+    var muscleTags = Object.keys(muscleSet);
+    if (!muscleTags.length) return;
+
+    // Fetch cool-down stretches that overlap with WOD muscle groups
+    var stretchRes = await supabaseClient
+      .from('stretches')
+      .select('name, slug, hold_intermediate')
+      .overlaps('focus', muscleTags)
+      .limit(5);
+
+    // Fetch warm-up movements: eligible + overlaps muscle tags + not already in the WOD
+    var warmupRes = await supabaseClient
+      .from('movements')
+      .select('name, slug')
+      .eq('warmup_eligible', true)
+      .overlaps('muscle_groups', muscleTags)
+      .not('name', 'in', '(' + wodMovNames.map(function(n) { return '"' + n + '"'; }).join(',') + ')')
+      .limit(4);
+
+    // Render warm-up card
+    if (warmupRes.data && warmupRes.data.length && warmupCard && warmupContainer) {
+      warmupContainer.innerHTML = warmupRes.data.map(function(m) {
+        return '<a class="prep-row" href="/movements/' + escHtml(m.slug || '') + '">' +
+          '<span class="prep-name">' + escHtml(m.name) + '</span>' +
+          '<span class="prep-reps">2–3 sets &times; 10 reps</span>' +
+        '</a>';
+      }).join('');
+      warmupCard.style.display = '';
+    }
+
+    // Render cool-down card
+    if (stretchRes.data && stretchRes.data.length && cooldownCard && cooldownContainer) {
+      cooldownContainer.innerHTML = stretchRes.data.map(function(s) {
+        var hold = s.hold_intermediate ? s.hold_intermediate + ' sec' : '30–45 sec';
+        return '<a class="prep-row" href="/stretches/' + escHtml(s.slug || '') + '">' +
+          '<span class="prep-name">' + escHtml(s.name) + '</span>' +
+          '<span class="prep-reps">' + hold + '</span>' +
+        '</a>';
+      }).join('');
+      cooldownCard.style.display = '';
+    }
+  } catch(e) {
+    console.warn('loadWarmupCooldown error:', e);
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
