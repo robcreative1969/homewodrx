@@ -215,25 +215,41 @@
 .scale-badge.scaled   { background: #dbeafe; color: #1d4ed8; border: 1px solid #93c5fd; }
 .scale-badge.beginner { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
 
-/* Workouts tab */
-.wod-mini-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
-.wod-mini-card {
-  border: 1px solid var(--border); border-radius: 8px;
-  padding: 14px 16px; text-decoration: none; color: var(--text);
-  background: #f9fafb; transition: all .15s; display: block;
+/* Workouts tab — canonical card grid */
+.wod-mini-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.wod-card {
+  background: var(--white); border-radius: 14px; border: 1.5px solid var(--border);
+  box-shadow: 0 2px 12px rgba(0,0,0,.07); overflow: hidden;
+  display: flex; flex-direction: column;
+  text-decoration: none; color: var(--text);
+  transition: transform .15s, box-shadow .15s, border-color .15s;
 }
-.wod-mini-card:hover { border-color: var(--or); background: var(--or-xlight); }
-.wod-mini-name { font-family: var(--font-head); font-size: 1.2rem; letter-spacing: .04em; color: var(--text); margin-bottom: 4px; }
-.wod-mini-card:hover .wod-mini-name { color: var(--or); }
-.wod-mini-meta { font-size: .72rem; color: var(--muted); font-weight: 600; }
-.wod-mini-type { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; margin-top: 6px; }
-.wod-mini-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; margin-top: 4px; margin-left: 4px; }
-.wod-mini-badge.girl      { background: #fce7f3; color: #be185d; border: 1px solid #fbcfe8; }
-.wod-mini-badge.hero      { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
-.wod-mini-badge.open      { background: #dbeafe; color: #1d4ed8; border: 1px solid #93c5fd; }
-.wod-mini-badge.games     { background: #ede9fe; color: #5b21b6; border: 1px solid #c4b5fd; }
-.wod-mini-badge.partner   { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
-.wod-mini-badge.benchmark { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+.wod-card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,.11); border-color: var(--or); }
+.wod-card .card-head { padding: 16px 18px 0; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.wod-card .card-name { font-family: var(--font-head); font-size: 1.75rem; letter-spacing: .04em; line-height: 1; flex: 1; margin: 0; }
+.wod-card .card-badges { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+.cat-badge { font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; padding: 3px 9px; border-radius: 20px; }
+.cat-badge.hero      { background: #fde8e8; color: #c41212; }
+.cat-badge.girl      { background: #f3e8ff; color: #7b1fa2; }
+.cat-badge.open      { background: #e8f0fe; color: #1565c0; }
+.cat-badge.games     { background: #fff3e0; color: #e65100; }
+.cat-badge.partner   { background: #e8f5e9; color: #2e7d32; }
+.cat-badge.benchmark { background: #eceff1; color: #37474f; }
+.cat-badge.daily20   { background: #e0f2fe; color: #0369a1; }
+.cat-badge.community { background: #f0fdf4; color: #166534; }
+.wod-type-badge { font-size: .66rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 2px 8px; border-radius: 20px; background: var(--bg); color: var(--muted); }
+.wod-card .card-body { padding: 10px 18px 14px; flex: 1; display: flex; flex-direction: column; }
+.wod-card .card-scheme { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-bottom: 6px; }
+.wod-card .mov-line { display: flex; align-items: baseline; gap: 6px; padding: 2px 0; }
+.wod-card .mov-reps { font-size: .8rem; font-weight: 700; color: var(--or); min-width: 32px; flex-shrink: 0; }
+.wod-card .mov-name { font-size: .88rem; color: var(--text); }
+.wod-card .mov-weight { font-size: .75rem; color: var(--muted); font-style: italic; margin-left: 3px; }
+.wod-card .rest-line { opacity: .7; }
+.wod-card .rest-icon { font-size: .72rem; color: var(--muted); flex-shrink: 0; }
+.wod-card .rest-text { font-size: .78rem; color: var(--muted); font-style: italic; }
+.wod-card .card-footer { padding: 10px 18px 14px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.wod-card .card-stat { display: flex; align-items: center; gap: 5px; font-size: .78rem; color: var(--muted); font-weight: 600; }
+.wod-card .card-cta { font-size: .8rem; font-weight: 700; color: var(--or); }
 .wod-mini-badge.daily     { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
 .wod-mini-badge.community { background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd; }
 
@@ -726,6 +742,27 @@ const MOVEMENT_FAMILIES = {
 function slugify(name) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
+
+const CLOCK_SVG = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
+const D20_FMT_LABEL = { amrap:'AMRAP', emom:'EMOM', fortime:'For Time', circuit:'Circuit' };
+const WOD_CAT_LABELS = { hero:'Hero', girl:'Girl', open:'Open', games:'Games', partner:'Partner', benchmark:'Benchmark' };
+
+function buildMovHtml(movements) {
+  if (!movements || !movements.length) return '';
+  return movements.map(m => {
+    if (m.isRest) {
+      const label = m.note ? `${m.reps} rest ${m.note}` : `${m.reps} rest between rounds`;
+      return `<div class="mov-line rest-line"><span class="rest-icon">⏸</span><span class="rest-text">${label}</span></div>`;
+    }
+    const name = m.name || m.movement || '';
+    const reps = m.reps ? `<span class="mov-reps">${m.reps}</span>` : '';
+    let weight = '';
+    if (m.rx_men && m.rx_women) weight = `<span class="mov-weight">(${m.rx_men} / ${m.rx_women})</span>`;
+    else if (m.rx_men)          weight = `<span class="mov-weight">(${m.rx_men})</span>`;
+    else if (m.rx_women)        weight = `<span class="mov-weight">(${m.rx_women})</span>`;
+    return `<div class="mov-line">${reps}<span class="mov-name">${name}${weight}</span></div>`;
+  }).join('');
+}
 function titleCase(slug) {
   return slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 }
@@ -1118,32 +1155,73 @@ async function loadMovementPage() {
       </div>`;
   } else {
     const benchmarkCards = matchingBenchmarks.map(w => {
-      const catClass = CATEGORY_LABELS[w.category] || 'benchmark';
-      return `<a href="/workouts/${w.slug}" class="wod-mini-card">
-        <div class="wod-mini-name">${w.name}</div>
-        <div class="wod-mini-meta">${typeof formatWodMeta === 'function' ? formatWodMeta(w) : (w.format || '')}</div>
-        <span class="wod-mini-type">${w.format || 'WOD'}</span>
-        <span class="wod-mini-badge ${catClass}">${catClass.charAt(0).toUpperCase() + catClass.slice(1)} WOD</span>
+      const cat = w.category || 'benchmark';
+      const catLabel = WOD_CAT_LABELS[cat] || cat;
+      const scheme = w.scheme || '';
+      return `<a href="/workouts/${w.slug}" class="wod-card">
+        <div class="card-head">
+          <h2 class="card-name">${w.name}</h2>
+          <div class="card-badges">
+            <span class="cat-badge ${cat}">${catLabel}</span>
+            ${w.format ? `<span class="wod-type-badge">${w.format}</span>` : ''}
+          </div>
+        </div>
+        <div class="card-body">
+          ${scheme ? `<div class="card-scheme">${scheme}</div>` : ''}
+          <div class="card-movements">${buildMovHtml(w.movements || [])}</div>
+        </div>
+        <div class="card-footer">
+          <span class="card-stat">${CLOCK_SVG} ${w.duration_estimate || ''}</span>
+          <span class="card-cta">View Workout →</span>
+        </div>
       </a>`;
     }).join('');
 
-    const userCards = matchingUserWorkouts.map(w =>
-      `<a href="/workout.html?id=${w.id}" class="wod-mini-card">
-        <div class="wod-mini-name">${w.title || w.name || 'Community WOD'}</div>
-        <div class="wod-mini-meta">${w.format || 'Custom'}${w.username ? ' · by ' + w.username : ''}</div>
-        <span class="wod-mini-type">${w.format || 'Custom'}</span>
-        <span class="wod-mini-badge community">Community</span>
-      </a>`
-    ).join('');
+    const userCards = matchingUserWorkouts.map(w => {
+      const fmt = w.format || 'Custom';
+      return `<a href="/workout.html?id=${w.id}" class="wod-card">
+        <div class="card-head">
+          <h2 class="card-name">${w.title || w.name || 'Community WOD'}</h2>
+          <div class="card-badges">
+            <span class="cat-badge community">Community</span>
+            ${fmt ? `<span class="wod-type-badge">${fmt}</span>` : ''}
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-movements">${buildMovHtml(w.movements || [])}</div>
+        </div>
+        <div class="card-footer">
+          <span class="card-stat">${w.username ? `by ${w.username}` : 'Community WOD'}</span>
+          <span class="card-cta">View WOD →</span>
+        </div>
+      </a>`;
+    }).join('');
 
-    const dailyCards = matchingDailyWods.map(w =>
-      `<a href="/daily-wod?date=${w._date}" class="wod-mini-card">
-        <div class="wod-mini-name">${w.name}</div>
-        <div class="wod-mini-meta">${typeof formatWodMeta === 'function' ? formatWodMeta(w) : (w.format || '')}</div>
-        <span class="wod-mini-type">${w.format || 'Daily'}</span>
-        <span class="wod-mini-badge daily">Daily 20</span>
-      </a>`
-    ).join('');
+    const dailyCards = matchingDailyWods.map(w => {
+      const fmtKey = w.format || 'amrap';
+      const fmtLabel = D20_FMT_LABEL[fmtKey] || fmtKey;
+      const scheme = fmtKey === 'fortime' ? (w.difficulty === 'advanced' ? '4 ROUNDS FOR TIME' : '3 ROUNDS FOR TIME')
+                   : fmtKey === 'emom'    ? 'EMOM 20'
+                   : fmtKey === 'amrap'   ? 'AMRAP 20'
+                   : '4 ROUNDS · 60 SEC REST';
+      return `<a href="/daily-wod?date=${w._date}" class="wod-card">
+        <div class="card-head">
+          <h2 class="card-name">${w.name}</h2>
+          <div class="card-badges">
+            <span class="cat-badge daily20">Daily 20</span>
+            <span class="wod-type-badge">${fmtLabel}</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-scheme">${scheme}</div>
+          <div class="card-movements">${buildMovHtml(w.movements || [])}</div>
+        </div>
+        <div class="card-footer">
+          <span class="card-stat">${CLOCK_SVG} 20 min</span>
+          <span class="card-cta">View WOD →</span>
+        </div>
+      </a>`;
+    }).join('');
 
     document.getElementById('wod-grid').innerHTML = benchmarkCards + userCards + dailyCards;
   }
