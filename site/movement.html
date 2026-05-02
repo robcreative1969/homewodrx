@@ -938,8 +938,8 @@ async function loadMovementPage() {
   const muscles     = info?.muscles   || '';
   const tips        = Array.isArray(info?.tips)   ? info.tips   : (info?.tips ? [info.tips] : []);
   const equipment   = Array.isArray(info?.equipment) ? info.equipment : (info?.equipment ? [info.equipment] : []);
-  const scaling     = []; // scaling_options is text, not structured yet
-  const faults      = []; // common_faults is text, not structured yet
+  const scaling     = (() => { try { return info?.scaling_options ? JSON.parse(info.scaling_options) : []; } catch(e) { return []; } })();
+  const faults      = (() => { try { return info?.common_faults  ? JSON.parse(info.common_faults)   : []; } catch(e) { return []; } })();
   const faq         = [];
   const related     = [];
 
@@ -1070,9 +1070,8 @@ async function loadMovementPage() {
       </li>`
     ).join('');
   } else {
-    document.getElementById('cues-list').innerHTML =
-      `<div class="tab-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg><p>Coaching cues not yet available for this movement.</p></div>`;
-    document.getElementById('tab-btn-cues').style.opacity = '.55';
+    document.getElementById('cues-list').innerHTML = '';
+    document.getElementById('tab-btn-cues').style.display = 'none';
   }
 
   /* ── 7. Scaling tab ── */
@@ -1092,9 +1091,8 @@ async function loadMovementPage() {
       noteEl.style.display = '';
     }
   } else {
-    document.getElementById('scaling-tbody').innerHTML =
-      `<tr><td colspan="3"><div class="tab-empty" style="padding:24px 0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:28px;height:28px;opacity:.3;display:block;margin:0 auto 8px"><path d="M4 6h16M4 10h16M4 14h16M4 18h7"/></svg><p>Scaling options not yet available for this movement.</p></div></td></tr>`;
-    document.getElementById('tab-btn-scaling').style.opacity = '.55';
+    document.getElementById('scaling-tbody').innerHTML = '';
+    document.getElementById('tab-btn-scaling').style.display = 'none';
   }
 
   /* ── 8. Workouts tab — benchmarks + user WODs + daily WODs ── */
@@ -1241,9 +1239,8 @@ async function loadMovementPage() {
       </li>`
     ).join('');
   } else {
-    document.getElementById('faults-list').innerHTML =
-      `<div class="tab-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p>Common faults not yet available for this movement.</p></div>`;
-    document.getElementById('tab-btn-faults').style.opacity = '.55';
+    document.getElementById('faults-list').innerHTML = '';
+    document.getElementById('tab-btn-faults').style.display = 'none';
   }
 
   /* ── 10. FAQ card ── */
