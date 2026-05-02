@@ -111,6 +111,10 @@
 .equip-below-wb { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); padding: 14px 20px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 .equip-below-label { font-family: var(--font-head); font-size: .9rem; letter-spacing: .06em; color: var(--muted); text-transform: uppercase; flex-shrink: 0; }
 
+/* Warm-Up + Cool-Down side by side under the whiteboard */
+.wc-row { display: flex; gap: 12px; }
+.wc-row .bc { flex: 1; min-width: 0; }
+
 /* ══ WOD HERO CARD (replaces dark whiteboard) ══ */
 .wod-hero-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 32px 24px; box-shadow: var(--shadow); }
 .wod-hero-eyebrow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
@@ -314,6 +318,7 @@
   .meta-stack { display: flex; flex-direction: column; gap: 10px; }
   .bento { grid-template-columns: 1fr; gap: 12px; }
   .span2, .span3, .span4, .span6 { grid-column: span 1; }
+  .wc-row { flex-direction: column; }
   .related-grid { grid-template-columns: repeat(3, 200px); overflow-x: auto; padding-bottom: 8px; -webkit-overflow-scrolling: touch; }
   .breadcrumb { font-size: .72rem; }
 }
@@ -1192,8 +1197,16 @@ function renderBenchmarkLayout(w) {
     var firstRepsRaw = String(movements[0].reps || '');
     var rNums = firstRepsRaw.match(/\d+/g);
     if (rNums && rNums.length === 1) {
-      // Single number = rounds — add label so "4 For Time" doesn't look like a format name
-      repsLabel = rNums[0] + ' Rounds';
+      // Check if this is a chipper: all movements share the same single rep count
+      // and there are 5+ movements (e.g. Filthy Fifty = 50 reps × 10 movements, not 50 rounds)
+      var isChipper = movements.length >= 5 && movements.every(function(m) {
+        var r = String(m.reps || '').match(/\d+/g);
+        return r && r.length === 1 && r[0] === rNums[0];
+      });
+      if (!isChipper) {
+        // Single number = rounds — add label so "4 For Time" doesn't look like a format name
+        repsLabel = rNums[0] + ' Rounds';
+      }
     } else if (rNums && rNums.length > 1) {
       repsLabel = rNums.join('–');
     } else {
@@ -1265,21 +1278,21 @@ function renderBenchmarkLayout(w) {
                 '<div class="equip-chips">' + equipChips + '</div>' +
               '</div>'
             : '') +
+          '<div class="wc-row">' +
+            '<div class="bc" id="warmup-card" style="display:none">' +
+              '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M13 2L3 14h9l-1 4 10-12h-9l1-4z"/></svg></div>Warm-Up</div>' +
+              '<div id="warmup-container"></div>' +
+            '</div>' +
+            '<div class="bc" id="cooldown-card" style="display:none">' +
+              '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M12 21c-4.5-2.5-8-7-8-11a8 8 0 0116 0c0 4-3.5 8.5-8 11z"/></svg></div>Cool-Down</div>' +
+              '<div id="cooldown-container"></div>' +
+            '</div>' +
+          '</div>' +
         '</div>' +
         buildMetaStackHTML(w, true) +
       '</div>' +
 
       '<div class="bento">' +
-
-        // Warm-Up + Cool-Down (async, hidden until loaded) — first, right below whiteboard
-        '<div class="bc span3" id="warmup-card" style="display:none">' +
-          '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M13 2L3 14h9l-1 4 10-12h-9l1-4z"/></svg></div>Warm-Up</div>' +
-          '<div id="warmup-container"></div>' +
-        '</div>' +
-        '<div class="bc span3" id="cooldown-card" style="display:none">' +
-          '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M12 21c-4.5-2.5-8-7-8-11a8 8 0 0116 0c0 4-3.5 8.5-8 11z"/></svg></div>Cool-Down</div>' +
-          '<div id="cooldown-container"></div>' +
-        '</div>' +
 
         // About — full width span6
         '<div class="bc span6">' +
@@ -1400,21 +1413,21 @@ function renderUserWodLayout(w) {
         '<div class="hero-left">' +
           buildWodHeroCardHTML(w) +
           equipBelowHtml +
+          '<div class="wc-row">' +
+            '<div class="bc" id="warmup-card" style="display:none">' +
+              '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M13 2L3 14h9l-1 4 10-12h-9l1-4z"/></svg></div>Warm-Up</div>' +
+              '<div id="warmup-container"></div>' +
+            '</div>' +
+            '<div class="bc" id="cooldown-card" style="display:none">' +
+              '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M12 21c-4.5-2.5-8-7-8-11a8 8 0 0116 0c0 4-3.5 8.5-8 11z"/></svg></div>Cool-Down</div>' +
+              '<div id="cooldown-container"></div>' +
+            '</div>' +
+          '</div>' +
         '</div>' +
         buildMetaStackHTML(w, false) +
       '</div>' +
 
       '<div class="bento">' +
-
-        // Warm-Up + Cool-Down (async, hidden until loaded) — first, right below whiteboard
-        '<div class="bc span3" id="warmup-card" style="display:none">' +
-          '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M13 2L3 14h9l-1 4 10-12h-9l1-4z"/></svg></div>Warm-Up</div>' +
-          '<div id="warmup-container"></div>' +
-        '</div>' +
-        '<div class="bc span3" id="cooldown-card" style="display:none">' +
-          '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M12 21c-4.5-2.5-8-7-8-11a8 8 0 0116 0c0 4-3.5 8.5-8 11z"/></svg></div>Cool-Down</div>' +
-          '<div id="cooldown-container"></div>' +
-        '</div>' +
 
         (scalingHtml
           ? '<div class="bc span3"><div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><line x1="10" y1="2" x2="10" y2="18"/><line x1="3" y1="7" x2="17" y2="7"/><line x1="5" y1="13" x2="15" y2="13"/></svg></div>Scaling Options</div>' + scalingHtml + '</div>'
