@@ -422,6 +422,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/js/config.js"></script>
 <script src="/js/db.js"></script>
+<script src="/js/movement-db.js"></script>
+<script src="/js/daily-wod.js"></script>
 <script src="/js/nav.js"></script>
 
 <script>
@@ -609,8 +611,60 @@ const D20_FMT  = { 0:'Circuit', 1:'AMRAP', 2:'For Time', 3:'EMOM', 4:'AMRAP', 5:
 const D20_DIFF = { 0:'Beginner', 1:'Intermediate', 2:'Advanced', 3:'Intermediate', 4:'Advanced', 5:'Advanced', 6:'Intermediate' };
 const D20_BODY = { 0:'Core', 1:'Full Body', 2:'Lower Body', 3:'Upper Body', 4:'Cardio', 5:'Full Body', 6:'Legs & Glutes' };
 
-// buildD20Archive — accepts optional search query, returns count of matched cards
-function buildD20Archive(q) {
+// ── D20 data pre-load ─────────────────────────────────────────────────────────
+// One Supabase fetch for the movement pool + config — same data daily-wod.html uses.
+// Cached for the page session. No per-card queries needed.
+let _d20MovDB   = null;
+let _d20Config  = null;
+let d20DataReady = null;  // Promise — resolves when data is loaded
+
+async function preloadD20() {
+  if (!supabaseClient) await initSupabase();
+  [_d20Config, _d20MovDB] = await Promise.all([
+    DailyWOD.getConfig(),
+    DailyWOD._loadMovements()
+  ]);
+}
+
+// Synchronous generator — uses cached data + DailyWOD's seeded RNG/pickers.
+// Mirrors DailyWOD.generate() exactly (same RNG consumption order), skips override check.
+function generateD20Sync(dateStr, dow) {
+  if (!_d20MovDB || !_d20Config) return null;
+
+  const seed = DailyWOD.getSeedForDate(dateStr);
+  const rng  = DailyWOD.seededRng(seed);
+
+  const difficulty = _d20Config.difficultyByDay[dow] || 'intermediate';
+  const bodyFocus  = _d20Config.bodyFocusByDay[dow]  || 'full-body';
+  const format     = _d20Config.formatByDay[dow]     || 'amrap';
+  const equipment  = _d20Config.equipment || ['bodyweight'];
+
+  const pool = DailyWOD._buildPool(equipment, difficulty, bodyFocus, rng, _d20MovDB);
+
+  let workout;
+  if (format === 'amrap')        workout = DailyWOD._genAMRAP(pool, difficulty, 20, bodyFocus, rng);
+  else if (format === 'emom')    workout = DailyWOD._genEMOM(pool, difficulty, 20, bodyFocus, rng);
+  else if (format === 'fortime') workout = DailyWOD._genForTime(pool, difficulty, rng);
+  else                           workout = DailyWOD._genCircuit(pool, difficulty, 20, bodyFocus, rng);
+
+  if (workout.rows) workout.rows.forEach(r => delete r._eq);
+  return workout;
+}
+
+// Build movement HTML for D20 card rows
+function buildD20MovHtml(rows) {
+  if (!rows || !rows.length) return '';
+  return rows.map(r => {
+    // EMOM reps are verbose like "Min 1 (repeat): 15 reps" — strip "(repeat)" for card display
+    const reps = String(r.reps).replace(' (repeat)', '');
+    return `<div class="mov-line"><span class="mov-reps">${reps}</span><span class="mov-name">${r.movement}</span></div>`;
+  }).join('');
+}
+
+// buildD20Archive — async; awaits pre-loaded data then renders synchronously
+async function buildD20Archive(q) {
+  await d20DataReady;
+
   const cards = [];
   const today = new Date();
   for (let i = 0; i < 90; i++) {
@@ -622,13 +676,23 @@ function buildD20Archive(q) {
     const diff    = D20_DIFF[dow];
     const body    = D20_BODY[dow];
     const link    = i === 0 ? '/daily-wod.html' : '/daily-wod.html?date=' + dateStr;
-    const scheme  = '20 MIN ' + fmt.toUpperCase();
+
+    // Human-readable scheme
+    let scheme;
+    if (fmt === 'AMRAP')         scheme = 'AMRAP 20';
+    else if (fmt === 'EMOM')     scheme = 'EMOM 20';
+    else if (fmt === 'For Time') scheme = (diff === 'Advanced' ? '4' : '3') + ' ROUNDS FOR TIME';
+    else                         scheme = '4 ROUNDS · 60 SEC REST';
 
     // Filter by search query against date label, format, body focus, difficulty
     if (q) {
       const searchable = (label + ' ' + fmt + ' ' + body + ' ' + diff).toLowerCase();
       if (!searchable.includes(q.toLowerCase())) continue;
     }
+
+    // Generate actual movements using Supabase-backed DailyWOD engine
+    const wod     = generateD20Sync(dateStr, dow);
+    const movHtml = wod ? buildD20MovHtml(wod.rows) : '';
 
     cards.push(
       '<a class="d20-date-card wod-card" href="' + link + '">' +
@@ -642,10 +706,7 @@ function buildD20Archive(q) {
         '</div>' +
         '<div class="card-body">' +
           '<div class="card-scheme">' + scheme + '</div>' +
-          '<div class="d20-meta-rows">' +
-            '<div class="d20-meta-row"><span class="d20-meta-label">Focus</span><span>' + body + '</span></div>' +
-            '<div class="d20-meta-row"><span class="d20-meta-label">Level</span><span class="d20-dc-diff ' + diff.toLowerCase() + '">' + diff + '</span></div>' +
-          '</div>' +
+          '<div class="card-movements">' + movHtml + '</div>' +
         '</div>' +
         '<div class="card-footer">' +
           '<span class="card-stat">' + CLOCK_SVG + ' 20 min</span>' +
@@ -672,9 +733,10 @@ function render() {
   updateTabCounts();
 
   if (isD20) {
-    const d20Count = buildD20Archive(searchQuery);
-    document.getElementById('shown-count').textContent = d20Count;
-    document.getElementById('empty-state').style.display = 'none';
+    buildD20Archive(searchQuery).then(d20Count => {
+      document.getElementById('shown-count').textContent = d20Count;
+      document.getElementById('empty-state').style.display = 'none';
+    });
     return;
   }
 
@@ -682,17 +744,19 @@ function render() {
   const grid  = document.getElementById('wod-grid');
   const empty = document.getElementById('empty-state');
 
-  let totalShown = list.length;
-  if (isAll) {
-    totalShown += buildD20Archive(searchQuery);
-  }
+  const benchmarkCount = list.length;
+  document.getElementById('shown-count').textContent = benchmarkCount;
 
-  document.getElementById('shown-count').textContent = totalShown;
+  if (isAll) {
+    buildD20Archive(searchQuery).then(d20Count => {
+      document.getElementById('shown-count').textContent = benchmarkCount + d20Count;
+    });
+  }
 
   if (list.length === 0) {
     grid.innerHTML = '';
-    empty.style.display = (!isAll || totalShown === 0) ? '' : 'none';
-    if (!isAll || totalShown === 0) empty.classList.add('visible');
+    empty.style.display = !isAll ? '' : 'none';
+    if (!isAll) empty.classList.add('visible');
   } else {
     empty.style.display = 'none';
     empty.classList.remove('visible');
@@ -814,6 +878,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('sort-select').addEventListener('change', e => { sortBy = e.target.value; render(); });
 
   loadFromSupabase(); // nav.js handles auth; this does the first real render
+  d20DataReady = preloadD20(); // pre-fetch movement pool + config for D20 cards
 });
 </script>
 <script src="/js/footer.js"></script>
