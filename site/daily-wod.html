@@ -88,6 +88,12 @@
 .share-pill.copied { border-color: #16a34a; color: #16a34a; background: #f0fdf4; }
 
 /* ══ BENTO ══ */
+/* ── Warm-Up / Cool-Down prep rows ── */
+.prep-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border); text-decoration: none; color: inherit; font-size: .875rem; gap: 8px; }
+.prep-row:last-child { border-bottom: none; }
+.prep-row:hover .prep-name { color: var(--or); }
+.prep-name { font-weight: 500; }
+.prep-reps { color: var(--muted); font-size: .78rem; white-space: nowrap; flex-shrink: 0; }
 .bento { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; grid-auto-flow: dense; }
 .span3 { grid-column: span 3; }
 .span6 { grid-column: span 6; }
@@ -344,7 +350,7 @@
             '<span>' + escHtml(formatted) + '</span>' +
           '</nav>' +
           '<div class="d20-live-badge"><span class="d20-dot"></span>Daily 20</div>' +
-          '<h1 class="wod-ph-title">Today\'s WOD</h1>' +
+          '<h1 class="wod-ph-title">Daily 20 &ndash; ' + formatted + '</h1>' +
           '<div class="wod-ph-meta">' +
             (fmtLabel ? '<span>' + escHtml(fmtLabel) + (wod.duration ? ' · ' + wod.duration + ' min' : '') + '</span>' : '') +
             (wod.difficulty ? '<span>' + escHtml(cap(wod.difficulty)) + '</span>' : '') +
@@ -492,6 +498,18 @@
               : '';
           })() +
 
+          // Warm-Up (hidden until loaded)
+          '<div class="bc span3" id="warmup-card" style="display:none">' +
+            '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M13 2L3 14h9l-1 4 10-12h-9l1-4z"/></svg></div>Warm-Up</div>' +
+            '<div id="warmup-container"></div>' +
+          '</div>' +
+
+          // Cool-Down (hidden until loaded)
+          '<div class="bc span3" id="cooldown-card" style="display:none">' +
+            '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M12 21c-4.5-2.5-8-7-8-11a8 8 0 0116 0c0 4-3.5 8.5-8 11z"/></svg></div>Cool-Down</div>' +
+            '<div id="cooldown-container"></div>' +
+          '</div>' +
+
           // Leaderboard (hidden by default — shown after load)
           '<div class="bc span6" id="leaderboard-card" style="display:none">' +
             '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M4 16V9a2 2 0 012-2h8a2 2 0 012 2v7"/><path d="M2 16h16"/><path d="M8 7V5a2 2 0 014 0v2"/></svg></div>Leaderboard</div>' +
@@ -508,6 +526,9 @@
 
     document.getElementById('workout-main').innerHTML = pageHeaderHtml + pageWrapHtml;
 
+    // Load warm-up and cool-down asynchronously after render
+    loadDailyWarmupCooldown(wod);
+
     // Attach leaderboard filter listeners (rendered dynamically)
     document.querySelectorAll('#leaderboard-filters .scale-tab').forEach(function(btn) {
       btn.addEventListener('click', function() {
@@ -520,6 +541,78 @@
     loadLeaderboard('day', dateStr);
   }
 
+  async function loadDailyWarmupCooldown(wod) {
+    var warmupCard        = document.getElementById('warmup-card');
+    var cooldownCard      = document.getElementById('cooldown-card');
+    var warmupContainer   = document.getElementById('warmup-container');
+    var cooldownContainer = document.getElementById('cooldown-container');
+    if (!warmupContainer && !cooldownContainer) return;
+    if (!supabaseClient) return;
+
+    try {
+      // Collect movement names from the wod rows
+      var wodMovNames = (wod.rows || []).map(function(r) {
+        return (r.movement || r.name || '').replace(/\s*\([^)]*\)\s*/g, '').trim();
+      }).filter(Boolean);
+      if (!wodMovNames.length) return;
+
+      // Fetch muscle_groups for the WOD's movements
+      var movRes = await supabaseClient
+        .from('movements')
+        .select('name, muscle_groups')
+        .in('name', wodMovNames);
+      if (movRes.error || !movRes.data || !movRes.data.length) return;
+
+      // Aggregate unique muscle group tags (exclude 'full' — too generic)
+      var muscleSet = {};
+      movRes.data.forEach(function(m) {
+        (m.muscle_groups || []).forEach(function(mg) { if (mg !== 'full') muscleSet[mg] = true; });
+      });
+      var muscleTags = Object.keys(muscleSet);
+      if (!muscleTags.length) return;
+
+      // Fetch cool-down stretches overlapping WOD muscle groups
+      var stretchRes = await supabaseClient
+        .from('stretches')
+        .select('name, slug, hold_intermediate')
+        .overlaps('focus', muscleTags)
+        .limit(5);
+
+      // Fetch warm-up movements: eligible + overlaps muscle tags + not already in the WOD
+      var warmupRes = await supabaseClient
+        .from('movements')
+        .select('name, slug')
+        .eq('warmup_eligible', true)
+        .overlaps('muscle_groups', muscleTags)
+        .not('name', 'in', '(' + wodMovNames.map(function(n) { return '"' + n + '"'; }).join(',') + ')')
+        .limit(4);
+
+      // Render warm-up card
+      if (warmupRes.data && warmupRes.data.length && warmupCard && warmupContainer) {
+        warmupContainer.innerHTML = warmupRes.data.map(function(m) {
+          return '<a class="prep-row" href="/movements/' + escHtml(m.slug || '') + '">' +
+            '<span class="prep-name">' + escHtml(m.name) + '</span>' +
+            '<span class="prep-reps">2–3 sets &times; 10 reps</span>' +
+          '</a>';
+        }).join('');
+        warmupCard.style.display = '';
+      }
+
+      // Render cool-down card
+      if (stretchRes.data && stretchRes.data.length && cooldownCard && cooldownContainer) {
+        cooldownContainer.innerHTML = stretchRes.data.map(function(s) {
+          var hold = s.hold_intermediate ? s.hold_intermediate + ' sec' : '30–45 sec';
+          return '<a class="prep-row" href="/stretches/' + escHtml(s.slug || '') + '">' +
+            '<span class="prep-name">' + escHtml(s.name) + '</span>' +
+            '<span class="prep-reps">' + hold + '</span>' +
+          '</a>';
+        }).join('');
+        cooldownCard.style.display = '';
+      }
+    } catch(e) {
+      console.warn('loadDailyWarmupCooldown error:', e);
+    }
+  }
 
   function printWod() {
     const w = currentWod;
