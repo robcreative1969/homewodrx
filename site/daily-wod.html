@@ -417,6 +417,18 @@
 
         '<div class="bento">' +
 
+          // Warm-Up (hidden until loaded) — first, right below whiteboard
+          '<div class="bc span3" id="warmup-card" style="display:none">' +
+            '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M13 2L3 14h9l-1 4 10-12h-9l1-4z"/></svg></div>Warm-Up</div>' +
+            '<div id="warmup-container"></div>' +
+          '</div>' +
+
+          // Cool-Down (hidden until loaded)
+          '<div class="bc span3" id="cooldown-card" style="display:none">' +
+            '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M12 21c-4.5-2.5-8-7-8-11a8 8 0 0116 0c0 4-3.5 8.5-8 11z"/></svg></div>Cool-Down</div>' +
+            '<div id="cooldown-container"></div>' +
+          '</div>' +
+
           // Scaling Options (span3) — Rx table from rows data
           (function() {
             var iconScaleSvg = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><line x1="10" y1="2" x2="10" y2="18"/><line x1="3" y1="7" x2="17" y2="7"/><line x1="5" y1="13" x2="15" y2="13"/></svg>';
@@ -497,18 +509,6 @@
                 '</div>'
               : '';
           })() +
-
-          // Warm-Up (hidden until loaded)
-          '<div class="bc span3" id="warmup-card" style="display:none">' +
-            '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M13 2L3 14h9l-1 4 10-12h-9l1-4z"/></svg></div>Warm-Up</div>' +
-            '<div id="warmup-container"></div>' +
-          '</div>' +
-
-          // Cool-Down (hidden until loaded)
-          '<div class="bc span3" id="cooldown-card" style="display:none">' +
-            '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M12 21c-4.5-2.5-8-7-8-11a8 8 0 0116 0c0 4-3.5 8.5-8 11z"/></svg></div>Cool-Down</div>' +
-            '<div id="cooldown-container"></div>' +
-          '</div>' +
 
           // Leaderboard (hidden by default — shown after load)
           '<div class="bc span6" id="leaderboard-card" style="display:none">' +
