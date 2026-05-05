@@ -25,13 +25,13 @@
     <lastmod>2026-04-05</lastmod>
   </url>
   <url>
-    <loc>https://homewodrx.com/generator</loc>
+    <loc>https://homewodrx.com/wodbuilder</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-04-05</lastmod>
   </url>
   <url>
-    <loc>https://homewodrx.com/stretch</loc>
+    <loc>https://homewodrx.com/stretchbuilder</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <lastmod>2026-04-11</lastmod>
@@ -2613,6 +2613,24 @@
     <lastmod>2026-04-13</lastmod>
   </url>
   <url>
+    <loc>https://homewodrx.com/stretches/wrist-circles</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-05-05</lastmod>
+  </url>
+  <url>
+    <loc>https://homewodrx.com/stretches/wrist-extensor-stretch</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-05-05</lastmod>
+  </url>
+  <url>
+    <loc>https://homewodrx.com/stretches/wrist-flexor-stretch</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-05-05</lastmod>
+  </url>
+  <url>
     <loc>https://homewodrx.com/stretches/seated-forward-fold</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -2821,5 +2839,11 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-04-29</lastmod>
+  </url>
+  <url>
+    <loc>https://homewodrx.com/blog/building-garage-gym</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-05-05</lastmod>
   </url>
 </urlset>
