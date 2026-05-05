@@ -469,18 +469,35 @@ function normStr(s) {
 }
 
 const ACRONYMS = {
-  't2b':'toes to bar','ttb':'toes to bar','hspu':'handstand push ups',
+  't2b':'toes to bar','ttb':'toes to bar','k2e':'knees to elbows','kte':'knees to elbows',
+  'hspu':'handstand push ups','hrpu':'hand release push ups',
   'c2b':'chest to bar pull ups','ctb':'chest to bar pull ups',
   'mu':'muscle ups','bmu':'bar muscle ups','rmu':'ring muscle ups',
-  'du':'double unders','dus':'double unders',
+  'du':'double unders','dus':'double unders','su':'single unders','sus':'single unders',
   'kbs':'kettlebell swings','rkbs':'russian kettlebell swings','akbs':'american kettlebell swings',
   'ohs':'overhead squat','s2oh':'shoulder to overhead','stoh':'shoulder to overhead',
   'ghd':'ghd sit ups','wb':'wall balls','wbs':'wall balls',
-  'dl':'deadlift','pc':'power clean','ps':'power snatch','sn':'snatch',
+  'dl':'deadlift','pc':'power clean','hpc':'hang power clean',
+  'ps':'power snatch','hps':'hang power snatch','sn':'snatch',
   'fs':'front squat','bs':'back squat','pp':'push press',
   'pj':'push jerk','sj':'split jerk','cj':'clean and jerk',
   'bj':'box jumps','bjs':'box jumps','rdl':'romanian deadlift',
+  'sdhp':'sumo deadlift high pull','rc':'rope climbs',
 };
+
+// Bidirectional equipment-prefix expansion so "KB" ↔ "kettlebell",
+// "DB" ↔ "dumbbell", "MB" ↔ "medicine ball" all resolve identically.
+function expandItemName(name) {
+  if (!name) return '';
+  const low = name.toLowerCase();
+  if (low.startsWith('kb '))            return 'kettlebell '    + name.slice(3);
+  if (low.startsWith('db '))            return 'dumbbell '      + name.slice(3);
+  if (low.startsWith('mb '))            return 'medicine ball ' + name.slice(3);
+  if (low.startsWith('kettlebell '))    return 'KB '            + name.slice(11);
+  if (low.startsWith('dumbbell '))      return 'DB '            + name.slice(9);
+  if (low.startsWith('medicine ball ')) return 'MB '            + name.slice(13);
+  return '';
+}
 
 function expandQuery(q) {
   return String(q || '').trim().toLowerCase()
@@ -510,7 +527,7 @@ function filteredWods() {
     const q = searchQuery;
     list = list.filter(w =>
       strMatch(w.name, q) ||
-      w.movements.some(m => strMatch(m.name, q)) ||
+      w.movements.some(m => strMatch(m.name + ' ' + expandItemName(m.name), q)) ||
       strMatch(w.type, q)
     );
   }
@@ -579,7 +596,7 @@ function updateTabCounts() {
     if (searchQuery) {
       const q = searchQuery;
       return strMatch(w.name, q) ||
-             w.movements.some(m => strMatch(m.name, q));
+             w.movements.some(m => strMatch(m.name + ' ' + expandItemName(m.name), q));
     }
     return true;
   });
