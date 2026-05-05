@@ -38,7 +38,10 @@ const Search = (() => {
   const ACRONYMS = {
     't2b':  'toes to bar',
     'ttb':  'toes to bar',
+    'k2e':  'knees to elbows',
+    'kte':  'knees to elbows',
     'hspu': 'handstand push ups',
+    'hrpu': 'hand release push ups',
     'c2b':  'chest to bar pull ups',
     'ctb':  'chest to bar pull ups',
     'mu':   'muscle ups',
@@ -46,6 +49,8 @@ const Search = (() => {
     'rmu':  'ring muscle ups',
     'du':   'double unders',
     'dus':  'double unders',
+    'su':   'single unders',
+    'sus':  'single unders',
     'kbs':  'kettlebell swings',
     'rkbs': 'russian kettlebell swings',
     'akbs': 'american kettlebell swings',
@@ -57,7 +62,9 @@ const Search = (() => {
     'wbs':  'wall balls',
     'dl':   'deadlift',
     'pc':   'power clean',
+    'hpc':  'hang power clean',
     'ps':   'power snatch',
+    'hps':  'hang power snatch',
     'sn':   'snatch',
     'fs':   'front squat',
     'bs':   'back squat',
@@ -68,7 +75,27 @@ const Search = (() => {
     'bj':   'box jumps',
     'bjs':  'box jumps',
     'rdl':  'romanian deadlift',
+    'sdhp': 'sumo deadlift high pull',
+    'rc':   'rope climbs',
   };
+
+  // Bidirectional equipment-prefix expansion.
+  // Appends an alternate form to searchable text so that "KB" ↔ "kettlebell",
+  // "DB" ↔ "dumbbell", and "MB" ↔ "medicine ball" are always treated as equal.
+  // e.g. "KB Press"        → "kettlebell Press"
+  //      "Kettlebell Swings" → "KB Swings"
+  //      "DB Thrusters"    → "dumbbell Thrusters"
+  function expandItemName(name) {
+    if (!name) return '';
+    const low = name.toLowerCase();
+    if (low.startsWith('kb '))             return 'kettlebell '   + name.slice(3);
+    if (low.startsWith('db '))             return 'dumbbell '     + name.slice(3);
+    if (low.startsWith('mb '))             return 'medicine ball '+ name.slice(3);
+    if (low.startsWith('kettlebell '))     return 'KB '           + name.slice(11);
+    if (low.startsWith('dumbbell '))       return 'DB '           + name.slice(9);
+    if (low.startsWith('medicine ball '))  return 'MB '           + name.slice(13);
+    return '';
+  }
 
   // Expand any acronym words in a query string
   function expandQuery(q) {
@@ -468,7 +495,7 @@ const Search = (() => {
       benchmarks: filterSet(data.benchmarks, b =>
         (b.name || '') + ' ' + (b.category || '') + ' ' + (b.description || '')),
       movements:  filterSet(data.movements,  m =>
-        (m.name || '') + ' ' + (m.tags || []).join(' ')),
+        (m.name || '') + ' ' + expandItemName(m.name) + ' ' + (m.tags || []).join(' ')),
       workouts:   filterSet(data.workouts,   w =>
         (w.title || '') + ' ' + (w.description || ''))
     };
