@@ -1,0 +1,82 @@
+[
+  {
+    "slug": "building-garage-gym",
+    "file": "/blog/building-garage-gym.html",
+    "title": "Building Your Garage Gym: A Step-by-Step Guide",
+    "excerpt": "No fluff — just the right decisions in the right order. Space planning, flooring, racks, barbells, and which accessories are actually worth buying first.",
+    "category": "equipment",
+    "categoryLabel": "Equipment",
+    "date": "May 4, 2026",
+    "readTime": "7 min read"
+  },
+  {
+    "slug": "rogue-vs-titan-home-gym",
+    "file": "/blog/rogue-vs-titan-home-gym.html",
+    "title": "Rogue vs. Titan: Which Home Gym Brand Is Right for You?",
+    "excerpt": "Rogue or Titan? We break down the real differences in quality, price, and value so garage gym athletes can make a confident choice before they spend.",
+    "category": "equipment",
+    "categoryLabel": "Equipment",
+    "date": "April 27, 2026",
+    "readTime": "6 min read"
+  },
+  {
+    "slug": "hero-wod-guide",
+    "file": "/blog/hero-wod-guide.html",
+    "title": "The Complete Guide to Hero WODs: History, Purpose & How to Attack Them",
+    "excerpt": "Hero WODs are the most emotionally charged workouts in functional fitness — brutal by design, meaningful by intent.",
+    "category": "wod-guides",
+    "categoryLabel": "WOD Guide",
+    "date": "April 10, 2026",
+    "readTime": "8 min read"
+  },
+  {
+    "slug": "how-to-scale-wods",
+    "file": "/blog/how-to-scale-wods.html",
+    "title": "How to Scale WODs Without Losing the Intent of the Workout",
+    "excerpt": "Scaling isn't cheating — it's smart training. Here's a framework for modifying any WOD while preserving its stimulus.",
+    "category": "training",
+    "categoryLabel": "Training",
+    "date": "March 28, 2026",
+    "readTime": "6 min read"
+  },
+  {
+    "slug": "best-home-gym-equipment",
+    "file": "/blog/best-home-gym-equipment.html",
+    "title": "The Best Home Gym Equipment for Functional Fitness Athletes (2026)",
+    "excerpt": "From budget starter setups to full garage gyms — the gear that actually matters and what to buy first.",
+    "category": "equipment",
+    "categoryLabel": "Equipment",
+    "date": "March 22, 2026",
+    "readTime": "10 min read"
+  },
+  {
+    "slug": "named-benchmark-wods-guide",
+    "file": "/blog/named-benchmark-wods-guide.html",
+    "title": "Named Benchmark WODs Explained: The Girls, Heroes, and Open Tests",
+    "excerpt": "Why certain workouts have names — and why you should track your performance on them over time.",
+    "category": "wod-guides",
+    "categoryLabel": "WOD Guide",
+    "date": "March 15, 2026",
+    "readTime": "7 min read"
+  },
+  {
+    "slug": "weekly-training-program-home",
+    "file": "/blog/weekly-training-program-home.html",
+    "title": "How to Structure a Weekly Training Program at Home",
+    "excerpt": "The difference between random workouts and real progress. How to balance intensity, volume, and recovery week to week.",
+    "category": "programming",
+    "categoryLabel": "Programming",
+    "date": "March 8, 2026",
+    "readTime": "9 min read"
+  },
+  {
+    "slug": "why-stretching-matters",
+    "file": "/blog/why-stretching-matters.html",
+    "title": "Why Stretching Matters More Than You Think (And When to Do It)",
+    "excerpt": "Static vs. dynamic, pre vs. post-WOD — what the research actually says and the routine that makes a difference.",
+    "category": "mobility",
+    "categoryLabel": "Mobility",
+    "date": "February 27, 2026",
+    "readTime": "5 min read"
+  }
+]

@@ -228,12 +228,12 @@
 <div class="filter-bar">
   <div class="wrap">
     <div class="filter-bar-inner">
-      <button class="filter-chip active" onclick="filterPosts('all', this)">All <span class="filter-count">6</span></button>
-      <button class="filter-chip" onclick="filterPosts('training', this)">Training</button>
-      <button class="filter-chip" onclick="filterPosts('wod-guides', this)">WOD Guides</button>
-      <button class="filter-chip" onclick="filterPosts('equipment', this)">Equipment</button>
-      <button class="filter-chip" onclick="filterPosts('mobility', this)">Mobility</button>
-      <button class="filter-chip" onclick="filterPosts('programming', this)">Programming</button>
+      <button class="filter-chip active" data-filter="all" onclick="filterPosts('all', this)">All <span class="filter-count" id="totalPostCount">—</span></button>
+      <button class="filter-chip" data-filter="training" onclick="filterPosts('training', this)">Training</button>
+      <button class="filter-chip" data-filter="wod-guides" onclick="filterPosts('wod-guides', this)">WOD Guides</button>
+      <button class="filter-chip" data-filter="equipment" onclick="filterPosts('equipment', this)">Equipment</button>
+      <button class="filter-chip" data-filter="mobility" onclick="filterPosts('mobility', this)">Mobility</button>
+      <button class="filter-chip" data-filter="programming" onclick="filterPosts('programming', this)">Programming</button>
     </div>
   </div>
 </div>
@@ -252,92 +252,7 @@
     </div>
 
     <div class="post-grid" id="postGrid">
-      <!-- ↑ ADD NEW POSTS HERE (newest first) — the first card auto-becomes the featured post -->
-
-      <a class="post-card" href="/blog/rogue-vs-titan-home-gym.html" data-category="equipment">
-        <div class="post-card-body">
-          <div class="pc-tag">Equipment</div>
-          <h3>Rogue vs. Titan: Which Home Gym Brand Is Right for You?</h3>
-          <p>Rogue or Titan? We break down the real differences in quality, price, and value so garage gym athletes can make a confident choice before they spend.</p>
-          <div class="pc-footer">
-            <span class="pc-date">April 27, 2026 · 7 min read</span>
-            <span class="pc-link">Read <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
-          </div>
-        </div>
-      </a>
-
-      <a class="post-card" href="/blog/hero-wod-guide.html" data-category="wod-guides">
-        <div class="post-card-body">
-          <div class="pc-tag">WOD Guide</div>
-          <h3>The Complete Guide to Hero WODs: History, Purpose &amp; How to Attack Them</h3>
-          <p>Hero WODs are the most emotionally charged workouts in functional fitness — brutal by design, meaningful by intent.</p>
-          <div class="pc-footer">
-            <span class="pc-date">April 10, 2026 · 8 min read</span>
-            <span class="pc-link">Read <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
-          </div>
-        </div>
-      </a>
-
-      <a class="post-card" href="/blog/how-to-scale-wods.html" data-category="training">
-        <div class="post-card-body">
-          <div class="pc-tag">Training</div>
-          <h3>How to Scale WODs Without Losing the Intent of the Workout</h3>
-          <p>Scaling isn't cheating — it's smart training. Here's a framework for modifying any WOD while preserving its stimulus.</p>
-          <div class="pc-footer">
-            <span class="pc-date">March 28, 2026 · 6 min read</span>
-            <span class="pc-link">Read <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
-          </div>
-        </div>
-      </a>
-
-      <a class="post-card" href="/blog/best-home-gym-equipment.html" data-category="equipment">
-        <div class="post-card-body">
-          <div class="pc-tag">Equipment</div>
-          <h3>The Best Home Gym Equipment for Functional Fitness Athletes (2026)</h3>
-          <p>From budget starter setups to full garage gyms — the gear that actually matters and what to buy first.</p>
-          <div class="pc-footer">
-            <span class="pc-date">March 22, 2026 · 10 min read</span>
-            <span class="pc-link">Read <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
-          </div>
-        </div>
-      </a>
-
-      <a class="post-card" href="/blog/named-benchmark-wods-guide.html" data-category="wod-guides">
-        <div class="post-card-body">
-          <div class="pc-tag">WOD Guide</div>
-          <h3>Named Benchmark WODs Explained: The Girls, Heroes, and Open Tests</h3>
-          <p>Why certain workouts have names — and why you should track your performance on them over time.</p>
-          <div class="pc-footer">
-            <span class="pc-date">March 15, 2026 · 7 min read</span>
-            <span class="pc-link">Read <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
-          </div>
-        </div>
-      </a>
-
-      <a class="post-card" href="/blog/weekly-training-program-home.html" data-category="programming">
-        <div class="post-card-body">
-          <div class="pc-tag">Programming</div>
-          <h3>How to Structure a Weekly Training Program at Home</h3>
-          <p>The difference between random workouts and real progress. How to balance intensity, volume, and recovery week to week.</p>
-          <div class="pc-footer">
-            <span class="pc-date">March 8, 2026 · 9 min read</span>
-            <span class="pc-link">Read <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
-          </div>
-        </div>
-      </a>
-
-      <a class="post-card" href="/blog/why-stretching-matters.html" data-category="mobility">
-        <div class="post-card-body">
-          <div class="pc-tag">Mobility</div>
-          <h3>Why Stretching Matters More Than You Think (And When to Do It)</h3>
-          <p>Static vs. dynamic, pre vs. post-WOD — what the research actually says and the routine that makes a difference.</p>
-          <div class="pc-footer">
-            <span class="pc-date">February 27, 2026 · 5 min read</span>
-            <span class="pc-link">Read <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
-          </div>
-        </div>
-      </a>
-
+      <!-- Posts are rendered here dynamically from /blog-posts.json — do not add cards manually -->
     </div><!-- /post-grid -->
 
     <!-- NEWSLETTER -->
@@ -358,44 +273,90 @@
 </div><!-- /blog-main -->
 
 <script>
-// Auto-promote: first grid card becomes the featured post
-(function() {
-  var grid = document.getElementById('postGrid');
+var ARROW_SVG = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+var ARROW_LG  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+
+function buildCard(post) {
+  var a = document.createElement('a');
+  a.className = 'post-card';
+  a.href = post.file;
+  a.dataset.category = post.category;
+  a.innerHTML =
+    '<div class="post-card-body">' +
+      '<div class="pc-tag">' + post.categoryLabel + '</div>' +
+      '<h3>' + post.title + '</h3>' +
+      '<p>' + post.excerpt + '</p>' +
+      '<div class="pc-footer">' +
+        '<span class="pc-date">' + post.date + ' · ' + post.readTime + '</span>' +
+        '<span class="pc-link">Read ' + ARROW_SVG + '</span>' +
+      '</div>' +
+    '</div>';
+  return a;
+}
+
+function buildFeatured(post) {
   var featured = document.getElementById('featuredPost');
-  if (!grid || !featured) return;
-  var card = grid.querySelector('.post-card');
-  if (!card) return;
-
-  var href     = card.getAttribute('href') || '#';
-  var cat      = card.getAttribute('data-category') || '';
-  var catLabel = (card.querySelector('.pc-tag') || {}).textContent || '';
-  var title    = (card.querySelector('h3') || {}).textContent || '';
-  var desc     = (card.querySelector('p') || {}).textContent || '';
-  var dateRaw  = (card.querySelector('.pc-date') || {}).textContent || '';
-  var parts    = dateRaw.split(' · ');
-  var date     = (parts[0] || '').trim();
-  var readTime = (parts[1] || '').trim();
-
-  featured.setAttribute('href', href);
-  featured.setAttribute('data-category', cat);
+  if (!featured) return;
+  featured.href = post.file;
+  featured.dataset.category = post.category;
   featured.innerHTML =
     '<div class="featured-body">' +
       '<div>' +
         '<div class="feat-meta">' +
           '<span class="feat-tag">Featured</span>' +
-          (readTime ? '<span class="feat-read-time">' + readTime + '</span>' : '') +
+          '<span class="feat-read-time">' + post.readTime + '</span>' +
         '</div>' +
-        '<h2>' + title + '</h2>' +
-        '<p>' + desc + '</p>' +
+        '<h2>' + post.title + '</h2>' +
+        '<p>' + post.excerpt + '</p>' +
       '</div>' +
       '<div class="feat-footer">' +
-        '<span class="feat-date">' + date + '</span>' +
-        '<span class="btn-read">Read Article <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>' +
+        '<span class="feat-date">' + post.date + '</span>' +
+        '<span class="btn-read">Read Article ' + ARROW_LG + '</span>' +
       '</div>' +
     '</div>';
+}
 
-  card.remove();
-})();
+function updateCounts(posts) {
+  // "All" total
+  var countEl = document.getElementById('totalPostCount');
+  if (countEl) countEl.textContent = posts.length;
+}
+
+function filterPosts(category, btn) {
+  document.querySelectorAll('.filter-chip').forEach(function(c) { c.classList.remove('active'); });
+  btn.classList.add('active');
+
+  document.querySelectorAll('#postGrid .post-card').forEach(function(card) {
+    card.style.display = (category === 'all' || card.dataset.category === category) ? '' : 'none';
+  });
+
+  var feat = document.getElementById('featuredPost');
+  if (feat && feat.dataset.category) {
+    feat.style.display = (category === 'all' || feat.dataset.category === category) ? '' : 'none';
+  }
+}
+
+// Load posts from JSON manifest — no manual edits to this file ever needed
+fetch('/blog-posts.json')
+  .then(function(r) { return r.json(); })
+  .then(function(posts) {
+    if (!posts || !posts.length) return;
+
+    // First post → featured hero
+    buildFeatured(posts[0]);
+
+    // Remaining posts → grid cards
+    var grid = document.getElementById('postGrid');
+    posts.slice(1).forEach(function(post) {
+      grid.appendChild(buildCard(post));
+    });
+
+    // Update "All" count badge
+    updateCounts(posts);
+  })
+  .catch(function(err) {
+    console.error('Failed to load blog-posts.json:', err);
+  });
 
 async function nlSubmit(e) {
   e.preventDefault();
@@ -414,7 +375,6 @@ async function nlSubmit(e) {
 
     msg.style.display = 'block';
     if (error && error.code === '23505') {
-      // Duplicate — already subscribed
       msg.style.color = 'rgba(255,255,255,.6)';
       msg.textContent = 'You\'re already on the list!';
       btn.textContent = 'Subscribed';
@@ -434,19 +394,6 @@ async function nlSubmit(e) {
     btn.textContent = 'Subscribe Free';
     console.error('Subscribe error:', err);
   }
-}
-
-function filterPosts(category, btn) {
-  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-  btn.classList.add('active');
-
-  document.querySelectorAll('#postGrid .post-card[data-category]').forEach(card => {
-    card.style.display = (category === 'all' || card.dataset.category === category) ? '' : 'none';
-  });
-
-  // Featured post — respects data-category set by auto-promote above
-  var feat = document.querySelector('.featured-post[data-category]');
-  if (feat) feat.style.display = (category === 'all' || feat.dataset.category === category) ? '' : 'none';
 }
 </script>
 
