@@ -1,5 +1,6 @@
 {
   "routes": [
+    { "src": "^(?:https?://)?www\\.homewodrx\\.com(.*)", "headers": { "Location": "https://homewodrx.com$1" }, "status": 301 },
     { "src": "/generator",     "headers": { "Location": "/wodbuilder"     }, "status": 301 },
     { "src": "/generator.html","headers": { "Location": "/wodbuilder"     }, "status": 301 },
     { "src": "/stretch$",      "headers": { "Location": "/stretchbuilder" }, "status": 301 },
