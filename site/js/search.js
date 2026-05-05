@@ -29,81 +29,9 @@ const Search = (() => {
       .replace(/^-|-$/g, '');
   }
 
-  // Collapse hyphens and spaces so "pushup" / "push-up" / "push up" all match
-  function normalize(str) {
-    return String(str).toLowerCase().replace(/[-\s']+/g, '');
-  }
-
-  // Common CrossFit/functional-fitness acronyms → canonical search term
-  const ACRONYMS = {
-    't2b':  'toes to bar',
-    'ttb':  'toes to bar',
-    'k2e':  'knees to elbows',
-    'kte':  'knees to elbows',
-    'hspu': 'handstand push ups',
-    'hrpu': 'hand release push ups',
-    'c2b':  'chest to bar pull ups',
-    'ctb':  'chest to bar pull ups',
-    'mu':   'muscle ups',
-    'bmu':  'bar muscle ups',
-    'rmu':  'ring muscle ups',
-    'du':   'double unders',
-    'dus':  'double unders',
-    'su':   'single unders',
-    'sus':  'single unders',
-    'kbs':  'kettlebell swings',
-    'rkbs': 'russian kettlebell swings',
-    'akbs': 'american kettlebell swings',
-    'ohs':  'overhead squat',
-    's2oh': 'shoulder to overhead',
-    'stoh': 'shoulder to overhead',
-    'ghd':  'ghd sit ups',
-    'wb':   'wall balls',
-    'wbs':  'wall balls',
-    'dl':   'deadlift',
-    'pc':   'power clean',
-    'hpc':  'hang power clean',
-    'ps':   'power snatch',
-    'hps':  'hang power snatch',
-    'sn':   'snatch',
-    'fs':   'front squat',
-    'bs':   'back squat',
-    'pp':   'push press',
-    'pj':   'push jerk',
-    'sj':   'split jerk',
-    'cj':   'clean and jerk',
-    'bj':   'box jumps',
-    'bjs':  'box jumps',
-    'rdl':  'romanian deadlift',
-    'sdhp': 'sumo deadlift high pull',
-    'rc':   'rope climbs',
-  };
-
-  // Bidirectional equipment-prefix expansion.
-  // Appends an alternate form to searchable text so that "KB" ↔ "kettlebell",
-  // "DB" ↔ "dumbbell", and "MB" ↔ "medicine ball" are always treated as equal.
-  // e.g. "KB Press"        → "kettlebell Press"
-  //      "Kettlebell Swings" → "KB Swings"
-  //      "DB Thrusters"    → "dumbbell Thrusters"
-  function expandItemName(name) {
-    if (!name) return '';
-    const low = name.toLowerCase();
-    if (low.startsWith('kb '))             return 'kettlebell '   + name.slice(3);
-    if (low.startsWith('db '))             return 'dumbbell '     + name.slice(3);
-    if (low.startsWith('mb '))             return 'medicine ball '+ name.slice(3);
-    if (low.startsWith('kettlebell '))     return 'KB '           + name.slice(11);
-    if (low.startsWith('dumbbell '))       return 'DB '           + name.slice(9);
-    if (low.startsWith('medicine ball '))  return 'MB '           + name.slice(13);
-    return '';
-  }
-
-  // Expand any acronym words in a query string
-  function expandQuery(q) {
-    return q.trim().toLowerCase()
-      .split(/\s+/)
-      .map(w => ACRONYMS[w] || w)
-      .join(' ');
-  }
+  // Pull shared utilities from search-utils.js (loaded by nav.js before this file).
+  // normalize is the local alias for normStr used throughout this module.
+  const { normStr: normalize, expandItemName, expandQuery } = window.SearchUtils;
 
   function esc(str) {
     return String(str || '')

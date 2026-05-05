@@ -54,6 +54,20 @@ const Nav = {
   },
 
   loadSearchScript() {
+    // Always ensure search-utils.js (shared utilities) loads before search.js
+    // (the nav overlay). If it's already on the page via a static <script> tag,
+    // window.SearchUtils will already exist — skip straight to the overlay.
+    if (window.SearchUtils || document.querySelector('script[src="/js/search-utils.js"]')) {
+      this._loadSearchOverlay();
+    } else {
+      const utils = document.createElement('script');
+      utils.src = '/js/search-utils.js';
+      utils.onload = () => this._loadSearchOverlay();
+      document.head.appendChild(utils);
+    }
+  },
+
+  _loadSearchOverlay() {
     // Guard against double-load during the CDN download window
     if (window.Search || document.querySelector('script[src="/js/search.js"]')) return;
     const script = document.createElement('script');
