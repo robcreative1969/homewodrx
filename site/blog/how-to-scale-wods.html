@@ -377,6 +377,9 @@ var sections=['what-rx-means','three-types','movement-substitutions','scale-benc
 var tocLinks=document.querySelectorAll('#toc a');
 window.addEventListener('scroll',function(){var current=sections[0];sections.forEach(function(id){var el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<120)current=id;});tocLinks.forEach(function(link){link.classList.toggle('active',link.getAttribute('href')==='#'+current);});},{passive:true});
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/js/config.js"></script>
+<script src="/js/db.js"></script>
 <script src="/js/nav.js"></script>
 <script src="/js/footer.js"></script>
 </body>
