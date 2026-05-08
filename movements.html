@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movement Library — HomeWodRX</title>
+  <meta name="description" content="Browse every functional fitness movement — bodyweight, barbell, kettlebell, pull-up bar, cardio and more. Coaching cues, benchmark WOD counts, and demo links.">
+  <link rel="canonical" href="https://homewodrx.com/movements">
+
+  <!-- Sentry -->
+  <style>sentry-feedback,#sentry-feedback{display:none!important;visibility:hidden!important}</style>
+  <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Shared styles -->
+  <link rel="stylesheet" href="/css/style.css">
+
+  <!-- Page-specific overrides & additions -->
+  <style>
+    /* Fix ham-panel: style.css uses position:absolute (relative to sticky nav),
+       which puts it off-screen when page is scrolled. Override to fixed. */
+    .ham-panel { position: fixed !important; top: var(--nav-h); }
+
+    /* page-header has padding in style.css; this page manages its own inner padding */
+    .page-header { padding: 0; }
+
+    /* style.css .chip is display-only — override to full interactive chip */
+    .chip {
+      cursor: pointer;
+      display: inline-block;
+      font-family: var(--font-body);
+      font-size: .875rem;
+      font-weight: 500;
+      padding: .28rem .7rem;
+      border-radius: 20px;
+      line-height: 1.4;
+      border: 1px solid var(--border);
+      background: var(--white);
+      color: var(--text);
+      transition: all 150ms;
+      white-space: nowrap;
+    }
+    .chip:hover { border-color: var(--or); color: var(--or); }
+    .chip.active { background: var(--or); border-color: var(--or); color: #fff; }
+
+    /* ── Page header ── */
+    .page-header { background: var(--white); border-bottom: 1px solid var(--border); }
+    .page-header-inner { max-width: 1248px; margin: 0 auto; padding: 32px 24px 24px; }
+    .page-title-row { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-bottom: 20px; }
+    .page-title { font-family: var(--font-head); font-size: 3rem; letter-spacing: .04em; line-height: 1; }
+    .page-subtitle { font-size: .9rem; color: var(--muted); }
+    .page-subtitle strong { color: var(--text); font-weight: 700; }
+
+    /* filter sections */
+    .filter-section { display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px; }
+    .filter-section + .filter-section { padding-top: 18px; }
+    .filter-divider { height: 1px; background: var(--border); }
+    .filter-label {
+      font-size: .72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .07em; color: var(--muted);
+    }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 7px; }
+
+    /* search */
+    .search-wrap { position: relative; }
+    .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+    .search-input {
+      width: 100%; padding: 11px 14px 11px 42px; border: 1.5px solid var(--border); border-radius: 9px;
+      font-family: var(--font-body); font-size: .92rem; color: var(--text); background: var(--bg);
+      outline: none; transition: border-color .15s, background .15s;
+    }
+    .search-input::placeholder { color: var(--muted); }
+    .search-input:focus { border-color: var(--or); background: var(--white); }
+
+    /* ── Main content ── */
+    .main { max-width: 1248px; margin: 0 auto; padding: 32px 24px 80px; }
+
+    /* ── Category sections ── */
+    .cat-section { margin-bottom: 44px; }
+    .cat-heading { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+    .cat-heading-bar { width: 4px; height: 28px; background: var(--or); border-radius: 2px; flex-shrink: 0; }
+    .cat-heading-text { font-family: var(--font-head); font-size: 1.6rem; letter-spacing: .04em; color: var(--text); line-height: 1; }
+    .cat-heading-count { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-left: 2px; }
+
+    /* ── Movement grid & cards ── */
+    .mv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+
+    .mv-card {
+      display: flex; flex-direction: column;
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.07);
+      transition: transform .15s, box-shadow .15s, border-color .15s;
+      overflow: hidden; text-decoration: none; color: var(--text);
+    }
+    .mv-card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,.11); border-color: var(--border2, #d0d0d0); }
+
+    .mv-card-head { padding: 16px 18px 0; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .mv-name { font-family: var(--font-head); font-size: 1.55rem; letter-spacing: .04em; line-height: 1; flex: 1; }
+    .mv-badge {
+      font-size: .66rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .07em; padding: 3px 9px; border-radius: 20px;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .mv-badge.bodyweight      { background: #dcfce7; color: #15803d; }
+    .mv-badge.barbell         { background: #fef3c7; color: #92400e; }
+    .mv-badge.kettlebell      { background: #fce7f3; color: #be185d; }
+    .mv-badge.dumbbell        { background: #e0f2f1; color: #00695c; }
+    .mv-badge.pullupbar       { background: #e8f0fe; color: #1565c0; }
+    .mv-badge.rings           { background: #fff0e0; color: #b45309; }
+    .mv-badge.jumprope        { background: #f3e8ff; color: #7b1fa2; }
+    .mv-badge.resistancebands { background: #e0e7ff; color: #4338ca; }
+    .mv-badge.cardio          { background: #dbeafe; color: #1d4ed8; }
+    .mv-badge.slamball        { background: #fde8e8; color: #b91c1c; }
+    .mv-badge.medball         { background: #fef9c3; color: #854d0e; }
+    .mv-badge.rope            { background: #e7f5e9; color: #166534; }
+    .mv-badge.box             { background: #f0fdf4; color: #166534; }
+    .mv-badge.ghd             { background: #f1f5f9; color: #334155; }
+
+    .mv-card-body { padding: 10px 18px 14px; flex: 1; }
+    .mv-tip { font-size: .83rem; color: var(--muted); line-height: 1.55; }
+
+    .mv-card-footer {
+      padding: 10px 18px 14px; border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    .mv-count { font-size: .78rem; font-weight: 700; color: var(--or); }
+    .mv-count.zero { color: var(--muted); font-weight: 600; }
+    .mv-arrow { color: var(--muted); transition: color .15s, transform .15s; }
+    .mv-card:hover .mv-arrow { color: var(--or); transform: translateX(3px); }
+
+    /* ── Empty state ── */
+    .empty-state { text-align: center; padding: 80px 24px; display: none; }
+    .empty-state.visible { display: block; }
+    .empty-icon { margin-bottom: 16px; opacity: .4; display: flex; justify-content: center; }
+    .empty-icon svg { width: 48px; height: 48px; }
+    .empty-title { font-family: var(--font-head); font-size: 1.8rem; letter-spacing: .04em; margin-bottom: 8px; }
+    .empty-sub { font-size: .9rem; color: var(--muted); }
+    .empty-clear {
+      margin-top: 20px; padding: 10px 24px; border-radius: 8px; background: var(--or); color: #fff;
+      font-weight: 700; font-size: .88rem; cursor: pointer; border: none; font-family: var(--font-body);
+      transition: background .15s;
+    }
+    .empty-clear:hover { background: var(--or-dark); }
+
+    /* ── Footer ── */
+    .site-footer {
+      background: #111; color: #aaa; margin-top: 4rem;
+      border-top: 3px solid var(--or); padding: 48px 24px 24px; font-size: .875rem;
+    }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 32px 40px; margin-bottom: 40px; }
+    @media (max-width: 800px) { .footer-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 480px) { .footer-grid { grid-template-columns: 1fr; } }
+    .footer-col h4 { font-family: var(--font-head); font-size: 1rem; letter-spacing: .06em; color: #fff; margin-bottom: 12px; }
+    .footer-col a { display: block; color: #aaa; text-decoration: none; margin-bottom: 8px; transition: color .15s; }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom { border-top: 1px solid #333; padding-top: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-bottom p { font-size: .75rem; color: #666; }
+
+    /* ── Responsive ── */
+    @media (max-width: 700px) {
+      .page-header-inner { padding: 20px 16px 16px; }
+      .main { padding: 20px 16px 48px; }
+      .page-title { font-size: 2.2rem; }
+      .mv-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-HZM475VDN3');
+  </script>
+  <!-- Vercel Analytics -->
+  <script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body data-nav-init="true" data-active-page="movements">
+<!-- ── PAGE HEADER ── -->
+<div class="page-header">
+  <div class="page-header-inner">
+
+    <div class="page-title-row">
+      <h1 class="page-title">MOVEMENTS</h1>
+      <p class="page-subtitle">
+        <strong id="total-count">—</strong> functional fitness movements — coaching cues and the WODs that use them
+      </p>
+    </div>
+
+    <!-- Category filter -->
+    <div class="filter-section">
+      <span class="filter-label">Category</span>
+      <div class="chip-row" id="cat-chips">
+        <button class="chip active" data-cat="all">All</button>
+        <button class="chip" data-cat="bodyweight">Bodyweight</button>
+        <button class="chip" data-cat="barbell">Barbell</button>
+        <button class="chip" data-cat="kettlebell">Kettlebell</button>
+        <button class="chip" data-cat="dumbbells">Dumbbell</button>
+        <button class="chip" data-cat="pullupbar">Pull-up Bar</button>
+        <button class="chip" data-cat="rings">Rings</button>
+        <button class="chip" data-cat="jumprope">Jump Rope</button>
+        <button class="chip" data-cat="resistancebands">Resistance Bands</button>
+        <button class="chip" data-cat="running">Running</button>
+        <button class="chip" data-cat="rower">Rower</button>
+        <button class="chip" data-cat="assaultbike">Assault Bike</button>
+        <button class="chip" data-cat="skierg">Ski Erg</button>
+        <button class="chip" data-cat="slamball">Slam Ball</button>
+        <button class="chip" data-cat="medicineball">Medicine Ball</button>
+        <button class="chip" data-cat="rope">Rope</button>
+        <button class="chip" data-cat="box">Box</button>
+        <button class="chip" data-cat="ghd">GHD</button>
+      </div>
+    </div>
+    <div class="filter-divider"></div>
+
+    <!-- Search -->
+    <div class="filter-section">
+      <span class="filter-label">Search</span>
+      <div class="search-wrap">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input class="search-input" id="search" type="text" placeholder="Search by movement name or coaching cue…" autocomplete="off">
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<main class="main">
+  <div id="sections-root"></div>
+  <div class="empty-state" id="empty-state">
+    <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
+    <p class="empty-title">NO MOVEMENTS FOUND</p>
+    <p class="empty-sub">Try a different search term or category.</p>
+    <button class="empty-clear" onclick="clearAllFilters()">Clear filters</button>
+  </div>
+</main>
+
+<!-- ── FOOTER ── -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>Workouts</h4>
+        <a href="/workouts.html?cat=classic_benchmark">Classic Benchmarks</a>
+        <a href="/workouts.html?cat=hero">Hero WODs</a>
+        <a href="/workouts.html?cat=competition">Competition WODs</a>
+        <a href="/workouts.html?cat=community">Community WODs</a>
+        <a href="/workouts.html">All Workouts</a>
+      </div>
+      <div class="footer-col">
+        <h4>Train</h4>
+        <a href="/daily-wod.html">The Daily 20</a>
+        <a href="/wodbuilder.html">Smart WOD Builder</a>
+        <a href="/timer.html">WOD Timer</a>
+        <a href="/movements.html">Movement Library</a>
+      </div>
+      <div class="footer-col">
+        <h4>Stretch &amp; Mobility</h4>
+        <a href="/stretchbuilder.html">The Daily 10</a>
+        <a href="/stretches.html">Browse Stretches</a>
+        <a href="/stretch-routines.html">Stretch Routines</a>
+      </div>
+      <div class="footer-col">
+        <h4>More</h4>
+        <a href="/shop.html">Gear Shop</a>
+        <a href="/blog.html">Blog</a>
+        <a href="/search.html">Search</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <a href="/"><img src="/images/HomeWODRx-logo-white-red-black-strip-040626.png" alt="HomeWODrx" style="height:28px;display:block;"></a>
+      <p>© 2026 HomeWodRX. All rights reserved.</p>
+      <div style="display:flex;gap:16px;font-size:.75rem;">
+        <a href="/privacy.html" style="color:#666;text-decoration:none;">Privacy</a>
+        <a href="/terms.html" style="color:#666;text-decoration:none;">Terms</a>
+        <a href="/disclaimer.html" style="color:#666;text-decoration:none;">Disclaimer</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ── DATA & SCRIPTS ── -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/js/config.js"></script>
+<script src="/js/db.js"></script>
+<script src="/js/search-utils.js"></script>
+<script src="/js/nav.js"></script>
+
+<script>
+// ─────────────────────────────────────────
+// CATEGORY CONFIG  (keyed to equipment_category values in Supabase)
+// ─────────────────────────────────────────
+const CATEGORY_CONFIG = [
+  { key: 'bodyweight',      label: 'Bodyweight',       badgeCls: 'bodyweight',      badgeLabel: 'Bodyweight'   },
+  { key: 'barbell',         label: 'Barbell',          badgeCls: 'barbell',         badgeLabel: 'Barbell'      },
+  { key: 'kettlebell',      label: 'Kettlebell',       badgeCls: 'kettlebell',      badgeLabel: 'Kettlebell'   },
+  { key: 'dumbbells',       label: 'Dumbbell',         badgeCls: 'dumbbell',        badgeLabel: 'Dumbbell'     },
+  { key: 'pullupbar',       label: 'Pull-up Bar',      badgeCls: 'pullupbar',       badgeLabel: 'Pull-up Bar'  },
+  { key: 'rings',           label: 'Rings',            badgeCls: 'rings',           badgeLabel: 'Rings'        },
+  { key: 'jumprope',        label: 'Jump Rope',        badgeCls: 'jumprope',        badgeLabel: 'Jump Rope'    },
+  { key: 'resistancebands', label: 'Resistance Bands', badgeCls: 'resistancebands', badgeLabel: 'Bands'        },
+  { key: 'running',         label: 'Running',          badgeCls: 'cardio',          badgeLabel: 'Running'      },
+  { key: 'rower',           label: 'Rowing Machine',   badgeCls: 'cardio',          badgeLabel: 'Rowing'       },
+  { key: 'assaultbike',     label: 'Assault Bike',     badgeCls: 'cardio',          badgeLabel: 'Assault Bike' },
+  { key: 'skierg',          label: 'Ski Erg',          badgeCls: 'cardio',          badgeLabel: 'Ski Erg'      },
+  { key: 'slamball',        label: 'Slam Ball',        badgeCls: 'slamball',        badgeLabel: 'Slam Ball'    },
+  { key: 'medicineball',    label: 'Medicine Ball',    badgeCls: 'medball',         badgeLabel: 'Med Ball'     },
+  { key: 'rope',            label: 'Rope',             badgeCls: 'rope',            badgeLabel: 'Rope'         },
+  { key: 'box',             label: 'Box / Plyo',       badgeCls: 'box',             badgeLabel: 'Box'          },
+  { key: 'ghd',             label: 'GHD',              badgeCls: 'ghd',             badgeLabel: 'GHD'          },
+];
+const CAT_MAP = Object.fromEntries(CATEGORY_CONFIG.map(c => [c.key, c]));
+
+// ─────────────────────────────────────────
+// BENCHMARK COUNTS  (fetched from Supabase via db.getAllBenchmarks)
+// ─────────────────────────────────────────
+async function buildBenchmarkCounts() {
+  const counts = {};
+  const benchmarks = await db.getAllBenchmarks();
+  benchmarks.forEach(b => {
+    (b.movements || []).forEach(m => {
+      const key = (m.name || '').toLowerCase().trim();
+      counts[key] = (counts[key] || 0) + 1;
+    });
+  });
+  return counts;
+}
+
+// ─────────────────────────────────────────
+// SUPABASE FETCH
+// ─────────────────────────────────────────
+async function loadMovements() {
+  const benchmarkCounts = await buildBenchmarkCounts();
+
+  if (!supabaseClient) {
+    console.warn('Supabase not ready — movement library unavailable.');
+    return [];
+  }
+
+  const { data, error } = await supabaseClient
+    .from('movements')
+    .select('name, slug, equipment_category, wod_tip')
+    .order('name');
+
+  if (error || !data) {
+    console.error('Failed to load movements:', error);
+    return [];
+  }
+
+  return data.map(m => ({
+    name:  m.name,
+    slug:  m.slug,
+    cat:   m.equipment_category || 'bodyweight',
+    tip:   m.wod_tip || '',
+    count: benchmarkCounts[(m.name || '').toLowerCase().trim()] || 0,
+  }));
+}
+
+// ─────────────────────────────────────────
+// SEARCH HELPERS — from shared search-utils.js
+// ─────────────────────────────────────────
+const { normStr, expandItemName, expandQuery } = window.SearchUtils;
+
+function strMatch(text, q) {
+  const low = String(text || '').toLowerCase();
+  return low.includes(q) || normStr(text).includes(normStr(q));
+}
+
+// ─────────────────────────────────────────
+// FILTER STATE
+// ─────────────────────────────────────────
+let activeCategory = 'all';
+let searchQuery    = '';
+let ALL_MOVEMENTS  = [];
+
+function filteredMovements() {
+  let list = [...ALL_MOVEMENTS];
+  if (activeCategory !== 'all') list = list.filter(m => m.cat === activeCategory);
+  if (searchQuery) {
+    const q = searchQuery;
+    list = list.filter(m =>
+      strMatch(m.name + ' ' + expandItemName(m.name), q) ||
+      strMatch(m.tip,  q)
+    );
+  }
+  return list;
+}
+
+// ─────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────
+const ARROW_SVG = `<svg class="mv-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`;
+
+function buildCard(m) {
+  const cfg = CAT_MAP[m.cat] || { badgeCls: 'bodyweight', badgeLabel: m.cat };
+  const countLabel = m.count > 0
+    ? `${m.count} benchmark WOD${m.count === 1 ? '' : 's'}`
+    : 'Movement guide';
+  const countCls = m.count > 0 ? '' : ' zero';
+  return `
+    <a class="mv-card" href="/movements/${m.slug}">
+      <div class="mv-card-head">
+        <h3 class="mv-name">${m.name}</h3>
+        <span class="mv-badge ${cfg.badgeCls}">${cfg.badgeLabel}</span>
+      </div>
+      <div class="mv-card-body">
+        ${m.tip ? `<p class="mv-tip">${m.tip}</p>` : ''}
+      </div>
+      <div class="mv-card-footer">
+        <span class="mv-count${countCls}">${countLabel}</span>
+        ${ARROW_SVG}
+      </div>
+    </a>`;
+}
+
+function render() {
+  const list  = filteredMovements();
+  const root  = document.getElementById('sections-root');
+  const empty = document.getElementById('empty-state');
+
+  if (list.length === 0) {
+    root.innerHTML = '';
+    empty.classList.add('visible');
+    return;
+  }
+  empty.classList.remove('visible');
+
+  const bycat = {};
+  list.forEach(m => {
+    if (!bycat[m.cat]) bycat[m.cat] = [];
+    bycat[m.cat].push(m);
+  });
+
+  const catsToShow = activeCategory === 'all'
+    ? CATEGORY_CONFIG.filter(c => bycat[c.key])
+    : CATEGORY_CONFIG.filter(c => c.key === activeCategory && bycat[c.key]);
+
+  root.innerHTML = catsToShow.map(cfg => {
+    const movements = bycat[cfg.key] || [];
+    return `
+      <section class="cat-section">
+        <div class="cat-heading">
+          <div class="cat-heading-bar"></div>
+          <span class="cat-heading-text">${cfg.label}</span>
+          <span class="cat-heading-count">(${movements.length})</span>
+        </div>
+        <div class="mv-grid">${movements.map(buildCard).join('')}</div>
+      </section>`;
+  }).join('');
+}
+
+function clearAllFilters() {
+  activeCategory = 'all';
+  searchQuery = '';
+  document.getElementById('search').value = '';
+  document.querySelectorAll('[data-cat]').forEach(c =>
+    c.classList.toggle('active', c.dataset.cat === 'all'));
+  render();
+}
+
+// ─────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+  ALL_MOVEMENTS = await loadMovements();
+  document.getElementById('total-count').textContent = ALL_MOVEMENTS.length;
+
+  // Category chips
+  document.getElementById('cat-chips').addEventListener('click', e => {
+    const chip = e.target.closest('[data-cat]');
+    if (!chip) return;
+    activeCategory = chip.dataset.cat;
+    document.querySelectorAll('[data-cat]').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    render();
+  });
+
+  // Search
+  let searchTimer;
+  document.getElementById('search').addEventListener('input', e => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => { searchQuery = expandQuery(e.target.value); render(); }, 180);
+  });
+
+  render();
+});
+</script>
+<script src="/js/footer.js"></script>
+</body>
+</html>

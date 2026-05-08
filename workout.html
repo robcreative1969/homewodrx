@@ -1,0 +1,2294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Sentry Error Monitoring -->
+  <style>sentry-feedback,#sentry-feedback{display:none!important;visibility:hidden!important}</style>
+  <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Primary SEO tags — IDs allow JS to update them dynamically -->
+  <title id="page-title">Workout — HomeWodRX</title>
+  <meta name="description" content="View this workout: movements, scaling options, coaching tips, and more. Log your result on HomeWodRX." id="meta-description">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="HomeWodRX">
+  <meta property="og:title" content="Workout — HomeWodRX" id="og-title">
+  <meta property="og:description" content="View this workout: movements, scaling options, coaching tips, and more. Log your result on HomeWodRX." id="og-description">
+  <meta property="og:url" content="https://homewodrx.com/workouts/" id="og-url">
+  <meta property="og:image" content="https://homewodrx.com/images/og-default.png" id="og-image">
+  <meta property="og:image:width" content="1200" id="og-image-width">
+  <meta property="og:image:height" content="630" id="og-image-height">
+  <meta property="og:image:alt" content="Workout — HomeWodRX" id="og-image-alt">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@homewodrx">
+  <meta name="twitter:title" content="Workout — HomeWodRX" id="twitter-title">
+  <meta name="twitter:description" content="View this workout: movements, scaling options, coaching tips, and more. Log your result on HomeWodRX." id="twitter-description">
+  <meta name="twitter:image" content="https://homewodrx.com/images/og-default.png" id="twitter-image">
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://homewodrx.com/workouts/" id="canonical-url">
+
+  <!-- SEO inline script: reads slug from URL, sets title/description/canonical
+       before JS loads so crawlers see correct tags on first HTML pass -->
+  <script>
+    (function() {
+      var parts = window.location.pathname.split('/').filter(Boolean);
+      var slug = parts[parts.length - 1] || '';
+      // Also support ?slug= query param
+      if (!slug || slug === 'workouts' || slug === 'workout.html') {
+        var qs = new URLSearchParams(window.location.search);
+        slug = qs.get('slug') || '';
+      }
+      if (slug && slug !== 'workouts' && slug !== 'workout.html') {
+        var name = slug.replace(/-/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+        document.title = name + ' Workout — HomeWodRX';
+        var desc = 'The ' + name + ' workout: movements, time cap, scaling options, and coaching tips. View the full WOD and log your result on HomeWodRX.';
+        var el;
+        el = document.getElementById('meta-description');     if (el) el.setAttribute('content', desc);
+        el = document.getElementById('og-title');             if (el) el.setAttribute('content', name + ' Workout — HomeWodRX');
+        el = document.getElementById('og-description');       if (el) el.setAttribute('content', desc);
+        el = document.getElementById('twitter-title');        if (el) el.setAttribute('content', name + ' Workout — HomeWodRX');
+        el = document.getElementById('twitter-description');  if (el) el.setAttribute('content', desc);
+        var url = 'https://homewodrx.com/workouts/' + slug;
+        el = document.getElementById('canonical-url');  if (el) el.setAttribute('href', url);
+        el = document.getElementById('og-url');         if (el) el.setAttribute('content', url);
+      }
+    })();
+  </script>
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+
+  <!-- Google Fonts: Bebas Neue (headings) + Barlow (body) + Kalam (whiteboard) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Shared site styles -->
+  <link rel="stylesheet" href="/css/style.css">
+
+  <!-- Page-specific styles -->
+  <style>
+
+/* ham-panel fix */
+.ham-panel { position: fixed !important; top: var(--nav-h); }
+
+/* ── page loading / error ── */
+.loading-wrap { display: flex; align-items: center; justify-content: center; padding: 80px; }
+.error-wrap { text-align: center; padding: 80px 24px; }
+.error-wrap p { color: var(--muted); font-size: .95rem; }
+
+/* ══ PAGE HEADER (white strip above gray) ══ */
+.page-header { background: var(--white); border-bottom: 1px solid var(--border); padding: 24px 24px 28px; }
+.page-header-inner { max-width: 1200px; margin: 0 auto; }
+.breadcrumb { font-size: .78rem; color: var(--muted); display: flex; align-items: center; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.breadcrumb a { color: var(--muted); text-decoration: none; }
+.breadcrumb a:hover { color: var(--or); }
+.breadcrumb span { opacity: .4; }
+.wod-ph-eyebrow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.wod-ph-title { font-family: var(--font-head); font-size: clamp(2.8rem, 6vw, 4.5rem); letter-spacing: .04em; line-height: 1; color: var(--text); margin-bottom: 0; }
+.wod-ph-meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; font-size: .82rem; color: var(--muted); font-weight: 500; padding-top: 14px; border-top: 1px solid var(--border); margin-top: 14px; }
+.wod-ph-meta-item { display: flex; align-items: center; gap: 5px; }
+.wod-ph-meta-item svg { width: 14px; height: 14px; flex-shrink: 0; opacity: .7; }
+.wod-ph-desc { font-size: .9rem; color: var(--muted); line-height: 1.5; margin-top: 12px; }
+
+/* ══ PAGE LAYOUT ══ */
+.page-wrap { max-width: 1200px; margin: 0 auto; padding: 28px 24px 80px; }
+
+/* ── HERO ROW ── */
+.hero-row { display: grid; grid-template-columns: 1fr 300px; gap: 20px; margin-bottom: 20px; align-items: start; }
+.hero-left { display: flex; flex-direction: column; gap: 12px; }
+
+/* Equipment strip below WOD hero card */
+.equip-below-wb { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); padding: 14px 20px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.equip-below-label { font-family: var(--font-head); font-size: .9rem; letter-spacing: .06em; color: var(--muted); text-transform: uppercase; flex-shrink: 0; }
+
+/* Warm-Up + Cool-Down side by side under the whiteboard */
+.wc-row { display: flex; gap: 12px; }
+.wc-row .bc { flex: 1; min-width: 0; }
+
+/* ══ WOD HERO CARD (replaces dark whiteboard) ══ */
+.wod-hero-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 32px 24px; box-shadow: var(--shadow); }
+.wod-hero-eyebrow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.wod-cat-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 20px; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; border: 1.5px solid; }
+.wod-cat-badge.girl-wod   { background: #fce7f3; border-color: #db2777; color: #be185d; }
+.wod-cat-badge.hero-wod   { background: #dbeafe; border-color: #2563eb; color: #1d4ed8; }
+.wod-cat-badge.benchmark  { background: var(--or-xlight); border-color: var(--or); color: var(--or); }
+.wod-cat-badge.open       { background: #d1fae5; border-color: #059669; color: #065f46; }
+.wod-cat-badge.games      { background: #fff7ed; border-color: #d97706; color: #92400e; }
+.wod-cat-badge.partner    { background: #d1fae5; border-color: #16a34a; color: #15803d; }
+.wod-type-badge { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 20px; background: #f5f5f5; border: 1px solid var(--border); font-size: .78rem; font-weight: 700; color: var(--muted); }
+
+/* Movement list — table layout guarantees uniform column widths across all rows */
+.wod-move-list { list-style: none; margin-bottom: 0; padding: 0; display: table; width: 100%; border-collapse: collapse; }
+.wod-move-row { display: table-row; }
+.wod-reps { display: table-cell; font-family: var(--font-head); font-size: 1.55rem; color: var(--or); letter-spacing: .04em; line-height: 1; white-space: nowrap; text-align: left; padding: 7px 20px 7px 0; border-bottom: 1px solid #f3f3f3; vertical-align: middle; }
+.wod-move-link { display: table-cell; font-size: 1.05rem; font-weight: 600; color: var(--text); text-decoration: none; transition: color .15s; padding: 7px 0; border-bottom: 1px solid #f3f3f3; vertical-align: middle; }
+.wod-move-link:hover { color: var(--or); }
+.wod-load { font-size: .82rem; color: var(--muted); font-weight: 500; margin-left: 8px; white-space: nowrap; }
+.wod-round-sep { display: table-row; }
+.wod-round-sep-spacer { display: table-cell; }
+.wod-round-sep-text { display: table-cell; font-size: .72rem; color: var(--muted); font-style: italic; padding: 4px 0; border-bottom: 1px solid #f3f3f3; }
+.wod-score-note { font-size: .82rem; color: var(--muted); padding: 10px 0 0; }
+.wod-stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+.wod-stat { display: flex; flex-direction: column; gap: 2px; }
+.wod-stat-label { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+.wod-stat-val { font-family: var(--font-head); font-size: 1.1rem; letter-spacing: .04em; color: var(--text); line-height: 1.1; }
+
+/* ══ META STACK (right column) ══ */
+.meta-stack { display: flex; flex-direction: column; gap: 12px; }
+.cta-card { background: var(--or); border-radius: var(--radius); padding: 20px; text-align: center; box-shadow: 0 4px 16px rgba(196,18,18,.25); }
+.cta-card h3 { font-family: var(--font-head); font-size: 1.5rem; color: white; letter-spacing: .06em; margin-bottom: 6px; }
+.cta-card p { font-size: .8rem; color: rgba(255,255,255,.75); margin-bottom: 14px; }
+.cta-btn { display: inline-block; width: 100%; background: white; color: var(--or); font-family: var(--font-head); font-size: 1.1rem; letter-spacing: .06em; padding: 10px; border-radius: 7px; border: none; cursor: pointer; transition: background .15s; text-decoration: none; }
+.cta-btn:hover { background: #f5e5e5; }
+.action-col { display: flex; flex-direction: column; gap: 8px; }
+.action-btn { display: flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--white); font-size: .84rem; font-weight: 700; color: var(--text); text-decoration: none; cursor: pointer; font-family: var(--font-body); transition: all .15s; box-shadow: var(--shadow); width: 100%; }
+.action-btn:hover { border-color: var(--or); color: var(--or); background: var(--or-xlight); }
+.action-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+.admin-row { margin-top: 4px; }
+.admin-delete-btn { display: flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 8px; border: 1.5px solid rgba(196,18,18,.35); background: var(--white); font-size: .84rem; font-weight: 700; color: var(--or); cursor: pointer; font-family: var(--font-body); box-shadow: var(--shadow); width: 100%; transition: all .15s; }
+.admin-delete-btn:hover { border-color: var(--or); background: var(--or-xlight); }
+.admin-delete-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+/* ══ SOCIAL SHARE ══ */
+.share-card { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); }
+.share-title { font-family: var(--font-head); font-size: .9rem; letter-spacing: .06em; color: var(--muted); padding: 14px 18px 0; text-transform: uppercase; }
+.share-pill-body { padding: 14px 18px; display: flex; flex-direction: column; gap: 8px; }
+.share-pill { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-radius: 8px; border: 1.5px solid var(--border); background: none; font-family: var(--font-body); font-size: .82rem; font-weight: 600; color: var(--text); cursor: pointer; transition: border-color .15s, color .15s, background .15s; text-align: left; width: 100%; text-decoration: none; }
+.share-pill svg { width: 16px; height: 16px; flex-shrink: 0; }
+.share-x:hover    { border-color: #000; color: #000; background: #f5f5f5; }
+.share-fb:hover   { border-color: #1877f2; color: #1877f2; background: #f0f4ff; }
+.share-wa:hover   { border-color: #25d366; color: #25d366; background: #f0fdf4; }
+.share-copy:hover { border-color: var(--or); color: var(--or); background: var(--or-xlight); }
+.share-pill.copied { border-color: #16a34a; color: #16a34a; background: #f0fdf4; }
+
+/* ══ BENTO GRID ══ */
+.bento { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; grid-auto-flow: dense; }
+.span2 { grid-column: span 2; }
+.span3 { grid-column: span 3; }
+.span4 { grid-column: span 4; }
+.span6 { grid-column: span 6; }
+.bc { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); padding: 22px 24px; box-shadow: var(--shadow); }
+.bc-head { font-family: var(--font-head); font-size: 1.2rem; letter-spacing: .06em; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; color: var(--text); }
+.bc-head .icon { width: 28px; height: 28px; border-radius: 6px; background: var(--or-xlight); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--or); }
+.bc p { font-size: .88rem; color: var(--muted); line-height: 1.7; }
+.bc p + p { margin-top: 10px; }
+
+/* ── About / description ── */
+.about-text { font-size: .9rem; line-height: 1.75; color: var(--text); }
+.scoring-note { margin-top: 10px; font-size: .85rem; color: var(--muted); line-height: 1.6; }
+.scoring-note strong { color: var(--text); font-weight: 700; }
+
+/* ── Video card ── */
+.video-wrap { position: relative; width: 100%; border-radius: 8px; overflow: hidden; background: #111; aspect-ratio: 16 / 9; }
+.video-wrap iframe { width: 100%; height: 100%; border: 0; }
+.video-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: #f3f3f3; border-radius: 8px; aspect-ratio: 16 / 9; color: var(--muted); font-size: .8rem; }
+.video-placeholder .play-btn { width: 52px; height: 52px; background: rgba(0,0,0,.12); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+/* ── Related cards ── */
+.rel-badge { font-size: .62rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; padding: 2px 8px; border-radius: 4px; align-self: flex-start; }
+.rb-girl      { background: #fce7f3; color: #9d174d; }
+.rb-hero      { background: #dbeafe; color: #1e40af; }
+.rb-benchmark { background: var(--or-xlight); color: var(--or); }
+.rb-open      { background: #d1fae5; color: #065f46; }
+.rb-games     { background: #fff3e0; color: #e65100; }
+.rb-partner   { background: #f3e8ff; color: #7b1fa2; }
+.rel-desc { font-size: .75rem; color: var(--muted); line-height: 1.4; flex: 1; }
+.rel-arrow { font-size: .8rem; color: var(--muted); align-self: flex-end; margin-top: 4px; }
+.rel-card:hover .rel-arrow { color: var(--or); }
+.rel-card:hover .rel-name { color: var(--or); }
+
+/* ── Movements in bento ── */
+.movements-list { list-style: none; padding: 0; margin: 0; }
+.movements-list li { display: flex; align-items: baseline; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: .9rem; }
+.movements-list li:last-child { border-bottom: none; }
+.mov-reps { font-family: var(--font-head); font-size: 1.15rem; color: var(--or); min-width: 42px; text-align: right; flex-shrink: 0; line-height: 1; }
+.mov-name a { color: var(--text); text-decoration: none; font-weight: 600; }
+.mov-name a:hover { color: var(--or); }
+.mov-rx { font-size: .78rem; color: var(--muted); margin-left: 6px; }
+
+/* ── Scaling ── */
+.scaling-box { background: #fafafa; border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; font-size: .88rem; line-height: 1.7; color: var(--text); }
+.scale-tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.scale-tab { padding: 5px 14px; border-radius: 20px; border: 1.5px solid var(--border); font-size: .78rem; font-weight: 700; cursor: pointer; font-family: var(--font-body); background: none; color: var(--muted); transition: all .15s; }
+.scale-tab.active { background: var(--or); color: white; border-color: var(--or); }
+.scale-tab:hover:not(.active) { border-color: var(--or); color: var(--or); }
+.scale-content { display: none; }
+.scale-content.active { display: block; }
+.scale-row { display: flex; align-items: baseline; gap: 10px; font-size: .875rem; line-height: 1.8; border-bottom: 1px solid #f5f5f5; padding: 4px 0; }
+.scale-row:last-child { border: none; }
+.scale-mv { font-weight: 600; flex: 1; }
+.scale-rx { color: var(--or); font-weight: 700; font-size: .8rem; white-space: nowrap; }
+
+/* ── Round separator (table-row with two cells) ── */
+
+/* ── Movement standards table ── */
+.standards-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+.standards-table th { padding: 6px 10px; text-align: left; font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); border-bottom: 2px solid var(--border); }
+.standards-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
+.standards-table tr:last-child td { border-bottom: none; }
+.standards-table .std-mv { font-weight: 600; }
+.standards-table .std-rx { color: var(--or); font-weight: 700; }
+
+/* ── Equipment chips ── */
+.equip-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.equip-chips-wrap { display: flex; flex-wrap: wrap; gap: 9px; }
+.equip-chip { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; border: 1px solid var(--border); background: #fafafa; font-size: .82rem; font-weight: 600; color: var(--text); text-decoration: none; transition: all .15s; }
+.equip-chip:hover { border-color: var(--or); color: var(--or); background: var(--or-xlight); }
+.equip-section-note { font-size: .78rem; color: var(--muted); margin-bottom: 14px; }
+
+/* ── Coaching tips ── */
+.tip-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.tip-list li { display: flex; align-items: flex-start; gap: 10px; font-size: .88rem; line-height: 1.6; }
+.tip-num { flex-shrink: 0; width: 22px; height: 22px; background: var(--or); color: #fff; border-radius: 50%; font-size: .68rem; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+
+/* ── FAQ ── */
+.faq-item { border-bottom: 1px solid var(--border); }
+.faq-item:first-child { border-top: 1px solid var(--border); }
+.faq-q { width: 100%; text-align: left; background: none; border: none; padding: 13px 0; font-size: .9rem; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; font-family: var(--font-body); color: var(--text); transition: color .15s; }
+.faq-q svg { flex-shrink: 0; transition: transform .2s; color: var(--muted); }
+.faq-a { display: none; font-size: .85rem; color: var(--muted); line-height: 1.7; padding-bottom: 14px; }
+.faq-item.open .faq-q { color: var(--or); }
+.faq-item.open .faq-q svg { transform: rotate(180deg); }
+.faq-item.open .faq-a { display: block; }
+
+/* ── Related WODs ── */
+.related-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.rel-card { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border-radius: var(--radius); border: 1px solid var(--border); background: #fafafa; text-decoration: none; color: var(--text); transition: all .15s; }
+.rel-card:hover { border-color: var(--or); background: var(--or-xlight); transform: translateY(-2px); }
+.rel-name { font-family: var(--font-head); font-size: 1.4rem; line-height: 1; }
+.rel-meta { font-size: .75rem; color: var(--muted); }
+.rel-movs { font-size: .78rem; color: var(--muted); }
+
+/* ── Category badges ── */
+.cat-badge { font-size: .65rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; padding: 2px 8px; border-radius: 20px; display: inline-block; }
+.cat-badge.hero      { background: #fde8e8; color: #c41212; }
+.cat-badge.girl      { background: #f3e8ff; color: #7b1fa2; }
+.cat-badge.open      { background: #e8f0fe; color: #1565c0; }
+.cat-badge.games     { background: #fff3e0; color: #e65100; }
+.cat-badge.partner   { background: #e8f5e9; color: #2e7d32; }
+.cat-badge.benchmark { background: #eceff1; color: #37474f; }
+
+/* ── My History ── */
+.history-table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+.history-table th { padding: 7px 10px; text-align: left; font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); border-bottom: 2px solid var(--border); }
+.history-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
+.history-table tr:last-child td { border-bottom: none; }
+.pr-badge { font-size: .65rem; background: rgba(196,18,18,.12); color: var(--or); border: 1px solid rgba(196,18,18,.25); padding: 2px 6px; border-radius: 4px; font-weight: 700; margin-left: 5px; vertical-align: middle; }
+.rx-badge { font-size: .65rem; background: rgba(39,174,96,.12); color: #27ae60; border: 1px solid rgba(39,174,96,.25); padding: 2px 6px; border-radius: 4px; font-weight: 700; }
+
+/* ── Animations ── */
+@keyframes slideInToast { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popIn { from { transform: scale(.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* ── Responsive ── */
+@media (max-width: 1023px) and (min-width: 900px) {
+  .hero-row { grid-template-columns: 1fr 280px; }
+  .bento { grid-template-columns: repeat(4, 1fr); }
+  .span2 { grid-column: span 2; }
+  .span3 { grid-column: span 2; }
+  .span4 { grid-column: span 4; }
+  .span6 { grid-column: span 4; }
+  .related-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 899px) {
+  .hero-row { grid-template-columns: 1fr; }
+  .meta-stack { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .action-col { flex-direction: row; flex-wrap: wrap; }
+  .action-btn { width: auto; }
+  .bento { grid-template-columns: repeat(2, 1fr); }
+  .span2, .span3, .span4, .span6 { grid-column: span 2; }
+  .related-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 767px) {
+  .page-header { padding: 16px 16px 20px; }
+  .page-wrap { padding: 16px 14px 80px; }
+  .wod-hero-card { padding: 20px 18px 18px; }
+  .wod-stats-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .meta-stack { display: flex; flex-direction: column; gap: 10px; }
+  .bento { grid-template-columns: 1fr; gap: 12px; }
+  .span2, .span3, .span4, .span6 { grid-column: span 1; }
+  .wc-row { flex-direction: column; }
+  .related-grid { grid-template-columns: repeat(3, 200px); overflow-x: auto; padding-bottom: 8px; -webkit-overflow-scrolling: touch; }
+  .breadcrumb { font-size: .72rem; }
+}
+@media (max-width: 480px) {
+  .related-grid { grid-template-columns: repeat(3, 180px); }
+}
+
+/* ── Print ── */
+#print-area { display: none; }
+@media print {
+  body > * { display: none !important; }
+  #print-area { display: block !important; font-family: system-ui, Arial, sans-serif; color: #000; background: #fff; padding: 0; margin: 0; }
+  #print-area .ph { display: flex; align-items: center; justify-content: space-between; padding-bottom: 12px; margin-bottom: 20px; border-bottom: 3px solid #C41212; }
+  #print-area .ph img { height: 48px; width: auto; }
+  #print-area .ph .ph-url { font-size: 11px; color: #666; text-align: right; line-height: 1.4; }
+  #print-area .pt { font-size: 26px; font-weight: 900; margin: 0 0 4px; }
+  #print-area .ps { font-size: 13px; color: #555; margin-bottom: 10px; }
+  #print-area .pm { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  #print-area .pm span { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px; border: 1px solid #ccc; color: #333; background: #f4f4f4; }
+  #print-area table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 13px; }
+  #print-area table th { background: #222; color: #fff; padding: 8px 10px; text-align: left; font-size: 11px; text-transform: uppercase; }
+  #print-area table td { padding: 8px 10px; border-bottom: 1px solid #ddd; }
+  #print-area .pscore { border: 1px solid #ccc; background: #f8f8f8; border-radius: 6px; padding: 12px 14px; margin-bottom: 18px; }
+  #print-area .pscore h4 { font-size: 10px; font-weight: 800; color: #C41212; text-transform: uppercase; margin-bottom: 5px; }
+  #print-area .pscore p { font-size: 13px; color: #222; margin: 0; line-height: 1.5; }
+  #print-area .pfoot { margin-top: 20px; padding-top: 10px; border-top: 1px solid #ddd; font-size: 10px; color: #999; text-align: center; }
+}
+
+  </style>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-HZM475VDN3');
+  </script>
+  <!-- Vercel Analytics -->
+  <script defer src="/_vercel/insights/script.js"></script>
+
+</head>
+
+<body data-nav-init="true" data-active-page="workout">
+<!-- ── MAIN CONTENT ── -->
+<div id="workout-main">
+  <div class="loading-wrap">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--or)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 1s linear infinite">
+      <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+    </svg>
+  </div>
+</div>
+
+
+<!-- ── SPIN KEYFRAME (loading spinner) ── -->
+<style>
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Result / Edit modals ── */
+.wod-modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.72); z-index: 800;
+  align-items: center; justify-content: center;
+  padding: 20px; animation: fadeInOverlay .18s ease;
+}
+.wod-modal-overlay.active { display: flex; }
+.wod-modal {
+  background: #fff; border-radius: var(--radius);
+  width: 100%; max-width: 460px; position: relative;
+  box-shadow: 0 24px 64px rgba(0,0,0,.28);
+  animation: popIn .18s ease;
+  overflow: hidden;
+}
+.wod-modal-head {
+  background: var(--or); color: #fff;
+  padding: 18px 22px; display: flex;
+  align-items: center; justify-content: space-between;
+}
+.wod-modal-head h3 {
+  font-family: var(--font-head); font-size: 1.25rem;
+  letter-spacing: .05em; margin: 0;
+}
+.wod-modal-close {
+  background: none; border: none; color: rgba(255,255,255,.8);
+  font-size: 22px; line-height: 1; cursor: pointer; padding: 0 2px;
+  transition: color .15s;
+}
+.wod-modal-close:hover { color: #fff; }
+.wod-modal-body { padding: 22px; }
+.wod-modal-field { margin-bottom: 16px; }
+.wod-modal-field label {
+  display: block; font-size: .72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .07em;
+  color: var(--muted); margin-bottom: 6px;
+}
+.wod-modal-field input[type="text"],
+.wod-modal-field input[type="number"],
+.wod-modal-field textarea {
+  width: 100%; padding: 10px 12px; border-radius: 8px;
+  border: 1.5px solid var(--border); font-family: var(--font-body);
+  font-size: .9rem; color: var(--text); background: #fff;
+  outline: none; box-sizing: border-box; transition: border-color .15s;
+}
+.wod-modal-field input:focus,
+.wod-modal-field textarea:focus { border-color: var(--or); }
+.wod-modal-field textarea { min-height: 80px; resize: vertical; }
+.wod-modal-rx-row {
+  display: flex; align-items: center; gap: 9px;
+  padding: 10px 0; font-size: .88rem; font-weight: 600; cursor: pointer;
+}
+.wod-modal-rx-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--or); cursor: pointer; }
+.wod-modal-error {
+  background: rgba(231,76,60,.12); border: 1px solid rgba(231,76,60,.35);
+  color: #c0392b; border-radius: 7px; padding: 10px 14px;
+  font-size: .82rem; margin-bottom: 14px; display: none;
+}
+.wod-modal-pr-hint {
+  background: rgba(196,18,18,.08); border: 1px solid rgba(196,18,18,.2);
+  color: var(--or); border-radius: 7px; padding: 10px 14px;
+  font-size: .82rem; margin-bottom: 14px; display: none;
+  font-weight: 700;
+}
+.wod-modal-foot {
+  padding: 0 22px 20px; display: flex; gap: 10px; justify-content: flex-end;
+}
+.wod-modal-cancel {
+  padding: 10px 20px; border-radius: 8px; border: 1.5px solid var(--border);
+  background: #fff; color: var(--text); font-family: var(--font-body);
+  font-size: .88rem; font-weight: 700; cursor: pointer; transition: all .15s;
+}
+.wod-modal-cancel:hover { border-color: var(--or); color: var(--or); }
+.wod-modal-submit {
+  padding: 10px 22px; border-radius: 8px; border: none;
+  background: var(--or); color: #fff; font-family: var(--font-body);
+  font-size: .88rem; font-weight: 800; cursor: pointer; transition: background .15s;
+}
+.wod-modal-submit:hover { background: #a80e0e; }
+.wod-modal-delete {
+  padding: 10px 16px; border-radius: 8px; margin-right: auto;
+  border: 1px solid rgba(231,76,60,.4); background: transparent;
+  color: #e74c3c; font-family: var(--font-body); font-size: .84rem;
+  font-weight: 700; cursor: pointer; transition: all .15s;
+}
+.wod-modal-delete:hover { background: rgba(231,76,60,.08); }
+
+/* ── Auth modal (dark overlay — intentional) ── */
+#workout-auth-modal {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.75); z-index: 900;
+  align-items: center; justify-content: center; padding: 20px;
+}
+#workout-auth-modal.active { display: flex; }
+#workout-auth-modal .wam {
+  background: var(--dark-card, #1E1E2C);
+  border: 1px solid var(--dark-border, #2E2E42);
+  border-radius: 14px; padding: 28px 28px 24px;
+  width: 100%; max-width: 380px; position: relative;
+}
+#workout-auth-modal .wam-close {
+  position: absolute; top: 14px; right: 16px;
+  background: none; border: none; color: var(--text-muted, #888899);
+  font-size: 20px; cursor: pointer; line-height: 1;
+}
+#workout-auth-modal .wam-close:hover { color: var(--text-primary, #EAEAF0); }
+#workout-auth-modal h2 { font-size: 20px; font-weight: 900; margin-bottom: 4px; color: #EAEAF0; }
+#workout-auth-modal .wamsub { color: var(--text-muted, #888899); font-size: 13px; margin-bottom: 18px; }
+#workout-auth-modal .wamfield { margin-bottom: 14px; }
+#workout-auth-modal .wamfield label {
+  display: block; font-size: 11px; font-weight: 700;
+  color: var(--text-muted, #888899); text-transform: uppercase;
+  letter-spacing: .5px; margin-bottom: 5px;
+}
+#workout-auth-modal .wamfield input {
+  width: 100%; background: #16161F;
+  border: 1px solid var(--dark-border, #2E2E42);
+  border-radius: 8px; padding: 10px 12px;
+  color: var(--text-primary, #EAEAF0); font-size: 14px;
+  outline: none; font-family: inherit; box-sizing: border-box;
+}
+#workout-auth-modal .wamfield input:focus { border-color: var(--orange, #C41212); }
+#workout-auth-modal .wambtn {
+  width: 100%; padding: 13px; background: var(--orange, #C41212);
+  color: #fff; border: none; border-radius: 8px; font-size: 15px;
+  font-weight: 800; cursor: pointer; margin-top: 4px;
+}
+#workout-auth-modal .wambtn:hover { background: #E03030; }
+#workout-auth-modal .wamlink {
+  text-align: center; margin-top: 12px; font-size: 13px;
+  color: var(--text-muted, #888899);
+}
+#workout-auth-modal .wamlink a { color: var(--orange, #C41212); cursor: pointer; text-decoration: none; }
+#workout-auth-modal .wam-recovery {
+  display: flex; justify-content: center; gap: 16px;
+  margin-top: 10px; font-size: 12px;
+}
+#workout-auth-modal .wam-recovery a { color: var(--text-muted, #888899); text-decoration: none; }
+#workout-auth-modal .wam-recovery a:hover { color: var(--orange, #C41212); text-decoration: underline; }
+#workout-auth-modal .wamerr {
+  background: rgba(231,76,60,.15); border: 1px solid rgba(231,76,60,.4);
+  color: #E74C3C; border-radius: 7px; padding: 10px 14px;
+  font-size: 13px; margin-bottom: 14px; display: none;
+}
+/* ── Warm-Up / Cool-Down prep rows ── */
+.prep-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 9px 0; border-bottom: 1px solid var(--border);
+  text-decoration: none; color: inherit; font-size: .875rem; gap: 8px;
+}
+.prep-row:last-child { border-bottom: none; }
+.prep-row:hover .prep-name { color: var(--or); }
+.prep-name { font-weight: 500; }
+.prep-reps { color: var(--muted); font-size: .78rem; white-space: nowrap; flex-shrink: 0; }
+</style>
+
+<!-- ── FOOTER ── -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>Workouts</h4>
+        <a href="/workouts.html?cat=classic_benchmark">Classic Benchmarks</a>
+        <a href="/workouts.html?cat=hero">Hero WODs</a>
+        <a href="/workouts.html?cat=competition">Competition WODs</a>
+        <a href="/workouts.html?cat=community">Community WODs</a>
+        <a href="/workouts.html">All Workouts</a>
+      </div>
+      <div class="footer-col">
+        <h4>Train</h4>
+        <a href="/daily-wod.html">The Daily 20</a>
+        <a href="/wodbuilder.html">Smart WOD Builder</a>
+        <a href="/timer.html">WOD Timer</a>
+        <a href="/movements.html">Movement Library</a>
+      </div>
+      <div class="footer-col">
+        <h4>Stretch &amp; Mobility</h4>
+        <a href="/stretchbuilder.html">The Daily 10</a>
+        <a href="/stretches.html">Browse Stretches</a>
+        <a href="/stretch-routines.html">Stretch Routines</a>
+      </div>
+      <div class="footer-col">
+        <h4>More</h4>
+        <a href="/shop.html">Gear Shop</a>
+        <a href="/blog.html">Blog</a>
+        <a href="/search.html">Search</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <a href="/"><img src="/images/HomeWODRx-logo-white-red-black-strip-040626.png" alt="HomeWODrx" style="height:28px;display:block;"></a>
+      <p>© 2026 HomeWodRX. All rights reserved.</p>
+      <div style="display:flex;gap:16px;font-size:.75rem;">
+        <a href="/privacy.html" style="color:#666;text-decoration:none;">Privacy</a>
+        <a href="/terms.html" style="color:#666;text-decoration:none;">Terms</a>
+        <a href="/disclaimer.html" style="color:#666;text-decoration:none;">Disclaimer</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ── MODAL: LOG RESULT ── -->
+<div class="wod-modal-overlay" id="result-modal">
+  <div class="wod-modal">
+    <div class="wod-modal-head">
+      <h3 id="result-modal-title">Log Your Result</h3>
+      <button class="wod-modal-close" onclick="closeResultModal()">&#x2715;</button>
+    </div>
+    <div class="wod-modal-body">
+      <div id="result-error" class="wod-modal-error"></div>
+      <div id="result-pr-hint" class="wod-modal-pr-hint">New PR! Great work!</div>
+      <!-- Dynamic score fields injected here by buildScoreFields(scoringType) -->
+      <div id="result-score-fields"></div>
+      <div class="wod-modal-field">
+        <label for="result-notes">Notes (optional)</label>
+        <textarea id="result-notes" placeholder="Scaling notes, how it felt, any modifications..."></textarea>
+      </div>
+      <label class="wod-modal-rx-row">
+        <input type="checkbox" id="result-rx">
+        Completed RX (as prescribed — no scaling)
+      </label>
+    </div>
+    <div class="wod-modal-foot">
+      <button class="wod-modal-cancel" onclick="closeResultModal()">Cancel</button>
+      <button class="wod-modal-submit" onclick="submitResult()">Log Result &#x2192;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: EDIT RESULT ── -->
+<div class="wod-modal-overlay" id="edit-result-modal">
+  <div class="wod-modal">
+    <div class="wod-modal-head">
+      <h3>Edit Result</h3>
+      <button class="wod-modal-close" onclick="closeEditResultModal()">&#x2715;</button>
+    </div>
+    <div class="wod-modal-body">
+      <input type="hidden" id="edit-result-id">
+      <div id="edit-result-error" class="wod-modal-error"></div>
+      <!-- Dynamic score fields injected here by buildScoreFields() for edit mode -->
+      <div id="edit-result-score-fields"></div>
+      <div class="wod-modal-field">
+        <label for="edit-result-notes">Notes (optional)</label>
+        <textarea id="edit-result-notes" placeholder="Scaling notes, how it felt, any modifications..."></textarea>
+      </div>
+      <label class="wod-modal-rx-row">
+        <input type="checkbox" id="edit-result-rx">
+        Completed RX (as prescribed — no scaling)
+      </label>
+    </div>
+    <div class="wod-modal-foot">
+      <button class="wod-modal-delete" onclick="deleteResult()">Delete</button>
+      <button class="wod-modal-cancel" onclick="closeEditResultModal()">Cancel</button>
+      <button class="wod-modal-submit" onclick="saveEditResult()">Save Changes &#x2192;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: EDIT WOD DETAILS ── -->
+<div class="wod-modal-overlay" id="edit-wod-modal">
+  <div class="wod-modal">
+    <div class="wod-modal-head">
+      <h3>Edit Workout</h3>
+      <button class="wod-modal-close" onclick="closeEditWodModal()">&#x2715;</button>
+    </div>
+    <div class="wod-modal-body">
+      <div id="edit-wod-error" class="wod-modal-error"></div>
+      <div class="wod-modal-field">
+        <label for="edit-wod-name">Workout Name</label>
+        <input type="text" id="edit-wod-name" placeholder="e.g. Slammer" maxlength="80">
+      </div>
+      <div class="wod-modal-field">
+        <label for="edit-wod-desc">Description (optional)</label>
+        <textarea id="edit-wod-desc" placeholder="What's the intent? Tips for athletes?"></textarea>
+      </div>
+      <label class="wod-modal-rx-row">
+        <input type="checkbox" id="edit-wod-public">
+        Make this workout public
+      </label>
+    </div>
+    <div class="wod-modal-foot">
+      <button class="wod-modal-cancel" onclick="closeEditWodModal()">Cancel</button>
+      <button class="wod-modal-submit" onclick="saveEditWod()">Save Changes &#x2192;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: AUTH GATE ── -->
+<div id="workout-auth-modal">
+  <div class="wam">
+    <button class="wam-close" onclick="closeWorkoutAuthModal()">&#x2715;</button>
+    <h2 id="workout-auth-title">Sign In to Log Result</h2>
+    <p class="wamsub" id="workout-auth-sub">Sign in to record your results and track your progress.</p>
+    <div id="workout-auth-error" class="wamerr"></div>
+    <div id="workout-login-form">
+      <div class="wamfield">
+        <label>Email</label>
+        <input type="email" id="workout-li-email" placeholder="you@email.com">
+      </div>
+      <div class="wamfield">
+        <label>Password</label>
+        <input type="password" id="workout-li-pass" placeholder="Your password"
+          onkeydown="if(event.key==='Enter')submitWorkoutLogin()">
+      </div>
+      <button class="wambtn" onclick="submitWorkoutLogin()">Sign In &#x2192;</button>
+      <p class="wamlink">No account? <a onclick="switchWorkoutAuthTab('signup')">Sign up free</a></p>
+      <div class="wam-recovery">
+        <a href="/login.html">Forgot password?</a>
+        <a href="/login.html">Forgot email?</a>
+      </div>
+    </div>
+    <div id="workout-signup-form" style="display:none">
+      <div class="wamfield">
+        <label>Username</label>
+        <input type="text" id="workout-su-user" placeholder="e.g. firebreather_rob" maxlength="20">
+      </div>
+      <div class="wamfield">
+        <label>Email</label>
+        <input type="email" id="workout-su-email" placeholder="you@email.com">
+      </div>
+      <div class="wamfield">
+        <label>Password</label>
+        <input type="password" id="workout-su-pass" placeholder="Min 6 characters"
+          onkeydown="if(event.key==='Enter')submitWorkoutSignup()">
+      </div>
+      <button class="wambtn" onclick="submitWorkoutSignup()">Create Account &#x2192;</button>
+      <p class="wamlink">Already have one? <a onclick="switchWorkoutAuthTab('login')">Log in</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ── PRINT AREA (hidden on screen; shown only @media print via Chunk 1 CSS) ── -->
+<div id="print-area"></div>
+
+
+<!-- ── DATA & SCRIPTS ── -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/js/config.js"></script>
+<script src="/js/db.js"></script>
+<script src="/js/nav.js"></script>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// GLOBALS
+// ─────────────────────────────────────────────────────────────────────────────
+let currentWod  = null;
+let currentUser = null;
+let historyResults = [];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CONSTANTS
+// ─────────────────────────────────────────────────────────────────────────────
+const AFFILIATE_TAG = 'homewodrx0f-20';
+
+const EQUIPMENT_LINKS = {
+  barbell:       'https://www.amazon.com/s?k=barbell&tag=' + AFFILIATE_TAG,
+  dumbbell:      'https://www.amazon.com/s?k=adjustable+dumbbells&tag=' + AFFILIATE_TAG,
+  kettlebell:    'https://www.amazon.com/s?k=kettlebell+set&tag=' + AFFILIATE_TAG,
+  pullUpBar:     'https://www.amazon.com/s?k=pull+up+bar&tag=' + AFFILIATE_TAG,
+  jumpRope:      'https://www.amazon.com/s?k=jump+rope+crossfit&tag=' + AFFILIATE_TAG,
+  rings:         'https://www.amazon.com/s?k=gymnastic+rings&tag=' + AFFILIATE_TAG,
+  rowingMachine: 'https://www.amazon.com/s?k=rowing+machine&tag=' + AFFILIATE_TAG,
+  assaultBike:   'https://www.amazon.com/s?k=assault+air+bike&tag=' + AFFILIATE_TAG,
+  box:           'https://www.amazon.com/s?k=plyo+box+crossfit&tag=' + AFFILIATE_TAG,
+  medBall:       'https://www.amazon.com/s?k=medicine+ball&tag=' + AFFILIATE_TAG,
+  vest:          'https://www.amazon.com/s?k=weight+vest+crossfit&tag=' + AFFILIATE_TAG,
+};
+
+const POPULAR_GEAR = [
+  { key: 'barbell',   label: 'Barbell' },
+  { key: 'pullUpBar', label: 'Pull-up Bar' },
+  { key: 'kettlebell',label: 'Kettlebell' },
+  { key: 'jumpRope',  label: 'Jump Rope' },
+];
+
+const SKIP_EQUIPMENT = ['bodyweight'];
+
+const EQUIP_LABELS = {
+  pullUpBar:'Pull-up Bar', bodyweight:'Bodyweight', barbell:'Barbell',
+  dumbbell:'Dumbbells', kettlebell:'Kettlebell', jumpRope:'Jump Rope',
+  rings:'Rings', rowingMachine:'Rower', assaultBike:'Air Bike',
+  box:'Box', medBall:'Med Ball', vest:'Weight Vest',
+};
+
+const CAT_LABELS = {
+  hero:'Hero', classic_benchmark:'Classic', competition:'Competition',
+  community:'Community', memorial:'Memorial',
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UTILITIES
+// ─────────────────────────────────────────────────────────────────────────────
+function slugify(str) {
+  return (str || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+function escHtml(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// URL / ROUTING
+// ─────────────────────────────────────────────────────────────────────────────
+function getWorkoutSlug() {
+  const pathMatch = window.location.pathname.match(/\/workouts\/([^/?#]+)/);
+  if (pathMatch) return pathMatch[1];
+  return new URLSearchParams(window.location.search).get('slug') || null;
+}
+
+function buildTimerUrl(w) {
+  const fmt  = (w.format || '').toLowerCase();
+  const raw  = w.duration_estimate || w.duration || '20';
+  const mins = parseInt(String(raw).match(/\d+/)?.[0] || 20);
+  const name = encodeURIComponent(w.name || w.title || 'WOD');
+  const fmtLabel = encodeURIComponent(w.format || '');
+  // For multi-round workouts (e.g. "21 – 15 – 9") use only the first round count
+  const movePairs = (w.movements || []).map(function(m) {
+    var reps = String(m.reps || '').match(/\d+/);
+    return (reps ? reps[0] : '') + ':' + (m.name || '');
+  });
+  const movesStr = movePairs.length ? '&moves=' + encodeURIComponent(movePairs.join(',')) : '';
+  const base = '/timer.html?wod=' + name + '&format=' + fmtLabel + '&time=' + mins + movesStr;
+  if (fmt.includes('amrap'))   return base + '&mode=amrap';
+  if (fmt.includes('emom'))    return base + '&mode=emom';
+  if (fmt.includes('tabata'))  return base + '&mode=tabata';
+  return base + '&mode=fortime';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FORMAT HELPERS
+// ─────────────────────────────────────────────────────────────────────────────
+function formatReps(r) {
+  if (!r) return r;
+  var s = String(r);
+  // "35s" or "4 × 35s" → "35 seconds"
+  s = s.replace(/(\d+)\s*s\b/gi, '$1 seconds');
+  // "20m" or "4-5 × 20m" → "20 meters" (guards against "min" and "meters")
+  s = s.replace(/(\d+)\s*m\b(?!in|eters)/gi, '$1 meters');
+  return s;
+}
+
+function formatWodMeta(b) {
+  const parts = [];
+  if (b.format) parts.push(b.format);
+  const dur = b.duration_estimate || b.duration;
+  if (dur) {
+    const m = String(dur).match(/\d+/);
+    parts.push(m ? m[0] + ' min' : String(dur));
+  }
+  return parts.join(' · ');
+}
+
+function summarizeMovements(b) {
+  const movs = (b.movements || []).map(function(m) { return m.name; }).filter(Boolean);
+  if (!movs.length) return '';
+  if (movs.length <= 2) return movs.join(', ');
+  return movs.slice(0, 2).join(', ') + ' +' + (movs.length - 2) + ' more';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ADMIN
+// ─────────────────────────────────────────────────────────────────────────────
+function isAdmin() {
+  return !!(currentUser && (
+    currentUser.email === 'rob@carlbloom.com' ||
+    (currentUser.user_metadata && currentUser.user_metadata.role === 'admin')
+  ));
+}
+function canManageWorkout(w) {
+  if (!currentUser || !w) return false;
+  if (isAdmin()) return true;
+  return w.user_id === currentUser.id;
+}
+function openEditWodModal() {
+  var w = currentWod;
+  if (!w) return;
+  var nameEl   = document.getElementById('edit-wod-name');
+  var descEl   = document.getElementById('edit-wod-desc');
+  var pubEl    = document.getElementById('edit-wod-public');
+  var errEl    = document.getElementById('edit-wod-error');
+  if (nameEl)  nameEl.value   = w.title || w.name || '';
+  if (descEl)  descEl.value   = w.description || '';
+  if (pubEl)   pubEl.checked  = !!w.is_public;
+  if (errEl)   { errEl.textContent = ''; errEl.style.display = 'none'; }
+  document.getElementById('edit-wod-modal').classList.add('active');
+  if (nameEl)  { nameEl.focus(); nameEl.select(); }
+}
+
+function closeEditWodModal() {
+  var el = document.getElementById('edit-wod-modal');
+  if (el) el.classList.remove('active');
+}
+
+async function saveEditWod() {
+  var user = currentUser || await db.getUser();
+  if (!user) return;
+  var w = currentWod;
+  if (!w || !w.id) return;
+
+  var nameEl = document.getElementById('edit-wod-name');
+  var descEl = document.getElementById('edit-wod-desc');
+  var pubEl  = document.getElementById('edit-wod-public');
+  var errEl  = document.getElementById('edit-wod-error');
+
+  var title    = (nameEl ? nameEl.value.trim() : '');
+  var desc     = (descEl ? descEl.value.trim() : '');
+  var isPublic = !!(pubEl && pubEl.checked);
+
+  if (!title) {
+    if (errEl) { errEl.textContent = 'Please enter a workout name.'; errEl.style.display = 'block'; }
+    if (nameEl) nameEl.focus();
+    return;
+  }
+
+  var submitBtn = document.querySelector('#edit-wod-modal .wod-modal-submit');
+  if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Saving…'; }
+
+  try {
+    var res = await supabaseClient.from('workouts')
+      .update({ title: title, description: desc, is_public: isPublic })
+      .eq('id', w.id)
+      .eq('user_id', user.id);
+    if (res.error) throw res.error;
+
+    // Update in-memory and on-page without a full reload
+    currentWod.title       = title;
+    currentWod.description = desc;
+    currentWod.is_public   = isPublic;
+    var phTitle = document.querySelector('.wod-ph-title');
+    if (phTitle) phTitle.textContent = title;
+    var crumb = document.querySelector('.breadcrumb');
+    if (crumb) {
+      var last = crumb.lastChild;
+      if (last && last.nodeType === 3) last.textContent = title.charAt(0).toUpperCase() + title.slice(1);
+    }
+    var descEl2 = document.querySelector('.wod-ph-desc');
+    if (desc && descEl2)       descEl2.textContent = desc;
+    else if (!desc && descEl2) descEl2.remove();
+
+    closeEditWodModal();
+    showWorkoutToast('Workout updated!', 'success');
+  } catch(e) {
+    if (errEl) { errEl.textContent = (e && e.message) || 'Error saving changes.'; errEl.style.display = 'block'; }
+  } finally {
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Save Changes →'; }
+  }
+}
+
+async function deleteCurrentWorkout() {
+  if (!confirm('Delete this workout? This cannot be undone.')) return;
+  const w = currentWod;
+  if (!w || !w.id) { showWorkoutToast('Cannot delete this workout.', 'error'); return; }
+  try {
+    var res = await supabaseClient.from('workouts').delete().eq('id', w.id);
+    if (res.error) throw res.error;
+    showWorkoutToast('Workout deleted.', 'success');
+    setTimeout(function() { window.location.href = '/workouts.html'; }, 1500);
+  } catch(e) {
+    showWorkoutToast('Error deleting workout.', 'error');
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// BUILD WOD HERO CARD HTML (light card replacing dark whiteboard)
+// ─────────────────────────────────────────────────────────────────────────────
+function buildWodHeroCardHTML(w) {
+  var isBm     = !!w.slug;
+  var category = w.category || '';
+  var catLabel = CAT_LABELS[category] || cap(category);
+
+  // Category badge
+  var badgeCls = category === 'hero' ? 'hero-wod'
+               : (category || 'classic_benchmark');
+  var catBadge = catLabel
+    ? '<span class="wod-cat-badge ' + badgeCls + '">' + escHtml(catLabel) + ' WOD</span>'
+    : '';
+
+  var scoringLabels = {
+    time:'For Time', rounds_reps:'Rounds + Reps',
+    reps:'Max Reps', load:'Max Load', calories:'Calories',
+  };
+  var scoreLabel = scoringLabels[w.scoring_type] || w.format || 'Complete';
+
+  // Detect multi-round format e.g. "21 – 15 – 9" or "21-15-9"
+  var movements = w.movements || [];
+  var firstRepsStr = movements.length ? String(movements[0].reps || '') : '';
+  var roundNums = firstRepsStr.match(/\d+/g);
+  var isMultiRound = roundNums && roundNums.length > 1;
+
+  var movementsHtml;
+  if (isMultiRound) {
+    // Expand into per-round rows with separators
+    movementsHtml = roundNums.map(function(rep, ri) {
+      var rowsForRound = movements.map(function(m) {
+        var mvName   = m.movement || m.name || '';
+        var mvSlug   = m.slug || slugify(mvName);
+        var loadHtml = (ri === 0 && (m.rx_men || m.rx_women))
+          ? '<span class="wod-load">' + escHtml(m.rx_men || '') + (m.rx_women ? ' / ' + m.rx_women : '') + '</span>'
+          : '';
+        return '<li class="wod-move-row">' +
+          '<span class="wod-reps">' + rep + '</span>' +
+          '<a class="wod-move-link" href="/movements/' + mvSlug + '">' + escHtml(mvName) + (loadHtml ? ' ' + loadHtml : '') + '</a>' +
+        '</li>';
+      }).join('');
+      // After round 1 only, insert a separator listing remaining rounds
+      var sep = (ri === 0 && roundNums.length > 1)
+        ? '<li class="wod-round-sep"><span class="wod-round-sep-spacer"></span><span class="wod-round-sep-text">— then ' + roundNums.slice(1).join(', then ') + ' —</span></li>'
+        : '';
+      return rowsForRound + sep;
+    }).join('');
+  } else {
+    movementsHtml = movements.map(function(m) {
+      var mvName   = m.movement || m.name || '';
+      var mvSlug   = m.slug || slugify(mvName);
+      var loadHtml = (m.rx_men || m.rx_women)
+        ? '<span class="wod-load">' + escHtml(m.rx_men || '') + (m.rx_women ? ' / ' + m.rx_women : '') + '</span>'
+        : '';
+      return '<li class="wod-move-row">' +
+        (m.reps
+          ? '<span class="wod-reps">' + escHtml(formatReps(m.reps)) + '</span>'
+          : '<span class="wod-reps" style="font-size:.9rem;color:var(--muted)">—</span>') +
+        '<a class="wod-move-link" href="/movements/' + mvSlug + '">' + escHtml(mvName) + (loadHtml ? ' ' + loadHtml : '') + '</a>' +
+      '</li>';
+    }).join('');
+  }
+
+  // Score note: use full scoring_notes text if present, otherwise just label
+  var scoreNoteHtml = w.scoring_notes
+    ? '<div class="wod-score-note"><strong>Score:</strong> ' + escHtml(scoreLabel) + ' &mdash; ' + escHtml(w.scoring_notes) + '</div>'
+    : '<div class="wod-score-note"><strong>Score:</strong> ' + escHtml(scoreLabel) + '</div>';
+
+  return '<div class="wod-hero-card">' +
+    (catBadge ? '<div class="wod-hero-eyebrow">' + catBadge + '</div>' : '') +
+    '<ul class="wod-move-list">' + movementsHtml + '</ul>' +
+    scoreNoteHtml +
+  '</div>';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// BUILD META STACK HTML (right column: CTA + actions + share)
+// ─────────────────────────────────────────────────────────────────────────────
+function buildMetaStackHTML(w, isBm) {
+  var timerUrl = buildTimerUrl(w);
+  var name     = w.name || w.title || 'WOD';
+  var scorePrompts = {
+    time:        'Track your ' + name + ' time and watch your progress over time.',
+    rounds_reps: 'Record your rounds + reps and track your progress.',
+    reps:        'Log your max reps and track your progress.',
+    load:        'Log your max load and track your progress.',
+    calories:    'Log your calories and track your progress.',
+  };
+  var ctaSub = scorePrompts[w.scoring_type] || 'Log your result and track your progress.';
+
+  var adminHtml = '';
+  if (canManageWorkout(w)) {
+    if (!isBm) {
+      adminHtml += '<div class="admin-row"><button class="action-btn" onclick="openEditWodModal()">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>' +
+        ' Edit Details</button></div>';
+    }
+    adminHtml += '<div class="admin-row"><button class="admin-delete-btn" onclick="deleteCurrentWorkout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg> Delete Workout</button></div>';
+  }
+
+  return '<div class="meta-stack">' +
+    '<div class="cta-card">' +
+      '<h3>LOG RESULT</h3>' +
+      '<p>' + escHtml(ctaSub) + '</p>' +
+      '<button class="cta-btn" onclick="openResultModal()">LOG YOUR RESULT &rarr;</button>' +
+    '</div>' +
+    '<div class="action-col">' +
+      '<a href="' + timerUrl + '" class="action-btn">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' +
+        ' Start WOD Timer' +
+      '</a>' +
+      '<button class="action-btn" onclick="printWorkout()">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>' +
+        ' Print WOD' +
+      '</button>' +
+      (isBm
+        ? '<a href="/workouts.html" class="action-btn">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>' +
+          ' Browse WODs</a>'
+        : '') +
+    '</div>' +
+    '<div class="share-card">' +
+      '<div class="share-title">Share This WOD</div>' +
+      '<div class="share-pill-body">' +
+        '<button class="share-pill share-x" onclick="shareWodX(event)">' +
+          '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>' +
+          ' Share on X' +
+        '</button>' +
+        '<button class="share-pill share-fb" onclick="shareWodFB(event)">' +
+          '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>' +
+          ' Facebook' +
+        '</button>' +
+        '<button class="share-pill share-wa" onclick="shareWodWA(event)">' +
+          '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>' +
+          ' WhatsApp' +
+        '</button>' +
+        '<button class="share-pill share-copy" id="wod-copy-btn" onclick="copyWodLink(this)">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>' +
+          ' Copy Link' +
+        '</button>' +
+      '</div>' +
+    '</div>' +
+    adminHtml +
+  '</div>';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RENDER BENCHMARK LAYOUT
+// ─────────────────────────────────────────────────────────────────────────────
+function renderBenchmarkLayout(w) {
+  var name      = w.name || 'WOD';
+  var category  = w.category || '';
+  var catLabel  = CAT_LABELS[category] || cap(category);
+  var movements = w.movements || [];
+
+  // Equipment chips
+  var equip      = (w.equipment || []).filter(function(e) { return SKIP_EQUIPMENT.indexOf(e) === -1; });
+  var equipChips = equip.length
+    ? equip.map(function(e) {
+        var label = EQUIP_LABELS[e] || cap(e);
+        var url   = EQUIPMENT_LINKS[e];
+        return url
+          ? '<a class="equip-chip" href="' + url + '" target="_blank" rel="noopener sponsored">' + escHtml(label) + '</a>'
+          : '<span class="equip-chip" style="pointer-events:none">' + escHtml(label) + '</span>';
+      }).join('')
+    : POPULAR_GEAR.map(function(g) {
+        return '<a class="equip-chip" href="' + EQUIPMENT_LINKS[g.key] + '" target="_blank" rel="noopener sponsored">' + escHtml(g.label) + '</a>';
+      }).join('');
+
+  // Scaling
+  var scalingHtml = '';
+  if (w.scaling_notes) {
+    var sn = w.scaling_notes;
+    if (typeof sn === 'object' && !Array.isArray(sn)) {
+      var tabs = Object.keys(sn);
+      if (tabs.length > 1) {
+        scalingHtml =
+          '<div class="scale-tabs">' +
+          tabs.map(function(t, i) {
+            return '<button class="scale-tab' + (i === 0 ? ' active' : '') + '"' +
+              ' onclick="setScale(this,\'' + escHtml(t) + '\')">' +
+              escHtml(t) + '</button>';
+          }).join('') + '</div>' +
+          tabs.map(function(t, i) {
+            return '<div class="scale-content' + (i === 0 ? ' active' : '') + '" data-scale="' + escHtml(t) + '">' +
+              '<div class="scaling-box">' + escHtml(String(sn[t])) + '</div></div>';
+          }).join('');
+      } else {
+        scalingHtml = '<div class="scaling-box">' + escHtml(String(sn[tabs[0]] || '')) + '</div>';
+      }
+    } else {
+      scalingHtml = '<div class="scaling-box">' + escHtml(String(sn)) + '</div>';
+    }
+  }
+
+  // Coaching tips — use w.coaching_tips if present, fall back to w.tips
+  var tipsArr = Array.isArray(w.coaching_tips) ? w.coaching_tips
+              : (w.coaching_tips ? [String(w.coaching_tips)]
+              : (Array.isArray(w.tips) ? w.tips
+              : (w.tips ? [String(w.tips)] : [])));
+  var tips = tipsArr;
+  var tipsHtml = tips.map(function(t, i) {
+    return '<li><span class="tip-num">' + (i + 1) + '</span> <span>' + escHtml(t) + '</span></li>';
+  }).join('');
+
+  // FAQ
+  var faqs    = Array.isArray(w.faqs) ? w.faqs : [];
+  var faqHtml = faqs.map(function(f) {
+    return '<div class="faq-item">' +
+      '<button class="faq-q" onclick="togFaq(this)">' + escHtml(f.q || f.question || '') +
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>' +
+      '</button>' +
+      '<div class="faq-a">' + escHtml(f.a || f.answer || '') + '</div>' +
+    '</div>';
+  }).join('');
+
+  // YouTube embed (always show for benchmarks; real embed or placeholder)
+  var videoCard = '';
+  var iconPlaySvg = '<svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><polygon points="5,3 17,10 5,17"/></svg>';
+  if (w.youtube_url) {
+    var ym = w.youtube_url.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+    if (ym) {
+      videoCard =
+        '<div class="bc span3">' +
+          '<div class="bc-head"><div class="icon">' + iconPlaySvg + '</div>Movement Demo</div>' +
+          '<div class="video-wrap">' +
+            '<iframe src="https://www.youtube.com/embed/' + ym[1] + '" title="' + escHtml(name) + ' video" allowfullscreen loading="lazy"></iframe>' +
+          '</div>' +
+        '</div>';
+    }
+  } else if (w.slug) {
+    // Benchmark without youtube_url — show placeholder
+    videoCard =
+      '<div class="bc span3">' +
+        '<div class="bc-head"><div class="icon">' + iconPlaySvg + '</div>Movement Demo</div>' +
+        '<div class="video-placeholder">' +
+          '<div class="play-btn"><svg width="22" height="22" viewBox="0 0 24 24" fill="rgba(0,0,0,.3)"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>' +
+          '<span>' + escHtml(name) + ' Demo Video</span>' +
+        '</div>' +
+      '</div>';
+  }
+
+  // Scoring note
+  var scoringNoteHtml = (w.scoring_notes || w.scoring)
+    ? '<p class="scoring-note"><strong>Scoring: </strong>' + escHtml(w.scoring_notes || w.scoring) + '</p>'
+    : '';
+
+  // Meta row items for page-header
+  var repsLabel = '';
+  var movements = w.movements || [];
+  if (movements.length) {
+    var firstRepsRaw = String(movements[0].reps || '');
+    var rNums = firstRepsRaw.match(/\d+/g);
+    if (rNums && rNums.length === 1) {
+      // Check if this is a chipper: all movements share the same single rep count
+      // and there are 5+ movements (e.g. Filthy Fifty = 50 reps × 10 movements, not 50 rounds)
+      var isChipper = movements.length >= 5 && movements.every(function(m) {
+        var r = String(m.reps || '').match(/\d+/g);
+        return r && r.length === 1 && r[0] === rNums[0];
+      });
+      if (!isChipper) {
+        // Single number = rounds — add label so "4 For Time" doesn't look like a format name
+        repsLabel = rNums[0] + ' Rounds';
+      }
+    } else if (rNums && rNums.length > 1) {
+      repsLabel = rNums.join('–');
+    } else {
+      repsLabel = firstRepsRaw;
+    }
+  }
+  var dur = w.duration_estimate || w.duration;
+  var durStr = dur ? String(dur) : '';
+  var metaHtml =
+    (repsLabel ? '<span class="wod-ph-meta-item">' + escHtml(repsLabel) + '</span>' : '') +
+    (w.format ? '<span class="wod-ph-meta-item">' + escHtml(w.format) + '</span>' : '') +
+    (durStr ? '<span class="wod-ph-meta-item">Time Cap: ' + escHtml(durStr) + '</span>' : '') +
+    (w.difficulty ? '<span class="wod-ph-meta-item">' + escHtml(cap(w.difficulty)) + '</span>' : '');
+
+  var subCatLabel = catLabel ? catLabel + ' WODs' : 'WODs';
+  var subCatHref  = catLabel ? '/workouts.html?category=' + encodeURIComponent(category) : '/workouts.html';
+
+  var pageHeaderHtml =
+    '<div class="page-header">' +
+      '<div class="page-header-inner">' +
+        '<nav class="breadcrumb" aria-label="Breadcrumb">' +
+          '<a href="/">Home</a><span>›</span>' +
+          '<a href="/workouts.html">Workouts</a><span>›</span>' +
+          '<a href="' + subCatHref + '">' + escHtml(subCatLabel) + '</a><span>›</span>' +
+          escHtml(name) +
+        '</nav>' +
+        '<div class="wod-ph-title">' + escHtml(name) + '</div>' +
+        (metaHtml ? '<div class="wod-ph-meta">' + metaHtml + '</div>' : '') +
+      '</div>' +
+    '</div>';
+
+  // Movement standards table (from movements rx data)
+  var hasMvStandards = movements.some(function(m) { return m.rx_men || m.rx_women; });
+  var standardsCard = '';
+  if (hasMvStandards) {
+    var stdRows = movements.map(function(m) {
+      if (!m.rx_men && !m.rx_women) return '';
+      return '<tr>' +
+        '<td class="std-mv">' + escHtml(m.name || '') + '</td>' +
+        '<td class="std-rx">' + escHtml(m.rx_men || '—') + '</td>' +
+        '<td class="std-rx">' + escHtml(m.rx_women || '—') + '</td>' +
+      '</tr>';
+    }).filter(Boolean).join('');
+    standardsCard =
+      '<div class="bc span3">' +
+        '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><line x1="10" y1="2" x2="10" y2="18"/><line x1="3" y1="7" x2="17" y2="7"/><line x1="5" y1="13" x2="15" y2="13"/></svg></div>Movement Standards</div>' +
+        '<table class="standards-table">' +
+          '<thead><tr><th>Movement</th><th>Men Rx</th><th>Women Rx</th></tr></thead>' +
+          '<tbody>' + stdRows + '</tbody>' +
+        '</table>' +
+        (scalingHtml ? '<div style="margin-top:14px"><div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px">Scaling</div>' + scalingHtml + '</div>' : '') +
+      '</div>';
+  } else if (scalingHtml) {
+    standardsCard =
+      '<div class="bc span3">' +
+        '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><line x1="10" y1="2" x2="10" y2="18"/><line x1="3" y1="7" x2="17" y2="7"/><line x1="5" y1="13" x2="15" y2="13"/></svg></div>Scaling Options</div>' +
+        scalingHtml +
+      '</div>';
+  }
+
+  var pageWrapHtml =
+    '<div class="page-wrap">' +
+      '<div class="hero-row">' +
+        '<div class="hero-left">' +
+          buildWodHeroCardHTML(w) +
+          (equip.length || w.equipment
+            ? '<div class="equip-below-wb">' +
+                '<span class="equip-below-label">Equipment Needed</span>' +
+                '<div class="equip-chips">' + equipChips + '</div>' +
+              '</div>'
+            : '') +
+          '<div class="wc-row">' +
+            '<div class="bc" id="warmup-card" style="display:none">' +
+              '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M13 2L3 14h9l-1 4 10-12h-9l1-4z"/></svg></div>Warm-Up</div>' +
+              '<div id="warmup-container"></div>' +
+            '</div>' +
+            '<div class="bc" id="cooldown-card" style="display:none">' +
+              '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M12 21c-4.5-2.5-8-7-8-11a8 8 0 0116 0c0 4-3.5 8.5-8 11z"/></svg></div>Cool-Down</div>' +
+              '<div id="cooldown-container"></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        buildMetaStackHTML(w, true) +
+      '</div>' +
+
+      '<div class="bento">' +
+
+        // About — full width span6
+        '<div class="bc span6">' +
+          '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" width="15" height="15"><circle cx="10" cy="10" r="8"/><line x1="10" y1="9" x2="10" y2="14"/><circle cx="10" cy="6.5" r=".5" fill="currentColor" stroke="none"/></svg></div>About ' + escHtml(name) + '</div>' +
+          '<div class="about-text">' + escHtml(w.description || 'A classic benchmark workout.') + '</div>' +
+          scoringNoteHtml +
+        '</div>' +
+
+        // Row 2: Video + Standards/Scaling — span dynamically to avoid empty half-rows
+        (function() {
+          if (!videoCard) return standardsCard ? standardsCard.replace('"bc span3"', '"bc span6"') : '';
+          var videoSpan = standardsCard ? 'span3' : 'span6';
+          return videoCard.replace('"bc span3"', '"bc ' + videoSpan + '"') + standardsCard;
+        })() +
+
+        // Row 3: Coaching Cues + FAQ — span dynamically to avoid empty half-rows
+        (function() {
+          var cueIcon = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><circle cx="10" cy="10" r="8"/><circle cx="10" cy="10" r="4"/><circle cx="10" cy="10" r="1" fill="currentColor" stroke="none"/></svg>';
+          var faqIcon = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><circle cx="10" cy="10" r="8"/><path d="M10 14v-1"/><path d="M10 10c0-1.5 2-2.5 2-4a2 2 0 00-4 0"/></svg>';
+          var hasCues = tips.length > 0;
+          var hasFaq  = faqs.length > 0;
+          var cueSpan = (hasCues && hasFaq) ? 'span3' : 'span6';
+          var faqSpan = (hasCues && hasFaq) ? 'span3' : 'span6';
+          var cueHtml = hasCues
+            ? '<div class="bc ' + cueSpan + '"><div class="bc-head"><div class="icon">' + cueIcon + '</div>Coaching Cues</div><ul class="tip-list">' + tipsHtml + '</ul></div>'
+            : '';
+          var faqCard = hasFaq
+            ? '<div class="bc ' + faqSpan + '"><div class="bc-head"><div class="icon">' + faqIcon + '</div>Frequently Asked</div>' + faqHtml + '</div>'
+            : '';
+          return cueHtml + faqCard;
+        })() +
+
+        // You Might Also Like — full width span6
+        '<div class="bc span6" id="related-wods-card">' +
+          '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><rect x="2" y="2" width="7" height="7" rx="1"/><rect x="11" y="2" width="7" height="7" rx="1"/><rect x="2" y="11" width="7" height="7" rx="1"/><rect x="11" y="11" width="7" height="7" rx="1"/></svg></div>You Might Also Like</div>' +
+          '<div id="related-wods-container"><div style="color:var(--muted);font-size:.85rem">Loading&hellip;</div></div>' +
+        '</div>' +
+
+        // My History (async, hidden until user is loaded)
+        '<div class="bc span6" id="my-history-section" style="display:none">' +
+          '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><circle cx="10" cy="10" r="8"/><polyline points="10 6 10 10 13 12"/></svg></div>My Results</div>' +
+          '<div id="my-history-inner"></div>' +
+        '</div>' +
+
+      '</div>' + // .bento
+    '</div>';   // .page-wrap
+
+  document.getElementById('workout-main').innerHTML = pageHeaderHtml + pageWrapHtml;
+  renderRelatedWorkouts(document.getElementById('related-wods-container'), w);
+  loadMyHistory();
+  loadWarmupCooldown(w);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RENDER USER WOD LAYOUT
+// ─────────────────────────────────────────────────────────────────────────────
+function renderUserWodLayout(w) {
+  var name = w.title || w.name || 'WOD';
+
+  var equip      = (w.equipment || []).filter(function(e) { return SKIP_EQUIPMENT.indexOf(e) === -1; });
+  var equipChips = equip.length
+    ? equip.map(function(e) {
+        var label = EQUIP_LABELS[e] || cap(e);
+        var url   = EQUIPMENT_LINKS[e];
+        return url
+          ? '<a class="equip-chip" href="' + url + '" target="_blank" rel="noopener sponsored">' + escHtml(label) + '</a>'
+          : '<span class="equip-chip" style="pointer-events:none">' + escHtml(label) + '</span>';
+      }).join('')
+    : POPULAR_GEAR.map(function(g) {
+        return '<a class="equip-chip" href="' + EQUIPMENT_LINKS[g.key] + '" target="_blank" rel="noopener sponsored">' + escHtml(g.label) + '</a>';
+      }).join('');
+
+  var scalingHtml = w.scaling_notes
+    ? '<div class="scaling-box">' + escHtml(typeof w.scaling_notes === 'string' ? w.scaling_notes : JSON.stringify(w.scaling_notes)) + '</div>'
+    : '';
+
+  var tips     = Array.isArray(w.coaching_tips) ? w.coaching_tips : (w.coaching_tips ? [String(w.coaching_tips)] : []);
+  var tipsHtml = tips.map(function(t, i) {
+    return '<li><span class="tip-num">' + (i + 1) + '</span> <span>' + escHtml(t) + '</span></li>';
+  }).join('');
+
+  var stLbls = { time: 'For Time', rounds_reps: 'AMRAP', reps: 'Max Reps', weight: 'Max Weight' };
+  var fmtLabel = w.format ? cap(w.format) : (w.scoring_type ? (stLbls[w.scoring_type] || cap(w.scoring_type)) : '');
+  var scoreLabel = w.scoring_type ? (stLbls[w.scoring_type] || cap(w.scoring_type)) : '';
+  // Only show scoring label separately if it differs from the format label
+  var showScoreLabel = scoreLabel && scoreLabel.toLowerCase() !== fmtLabel.toLowerCase();
+  var userDur = w.duration_estimate || w.duration;
+  var userMetaHtml = '';
+  if (fmtLabel) userMetaHtml += '<span class="wod-ph-meta-item">' + escHtml(fmtLabel) + '</span>';
+  if (userDur) {
+    var durM = String(userDur).match(/\d+/);
+    userMetaHtml += '<span class="wod-ph-meta-item">' + (durM ? durM[0] + ' min' : escHtml(String(userDur))) + '</span>';
+  }
+  if (showScoreLabel) userMetaHtml += '<span class="wod-ph-meta-item">' + escHtml(scoreLabel) + '</span>';
+
+  var pageHeaderHtml =
+    '<div class="page-header">' +
+      '<div class="page-header-inner">' +
+        '<nav class="breadcrumb" aria-label="Breadcrumb">' +
+          '<a href="/">Home</a><span>›</span>' +
+          '<a href="/myworkouts.html">My Workouts</a><span>›</span>' +
+          escHtml(cap(name)) +
+        '</nav>' +
+        '<div class="wod-ph-title">' + escHtml(name) + '</div>' +
+        (userMetaHtml ? '<div class="wod-ph-meta">' + userMetaHtml + '</div>' : '') +
+        (w.description ? '<p class="wod-ph-desc">' + escHtml(w.description) + '</p>' : '') +
+      '</div>' +
+    '</div>';
+
+  var equipBelowHtml = equip.length
+    ? '<div class="equip-below-wb">' +
+        '<span class="equip-below-label">Equipment:</span>' +
+        equip.map(function(e) {
+          var label = EQUIP_LABELS[e] || cap(e);
+          var url   = EQUIPMENT_LINKS[e];
+          return url
+            ? '<a class="equip-chip" href="' + url + '" target="_blank" rel="noopener sponsored">' + escHtml(label) + '</a>'
+            : '<span class="equip-chip" style="pointer-events:none">' + escHtml(label) + '</span>';
+        }).join('') +
+      '</div>'
+    : '';
+
+  var pageWrapHtml =
+    '<div class="page-wrap">' +
+      '<div class="hero-row">' +
+        '<div class="hero-left">' +
+          buildWodHeroCardHTML(w) +
+          equipBelowHtml +
+          '<div class="wc-row">' +
+            '<div class="bc" id="warmup-card" style="display:none">' +
+              '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M13 2L3 14h9l-1 4 10-12h-9l1-4z"/></svg></div>Warm-Up</div>' +
+              '<div id="warmup-container"></div>' +
+            '</div>' +
+            '<div class="bc" id="cooldown-card" style="display:none">' +
+              '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><path d="M12 21c-4.5-2.5-8-7-8-11a8 8 0 0116 0c0 4-3.5 8.5-8 11z"/></svg></div>Cool-Down</div>' +
+              '<div id="cooldown-container"></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        buildMetaStackHTML(w, false) +
+      '</div>' +
+
+      '<div class="bento">' +
+
+        (scalingHtml
+          ? '<div class="bc span3"><div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><line x1="10" y1="2" x2="10" y2="18"/><line x1="3" y1="7" x2="17" y2="7"/><line x1="5" y1="13" x2="15" y2="13"/></svg></div>Scaling Options</div>' + scalingHtml + '</div>'
+          : '') +
+
+        (tips.length
+          ? '<div class="bc span3"><div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><circle cx="10" cy="10" r="8"/><circle cx="10" cy="10" r="4"/><circle cx="10" cy="10" r="1" fill="currentColor" stroke="none"/></svg></div>Coaching Tips</div><ul class="tip-list">' + tipsHtml + '</ul></div>'
+          : '') +
+
+        '<div class="bc span6">' +
+          '<div class="bc-head"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div>Equipment</div>' +
+          '<p class="equip-section-note">Shop the gear for this WOD &darr;</p>' +
+          '<div class="equip-chips-wrap">' + equipChips + '</div>' +
+        '</div>' +
+
+        '<div class="bc span6" id="related-wods-card">' +
+          '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><rect x="2" y="2" width="7" height="7" rx="1"/><rect x="11" y="2" width="7" height="7" rx="1"/><rect x="2" y="11" width="7" height="7" rx="1"/><rect x="11" y="11" width="7" height="7" rx="1"/></svg></div>You Might Also Like</div>' +
+          '<div id="related-wods-container"><div style="color:var(--muted);font-size:.85rem">Loading&hellip;</div></div>' +
+        '</div>' +
+
+        '<div class="bc span6" id="my-history-section" style="display:none">' +
+          '<div class="bc-head"><div class="icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="15" height="15"><circle cx="10" cy="10" r="8"/><polyline points="10 6 10 10 13 12"/></svg></div>My Results</div>' +
+          '<div id="my-history-inner"></div>' +
+        '</div>' +
+
+      '</div>' +
+    '</div>';
+
+  document.getElementById('workout-main').innerHTML = pageHeaderHtml + pageWrapHtml;
+  renderRelatedWorkouts(document.getElementById('related-wods-container'), w);
+  loadMyHistory();
+  loadWarmupCooldown(w);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// WARM-UP / COOL-DOWN
+// ─────────────────────────────────────────────────────────────────────────────
+async function loadWarmupCooldown(w) {
+  var warmupCard      = document.getElementById('warmup-card');
+  var cooldownCard    = document.getElementById('cooldown-card');
+  var warmupContainer = document.getElementById('warmup-container');
+  var cooldownContainer = document.getElementById('cooldown-container');
+  if (!warmupContainer && !cooldownContainer) return;
+  if (!supabaseClient) return;
+
+  try {
+    // Clean WOD movement names (strip parenthetical qualifiers e.g. "Push-Ups (Spades)" → "Push-Ups")
+    var wodMovNames = (w.movements || []).map(function(m) {
+      return (m.name || '').replace(/\s*\([^)]*\)\s*/g, '').trim();
+    }).filter(Boolean);
+    if (!wodMovNames.length) return;
+
+    // Fetch muscle_groups for the WOD's movements
+    var movRes = await supabaseClient
+      .from('movements')
+      .select('name, muscle_groups')
+      .in('name', wodMovNames);
+    if (movRes.error || !movRes.data || !movRes.data.length) return;
+
+    // Aggregate unique muscle group tags (exclude 'full' — too generic for targeting)
+    var muscleSet = {};
+    movRes.data.forEach(function(m) {
+      (m.muscle_groups || []).forEach(function(mg) { if (mg !== 'full') muscleSet[mg] = true; });
+    });
+    var muscleTags = Object.keys(muscleSet);
+    if (!muscleTags.length) return;
+
+    // Fetch cool-down stretches that overlap with WOD muscle groups
+    var stretchRes = await supabaseClient
+      .from('stretches')
+      .select('name, slug, hold_intermediate')
+      .overlaps('focus', muscleTags)
+      .limit(5);
+
+    // Fetch warm-up movements: eligible + overlaps muscle tags + not already in the WOD
+    var warmupRes = await supabaseClient
+      .from('movements')
+      .select('name, slug')
+      .eq('warmup_eligible', true)
+      .overlaps('muscle_groups', muscleTags)
+      .not('name', 'in', '(' + wodMovNames.map(function(n) { return '"' + n + '"'; }).join(',') + ')')
+      .limit(4);
+
+    // Render warm-up card
+    if (warmupRes.data && warmupRes.data.length && warmupCard && warmupContainer) {
+      warmupContainer.innerHTML = warmupRes.data.map(function(m) {
+        return '<a class="prep-row" href="/movements/' + escHtml(m.slug || '') + '">' +
+          '<span class="prep-name">' + escHtml(m.name) + '</span>' +
+          '<span class="prep-reps">2–3 sets &times; 10 reps</span>' +
+        '</a>';
+      }).join('');
+      warmupCard.style.display = '';
+    }
+
+    // Render cool-down card
+    if (stretchRes.data && stretchRes.data.length && cooldownCard && cooldownContainer) {
+      cooldownContainer.innerHTML = stretchRes.data.map(function(s) {
+        var hold = s.hold_intermediate ? s.hold_intermediate + ' sec' : '30–45 sec';
+        return '<a class="prep-row" href="/stretches/' + escHtml(s.slug || '') + '">' +
+          '<span class="prep-name">' + escHtml(s.name) + '</span>' +
+          '<span class="prep-reps">' + hold + '</span>' +
+        '</a>';
+      }).join('');
+      cooldownCard.style.display = '';
+    }
+  } catch(e) {
+    console.warn('loadWarmupCooldown error:', e);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RENDER RELATED WORKOUTS
+// ─────────────────────────────────────────────────────────────────────────────
+function renderRelatedWorkouts(container, w) {
+  if (!container) return;
+  try {
+    var bms = window._ALL_BENCHMARKS || [];
+    if (!bms.length) {
+      container.innerHTML = '<p style="color:var(--muted);font-size:.85rem">No related WODs found.</p>';
+      return;
+    }
+    var category    = w.category || '';
+    var currentSlug = w.slug || '';
+    var currentName = (w.name || w.title || '').toLowerCase();
+
+    var related = bms.filter(function(b) {
+      return b.slug && b.slug !== currentSlug && (b.name || '').toLowerCase() !== currentName && (category ? b.category === category : true);
+    }).slice(0, 5);
+
+    if (related.length < 5) {
+      var others = bms.filter(function(b) {
+        return b.slug && b.slug !== currentSlug && (b.name || '').toLowerCase() !== currentName &&
+               !related.some(function(r) { return r.slug === b.slug; });
+      }).slice(0, 5 - related.length);
+      related = related.concat(others);
+    }
+
+    if (!related.length) {
+      container.innerHTML = '<p style="color:var(--muted);font-size:.85rem">No related WODs found.</p>';
+      return;
+    }
+
+    var badgeMap = { girl: 'rb-girl', hero: 'rb-hero', open: 'rb-open', games: 'rb-games', partner: 'rb-partner', benchmark: 'rb-benchmark' };
+    container.innerHTML = '<div class="related-grid">' +
+      related.map(function(b) {
+        var cl  = CAT_LABELS[b.category] || cap(b.category || '');
+        var rb  = badgeMap[b.category] || 'rb-benchmark';
+        var desc = summarizeMovements(b) || (b.format || '');
+        return '<a class="rel-card" href="/workouts/' + b.slug + '">' +
+          (cl ? '<span class="rel-badge ' + rb + '">' + escHtml(cl) + '</span>' : '') +
+          '<div class="rel-name">' + escHtml(b.name) + '</div>' +
+          '<div class="rel-desc">' + escHtml(desc) + '</div>' +
+          '<div class="rel-arrow">View &rarr;</div>' +
+        '</a>';
+      }).join('') +
+    '</div>';
+  } catch(e) {
+    container.innerHTML = '<p style="color:var(--muted);font-size:.85rem">No related WODs found.</p>';
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// LOAD MY HISTORY
+// ─────────────────────────────────────────────────────────────────────────────
+async function loadMyHistory() {
+  var section = document.getElementById('my-history-section');
+  var inner   = document.getElementById('my-history-inner');
+  if (!section || !inner) return;
+  try {
+    var user = await db.getUser();
+    if (!user) return;
+    currentUser = user;
+
+    var w = currentWod;
+    if (!w) return;
+
+    section.style.display = '';
+    inner.innerHTML = '<div style="color:var(--muted);font-size:.85rem">Loading&hellip;</div>';
+
+    var queryOpts = w.slug ? { benchmarkSlug: w.slug } : { workoutId: w.id };
+    queryOpts.userId = user.id;
+    queryOpts.limit  = 50;
+
+    var results = await db.getResults(queryOpts);
+    historyResults = results || [];
+
+    if (!historyResults.length) {
+      inner.innerHTML =
+        '<p style="color:var(--muted);font-size:.88rem;margin-bottom:12px">No results logged yet. ' +
+        '<a href="#" onclick="event.preventDefault();openResultModal()" style="color:var(--or);font-weight:700">Log your first result &rarr;</a></p>';
+      return;
+    }
+
+    // Find PR
+    var prId = null;
+    var st   = (w.scoring_type || 'time');
+    if (st === 'time') {
+      var withTime = historyResults.filter(function(r) { return r.score_display && r.score_display.includes(':'); });
+      if (withTime.length) {
+        var parseTime = function(s) {
+          var p = s.split(':');
+          return p.length === 2 ? parseInt(p[0]) * 60 + parseInt(p[1]) : parseInt(p[0]) * 3600 + parseInt(p[1]) * 60 + parseInt(p[2]);
+        };
+        var best = withTime.reduce(function(a, b) { return parseTime(a.score_display) <= parseTime(b.score_display) ? a : b; });
+        prId = best.id;
+      }
+    } else {
+      var withNum = historyResults.filter(function(r) { return r.score_display && !isNaN(parseFloat(r.score_display)); });
+      if (withNum.length) {
+        var bestNum = withNum.reduce(function(a, b) { return parseFloat(a.score_display) >= parseFloat(b.score_display) ? a : b; });
+        prId = bestNum.id;
+      }
+    }
+
+    inner.innerHTML =
+      '<table class="history-table">' +
+        '<thead><tr>' +
+          '<th>Date</th><th>Score</th><th>Rx</th><th>Notes</th><th></th>' +
+        '</tr></thead>' +
+        '<tbody>' +
+        historyResults.map(function(r, i) {
+          var d = new Date(r.date || r.created_at);
+          var dateStr = d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+          return '<tr>' +
+            '<td>' + dateStr + '</td>' +
+            '<td><strong>' + escHtml(r.score_display || '&mdash;') + '</strong>' +
+              (r.id === prId ? ' <span class="pr-badge">PR</span>' : '') +
+            '</td>' +
+            '<td>' + (r.is_rx
+              ? '<span class="rx-badge">RX</span>'
+              : '<span style="color:var(--muted);font-size:.78rem">Scaled</span>') +
+            '</td>' +
+            '<td style="color:var(--muted);font-size:.82rem;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' +
+              escHtml(r.notes || '') +
+            '</td>' +
+            '<td><button onclick="openEditResultModal(' + i + ')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:.78rem;font-weight:700;padding:2px 8px;border-radius:4px;border:1px solid var(--border)">Edit</button></td>' +
+          '</tr>';
+        }).join('') +
+        '</tbody>' +
+      '</table>' +
+      '<div style="margin-top:14px">' +
+        '<button onclick="openResultModal()" style="background:var(--or);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:.84rem;font-weight:800;cursor:pointer;font-family:var(--font-body)">+ Log New Result</button>' +
+      '</div>';
+  } catch(e) {
+    console.warn('loadMyHistory error:', e);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SCORE FIELDS
+// ─────────────────────────────────────────────────────────────────────────────
+function buildScoreFields(scoringType, prefix) {
+  var pfx      = prefix ? prefix + '-' : '';
+  var targetId = prefix ? prefix + '-result-score-fields' : 'result-score-fields';
+  var html;
+
+  if (scoringType === 'time') {
+    html =
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">' +
+        '<div class="wod-modal-field">' +
+          '<label>Minutes</label>' +
+          '<input type="number" id="' + pfx + 'score-minutes" min="0" placeholder="e.g. 7">' +
+        '</div>' +
+        '<div class="wod-modal-field">' +
+          '<label>Seconds</label>' +
+          '<input type="number" id="' + pfx + 'score-seconds" min="0" max="59" placeholder="e.g. 42">' +
+        '</div>' +
+      '</div>';
+  } else if (scoringType === 'rounds_reps') {
+    html =
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">' +
+        '<div class="wod-modal-field">' +
+          '<label>Rounds</label>' +
+          '<input type="number" id="' + pfx + 'score-rounds" min="0" placeholder="e.g. 8">' +
+        '</div>' +
+        '<div class="wod-modal-field">' +
+          '<label>Extra Reps</label>' +
+          '<input type="number" id="' + pfx + 'score-reps" min="0" placeholder="e.g. 12">' +
+        '</div>' +
+      '</div>';
+  } else if (scoringType === 'reps') {
+    html =
+      '<div class="wod-modal-field">' +
+        '<label>Total Reps</label>' +
+        '<input type="number" id="' + pfx + 'score-reps" min="0" placeholder="e.g. 150">' +
+      '</div>';
+  } else if (scoringType === 'load') {
+    html =
+      '<div class="wod-modal-field">' +
+        '<label>Max Load (lbs)</label>' +
+        '<input type="number" id="' + pfx + 'score-load" min="0" placeholder="e.g. 225">' +
+      '</div>';
+  } else if (scoringType === 'calories') {
+    html =
+      '<div class="wod-modal-field">' +
+        '<label>Calories</label>' +
+        '<input type="number" id="' + pfx + 'score-cals" min="0" placeholder="e.g. 200">' +
+      '</div>';
+  } else {
+    html =
+      '<div class="wod-modal-field">' +
+        '<label>Score</label>' +
+        '<input type="text" id="' + pfx + 'score-text" placeholder="Enter your score">' +
+      '</div>';
+  }
+
+  var el = document.getElementById(targetId);
+  if (el) el.innerHTML = html;
+}
+
+function getScoreDisplay(scoringType, prefix) {
+  var pfx = prefix ? prefix + '-' : '';
+  if (scoringType === 'time') {
+    var mins = parseInt(document.getElementById(pfx + 'score-minutes') ? document.getElementById(pfx + 'score-minutes').value : 0) || 0;
+    var secs = parseInt(document.getElementById(pfx + 'score-seconds') ? document.getElementById(pfx + 'score-seconds').value : 0) || 0;
+    if (!mins && !secs) return '';
+    return mins + ':' + String(secs).padStart(2, '0');
+  }
+  if (scoringType === 'rounds_reps') {
+    var rounds = (document.getElementById(pfx + 'score-rounds') || {}).value || '';
+    var reps   = (document.getElementById(pfx + 'score-reps') || {}).value || '';
+    if (!rounds && !reps) return '';
+    return rounds + ' rounds' + (reps ? ' + ' + reps + ' reps' : '');
+  }
+  if (scoringType === 'reps')    return ((document.getElementById(pfx + 'score-reps') || {}).value || '');
+  if (scoringType === 'load')    return ((document.getElementById(pfx + 'score-load') || {}).value || '');
+  if (scoringType === 'calories')return ((document.getElementById(pfx + 'score-cals') || {}).value || '');
+  return ((document.getElementById(pfx + 'score-text') || {}).value || '');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RESULT MODAL — LOG
+// ─────────────────────────────────────────────────────────────────────────────
+async function openResultModal() {
+  var user = await db.getUser();
+  currentUser = user;
+  if (!user) { openWorkoutAuthModal('login'); return; }
+  var w = currentWod;
+  if (!w) return;
+
+  var titleEl = document.getElementById('result-modal-title');
+  if (titleEl) titleEl.textContent = 'Log Result — ' + (w.name || w.title || 'WOD');
+
+  buildScoreFields(w.scoring_type || 'time');
+
+  var notesEl = document.getElementById('result-notes');
+  var rxEl    = document.getElementById('result-rx');
+  var errEl   = document.getElementById('result-error');
+  var prHint  = document.getElementById('result-pr-hint');
+  if (notesEl) notesEl.value   = '';
+  if (rxEl)    rxEl.checked    = false;
+  if (errEl)   { errEl.textContent = ''; errEl.style.display = 'none'; }
+  if (prHint)  prHint.style.display = 'none';
+
+  document.getElementById('result-modal').classList.add('active');
+}
+
+function closeResultModal() {
+  var el = document.getElementById('result-modal');
+  if (el) el.classList.remove('active');
+}
+
+async function submitResult() {
+  var user = currentUser || await db.getUser();
+  if (!user) { openWorkoutAuthModal('login'); return; }
+  var w = currentWod;
+  if (!w) return;
+
+  var st    = w.scoring_type || 'time';
+  var score = getScoreDisplay(st);
+  var notes = (document.getElementById('result-notes') || {}).value || '';
+  var isRx  = !!(document.getElementById('result-rx') || {}).checked;
+  var errEl = document.getElementById('result-error');
+  notes = notes.trim();
+
+  if (!score) {
+    if (errEl) { errEl.textContent = 'Please enter your score.'; errEl.style.display = 'block'; }
+    return;
+  }
+
+  var result = {
+    user_id:        user.id,
+    username:       (user.user_metadata && user.user_metadata.full_name) || (user.email ? user.email.split('@')[0] : 'athlete'),
+    benchmark_slug: w.slug || null,
+    workout_id:     w.id   || null,
+    score_display:  score,
+    is_rx:          isRx,
+    notes:          notes,
+    date:           new Date().toISOString().split('T')[0],
+  };
+
+  try {
+    var res = await db.saveResult(result);
+    if (res && res.error) throw res.error;
+    closeResultModal();
+    showPRCelebration(score, w.name || w.title || 'WOD');
+    showWorkoutToast('Result logged!', 'success');
+    setTimeout(function() { loadMyHistory(); }, 600);
+  } catch(e) {
+    if (errEl) { errEl.textContent = (e && e.message) || 'Error saving result. Please try again.'; errEl.style.display = 'block'; }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RESULT MODAL — EDIT
+// ─────────────────────────────────────────────────────────────────────────────
+function openEditResultModal(indexOrObj) {
+  var result;
+  if (typeof indexOrObj === 'number') {
+    result = historyResults[indexOrObj];
+  } else {
+    result = indexOrObj;
+  }
+  if (!result) return;
+
+  var w = currentWod;
+  if (!w) return;
+  var st = w.scoring_type || 'time';
+
+  document.getElementById('edit-result-id').value = result.id || '';
+  buildScoreFields(st, 'edit');
+
+  // Pre-fill score
+  var score = result.score_display || '';
+  if (st === 'time' && score.indexOf(':') !== -1) {
+    var parts = score.split(':');
+    var mEl = document.getElementById('edit-score-minutes');
+    var sEl = document.getElementById('edit-score-seconds');
+    if (mEl) mEl.value = parts[0] || '';
+    if (sEl) sEl.value = parts[1] || '';
+  } else if (st === 'rounds_reps') {
+    var rm = score.match(/^(\d+)\s*rounds?\s*\+?\s*(\d*)/i);
+    if (rm) {
+      var rEl = document.getElementById('edit-score-rounds');
+      var xEl = document.getElementById('edit-score-reps');
+      if (rEl) rEl.value = rm[1] || '';
+      if (xEl) xEl.value = rm[2] || '';
+    }
+  } else {
+    var anyInput = document.querySelector('#edit-result-score-fields input');
+    if (anyInput) anyInput.value = score;
+  }
+
+  var notesEl = document.getElementById('edit-result-notes');
+  var rxEl    = document.getElementById('edit-result-rx');
+  var errEl   = document.getElementById('edit-result-error');
+  if (notesEl) notesEl.value = result.notes || '';
+  if (rxEl)    rxEl.checked  = !!result.is_rx;
+  if (errEl)   { errEl.textContent = ''; errEl.style.display = 'none'; }
+
+  document.getElementById('edit-result-modal').classList.add('active');
+}
+
+function closeEditResultModal() {
+  var el = document.getElementById('edit-result-modal');
+  if (el) el.classList.remove('active');
+}
+
+async function saveEditResult() {
+  var id = (document.getElementById('edit-result-id') || {}).value;
+  if (!id) return;
+  var w = currentWod;
+  if (!w) return;
+
+  var st    = w.scoring_type || 'time';
+  var score = getScoreDisplay(st, 'edit');
+  var notes = ((document.getElementById('edit-result-notes') || {}).value || '').trim();
+  var isRx  = !!(document.getElementById('edit-result-rx') || {}).checked;
+  var errEl = document.getElementById('edit-result-error');
+
+  if (!score) {
+    if (errEl) { errEl.textContent = 'Please enter your score.'; errEl.style.display = 'block'; }
+    return;
+  }
+
+  try {
+    var res = await supabaseClient.from('results').update({ score_display: score, is_rx: isRx, notes: notes }).eq('id', id);
+    if (res && res.error) throw res.error;
+    closeEditResultModal();
+    showWorkoutToast('Result updated!', 'success');
+    setTimeout(function() { loadMyHistory(); }, 600);
+  } catch(e) {
+    if (errEl) { errEl.textContent = (e && e.message) || 'Error updating result.'; errEl.style.display = 'block'; }
+  }
+}
+
+async function deleteResult() {
+  var id = (document.getElementById('edit-result-id') || {}).value;
+  if (!id || !confirm('Delete this result? This cannot be undone.')) return;
+  try {
+    var res = await supabaseClient.from('results').delete().eq('id', id);
+    if (res && res.error) throw res.error;
+    closeEditResultModal();
+    showWorkoutToast('Result deleted.', 'success');
+    setTimeout(function() { loadMyHistory(); }, 600);
+  } catch(e) {
+    showWorkoutToast('Error deleting result.', 'error');
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PR CELEBRATION + TOAST
+// ─────────────────────────────────────────────────────────────────────────────
+function showPRCelebration(score, wodName) {
+  var overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9999;animation:fadeInOverlay .2s ease';
+  var el = document.createElement('div');
+  el.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:16px;padding:32px 40px;text-align:center;z-index:10000;box-shadow:0 8px 40px rgba(0,0,0,.25);animation:popIn .35s ease-out;max-width:340px;width:90%';
+  el.innerHTML =
+    '<div style="margin-bottom:12px;display:flex;justify-content:center"><svg viewBox="0 0 24 24" fill="none" stroke="var(--or)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="52" height="52"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></div>' +
+    '<div style="font-family:var(--font-head);font-size:2.5rem;color:var(--or);line-height:1;margin-bottom:8px">NEW PR!</div>' +
+    '<div style="font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:4px">' + escHtml(wodName) + '</div>' +
+    '<div style="font-size:1.4rem;font-weight:800;color:var(--text)">' + escHtml(score) + '</div>' +
+    '<button onclick="this.closest(\'div[style]\').previousSibling.remove();this.closest(\'div[style]\').remove()" ' +
+      'style="margin-top:20px;background:var(--or);color:#fff;border:none;border-radius:8px;padding:10px 28px;font-family:var(--font-body);font-size:.9rem;font-weight:800;cursor:pointer">' +
+      'Awesome!</button>';
+  overlay.onclick = function() { el.remove(); overlay.remove(); };
+  document.body.appendChild(overlay);
+  document.body.appendChild(el);
+  setTimeout(function() { if (el.parentNode) { el.remove(); overlay.remove(); } }, 8000);
+}
+
+function showWorkoutToast(message, type) {
+  type = type || 'success';
+  var bg = type === 'success' ? '#22c55e' : type === 'error' ? '#C41212' : '#3b82f6';
+  var toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;bottom:24px;right:24px;background:' + bg + ';color:#fff;padding:12px 20px;border-radius:10px;font-weight:700;font-size:.88rem;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.25);animation:slideInToast .3s ease-out;font-family:var(--font-body);max-width:320px';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(function() {
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity .3s';
+    setTimeout(function() { if (toast.parentNode) toast.remove(); }, 300);
+  }, 3500);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PRINT WORKOUT
+// ─────────────────────────────────────────────────────────────────────────────
+function printWorkout() {
+  var w = currentWod;
+  if (!w) { showWorkoutToast('No workout loaded.', 'error'); return; }
+  var name = w.name || w.title || 'WOD';
+
+  var rows = (w.movements || []).map(function(m) {
+    return '<tr>' +
+      '<td><strong>' + escHtml(m.name || '') + '</strong></td>' +
+      '<td>' + escHtml(String(m.reps || m.time || '')) + '</td>' +
+      '<td style="color:#555;font-size:12px">' +
+        escHtml(m.rx_men ? 'Rx: ' + m.rx_men + (m.rx_women ? ' / ' + m.rx_women : '') : '') +
+      '</td>' +
+    '</tr>';
+  }).join('');
+
+  var chips = [
+    w.format   && '<span>' + escHtml(w.format) + '</span>',
+    (w.duration_estimate || w.duration) && '<span>' + escHtml(String(w.duration_estimate || w.duration)) + '</span>',
+    w.difficulty && '<span>' + cap(w.difficulty) + '</span>',
+    w.category   && '<span>' + cap(w.category) + '</span>',
+  ].filter(Boolean).join('');
+
+  var scoringText = w.scoring_type === 'time'       ? 'Record your finish time.' :
+                   w.scoring_type === 'rounds_reps' ? 'Count total rounds + reps.' :
+                   (w.scoring_notes || w.scoring || '');
+
+  document.getElementById('print-area').innerHTML =
+    '<div class="ph">' +
+      '<img src="/images/HomeWODRx-logo-black-red-040626.png" alt="HomeWODrx">' +
+      '<div class="ph-url">homewodrx.com<br>Functional Fitness WODs</div>' +
+    '</div>' +
+    '<div class="pt">' + escHtml(name) + '</div>' +
+    (w.description ? '<div class="ps">' + escHtml(w.description) + '</div>' : '') +
+    '<div class="pm">' + chips + '</div>' +
+    '<table>' +
+      '<thead><tr><th>Movement</th><th>Reps / Weight</th><th>Rx Notes</th></tr></thead>' +
+      '<tbody>' + rows + '</tbody>' +
+    '</table>' +
+    '<div class="pscore"><h4>Scoring</h4><p>' + escHtml(scoringText) + '</p></div>' +
+    '<div class="pfoot">Printed from homewodrx.com &middot; ' +
+      new Date().toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' }) +
+    '</div>';
+
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      window.print();
+      setTimeout(function() { document.getElementById('print-area').innerHTML = ''; }, 500);
+    });
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AUTH MODAL
+// ─────────────────────────────────────────────────────────────────────────────
+function openWorkoutAuthModal(mode) {
+  mode = mode || 'login';
+  switchWorkoutAuthTab(mode);
+  var el = document.getElementById('workout-auth-modal');
+  if (el) el.classList.add('active');
+}
+function closeWorkoutAuthModal() {
+  var el = document.getElementById('workout-auth-modal');
+  if (el) el.classList.remove('active');
+  var errEl = document.getElementById('workout-auth-error');
+  if (errEl) { errEl.textContent = ''; errEl.style.display = 'none'; }
+}
+function switchWorkoutAuthTab(tab) {
+  var isLogin  = tab === 'login';
+  var titleEl  = document.getElementById('workout-auth-title');
+  var subEl    = document.getElementById('workout-auth-sub');
+  var loginFm  = document.getElementById('workout-login-form');
+  var signupFm = document.getElementById('workout-signup-form');
+  if (titleEl)  titleEl.textContent  = isLogin ? 'Sign In to Log Result' : 'Create Account';
+  if (subEl)    subEl.textContent    = isLogin ? 'Sign in to record your results and track your progress.' : 'Join HomeWODrx free — track results and compete.';
+  if (loginFm)  loginFm.style.display  = isLogin ? 'block' : 'none';
+  if (signupFm) signupFm.style.display = isLogin ? 'none'  : 'block';
+}
+async function submitWorkoutLogin() {
+  var email = ((document.getElementById('workout-li-email') || {}).value || '').trim();
+  var pass  = (document.getElementById('workout-li-pass') || {}).value || '';
+  var errEl = document.getElementById('workout-auth-error');
+  if (errEl) errEl.style.display = 'none';
+  if (!email || !pass) {
+    if (errEl) { errEl.textContent = 'Please enter email and password.'; errEl.style.display = 'block'; }
+    return;
+  }
+  var result = await db.signIn(email, pass);
+  if (result.error) {
+    if (errEl) { errEl.textContent = result.error.message || 'Sign in failed.'; errEl.style.display = 'block'; }
+    return;
+  }
+  currentUser = result.user;
+  closeWorkoutAuthModal();
+  openResultModal();
+}
+async function submitWorkoutSignup() {
+  var username = ((document.getElementById('workout-su-user')  || {}).value || '').trim();
+  var email    = ((document.getElementById('workout-su-email') || {}).value || '').trim();
+  var pass     = (document.getElementById('workout-su-pass')   || {}).value || '';
+  var errEl    = document.getElementById('workout-auth-error');
+  if (errEl) errEl.style.display = 'none';
+  if (!username || !email || !pass) {
+    if (errEl) { errEl.textContent = 'Please fill in all fields.'; errEl.style.display = 'block'; }
+    return;
+  }
+  var result = await db.signUp(email, pass, username);
+  if (result.error) {
+    if (errEl) { errEl.textContent = result.error.message || 'Sign up failed.'; errEl.style.display = 'block'; }
+    return;
+  }
+  currentUser = result.user;
+  closeWorkoutAuthModal();
+  openResultModal();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// NAV AUTH
+// ─────────────────────────────────────────────────────────────────────────────
+async function initAuth() {
+  try {
+    var user = await db.getUser();
+    currentUser = user;
+    if (user) {
+      var initials = ((user.user_metadata && user.user_metadata.full_name) || user.email || '?')[0].toUpperCase();
+      var name     = (user.user_metadata && user.user_metadata.full_name) || (user.email ? user.email.split('@')[0] : 'Athlete');
+      var handle   = '@' + (user.email ? user.email.split('@')[0] : 'athlete');
+      var el1 = document.getElementById('avatar-initials');
+      var el2 = document.getElementById('avatar-initials-dd');
+      var el3 = document.getElementById('avatar-name-dd');
+      var el4 = document.getElementById('avatar-handle-dd');
+      if (el1) el1.textContent = initials;
+      if (el2) el2.textContent = initials;
+      if (el3) el3.textContent = name;
+      if (el4) el4.textContent = handle;
+      var gEl = document.getElementById('nav-guest');
+      var aEl = document.getElementById('nav-auth');
+      if (gEl) gEl.style.display = 'none';
+      if (aEl) aEl.style.display = 'flex';
+    }
+  } catch(e) { console.warn('Auth check failed:', e); }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UI HELPERS
+// ─────────────────────────────────────────────────────────────────────────────
+function togFaq(btn) {
+  var item   = btn.closest('.faq-item');
+  var wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(function(i) { i.classList.remove('open'); });
+  if (!wasOpen) item.classList.add('open');
+}
+
+function setScale(btn, scaleName) {
+  var container = btn.closest('.bc');
+  if (!container) return;
+  container.querySelectorAll('.scale-tab').forEach(function(b) {
+    b.classList.remove('active');
+  });
+  container.querySelectorAll('.scale-content').forEach(function(c) { c.style.display = 'none'; });
+  btn.classList.add('active');
+  var target = container.querySelector('.scale-content[data-scale="' + scaleName + '"]');
+  if (target) target.style.display = 'block';
+}
+
+function shareWodX(e) {
+  e.preventDefault();
+  var name = currentWod ? (currentWod.name || currentWod.title || 'WOD') : 'WOD';
+  var url  = encodeURIComponent(window.location.href);
+  var text = encodeURIComponent('Just checked out ' + name + ' on HomeWODrx!');
+  window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + url, '_blank', 'width=550,height=420');
+}
+
+function shareWodFB(e) {
+  e.preventDefault();
+  var url = encodeURIComponent(window.location.href);
+  window.open('https://www.facebook.com/sharer/sharer.php?u=' + url, '_blank', 'width=580,height=400');
+}
+
+function shareWodWA(e) {
+  e.preventDefault();
+  var name = currentWod ? (currentWod.name || currentWod.title || 'WOD') : 'WOD';
+  var text = encodeURIComponent('Check out ' + name + ' on HomeWODrx: ' + window.location.href);
+  window.open('https://wa.me/?text=' + text, '_blank');
+}
+
+function copyWodLink(btn) {
+  navigator.clipboard.writeText(window.location.href).then(function() {
+    btn.classList.add('copied');
+    btn.textContent = '✓ Copied!';
+    setTimeout(function() {
+      btn.classList.remove('copied');
+      btn.innerHTML =
+        '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy';
+    }, 2500);
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SEO META UPDATE
+// ─────────────────────────────────────────────────────────────────────────────
+function updateSeoMeta(w, isBm) {
+  var name   = w.name || w.title || 'WOD';
+  var desc   = w.description ? w.description.slice(0, 160) : (name + ' — ' + formatWodMeta(w) + ' on HomeWODrx');
+  var canon  = isBm
+    ? 'https://homewodrx.com/workouts/' + (w.slug || '')
+    : 'https://homewodrx.com/workout.html?id=' + (w.id || '');
+
+  document.title = name + ' — WOD | HomeWODrx';
+
+  var canonEl = document.getElementById('canonical-url');
+  var ogUrlEl  = document.getElementById('og-url');
+  var ogImgEl  = document.getElementById('og-image');
+  var twImgEl  = document.getElementById('twitter-image');
+  if (canonEl) canonEl.href    = canon;
+  if (ogUrlEl) ogUrlEl.content = canon;
+
+  var ogImg = 'https://homewodrx.com/images/og-default.png';
+  if (ogImgEl) ogImgEl.content = ogImg;
+  if (twImgEl) twImgEl.content = ogImg;
+
+  var descEl = document.querySelector('meta[name="description"]');
+  if (descEl) descEl.content = desc;
+
+  var ogTitleEl = document.getElementById('og-title');
+  var twTitleEl = document.getElementById('twitter-title');
+  if (ogTitleEl) ogTitleEl.content = name + ' — WOD | HomeWODrx';
+  if (twTitleEl) twTitleEl.content = name + ' — WOD | HomeWODrx';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MAIN LOADER
+// ─────────────────────────────────────────────────────────────────────────────
+async function loadWorkout() {
+  var main = document.getElementById('workout-main');
+  if (!main) return;
+
+  await initAuth();
+
+  var slug    = getWorkoutSlug();
+  var idParam = new URLSearchParams(window.location.search).get('id');
+
+  if (!slug && !idParam) {
+    main.innerHTML =
+      '<div class="error-wrap">' +
+        '<h2>WOD Not Found</h2>' +
+        '<p>No workout specified.</p>' +
+        '<a href="/workouts.html" style="color:var(--or);font-weight:700">Browse all WODs &rarr;</a>' +
+      '</div>';
+    return;
+  }
+
+  try {
+    var w;
+    // Pre-load all benchmarks for related-WOD rendering (must await so they're ready before render)
+    try { window._ALL_BENCHMARKS = (await db.getAllBenchmarks()) || []; } catch(e) { window._ALL_BENCHMARKS = []; }
+
+    if (slug) {
+      // Fetch from Supabase first to get all fields (youtube_url, tips, scoring_notes, etc.)
+      if (db.getBenchmarkBySlug) {
+        try { w = await db.getBenchmarkBySlug(slug); } catch(e) { w = null; }
+      }
+      // db.getBenchmarkBySlug already falls back gracefully if Supabase is unavailable
+      if (w) {
+        currentWod = w;
+        updateSeoMeta(w, true);
+        renderBenchmarkLayout(w);
+      } else {
+        main.innerHTML =
+          '<div class="error-wrap">' +
+            '<h2>WOD Not Found</h2>' +
+            '<p>This benchmark WOD doesn\'t exist or has been removed.</p>' +
+            '<a href="/workouts.html" style="color:var(--or);font-weight:700">Browse all WODs &rarr;</a>' +
+          '</div>';
+      }
+    } else {
+      w = await db.getWorkoutById(idParam);
+      if (w) {
+        currentWod = w;
+        updateSeoMeta(w, false);
+        renderUserWodLayout(w);
+      } else {
+        main.innerHTML =
+          '<div class="error-wrap">' +
+            '<h2>WOD Not Found</h2>' +
+            '<p>This workout doesn\'t exist or has been deleted.</p>' +
+            '<a href="/workouts.html" style="color:var(--or);font-weight:700">Browse all WODs &rarr;</a>' +
+          '</div>';
+      }
+    }
+  } catch(e) {
+    console.error('loadWorkout error:', e);
+    main.innerHTML =
+      '<div class="error-wrap">' +
+        '<h2>Something went wrong</h2>' +
+        '<p>Unable to load this workout. Please try refreshing.</p>' +
+      '</div>';
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// BOOT
+// ─────────────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  loadWorkout();
+
+
+  // Modal backdrop dismiss
+  var rm = document.getElementById('result-modal');
+  var em = document.getElementById('edit-result-modal');
+  var am = document.getElementById('workout-auth-modal');
+  if (rm) rm.addEventListener('click', function(e) { if (e.target === rm) closeResultModal(); });
+  if (em) em.addEventListener('click', function(e) { if (e.target === em) closeEditResultModal(); });
+  if (am) am.addEventListener('click', function(e) { if (e.target === am) closeWorkoutAuthModal(); });
+});
+</script>
+<script src="/js/footer.js"></script>
+</body>
+</html>
