@@ -1334,16 +1334,18 @@ function deleteAthlete(id,username){
   document.getElementById('confirm-ok-btn').onclick=async()=>{
     closeConfirm();
     if(!supabaseClient)return;
-    const{data:{session}}=await supabaseClient.auth.getSession();
-    if(!session)return showAlert('athletes-alert','Not logged in.','err');
-    const res=await fetch('https://irtppmztpcakanhefljs.supabase.co/functions/v1/delete-user',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
-      body:JSON.stringify({userId:id})
-    });
-    const json=await res.json();
-    if(!res.ok)showAlert('athletes-alert','Error: '+(json.error||res.statusText),'err');
-    else{showAlert('athletes-alert','Athlete fully deleted!','ok');await loadAthletes();}
+    try{
+      const{data:{session}}=await supabaseClient.auth.getSession();
+      if(!session)return showAlert('athletes-alert','Not logged in.','err');
+      const res=await fetch('https://irtppmztpcakanhefljs.supabase.co/functions/v1/delete-user',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+        body:JSON.stringify({userId:id})
+      });
+      const json=await res.json();
+      if(!res.ok)showAlert('athletes-alert','Error: '+(json.error||res.statusText),'err');
+      else{showAlert('athletes-alert','Athlete fully deleted!','ok');await loadAthletes();}
+    }catch(e){showAlert('athletes-alert','Network error — please try again.','err');}
   };
   // Close on backdrop click
   overlay.onclick=(e)=>{if(e.target===overlay)closeConfirm();};
