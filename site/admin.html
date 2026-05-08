@@ -1300,11 +1300,18 @@ async function editAthlete(id,username,bio,avatarColor){
   else{showAlert('athletes-alert','Athlete updated!','ok');await loadAthletes();}
 }
 async function deleteAthlete(id,username){
-  if(!confirm(`Delete athlete "${username}" and all their data?`))return;
+  if(!confirm(`Delete athlete "${username}" and all their data? This cannot be undone.`))return;
   if(!supabaseClient)return;
-  const{error}=await supabaseClient.from('profiles').delete().eq('id',id);
-  if(error)showAlert('athletes-alert','Error: '+error.message,'err');
-  else{showAlert('athletes-alert','Athlete deleted!','ok');await loadAthletes();}
+  const{data:{session}}=await supabaseClient.auth.getSession();
+  if(!session)return showAlert('athletes-alert','Not logged in.','err');
+  const res=await fetch('https://irtppmztpcakanhefljs.supabase.co/functions/v1/delete-user',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+    body:JSON.stringify({userId:id})
+  });
+  const json=await res.json();
+  if(!res.ok)showAlert('athletes-alert','Error: '+(json.error||res.statusText),'err');
+  else{showAlert('athletes-alert','Athlete fully deleted!','ok');await loadAthletes();}
 }
 
 function getAthleteStatusHtml(lastSeen){
