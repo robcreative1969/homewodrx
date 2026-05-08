@@ -117,16 +117,16 @@
 .alert-ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d}
 .alert-err{background:#fef2f2;border:1px solid #fecaca;color:#dc2626}
 /* Confirm modal */
-.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .15s}
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .15s}
 .confirm-overlay.vis{opacity:1;pointer-events:all}
-.confirm-modal{background:var(--dk1,#1a1a1a);border:1px solid var(--bd,#333);border-radius:12px;padding:28px 28px 22px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
-.confirm-modal h3{font-family:var(--font-head,'Bebas Neue',sans-serif);font-size:1.3rem;letter-spacing:.04em;color:var(--tx,#fff);margin:0 0 8px}
-.confirm-modal p{color:var(--mu,#999);font-size:13px;margin:0 0 22px;line-height:1.5}
-.confirm-modal strong{color:var(--or,#C41212)}
+.confirm-modal{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:28px 28px 22px;width:100%;max-width:400px;box-shadow:0 8px 32px rgba(0,0,0,.12)}
+.confirm-modal h3{font-family:var(--font-head,'Bebas Neue',sans-serif);font-size:1.3rem;letter-spacing:.04em;color:#111;margin:0 0 8px}
+.confirm-modal p{color:#6b7280;font-size:13px;margin:0 0 22px;line-height:1.5}
+.confirm-modal strong{color:#C41212}
 .confirm-actions{display:flex;gap:10px;justify-content:flex-end}
-.confirm-cancel{padding:10px 18px;background:none;border:1px solid var(--bd,#333);border-radius:8px;color:var(--mu,#999);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
-.confirm-cancel:hover{border-color:var(--tx,#fff);color:var(--tx,#fff)}
-.confirm-ok{padding:10px 18px;background:var(--or,#C41212);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.confirm-cancel{padding:10px 18px;background:none;border:1px solid #d1d5db;border-radius:8px;color:#6b7280;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.confirm-cancel:hover{border-color:#111;color:#111}
+.confirm-ok{padding:10px 18px;background:#C41212;border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
 .confirm-ok:hover{opacity:.85}
 .alert-info{background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8}
 
