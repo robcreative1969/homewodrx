@@ -111,11 +111,11 @@
           <div class="hwrx-footer-col">
             <h4>Workouts</h4>
             <ul>
-              <li><a href="/workouts.html">The Girls</a></li>
-              <li><a href="/workouts.html">Hero WODs</a></li>
-              <li><a href="/workouts.html">Open WODs</a></li>
-              <li><a href="/workouts.html">Games WODs</a></li>
-              <li><a href="/workouts.html">Partner WODs</a></li>
+              <li><a href="/workouts.html?cat=classic_benchmark">Classic Benchmarks</a></li>
+              <li><a href="/workouts.html?cat=hero">Hero WODs</a></li>
+              <li><a href="/workouts.html?cat=competition">Competition WODs</a></li>
+              <li><a href="/workouts.html?cat=community">Community WODs</a></li>
+              <li><a href="/workouts.html">All Workouts</a></li>
             </ul>
           </div>
 

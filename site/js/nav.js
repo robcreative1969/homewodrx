@@ -112,25 +112,23 @@ const Nav = {
 
   <div class="nav-items">
     <div class="nav-dd${wA}" id="dd-workout">
-      <button class="nav-btn${wA}" onclick="toggleDD('dd-workout')">Workout<svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 6 8 10 12 6"/></svg></button>
+      <button class="nav-btn${wA}" onclick="toggleDD('dd-workout')">Train<svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 6 8 10 12 6"/></svg></button>
       <div class="dd-panel dd-panel-wide">
         <div class="dd-cols">
           <div class="dd-col">
-            <div class="dd-section-label">Browse by Category</div>
-            <a href="/workouts.html?cat=girl"><div class="dl"><strong>The Girls</strong><small>Fran, Cindy, Annie &amp; classics</small></div></a>
-            <a href="/workouts.html?cat=hero"><div class="dl"><strong>Hero WODs</strong><small>Murph, DT, Michael &amp; more</small></div></a>
-            <a href="/workouts.html?cat=open"><div class="dl"><strong>Open WODs</strong><small>2011–2024 competition workouts</small></div></a>
-            <a href="/workouts.html?cat=games"><div class="dl"><strong>Games WODs</strong><small>Elite-level competition</small></div></a>
-            <a href="/workouts.html?cat=benchmark"><div class="dl"><strong>Benchmarks</strong><small>Track your progress over time</small></div></a>
-            <a href="/workouts.html?cat=partner"><div class="dl"><strong>Partner WODs</strong><small>Team workouts for two</small></div></a>
-          </div>
-          <div class="dd-col dd-col-right">
-            <div class="dd-section-label">Train</div>
-            <a href="/daily-wod.html"><div class="dl"><strong>The Daily 20</strong><small>Today's free auto-generated WOD</small></div></a>
-            <a href="/wodbuilder.html"><div class="dl"><strong>Smart WOD Builder</strong><small>Custom workout in seconds</small></div></a>
+            <div class="dd-section-label">Get a Workout</div>
+            <a href="/daily-wod.html" style="background:rgba(196,18,18,.06);border-radius:8px;"><div class="dl"><strong>The Daily 20</strong><small>Today's 20-min WOD — free &amp; ready</small></div></a>
+            <a href="/wodbuilder.html"><div class="dl"><strong>Smart WOD Builder</strong><small>Customize to your goals</small></div></a>
             <div class="dd-div"></div>
             <a href="/timer.html"><div class="dl"><strong>WOD Timer</strong><small>AMRAP, EMOM, For Time &amp; more</small></div></a>
             <a href="/movements.html"><div class="dl"><strong>Movement Library</strong><small>200+ movements with demos</small></div></a>
+          </div>
+          <div class="dd-col dd-col-right">
+            <div class="dd-section-label">Named Workouts</div>
+            <a href="/workouts.html?cat=classic_benchmark"><div class="dl"><strong>Classic Benchmarks</strong><small>Fran, Grace, Helen &amp; more</small></div></a>
+            <a href="/workouts.html?cat=hero"><div class="dl"><strong>Hero WODs</strong><small>Murph, DT, Manion &amp; more</small></div></a>
+            <a href="/workouts.html?cat=competition"><div class="dl"><strong>Competition WODs</strong><small>Open, Games &amp; Qualifier</small></div></a>
+            <a href="/workouts.html?cat=community"><div class="dl"><strong>Community WODs</strong><small>Partner &amp; community workouts</small></div></a>
           </div>
         </div>
         <div class="dd-div"></div>
@@ -224,18 +222,17 @@ const Nav = {
 </nav>
 <div class="ham-panel" id="ham-panel">
   <div class="ham-section">
-    <div class="ham-section-title">Workout</div>
+    <div class="ham-section-title">Train</div>
     <div class="ham-links">
-      <a href="/workouts.html?cat=girl" class="ham-link">The Girls</a>
-      <a href="/workouts.html?cat=hero" class="ham-link">Hero WODs</a>
-      <a href="/workouts.html?cat=open" class="ham-link">Open WODs</a>
-      <a href="/workouts.html?cat=games" class="ham-link">Games WODs</a>
-      <a href="/workouts.html?cat=benchmark" class="ham-link">Benchmarks</a>
-      <a href="/workouts.html?cat=partner" class="ham-link">Partner WODs</a>
       <a href="/daily-wod.html" class="ham-link">The Daily 20</a>
       <a href="/wodbuilder.html" class="ham-link">Smart WOD Builder</a>
       <a href="/timer.html" class="ham-link">WOD Timer</a>
       <a href="/movements.html" class="ham-link">Movement Library</a>
+      <a href="/workouts.html?cat=classic_benchmark" class="ham-link">Classic Benchmarks</a>
+      <a href="/workouts.html?cat=hero" class="ham-link">Hero WODs</a>
+      <a href="/workouts.html?cat=competition" class="ham-link">Competition WODs</a>
+      <a href="/workouts.html?cat=community" class="ham-link">Community WODs</a>
+      <a href="/workouts.html" class="ham-link">Browse All Workouts</a>
     </div>
   </div>
   <div class="ham-divider"></div>
