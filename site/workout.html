@@ -1182,7 +1182,15 @@ function renderBenchmarkLayout(w) {
   // Meta row items for page-header
   var repsLabel = '';
   var movements = w.movements || [];
-  if (movements.length) {
+  if (w.scoring_type === 'time' && w.scheme) {
+    // For Time workouts: derive label from the scheme field (e.g. "8 Rounds For Time" → "8 Rounds",
+    // "21-15-9 For Time" → "21–15–9"). Never read movement reps as a round count.
+    var s = w.scheme.replace(/\s*For\s+Time\s*$/i, '').trim();
+    if (s && s.toLowerCase() !== 'chipper') {
+      // Convert digit-hyphen-digit to en-dash for display (e.g. "21-15-9" → "21–15–9")
+      repsLabel = s.replace(/(\d)-(\d)/g, '$1–$2');
+    }
+  } else if (movements.length) {
     var firstRepsRaw = String(movements[0].reps || '');
     var rNums = firstRepsRaw.match(/\d+/g);
     if (rNums && rNums.length === 1) {
@@ -1193,7 +1201,6 @@ function renderBenchmarkLayout(w) {
         return r && r.length === 1 && r[0] === rNums[0];
       });
       if (!isChipper) {
-        // Single number = rounds — add label so "4 For Time" doesn't look like a format name
         repsLabel = rNums[0] + ' Rounds';
       }
     } else if (rNums && rNums.length > 1) {
