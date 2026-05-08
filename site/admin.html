@@ -116,6 +116,18 @@
 .alert.vis{display:block}
 .alert-ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d}
 .alert-err{background:#fef2f2;border:1px solid #fecaca;color:#dc2626}
+/* Confirm modal */
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .15s}
+.confirm-overlay.vis{opacity:1;pointer-events:all}
+.confirm-modal{background:var(--dk1,#1a1a1a);border:1px solid var(--bd,#333);border-radius:12px;padding:28px 28px 22px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.confirm-modal h3{font-family:var(--font-head,'Bebas Neue',sans-serif);font-size:1.3rem;letter-spacing:.04em;color:var(--tx,#fff);margin:0 0 8px}
+.confirm-modal p{color:var(--mu,#999);font-size:13px;margin:0 0 22px;line-height:1.5}
+.confirm-modal strong{color:var(--or,#C41212)}
+.confirm-actions{display:flex;gap:10px;justify-content:flex-end}
+.confirm-cancel{padding:10px 18px;background:none;border:1px solid var(--bd,#333);border-radius:8px;color:var(--mu,#999);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.confirm-cancel:hover{border-color:var(--tx,#fff);color:var(--tx,#fff)}
+.confirm-ok{padding:10px 18px;background:var(--or,#C41212);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.confirm-ok:hover{opacity:.85}
 .alert-info{background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8}
 
 .stats-bar{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:28px}
@@ -153,6 +165,18 @@
 <body data-nav-init="true" style="background:var(--bg,#faf9f7);color:var(--text,#1a1a1a)">
 
 <!-- LOCK SCREEN -->
+<!-- Confirm delete modal -->
+<div id="confirm-overlay" class="confirm-overlay">
+  <div class="confirm-modal">
+    <h3>Delete Athlete</h3>
+    <p id="confirm-msg">Are you sure you want to delete <strong id="confirm-name"></strong>? This removes them from the site and all their data permanently.</p>
+    <div class="confirm-actions">
+      <button class="confirm-cancel" onclick="closeConfirm()">Cancel</button>
+      <button class="confirm-ok" id="confirm-ok-btn">Delete</button>
+    </div>
+  </div>
+</div>
+
 <div id="lock-screen" class="admin-lock">
   <div class="lock-card">
     <h1>Admin Panel</h1>
@@ -1299,19 +1323,30 @@ async function editAthlete(id,username,bio,avatarColor){
   if(error)showAlert('athletes-alert','Error: '+error.message,'err');
   else{showAlert('athletes-alert','Athlete updated!','ok');await loadAthletes();}
 }
-async function deleteAthlete(id,username){
-  if(!confirm(`Delete athlete "${username}" and all their data? This cannot be undone.`))return;
-  if(!supabaseClient)return;
-  const{data:{session}}=await supabaseClient.auth.getSession();
-  if(!session)return showAlert('athletes-alert','Not logged in.','err');
-  const res=await fetch('https://irtppmztpcakanhefljs.supabase.co/functions/v1/delete-user',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
-    body:JSON.stringify({userId:id})
-  });
-  const json=await res.json();
-  if(!res.ok)showAlert('athletes-alert','Error: '+(json.error||res.statusText),'err');
-  else{showAlert('athletes-alert','Athlete fully deleted!','ok');await loadAthletes();}
+function closeConfirm(){
+  document.getElementById('confirm-overlay').classList.remove('vis');
+  document.getElementById('confirm-ok-btn').onclick=null;
+}
+function deleteAthlete(id,username){
+  document.getElementById('confirm-name').textContent=username;
+  const overlay=document.getElementById('confirm-overlay');
+  overlay.classList.add('vis');
+  document.getElementById('confirm-ok-btn').onclick=async()=>{
+    closeConfirm();
+    if(!supabaseClient)return;
+    const{data:{session}}=await supabaseClient.auth.getSession();
+    if(!session)return showAlert('athletes-alert','Not logged in.','err');
+    const res=await fetch('https://irtppmztpcakanhefljs.supabase.co/functions/v1/delete-user',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+      body:JSON.stringify({userId:id})
+    });
+    const json=await res.json();
+    if(!res.ok)showAlert('athletes-alert','Error: '+(json.error||res.statusText),'err');
+    else{showAlert('athletes-alert','Athlete fully deleted!','ok');await loadAthletes();}
+  };
+  // Close on backdrop click
+  overlay.onclick=(e)=>{if(e.target===overlay)closeConfirm();};
 }
 
 function getAthleteStatusHtml(lastSeen){
