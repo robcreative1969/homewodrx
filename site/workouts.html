@@ -330,11 +330,10 @@
     <div class="cat-tabs" id="cat-tabs">
       <button class="cat-tab active" data-cat="all">All <span class="tab-count" id="cnt-all">107</span></button>
       <button class="cat-tab" data-cat="hero">Hero <span class="tab-count" id="cnt-hero">0</span></button>
-      <button class="cat-tab" data-cat="girl">Girl <span class="tab-count" id="cnt-girl">0</span></button>
-      <button class="cat-tab" data-cat="open">Open <span class="tab-count" id="cnt-open">0</span></button>
-      <button class="cat-tab" data-cat="games">Games <span class="tab-count" id="cnt-games">0</span></button>
-      <button class="cat-tab" data-cat="partner">Partner <span class="tab-count" id="cnt-partner">0</span></button>
-      <button class="cat-tab" data-cat="benchmark">Benchmark <span class="tab-count" id="cnt-benchmark">0</span></button>
+      <button class="cat-tab" data-cat="classic_benchmark">Classic <span class="tab-count" id="cnt-classic_benchmark">0</span></button>
+      <button class="cat-tab" data-cat="competition">Competition <span class="tab-count" id="cnt-competition">0</span></button>
+      <button class="cat-tab" data-cat="community">Community <span class="tab-count" id="cnt-community">0</span></button>
+      <button class="cat-tab" data-cat="memorial">Memorial <span class="tab-count" id="cnt-memorial">0</span></button>
       <button class="cat-tab" data-cat="daily20">Daily 20 <span class="tab-count" id="cnt-daily20">90</span></button>
     </div>
 
@@ -380,10 +379,10 @@
     <div class="footer-grid">
       <div class="footer-col">
         <h4>Workouts</h4>
-        <a href="/workouts.html?cat=girl">The Girls</a>
+        <a href="/workouts.html?cat=classic_benchmark">Classic Benchmarks</a>
         <a href="/workouts.html?cat=hero">Hero WODs</a>
-        <a href="/workouts.html?cat=open">Open WODs</a>
-        <a href="/workouts.html?cat=benchmark">Benchmarks</a>
+        <a href="/workouts.html?cat=competition">Competition WODs</a>
+        <a href="/workouts.html?cat=community">Community WODs</a>
         <a href="/workouts.html">All Workouts</a>
       </div>
       <div class="footer-col">
@@ -432,8 +431,8 @@
 // ─────────────────────────────────────────
 // DATA & FILTER STATE
 // ─────────────────────────────────────────
-const CAT_ORDER  = ['hero','girl','open','games','partner','benchmark'];
-const CAT_LABELS = { hero:'Hero', girl:'Girl', open:'Open', games:'Games', partner:'Partner', benchmark:'Benchmark' };
+const CAT_ORDER  = ['hero','classic_benchmark','competition','community','memorial'];
+const CAT_LABELS = { hero:'Hero', classic_benchmark:'Classic', competition:'Competition', community:'Community', memorial:'Memorial' };
 const EQUIP_LABELS = {
   pullUpBar:'Pull-up Bar', bodyweight:'Bodyweight', barbell:'Barbell',
   dumbbell:'Dumbbells', kettlebell:'Kettlebell', jumpRope:'Jump Rope',
@@ -778,7 +777,7 @@ async function loadFromSupabase() {
     WODS = data.map(b => ({
       name:      b.name,
       slug:      b.slug,
-      cat:       b.category || 'benchmark',
+      cat:       b.category || 'classic_benchmark',
       type:      b.format || '',
       minutes:   parseDurMin(b.duration_estimate),
       dur:       b.duration_estimate || '',

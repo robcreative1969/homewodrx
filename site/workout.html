@@ -539,10 +539,10 @@
     <div class="footer-grid">
       <div class="footer-col">
         <h4>Workouts</h4>
-        <a href="/workouts.html?cat=girl">The Girls</a>
+        <a href="/workouts.html?cat=classic_benchmark">Classic Benchmarks</a>
         <a href="/workouts.html?cat=hero">Hero WODs</a>
-        <a href="/workouts.html?cat=open">Open WODs</a>
-        <a href="/workouts.html?cat=benchmark">Benchmarks</a>
+        <a href="/workouts.html?cat=competition">Competition WODs</a>
+        <a href="/workouts.html?cat=community">Community WODs</a>
         <a href="/workouts.html">All Workouts</a>
       </div>
       <div class="footer-col">
@@ -762,8 +762,8 @@ const EQUIP_LABELS = {
 };
 
 const CAT_LABELS = {
-  hero:'Hero', girl:'Girl', open:'Open',
-  games:'Games', partner:'Partner', benchmark:'Benchmark',
+  hero:'Hero', classic_benchmark:'Classic', competition:'Competition',
+  community:'Community', memorial:'Memorial',
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -950,9 +950,8 @@ function buildWodHeroCardHTML(w) {
   var catLabel = CAT_LABELS[category] || cap(category);
 
   // Category badge
-  var badgeCls = category === 'girl' ? 'girl-wod'
-               : category === 'hero' ? 'hero-wod'
-               : (category || 'benchmark');
+  var badgeCls = category === 'hero' ? 'hero-wod'
+               : (category || 'classic_benchmark');
   var catBadge = catLabel
     ? '<span class="wod-cat-badge ' + badgeCls + '">' + escHtml(catLabel) + ' WOD</span>'
     : '';

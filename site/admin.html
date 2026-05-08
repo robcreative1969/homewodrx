@@ -450,9 +450,11 @@
       <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
         <select id="bm-category-filter" onchange="loadBenchmarksAdmin()" style="background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none">
           <option value="">All Categories</option>
-          <option value="girl">The Girls</option>
+          <option value="classic_benchmark">Classic Benchmarks</option>
           <option value="hero">Hero WODs</option>
-          <option value="benchmark">Other Benchmarks</option>
+          <option value="competition">Competition WODs</option>
+          <option value="community">Community WODs</option>
+          <option value="memorial">Memorials &amp; Tributes</option>
         </select>
         <select id="bm-difficulty-filter" onchange="renderBenchmarksTable()" style="background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none">
           <option value="">All Difficulties</option>
@@ -480,9 +482,11 @@
       <div class="grid-2">
         <div class="field"><label>Category</label>
           <select id="bmf-category">
-            <option value="girl">The Girls</option>
+            <option value="classic_benchmark" selected>Classic Benchmark</option>
             <option value="hero">Hero WOD</option>
-            <option value="benchmark" selected>Other Benchmark</option>
+            <option value="competition">Competition WOD</option>
+            <option value="community">Community WOD</option>
+            <option value="memorial">Memorial</option>
           </select>
         </div>
         <div class="field"><label>Format</label>
@@ -1111,7 +1115,7 @@ async function populateBenchmarkSelect(){
   const sel=document.getElementById('feat-benchmark');
   if(supabaseClient){
     const{data}=await supabaseClient.from('benchmark_workouts').select('slug,name,category').order('category').order('name');
-    if(data&&data.length){data.forEach(b=>{const opt=document.createElement('option');opt.value=b.slug;opt.textContent=`${b.name} (${b.category||'benchmark'})`;sel.appendChild(opt);});}
+    if(data&&data.length){data.forEach(b=>{const opt=document.createElement('option');opt.value=b.slug;opt.textContent=`${b.name} (${b.category||'classic_benchmark'})`;sel.appendChild(opt);});}
   }
   loadFeaturedSchedule();
 }
@@ -1651,7 +1655,7 @@ function renderBenchmarksTable(){
     document.getElementById('bm-table-wrap').innerHTML='<p style="color:var(--mu)">No benchmarks match your filters.</p>';
     return;
   }
-  const catLabel={girl:'Girl WOD',hero:'Hero WOD',benchmark:'Benchmark'};
+  const catLabel={classic_benchmark:'Classic',hero:'Hero WOD',competition:'Competition',community:'Community',memorial:'Memorial'};
   let html=`<table class="table"><thead><tr>
     <th>Name</th><th>Category</th><th>Format</th><th>Difficulty</th><th>Body Focus</th><th>Movements</th><th>Actions</th>
   </tr></thead><tbody>`;
@@ -1659,7 +1663,7 @@ function renderBenchmarksTable(){
     const movCount=Array.isArray(b.movements)?b.movements.length:0;
     html+=`<tr>
       <td style="font-weight:700"><a href="/workout.html?slug=${escHtml(b.slug)}" target="_blank" style="color:var(--orl);text-decoration:none">${escHtml(b.name)}</a></td>
-      <td><span class="pill ${b.category==='girl'?'pill-or':b.category==='hero'?'pill-pu':'pill-bl'}">${catLabel[b.category]||b.category}</span></td>
+      <td><span class="pill ${b.category==='classic_benchmark'?'pill-or':b.category==='hero'?'pill-pu':'pill-bl'}">${catLabel[b.category]||b.category}</span></td>
       <td style="font-size:12px">${escHtml(b.format||'')}</td>
       <td><span class="pill pill-mu">${cap(b.difficulty||'')}</span></td>
       <td style="font-size:12px;color:var(--mu)">${cap((b.body_focus||'').replace('-',' '))}</td>
@@ -1697,7 +1701,7 @@ function openBenchmarkForm(b){
     document.getElementById('bmf-name').value=b.name||'';
     document.getElementById('bmf-slug').value=b.slug||'';
     document.getElementById('bmf-slug').dataset.manual='1';
-    document.getElementById('bmf-category').value=b.category||'benchmark';
+    document.getElementById('bmf-category').value=b.category||'classic_benchmark';
     document.getElementById('bmf-format').value=b.format||'For Time';
     document.getElementById('bmf-duration').value=b.duration_estimate||'';
     document.getElementById('bmf-difficulty').value=b.difficulty||'intermediate';
@@ -1718,7 +1722,7 @@ function openBenchmarkForm(b){
     document.getElementById('bmf-name').value='';
     document.getElementById('bmf-slug').value='';
     delete document.getElementById('bmf-slug').dataset.manual;
-    document.getElementById('bmf-category').value='benchmark';
+    document.getElementById('bmf-category').value='classic_benchmark';
     document.getElementById('bmf-format').value='For Time';
     document.getElementById('bmf-duration').value='';
     document.getElementById('bmf-difficulty').value='intermediate';

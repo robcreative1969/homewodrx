@@ -745,7 +745,7 @@ function slugify(name) {
 
 const CLOCK_SVG = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
 const D20_FMT_LABEL = { amrap:'AMRAP', emom:'EMOM', fortime:'For Time', circuit:'Circuit' };
-const WOD_CAT_LABELS = { hero:'Hero', girl:'Girl', open:'Open', games:'Games', partner:'Partner', benchmark:'Benchmark' };
+const WOD_CAT_LABELS = { hero:'Hero', classic_benchmark:'Classic', competition:'Competition', community:'Community', memorial:'Memorial' };
 
 function buildMovHtml(movements) {
   if (!movements || !movements.length) return '';
@@ -1136,12 +1136,11 @@ async function loadMovementPage() {
   document.getElementById('meta-wods-text').textContent = `Found in ${totalCount} workout${totalCount !== 1 ? 's' : ''}`;
 
   const CATEGORY_LABELS = {
-    girl:      'girl',
-    hero:      'hero',
-    open:      'open',
-    games:     'games',
-    partner:   'partner',
-    benchmark: 'benchmark',
+    hero:              'hero',
+    classic_benchmark: 'classic_benchmark',
+    competition:       'competition',
+    community:         'community',
+    memorial:          'memorial',
   };
 
   if (totalCount === 0) {
@@ -1153,7 +1152,7 @@ async function loadMovementPage() {
       </div>`;
   } else {
     const benchmarkCards = matchingBenchmarks.map(w => {
-      const cat = w.category || 'benchmark';
+      const cat = w.category || 'classic_benchmark';
       const catLabel = WOD_CAT_LABELS[cat] || cat;
       const scheme = w.scheme || '';
       return `<a href="/workouts/${w.slug}" class="wod-card">
