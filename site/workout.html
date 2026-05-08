@@ -1158,7 +1158,7 @@ function renderBenchmarkLayout(w) {
     '</div>';
   }).join('');
 
-  // YouTube embed (always show for benchmarks; real embed or placeholder)
+  // YouTube embed — only rendered if youtube_url is present; absent = videoCard stays '' and layout adapts
   var videoCard = '';
   var iconPlaySvg = '<svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><polygon points="5,3 17,10 5,17"/></svg>';
   if (w.youtube_url) {
@@ -1172,16 +1172,6 @@ function renderBenchmarkLayout(w) {
           '</div>' +
         '</div>';
     }
-  } else if (w.slug) {
-    // Benchmark without youtube_url — show placeholder
-    videoCard =
-      '<div class="bc span3">' +
-        '<div class="bc-head"><div class="icon">' + iconPlaySvg + '</div>Movement Demo</div>' +
-        '<div class="video-placeholder">' +
-          '<div class="play-btn"><svg width="22" height="22" viewBox="0 0 24 24" fill="rgba(0,0,0,.3)"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>' +
-          '<span>' + escHtml(name) + ' Demo Video</span>' +
-        '</div>' +
-      '</div>';
   }
 
   // Scoring note
