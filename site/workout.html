@@ -1180,39 +1180,11 @@ function renderBenchmarkLayout(w) {
     : '';
 
   // Meta row items for page-header
-  var repsLabel = '';
-  var movements = w.movements || [];
-  if (w.scoring_type === 'time' && w.scheme) {
-    // For Time workouts: derive label from the scheme field (e.g. "8 Rounds For Time" → "8 Rounds",
-    // "21-15-9 For Time" → "21–15–9"). Never read movement reps as a round count.
-    var s = w.scheme.replace(/\s*For\s+Time\s*$/i, '').trim();
-    if (s && s.toLowerCase() !== 'chipper') {
-      // Convert digit-hyphen-digit to en-dash for display (e.g. "21-15-9" → "21–15–9")
-      repsLabel = s.replace(/(\d)-(\d)/g, '$1–$2');
-    }
-  } else if (movements.length) {
-    var firstRepsRaw = String(movements[0].reps || '');
-    var rNums = firstRepsRaw.match(/\d+/g);
-    if (rNums && rNums.length === 1) {
-      // Check if this is a chipper: all movements share the same single rep count
-      // and there are 5+ movements (e.g. Filthy Fifty = 50 reps × 10 movements, not 50 rounds)
-      var isChipper = movements.length >= 5 && movements.every(function(m) {
-        var r = String(m.reps || '').match(/\d+/g);
-        return r && r.length === 1 && r[0] === rNums[0];
-      });
-      if (!isChipper) {
-        repsLabel = rNums[0] + ' Rounds';
-      }
-    } else if (rNums && rNums.length > 1) {
-      repsLabel = rNums.join('–');
-    } else {
-      repsLabel = firstRepsRaw;
-    }
-  }
+  // Note: repsLabel chip removed — deriving round/rep counts from movement data is unreliable
+  // across AMRAPs, EMOMs, and multi-round For Time WODs. Format + time cap chips are sufficient.
   var dur = w.duration_estimate || w.duration;
   var durStr = dur ? String(dur) : '';
   var metaHtml =
-    (repsLabel ? '<span class="wod-ph-meta-item">' + escHtml(repsLabel) + '</span>' : '') +
     (w.format ? '<span class="wod-ph-meta-item">' + escHtml(w.format) + '</span>' : '') +
     (durStr ? '<span class="wod-ph-meta-item">Time Cap: ' + escHtml(durStr) + '</span>' : '') +
     (w.difficulty ? '<span class="wod-ph-meta-item">' + escHtml(cap(w.difficulty)) + '</span>' : '');
