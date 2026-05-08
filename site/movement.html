@@ -1002,11 +1002,7 @@ async function loadMovementPage() {
     bcCatWrap.style.display = '';
   }
 
-  // Badge
-  const badge = document.getElementById('hero-badge');
-  badge.className = 'cat-badge ' + catBadgeClass(category);
-  badge.textContent = catBadgeLabel(category);
-  badge.style.display = '';
+  // Badge removed — category shown in meta row; badge is redundant on movement pages
 
   // Difficulty dots
   if (difficulty) {
