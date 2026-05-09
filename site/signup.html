@@ -340,9 +340,25 @@
           return;
         }
         if (user) {
-          setAlert('auth-success', 'success', 'Account created! Check your email to confirm, then log in.');
-          submitBtn.disabled = true;
-          submitBtn.textContent = 'Account Created!';
+          // Hide the form and show a clean confirmation screen
+          document.getElementById('signup-form').style.display = 'none';
+          const perksBox = document.querySelector('.perks-box');
+          if (perksBox) perksBox.style.display = 'none';
+          clearAlert('auth-error');
+          clearAlert('auth-success');
+          const confirmScreen = document.createElement('div');
+          confirmScreen.style.cssText = 'text-align:center;padding:32px 16px 16px;';
+          confirmScreen.innerHTML = `
+            <div style="width:64px;height:64px;background:#f0fdf4;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+              <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="#16a34a" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <h2 style="margin:0 0 10px;font-size:22px;font-weight:800;color:#1a1a1a;">Check your email</h2>
+            <p style="margin:0 0 24px;font-size:15px;color:#555;line-height:1.6;">We sent a confirmation link to<br><strong style="color:#1a1a1a;">${email}</strong></p>
+            <p style="margin:0 0 28px;font-size:13px;color:#888;line-height:1.6;">Click the link in that email to activate your account, then come back here to log in.</p>
+            <a href="/login.html" style="display:inline-block;background:#C41212;color:#fff;font-weight:700;font-size:15px;padding:14px 36px;border-radius:10px;text-decoration:none;">Go to Log In</a>
+            <p style="margin:20px 0 0;font-size:12px;color:#aaa;">Didn't get it? Check your spam folder.</p>
+          `;
+          document.getElementById('signup-form').insertAdjacentElement('afterend', confirmScreen);
         }
       } catch (err) {
         setAlert('auth-error', 'error', 'Something went wrong. Please try again.');
