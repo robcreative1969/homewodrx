@@ -156,6 +156,9 @@
     .terms-note a { color: var(--muted); text-decoration: underline; }
     .terms-note a:hover { color: var(--or); }
 
+    /* Turnstile widget */
+    .cf-turnstile { display: flex; justify-content: center; margin: 0.75rem 0 0.5rem; }
+
     @media (max-width: 480px) {
       .auth-card { padding: 2rem 1.25rem; }
     }
@@ -169,6 +172,8 @@
     gtag('config', 'G-HZM475VDN3');
   </script>
   <script defer src="/_vercel/insights/script.js"></script>
+  <!-- Cloudflare Turnstile bot protection -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
 
@@ -245,6 +250,8 @@
             </button>
           </div>
         </div>
+        <!-- Cloudflare Turnstile widget (auto-executes, invisible to real users) -->
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAADLyVvXnAx5cEnfY" data-theme="light"></div>
         <button type="submit" class="btn-submit" id="submit-btn">Create Free Account</button>
       </form>
 
@@ -299,13 +306,35 @@
         return;
       }
 
+      // Check Turnstile token
+      const turnstileToken = document.querySelector('[name=cf-turnstile-response]')?.value;
+      if (!turnstileToken) {
+        setAlert('auth-error', 'error', 'Security check not complete. Please wait a moment and try again.');
+        return;
+      }
+
       submitBtn.disabled = true;
       submitBtn.textContent = 'Creating account...';
 
       try {
+        // Verify bot check server-side before creating account
+        const verifyRes = await fetch('https://irtppmztpcakanhefljs.supabase.co/functions/v1/verify-turnstile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: turnstileToken })
+        });
+        if (!verifyRes.ok) {
+          setAlert('auth-error', 'error', 'Security check failed. Please refresh the page and try again.');
+          if (typeof turnstile !== 'undefined') turnstile.reset();
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Create Free Account';
+          return;
+        }
+
         const { user, error } = await db.signUp(email, password, { username });
         if (error) {
           setAlert('auth-error', 'error', error.message || 'Could not create account. Please try again.');
+          if (typeof turnstile !== 'undefined') turnstile.reset();
           submitBtn.disabled = false;
           submitBtn.textContent = 'Create Free Account';
           return;
@@ -317,6 +346,7 @@
         }
       } catch (err) {
         setAlert('auth-error', 'error', 'Something went wrong. Please try again.');
+        if (typeof turnstile !== 'undefined') turnstile.reset();
         submitBtn.disabled = false;
         submitBtn.textContent = 'Create Free Account';
       }
