@@ -421,6 +421,11 @@
       <div style="display:flex;align-items:center;margin-bottom:16px;gap:10px">
         <span style="font-size:13px;color:var(--mu)"><strong id="athletes-count">0</strong> total athletes</span>
       </div>
+      <div id="athletes-bulk-bar" style="display:none;align-items:center;gap:12px;background:var(--dk2);border:1px solid var(--bd);border-radius:8px;padding:10px 16px;margin-bottom:12px">
+        <span id="athletes-bulk-count" style="font-size:13px;color:var(--tx);font-weight:600"></span>
+        <button class="action-btn" style="background:var(--er,#c0392b);color:#fff;border-color:var(--er,#c0392b)" onclick="bulkDeleteAthletes()">Delete Selected</button>
+        <button class="action-btn" onclick="clearAthleteSelection()">Clear Selection</button>
+      </div>
       <div id="athletes-table-wrap"><p style="color:var(--mu);font-size:14px">Loading athletes...</p></div>
       <div style="display:flex;gap:10px;margin-top:20px">
         <button class="save-btn" onclick="loadMoreAthletes()">Load More</button>
@@ -1277,7 +1282,7 @@ function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt
 // ═════════════════════════════════════════════════════════════════
 // ATHLETES TAB
 // ═════════════════════════════════════════════════════════════════
-let athletesData=[],athletesPage=0,athletesSearch='';
+let athletesData=[],athletesPage=0,athletesSearch='',selectedAthletes=new Set();
 async function loadAthletes(){
   if(!supabaseClient){document.getElementById('athletes-table-wrap').innerHTML='<p style="color:var(--mu)">Connect Supabase to see athletes.</p>';return;}
   try{
@@ -1289,6 +1294,8 @@ async function loadAthletes(){
     const{data,count}=await query;
     athletesData=data||[];
     athletesPage=0;
+    selectedAthletes=new Set();
+    updateAthleteBulkBar();
     document.getElementById('athletes-count').textContent=count??athletesData.length;
     renderAthletesTable();
   }catch(e){showAlert('athletes-alert','Error loading athletes: '+e.message,'err');}
@@ -1301,14 +1308,93 @@ function renderAthletesTable(){
   const filtered=athletesData.filter(a=>a.username?.toLowerCase().includes(athletesSearch));
   const displayed=filtered.slice(0,(athletesPage+1)*50);
   if(!displayed.length){document.getElementById('athletes-table-wrap').innerHTML='<p style="color:var(--mu)">No athletes found.</p>';return;}
-  let html=`<table class="table"><thead><tr><th>Username</th><th>Status</th><th>Bio</th><th>Results</th><th>Joined</th><th>Actions</th></tr></thead><tbody>`;
+  const allDisplayedIds=displayed.map(a=>a.id);
+  const allChecked=allDisplayedIds.length>0&&allDisplayedIds.every(id=>selectedAthletes.has(id));
+  let html=`<table class="table"><thead><tr>
+    <th style="width:36px;text-align:center"><input type="checkbox" id="athletes-select-all" ${allChecked?'checked':''} onchange="toggleSelectAllAthletes(this)" style="cursor:pointer;width:15px;height:15px;accent-color:var(--or)"></th>
+    <th>Username</th><th>Status</th><th>Bio</th><th>Results</th><th>Joined</th><th>Actions</th>
+  </tr></thead><tbody>`;
   displayed.forEach(a=>{
     const joined=a.created_at?new Date(a.created_at).toLocaleDateString():'—';
     const statusHtml=getAthleteStatusHtml(a.last_seen);
-    html+=`<tr><td style="font-weight:700">${escHtml(a.username||'')}</td><td style="font-size:12px;white-space:nowrap">${statusHtml}</td><td style="color:var(--mu);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(a.bio||'')}</td><td>${a.total_results||0}</td><td style="font-size:12px;color:var(--mu)">${joined}</td><td style="display:flex;gap:4px;flex-wrap:wrap"><button class="action-btn" onclick="editAthlete('${escHtml(a.id)}','${escHtml(a.username)}','${escHtml(a.bio)}','${escHtml(a.avatar_color)}')">Edit</button><button class="action-btn" onclick="deleteAthlete('${escHtml(a.id)}','${escHtml(a.username)}')">Delete</button><button class="action-btn" onclick="sendAthleteReset('${escHtml(a.id)}','${escHtml(a.username)}')">Reset PW</button></td></tr>`;
+    const checked=selectedAthletes.has(a.id)?'checked':'';
+    html+=`<tr style="${checked?'background:var(--dk2)':''}">
+      <td style="text-align:center;vertical-align:middle"><input type="checkbox" ${checked} onchange="toggleAthleteSelect('${a.id}',this)" style="cursor:pointer;width:15px;height:15px;accent-color:var(--or)"></td>
+      <td style="font-weight:700">${escHtml(a.username||'')}</td>
+      <td style="font-size:12px;white-space:nowrap">${statusHtml}</td>
+      <td style="color:var(--mu);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(a.bio||'')}</td>
+      <td>${a.total_results||0}</td>
+      <td style="font-size:12px;color:var(--mu)">${joined}</td>
+      <td style="display:flex;gap:4px;flex-wrap:wrap"><button class="action-btn" onclick="editAthlete('${escHtml(a.id)}','${escHtml(a.username)}','${escHtml(a.bio||'')}','${escHtml(a.avatar_color||'')}')">Edit</button><button class="action-btn" onclick="deleteAthlete('${escHtml(a.id)}','${escHtml(a.username)}')">Delete</button><button class="action-btn" onclick="sendAthleteReset('${escHtml(a.id)}','${escHtml(a.username)}')">Reset PW</button></td>
+    </tr>`;
   });
   html+=`</tbody></table>`;
   document.getElementById('athletes-table-wrap').innerHTML=html;
+}
+function toggleAthleteSelect(id,cb){
+  if(cb.checked)selectedAthletes.add(id);
+  else selectedAthletes.delete(id);
+  updateAthleteBulkBar();
+  // Update select-all checkbox state
+  const filtered=athletesData.filter(a=>a.username?.toLowerCase().includes(athletesSearch));
+  const displayed=filtered.slice(0,(athletesPage+1)*50);
+  const allChecked=displayed.length>0&&displayed.every(a=>selectedAthletes.has(a.id));
+  const saEl=document.getElementById('athletes-select-all');
+  if(saEl)saEl.checked=allChecked;
+  // Highlight row
+  const row=cb.closest('tr');
+  if(row)row.style.background=cb.checked?'var(--dk2)':'';
+}
+function toggleSelectAllAthletes(cb){
+  const filtered=athletesData.filter(a=>a.username?.toLowerCase().includes(athletesSearch));
+  const displayed=filtered.slice(0,(athletesPage+1)*50);
+  displayed.forEach(a=>{
+    if(cb.checked)selectedAthletes.add(a.id);
+    else selectedAthletes.delete(a.id);
+  });
+  updateAthleteBulkBar();
+  renderAthletesTable();
+}
+function updateAthleteBulkBar(){
+  const bar=document.getElementById('athletes-bulk-bar');
+  const countEl=document.getElementById('athletes-bulk-count');
+  const n=selectedAthletes.size;
+  if(n>0){
+    bar.style.display='flex';
+    countEl.textContent=n+' athlete'+(n===1?'':'s')+' selected';
+  }else{
+    bar.style.display='none';
+  }
+}
+function clearAthleteSelection(){
+  selectedAthletes=new Set();
+  updateAthleteBulkBar();
+  renderAthletesTable();
+}
+async function bulkDeleteAthletes(){
+  const ids=[...selectedAthletes];
+  if(!ids.length)return;
+  // Find usernames for the confirm message
+  const names=athletesData.filter(a=>ids.includes(a.id)).map(a=>a.username).join(', ');
+  if(!confirm(`Delete ${ids.length} athlete(s)?\n\n${names}\n\nThis cannot be undone.`))return;
+  if(!supabaseClient)return showAlert('athletes-alert','Not connected.','err');
+  try{
+    const{data:{session}}=await supabaseClient.auth.getSession();
+    if(!session)return showAlert('athletes-alert','Not logged in.','err');
+    let errorCount=0;
+    for(const id of ids){
+      const res=await fetch('https://irtppmztpcakanhefljs.supabase.co/functions/v1/delete-user',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+        body:JSON.stringify({userId:id})
+      });
+      if(!res.ok)errorCount++;
+    }
+    if(errorCount>0)showAlert('athletes-alert',`Deleted with ${errorCount} error(s). Refreshing...`,'err');
+    else showAlert('athletes-alert',`${ids.length} athlete(s) deleted!`,'ok');
+    selectedAthletes=new Set();
+    await loadAthletes();
+  }catch(e){showAlert('athletes-alert','Network error — please try again.','err');}
 }
 function loadMoreAthletes(){athletesPage++;renderAthletesTable();}
 async function editAthlete(id,username,bio,avatarColor){
