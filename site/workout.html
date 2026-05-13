@@ -1450,10 +1450,29 @@ async function loadWarmupCooldown(w) {
   if (!supabaseClient) return;
 
   try {
-    // Clean WOD movement names (strip parenthetical qualifiers e.g. "Push-Ups (Spades)" → "Push-Ups")
+    // Map WOD movement display names → canonical movements-table names where they differ
+    var MOVEMENT_NAME_MAP = {
+      'Run': 'Running',
+      'Row': 'Rowing',
+      'Row (Calories)': 'Rowing',
+      'Clean-and-Jerks': 'Clean and Jerks',
+      'Clean & Jerks': 'Clean and Jerks',
+      'Deadlift': 'Deadlifts',
+      'Back Squats': 'Back Squat',
+      'Push Presses': 'Push Press',
+      'Wall Ball Shots': 'Wall Balls',
+      'Sprint': 'Running',
+      'Run Backwards': 'Running',
+      'Shuttle Runs': 'Running',
+    };
+
+    // Clean WOD movement names: strip parenthetical qualifiers, then apply normalization map
     var wodMovNames = (w.movements || []).map(function(m) {
-      return (m.name || '').replace(/\s*\([^)]*\)\s*/g, '').trim();
+      var n = (m.name || '').replace(/\s*\([^)]*\)\s*/g, '').trim();
+      return MOVEMENT_NAME_MAP[n] || n;
     }).filter(Boolean);
+    // Deduplicate (e.g. multiple Run segments all map to Running)
+    wodMovNames = wodMovNames.filter(function(v, i, a) { return a.indexOf(v) === i; });
     if (!wodMovNames.length) return;
 
     // Fetch muscle_groups for the WOD's movements
