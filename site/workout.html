@@ -1210,8 +1210,12 @@ function renderBenchmarkLayout(w) {
   var hasMvStandards = movements.some(function(m) { return m.rx_men || m.rx_women; });
   var standardsCard = '';
   if (hasMvStandards) {
+    var seenMvNames = {};
     var stdRows = movements.map(function(m) {
       if (!m.rx_men && !m.rx_women) return '';
+      var key = (m.name || '').toLowerCase();
+      if (seenMvNames[key]) return '';
+      seenMvNames[key] = true;
       return '<tr>' +
         '<td class="std-mv">' + escHtml(m.name || '') + '</td>' +
         '<td class="std-rx">' + escHtml(m.rx_men || '—') + '</td>' +
