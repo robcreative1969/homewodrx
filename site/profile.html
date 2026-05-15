@@ -1387,6 +1387,8 @@ document.getElementById('avatar-file-input').addEventListener('change', async fu
     avatarEl.style.background = 'transparent';
     avatarEl.style.fontSize = '';
     avatarEl.style.color = '';
+    // Keep nav avatar cache in sync so every page reflects the new photo immediately
+    localStorage.setItem('hwrx_avatar', url);
   } catch(err) {
     console.error('Avatar upload failed:', err);
     avatarEl.innerHTML = prevContent;
