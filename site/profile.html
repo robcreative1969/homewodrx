@@ -142,6 +142,23 @@
 }
 .btn-cancel:hover { border-color: var(--border2); color: var(--text); }
 
+/* ── Edit section separators ── */
+.edit-sep {
+  grid-column: 1 / -1; display: flex; align-items: center; gap: 10px;
+  margin-top: 8px; padding-top: 16px; border-top: 1px solid var(--border);
+}
+.edit-sep-label { font-size: .63rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted2); white-space: nowrap; }
+.edit-sep-note  { font-size: .68rem; font-weight: 400; color: var(--muted2); text-transform: none; letter-spacing: 0; }
+
+/* ── Equipment chips ── */
+.equip-grid { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 7px; }
+.equip-chip {
+  padding: 6px 14px; border-radius: 20px; font-size: .78rem; font-weight: 700;
+  border: 1.5px solid var(--border); background: var(--bg); color: var(--muted);
+  cursor: pointer; transition: all .15s; user-select: none; font-family: var(--font-body);
+}
+.equip-chip.on { background: rgba(196,18,18,.08); border-color: var(--or); color: var(--or); }
+
 /* ── Metrics strip ── */
 .metrics-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
 @media (max-width: 700px) { .metrics-strip { grid-template-columns: repeat(2, 1fr); } }
@@ -491,13 +508,15 @@
         <label>Height</label>
         <div class="height-row" id="height-imperial">
           <select id="edit-height-ft">
-            <option>4 ft</option><option>5 ft</option><option selected>5 ft</option>
-            <option>6 ft</option><option>7 ft</option>
+            <option value="4">4 ft</option>
+            <option value="5">5 ft</option>
+            <option value="6">6 ft</option>
+            <option value="7">7 ft</option>
           </select>
           <select id="edit-height-in">
-            <option>0"</option><option>1"</option><option>2"</option><option>3"</option>
-            <option>4"</option><option>5"</option><option>6"</option><option>7"</option>
-            <option>8"</option><option>9"</option><option>10"</option><option selected>11"</option>
+            <option value="0">0"</option><option value="1">1"</option><option value="2">2"</option><option value="3">3"</option>
+            <option value="4">4"</option><option value="5">5"</option><option value="6">6"</option><option value="7">7"</option>
+            <option value="8">8"</option><option value="9">9"</option><option value="10">10"</option><option value="11">11"</option>
           </select>
         </div>
         <input type="number" id="height-metric" placeholder="cm" style="display:none">
@@ -553,6 +572,66 @@
         <label>Favorite WOD</label>
         <input type="text" id="edit-fav-wod" placeholder="e.g. Murph">
       </div>
+
+      <!-- ── Training Preferences ── -->
+      <div class="edit-sep">
+        <span class="edit-sep-label">Training Preferences</span>
+      </div>
+      <div class="field full">
+        <label>Primary Goal</label>
+        <select id="edit-primary-goal" onchange="toggleSportField()">
+          <option value="">— Select —</option>
+          <option value="sport_performance">Training for a sport</option>
+          <option value="specific_activity">Training for an activity (biking, climbing, skiing…)</option>
+          <option value="general_health">General health &amp; wellness</option>
+          <option value="rebuilding">Coming back / rebuilding</option>
+          <option value="just_getting_started">Just getting started</option>
+        </select>
+      </div>
+      <div class="field full" id="sport-focus-field" style="display:none">
+        <label>Sport / Activity</label>
+        <input type="text" id="edit-sport-focus" placeholder="e.g. mountain biking, football, skiing">
+      </div>
+      <div class="field">
+        <label>Training Style</label>
+        <select id="edit-training-style">
+          <option value="">— Select —</option>
+          <option value="structured">Structured programming</option>
+          <option value="flexible">Flexible / whatever feels right</option>
+          <option value="benchmark_focused">Benchmark-focused</option>
+          <option value="variety_first">Variety first</option>
+        </select>
+      </div>
+
+      <!-- ── Equipment Available ── -->
+      <div class="edit-sep">
+        <span class="edit-sep-label">Equipment Available</span>
+      </div>
+      <div class="equip-grid" id="equip-grid">
+        <button type="button" class="equip-chip" data-eq="barbell"        onclick="toggleEquip(this)">Barbell</button>
+        <button type="button" class="equip-chip" data-eq="dumbbells"      onclick="toggleEquip(this)">Dumbbells</button>
+        <button type="button" class="equip-chip" data-eq="kettlebells"    onclick="toggleEquip(this)">Kettlebells</button>
+        <button type="button" class="equip-chip" data-eq="pull_up_bar"    onclick="toggleEquip(this)">Pull-up Bar</button>
+        <button type="button" class="equip-chip" data-eq="rower"          onclick="toggleEquip(this)">Rower</button>
+        <button type="button" class="equip-chip" data-eq="bike"           onclick="toggleEquip(this)">Assault / Echo Bike</button>
+        <button type="button" class="equip-chip" data-eq="rings"          onclick="toggleEquip(this)">Rings</button>
+        <button type="button" class="equip-chip" data-eq="jump_rope"      onclick="toggleEquip(this)">Jump Rope</button>
+        <button type="button" class="equip-chip" data-eq="bodyweight_only" onclick="toggleEquip(this)">Bodyweight Only</button>
+      </div>
+
+      <!-- ── Health Notes ── -->
+      <div class="edit-sep">
+        <span class="edit-sep-label">Health Notes &nbsp;<span class="edit-sep-note">— used only by your training companion</span></span>
+      </div>
+      <div class="field full">
+        <label>Injuries / Physical Limitations</label>
+        <textarea rows="2" id="edit-injuries" placeholder="e.g. left knee — patellar tendonitis&#10;lower back — avoid heavy deadlifts"></textarea>
+      </div>
+      <div class="field full">
+        <label>Medical Conditions</label>
+        <textarea rows="2" id="edit-medical" placeholder="e.g. Type 2 diabetes, managed&#10;Hypertension — cleared for exercise"></textarea>
+      </div>
+
     </div>
     <div class="edit-foot">
       <button class="btn-save" onclick="saveProfile()">Save Changes</button>
@@ -707,6 +786,7 @@
 var LIFT_NAMES = ['Back Squat', 'Deadlift', 'Clean & Jerk', 'Snatch', 'Overhead Press'];
 var liftData   = {};
 var isOwnProfile = false;
+var currentUnit  = 'imperial'; // tracks active unit selection in edit panel
 
 /* ── Init ── */
 document.addEventListener('DOMContentLoaded', async function() {
@@ -795,11 +875,34 @@ function renderProfile(data, isOwn) {
   var chips = [];
   var FREQ_LABEL = {'1-2':'1–2 days/week','3-4':'3–4 days/week','5-6':'5–6 days/week','daily':'Every day'};
   var JOUR_LABEL = {'lt1':'<1 yr exp','1-2':'1–2 yrs exp','3-5':'3–5 yrs exp','6-10':'6–10 yrs exp','10plus':'10+ yrs exp'};
+  var GOAL_LABEL = {
+    'sport_performance':'Sport Training','specific_activity':'Activity Training',
+    'general_health':'Health & Wellness','rebuilding':'Rebuilding','just_getting_started':'Getting Started'
+  };
+  var units = (data && data.preferred_units) || 'imperial';
   if (data) {
     if (data.gender)              chips.push(capitalise(data.gender));
+    if (data.birthday) {
+      var ageYrs = Math.floor((new Date() - new Date(data.birthday)) / (365.25 * 24 * 3600 * 1000));
+      if (ageYrs > 0 && ageYrs < 120) chips.push(ageYrs + ' yrs');
+    }
+    if (data.height_cm) {
+      if (units === 'imperial') {
+        var totalIn = Math.round(data.height_cm / 2.54);
+        chips.push(Math.floor(totalIn / 12) + "'" + (totalIn % 12) + '"');
+      } else {
+        chips.push(data.height_cm + ' cm');
+      }
+    }
+    if (data.weight_kg) {
+      chips.push(units === 'imperial'
+        ? Math.round(data.weight_kg * 2.20462) + ' lbs'
+        : data.weight_kg + ' kg');
+    }
     if (data.experience_level)    chips.push(capitalise(data.experience_level));
     if (data.training_frequency)  chips.push(FREQ_LABEL[data.training_frequency] || data.training_frequency);
     if (data.fitness_journey)     chips.push(JOUR_LABEL[data.fitness_journey]    || data.fitness_journey);
+    if (data.primary_goal)        chips.push(GOAL_LABEL[data.primary_goal] || data.primary_goal);
     if (data.goat)                chips.push('Goat: ' + data.goat);
     if (data.favorite_wod)        chips.push('Fav WOD: ' + data.favorite_wod);
   }
@@ -835,19 +938,61 @@ function renderProfile(data, isOwn) {
     document.getElementById('edit-prs-btn').classList.remove('hidden');
     // Pre-fill edit form
     if (data) {
-      document.getElementById('edit-first-name').value = data.first_name        || '';
-      document.getElementById('edit-last-name').value  = data.last_name         || '';
-      document.getElementById('edit-username').value   = data.username          || '';
-      document.getElementById('edit-bio').value        = data.bio               || '';
-      document.getElementById('edit-goat').value       = data.goat              || '';
-      document.getElementById('edit-fav-wod').value    = data.favorite_wod      || '';
-      document.getElementById('edit-country').value    = data.country           || '';
-      document.getElementById('edit-city').value       = data.city              || '';
-      document.getElementById('edit-gender').value     = data.gender            || '';
-      document.getElementById('edit-birthday').value   = data.birthday          || '';
-      document.getElementById('edit-experience').value = data.experience_level  || '';
-      document.getElementById('edit-frequency').value  = data.training_frequency|| '';
-      document.getElementById('edit-journey').value    = data.fitness_journey   || '';
+      document.getElementById('edit-first-name').value = data.first_name         || '';
+      document.getElementById('edit-last-name').value  = data.last_name          || '';
+      document.getElementById('edit-username').value   = data.username           || '';
+      document.getElementById('edit-bio').value        = data.bio                || '';
+      document.getElementById('edit-goat').value       = data.goat               || '';
+      document.getElementById('edit-fav-wod').value    = data.favorite_wod       || '';
+      document.getElementById('edit-country').value    = data.country            || '';
+      document.getElementById('edit-city').value       = data.city               || '';
+      document.getElementById('edit-gender').value     = data.gender             || '';
+      document.getElementById('edit-birthday').value   = data.birthday           || '';
+      document.getElementById('edit-experience').value = data.experience_level   || '';
+      document.getElementById('edit-frequency').value  = data.training_frequency || '';
+      document.getElementById('edit-journey').value    = data.fitness_journey    || '';
+
+      // Unit preference — init toggle first so height/weight show correct field
+      var savedUnit = data.preferred_units || 'imperial';
+      setUnit(savedUnit);
+
+      // Height
+      if (data.height_cm) {
+        if (savedUnit === 'imperial') {
+          var totalIn = Math.round(data.height_cm / 2.54);
+          document.getElementById('edit-height-ft').value = String(Math.floor(totalIn / 12));
+          document.getElementById('edit-height-in').value = String(totalIn % 12);
+        } else {
+          document.getElementById('height-metric').value = data.height_cm;
+        }
+      }
+
+      // Weight
+      if (data.weight_kg) {
+        document.getElementById('weight-input').value = savedUnit === 'imperial'
+          ? Math.round(data.weight_kg * 2.20462)
+          : data.weight_kg;
+      }
+
+      // Companion fields
+      document.getElementById('edit-primary-goal').value   = data.primary_goal          || '';
+      document.getElementById('edit-sport-focus').value    = data.sport_activity_focus  || '';
+      document.getElementById('edit-training-style').value = data.preferred_training_style || '';
+      toggleSportField();
+
+      // Equipment chips
+      var eq = Array.isArray(data.equipment_available) ? data.equipment_available : [];
+      document.querySelectorAll('#equip-grid .equip-chip').forEach(function(chip) {
+        chip.classList.toggle('on', eq.indexOf(chip.dataset.eq) !== -1);
+      });
+
+      // Injuries
+      var inj = Array.isArray(data.injuries) ? data.injuries : [];
+      document.getElementById('edit-injuries').value = inj.join('\n');
+
+      // Medical conditions
+      var med = Array.isArray(data.medical_conditions) ? data.medical_conditions : [];
+      document.getElementById('edit-medical').value = med.join('\n');
     }
   }
 }
@@ -1051,33 +1196,88 @@ function toggleEditPanel() {
 async function saveProfile() {
   var { data: { user } } = await supabaseClient.auth.getUser();
   if (!user) return;
+
+  // Height → always store as cm
+  var heightCm = null;
+  if (currentUnit === 'imperial') {
+    var ftVal = parseInt(document.getElementById('edit-height-ft').value);
+    var inVal = parseInt(document.getElementById('edit-height-in').value);
+    if (!isNaN(ftVal) && !isNaN(inVal)) heightCm = Math.round((ftVal * 12 + inVal) * 2.54);
+  } else {
+    var cmVal = parseInt(document.getElementById('height-metric').value);
+    if (!isNaN(cmVal) && cmVal > 0) heightCm = cmVal;
+  }
+
+  // Weight → always store as kg
+  var weightKg = null;
+  var wVal = parseFloat(document.getElementById('weight-input').value);
+  if (!isNaN(wVal) && wVal > 0) {
+    weightKg = currentUnit === 'imperial'
+      ? parseFloat((wVal / 2.20462).toFixed(2))
+      : wVal;
+  }
+
+  // Equipment (JSONB array)
+  var equipment = [];
+  document.querySelectorAll('#equip-grid .equip-chip.on').forEach(function(chip) {
+    equipment.push(chip.dataset.eq);
+  });
+
+  // Injuries / Medical (one entry per non-empty line)
+  function linesTo(id) {
+    return document.getElementById(id).value.trim()
+      .split('\n').map(function(s) { return s.trim(); }).filter(Boolean);
+  }
+
   var updates = {
-    first_name:          document.getElementById('edit-first-name').value.trim(),
-    last_name:           document.getElementById('edit-last-name').value.trim(),
-    username:            document.getElementById('edit-username').value.trim().toLowerCase().replace(/[^a-z0-9_]/g, ''),
-    bio:                 document.getElementById('edit-bio').value.trim(),
-    goat:                document.getElementById('edit-goat').value.trim(),
-    favorite_wod:        document.getElementById('edit-fav-wod').value.trim(),
-    country:             document.getElementById('edit-country').value.trim(),
-    city:                document.getElementById('edit-city').value.trim(),
-    gender:              document.getElementById('edit-gender').value,
-    experience_level:    document.getElementById('edit-experience').value,
-    training_frequency:  document.getElementById('edit-frequency').value,
-    fitness_journey:     document.getElementById('edit-journey').value,
-    updated_at:          new Date().toISOString(),
+    first_name:               document.getElementById('edit-first-name').value.trim(),
+    last_name:                document.getElementById('edit-last-name').value.trim(),
+    username:                 document.getElementById('edit-username').value.trim().toLowerCase().replace(/[^a-z0-9_]/g, ''),
+    bio:                      document.getElementById('edit-bio').value.trim(),
+    goat:                     document.getElementById('edit-goat').value.trim(),
+    favorite_wod:             document.getElementById('edit-fav-wod').value.trim(),
+    country:                  document.getElementById('edit-country').value.trim(),
+    city:                     document.getElementById('edit-city').value.trim(),
+    gender:                   document.getElementById('edit-gender').value    || null,
+    birthday:                 document.getElementById('edit-birthday').value  || null,
+    experience_level:         document.getElementById('edit-experience').value || null,
+    training_frequency:       document.getElementById('edit-frequency').value  || null,
+    fitness_journey:          document.getElementById('edit-journey').value    || null,
+    height_cm:                heightCm,
+    weight_kg:                weightKg,
+    preferred_units:          currentUnit,
+    primary_goal:             document.getElementById('edit-primary-goal').value   || null,
+    sport_activity_focus:     document.getElementById('edit-sport-focus').value.trim() || null,
+    preferred_training_style: document.getElementById('edit-training-style').value || null,
+    equipment_available:      equipment,
+    injuries:                 linesTo('edit-injuries'),
+    medical_conditions:       linesTo('edit-medical'),
+    updated_at:               new Date().toISOString(),
   };
+
   await supabaseClient.from('profiles').update(updates).eq('id', user.id);
   toggleEditPanel();
   window.location.reload();
 }
 
 function setUnit(u) {
+  currentUnit = u;
   document.getElementById('unit-imp').classList.toggle('active', u === 'imperial');
   document.getElementById('unit-met').classList.toggle('active', u === 'metric');
   document.getElementById('height-imperial').style.display = u === 'imperial' ? 'flex' : 'none';
   document.getElementById('height-metric').style.display   = u === 'imperial' ? 'none' : 'block';
-  document.getElementById('weight-lbl').textContent = u === 'imperial' ? 'Weight (lbs)' : 'Weight (kg)';
-  document.getElementById('weight-input').placeholder = u === 'imperial' ? 'lbs' : 'kg';
+  document.getElementById('weight-lbl').textContent        = u === 'imperial' ? 'Weight (lbs)' : 'Weight (kg)';
+  document.getElementById('weight-input').placeholder      = u === 'imperial' ? 'lbs' : 'kg';
+}
+
+function toggleEquip(chip) {
+  chip.classList.toggle('on');
+}
+
+function toggleSportField() {
+  var goal = document.getElementById('edit-primary-goal').value;
+  var show = (goal === 'sport_performance' || goal === 'specific_activity');
+  document.getElementById('sport-focus-field').style.display = show ? 'block' : 'none';
 }
 
 /* ── Modals ── */
@@ -1171,7 +1371,7 @@ document.getElementById('avatar-file-input').addEventListener('change', async fu
     if (!user) throw new Error('Not logged in');
 
     var ext = file.name.split('.').pop().toLowerCase() || 'jpg';
-    var path = user.id + '.' + ext;
+    var path = user.id + '/avatar.' + ext;
     var { error: upErr } = await supabaseClient.storage
       .from('avatars')
       .upload(path, file, { upsert: true, contentType: file.type });
