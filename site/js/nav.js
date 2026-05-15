@@ -10,6 +10,8 @@
 //   Shop:     shop
 //   Blog:     blog
 
+let supabaseClient = null;
+
 const Nav = {
 
   async init(activePage = '') {
