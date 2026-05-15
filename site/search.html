@@ -1180,7 +1180,7 @@ function renderAll(area, wods, mvs, stretches, blog, gear, q) {
     area.innerHTML = `
       <div class="result-section">
         <div class="section-head"><h2>Featured Workouts</h2><a class="section-see-all" href="#" onclick="switchTab('workouts');return false;">Browse all →</a></div>
-        <div class="wod-card-grid">${WORKOUTS.slice(0,3).map(w=>wodCard(w)).join('')}</div>
+        <div class="wod-card-grid">${WORKOUTS.slice(0,4).map(w=>wodCard(w)).join('')}</div>
       </div>
       <div class="result-section">
         <div class="section-head"><h2>Popular Movements</h2><a class="section-see-all" href="#" onclick="switchTab('movements');return false;">Browse all →</a></div>
