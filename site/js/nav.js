@@ -20,14 +20,20 @@ const Nav = {
 
     // Sync pre-check: if we know the user was logged in last visit, show
     // avatar placeholder instantly so there's no guest→avatar flash
-    const cachedAuth = localStorage.getItem('hwrx_authed');
-    const cachedInitial = localStorage.getItem('hwrx_initial') || '?';
-    const cachedName    = localStorage.getItem('hwrx_name')    || 'Athlete';
-    const cachedHandle  = localStorage.getItem('hwrx_handle')  || '@athlete';
+    const cachedAuth   = localStorage.getItem('hwrx_authed');
+    const cachedInitial= localStorage.getItem('hwrx_initial') || '?';
+    const cachedName   = localStorage.getItem('hwrx_name')    || 'Athlete';
+    const cachedHandle = localStorage.getItem('hwrx_handle')  || '@athlete';
+    const cachedAvatar = localStorage.getItem('hwrx_avatar')  || '';
     if (cachedAuth === '1') {
       const $ = id => document.getElementById(id);
-      if ($('avatar-initials'))    $('avatar-initials').textContent    = cachedInitial;
-      if ($('avatar-initials-dd')) $('avatar-initials-dd').textContent = cachedInitial;
+      if (cachedAvatar) {
+        Nav._applyAvatarImg($('avatar-initials'),    cachedAvatar);
+        Nav._applyAvatarImg($('avatar-initials-dd'), cachedAvatar);
+      } else {
+        if ($('avatar-initials'))    $('avatar-initials').textContent    = cachedInitial;
+        if ($('avatar-initials-dd')) $('avatar-initials-dd').textContent = cachedInitial;
+      }
       if ($('avatar-name-dd'))     $('avatar-name-dd').textContent     = cachedName;
       if ($('avatar-handle-dd'))   $('avatar-handle-dd').textContent   = cachedHandle;
       if ($('nav-auth'))           $('nav-auth').style.display         = 'flex';
@@ -44,14 +50,16 @@ const Nav = {
     if (currentUser && typeof db !== 'undefined') db.updateLastSeen();
 
     let profileUsername = null;
+    let avatarUrl = null;
     if (currentUser) {
       try {
         const profile = await db.getProfile(currentUser.id);
-        profileUsername = profile?.username || null;
+        profileUsername = profile?.username   || null;
+        avatarUrl       = profile?.avatar_url || null;
       } catch (e) { /* fallback to email-based display name */ }
     }
 
-    this.updateAuth(currentUser, profileUsername);
+    this.updateAuth(currentUser, profileUsername, avatarUrl);
   },
 
   loadSearchScript() {
@@ -350,8 +358,16 @@ const Nav = {
 `;
   },
 
+  // Helper: swap a nav circle element to show a photo
+  _applyAvatarImg(el, url) {
+    if (!el || !url) return;
+    el.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;" alt="">`;
+    el.style.background = 'transparent';
+    el.style.overflow   = 'hidden';
+  },
+
   // Populate the injected nav with verified auth state
-  updateAuth(currentUser, profileUsername) {
+  updateAuth(currentUser, profileUsername, avatarUrl = null) {
     const $ = id => document.getElementById(id);
 
     if (!currentUser) {
@@ -360,6 +376,7 @@ const Nav = {
       localStorage.removeItem('hwrx_initial');
       localStorage.removeItem('hwrx_name');
       localStorage.removeItem('hwrx_handle');
+      localStorage.removeItem('hwrx_avatar');
       if ($('nav-auth'))  $('nav-auth').style.display  = 'none';
       if ($('nav-guest')) $('nav-guest').style.display = 'flex';
       return;
@@ -373,9 +390,14 @@ const Nav = {
     const initial = (displayName.charAt(0) || '?').toUpperCase();
     const handle  = '@' + (currentUser.email?.split('@')[0] || displayName.toLowerCase());
 
-    // Update DOM
-    if ($('avatar-initials'))    $('avatar-initials').textContent    = initial;
-    if ($('avatar-initials-dd')) $('avatar-initials-dd').textContent = initial;
+    // Update DOM — photo if available, otherwise initials
+    if (avatarUrl) {
+      this._applyAvatarImg($('avatar-initials'),    avatarUrl);
+      this._applyAvatarImg($('avatar-initials-dd'), avatarUrl);
+    } else {
+      if ($('avatar-initials'))    $('avatar-initials').textContent    = initial;
+      if ($('avatar-initials-dd')) $('avatar-initials-dd').textContent = initial;
+    }
     if ($('avatar-name-dd'))     $('avatar-name-dd').textContent     = displayName;
     if ($('avatar-handle-dd'))   $('avatar-handle-dd').textContent   = handle;
     if ($('nav-guest'))          $('nav-guest').style.display        = 'none';
@@ -386,6 +408,7 @@ const Nav = {
     localStorage.setItem('hwrx_initial', initial);
     localStorage.setItem('hwrx_name',    displayName);
     localStorage.setItem('hwrx_handle',  handle);
+    localStorage.setItem('hwrx_avatar',  avatarUrl || '');
   },
 
   getAvatarColor(userId) {
