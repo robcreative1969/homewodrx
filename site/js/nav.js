@@ -10,8 +10,6 @@
 //   Shop:     shop
 //   Blog:     blog
 
-let supabaseClient = null;
-
 const Nav = {
 
   async init(activePage = '') {
@@ -40,9 +38,10 @@ const Nav = {
     }
 
     // Async Supabase verify — corrects state if cache is stale
+    // db.js may not be loaded on every page (e.g. shop), so guard all db calls
     await this.ensureSupabase();
-    const currentUser = await db.getUser();
-    if (currentUser) db.updateLastSeen();
+    const currentUser = typeof db !== 'undefined' ? await db.getUser() : null;
+    if (currentUser && typeof db !== 'undefined') db.updateLastSeen();
 
     let profileUsername = null;
     if (currentUser) {
@@ -84,7 +83,8 @@ const Nav = {
         await new Promise(r => setTimeout(r, 100));
         attempts++;
       }
-      if (!supabaseClient && window.supabase) {
+      // typeof guard: supabaseClient lives in db.js which may not be loaded on this page
+      if (typeof supabaseClient !== 'undefined' && !supabaseClient && window.supabase) {
         supabaseClient = window.supabase.createClient(
           CONFIG.SUPABASE_URL,
           CONFIG.SUPABASE_ANON_KEY
