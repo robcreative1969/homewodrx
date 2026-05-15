@@ -66,7 +66,7 @@
   font-family: var(--font-body);
 }
 .filter-chip:hover { border-color: var(--or); color: var(--or); background: var(--or-xlight); }
-.filter-chip.active { border-color: var(--or); color: var(--or); background: var(--or-xlight); }
+.filter-chip.active { border-color: var(--or); color: #fff; background: var(--or); }
 
 /* ── Search ── */
 .search-wrap { position: relative; margin-top: 16px; }
@@ -135,16 +135,12 @@
   border-color: var(--or); box-shadow: var(--shadow-md);
   transform: translateY(-2px);
 }
-.gear-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: #f59e0b;
-}
 .card-name { font-family: var(--font-head); font-size: 1.15rem; letter-spacing: .03em; line-height: 1.2; }
 .card-desc { font-size: .875rem; color: var(--muted); line-height: 1.55; flex: 1; }
 .card-cta {
   display: inline-flex; align-items: center; gap: 5px;
   margin-top: 6px; font-size: .875rem; font-weight: 700;
-  color: #d97706; transition: gap .12s;
+  color: var(--or); transition: gap .12s;
 }
 .gear-card:hover .card-cta { gap: 8px; }
 
