@@ -62,9 +62,9 @@
       border-bottom: 1px solid var(--border);
     }
     .page-header-inner {
-      max-width: 1200px;
+      max-width: 1248px;
       margin: 0 auto;
-      padding: 2rem 1.5rem 0;
+      padding: 2rem 24px 0;
     }
     .search-hero {
       max-width: 680px;
@@ -124,16 +124,21 @@
     .type-tabs-wrap {
       padding: 0 1.5rem;
       border-top: 1px solid var(--border);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
     }
+    .type-tabs-wrap::-webkit-scrollbar { display: none; }
     .type-tabs {
       max-width: 1200px;
       margin: 0 auto;
       display: flex;
       gap: 0;
       justify-content: center;
+      min-width: max-content;
     }
     .type-tab {
-      padding: .7rem 1.2rem;
+      padding: .7rem 1rem;
       font-family: var(--font-body);
       font-size: .9rem;
       font-weight: 600;
@@ -148,8 +153,12 @@
       display: flex;
       align-items: center;
       gap: .35rem;
-      min-width: 80px;
+      min-width: 0;
       justify-content: center;
+    }
+    @media (max-width: 600px) {
+      .type-tabs-wrap { padding: 0 .75rem; }
+      .type-tab { padding: .7rem .75rem; font-size: .85rem; }
     }
     .type-tab:hover { color: var(--text); }
     .type-tab.active { color: var(--or); border-bottom-color: var(--or); }
@@ -175,9 +184,9 @@
     }
     .filter-strip.visible { display: block; }
     .filter-strip-inner {
-      max-width: 1200px;
+      max-width: 1248px;
       margin: 0 auto;
-      padding: 0 1.5rem;
+      padding: 0 24px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -228,7 +237,7 @@
       display: none;
     }
     .advanced-panel.open { display: block; }
-    .advanced-panel-inner { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+    .advanced-panel-inner { max-width: 1248px; margin: 0 auto; padding: 0 24px; }
     .adv-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.1rem 2.5rem; }
     @media (max-width: 800px) { .adv-grid { grid-template-columns: 1fr 1fr; } }
     @media (max-width: 500px) { .adv-grid { grid-template-columns: 1fr; } }
@@ -248,7 +257,7 @@
     .reset-btn:hover { border-color: var(--or); color: var(--or); }
 
     /* ── Content area ── */
-    .page-wrap { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
+    .page-wrap { max-width: 1248px; margin: 0 auto; padding: 1.5rem 24px; }
     .active-pills { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.25rem; }
     .active-pill {
       display: inline-flex; align-items: center; gap: .3rem;
