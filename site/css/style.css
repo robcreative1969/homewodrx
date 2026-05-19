@@ -878,6 +878,45 @@ sentry-feedback { display: none !important; visibility: hidden !important; }
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
+   GLOBAL MODAL
+   Used by companion log-activity modal (and any future sitewide modals).
+   Profile page has its own inline copies for backward compat.
+══════════════════════════════════════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 3000; background: rgba(0,0,0,.42);
+  display: none; align-items: center; justify-content: center; padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius-lg);
+  padding: 28px; max-width: 460px; width: 100%; position: relative;
+  max-height: 90vh; overflow-y: auto;
+}
+.modal-close {
+  position: absolute; top: 14px; right: 16px; background: none; border: none;
+  color: var(--muted); font-size: 20px; cursor: pointer; transition: color .15s; line-height: 1;
+}
+.modal-close:hover { color: var(--text); }
+.modal-title { font-family: var(--font-head); font-size: 1.6rem; letter-spacing: .04em; margin-bottom: 4px; }
+.modal-sub { font-size: .82rem; color: var(--muted); margin-bottom: 22px; }
+.modal-field { margin-bottom: 16px; }
+.modal-field label { display: block; font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 6px; }
+.modal-field input, .modal-field textarea, .modal-field select {
+  width: 100%; background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 9px 12px; color: var(--text);
+  font-size: .875rem; outline: none; font-family: var(--font-body); transition: border-color .15s;
+  box-sizing: border-box;
+}
+.modal-field input:focus, .modal-field textarea:focus, .modal-field select:focus { border-color: var(--or); }
+.modal-foot { display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px; }
+.btn-modal-save { padding: 10px 22px; background: var(--or); color: #fff; border: none; border-radius: var(--radius); font-size: .875rem; font-weight: 700; cursor: pointer; transition: background .15s; font-family: var(--font-body); }
+.btn-modal-save:hover { background: var(--or-dark); }
+.btn-modal-save:disabled { opacity: .6; cursor: default; }
+.btn-modal-cancel { padding: 10px 16px; background: none; border: 1.5px solid var(--border); border-radius: var(--radius); font-size: .875rem; font-weight: 700; color: var(--muted); cursor: pointer; transition: all .15s; font-family: var(--font-body); }
+.btn-modal-cancel:hover { border-color: var(--border2); color: var(--text); }
+.modal-err { color: #dc2626; font-size: .8rem; margin-bottom: 10px; display: none; }
+
+/* ══════════════════════════════════════════════════════════════════════════
    COMPANION CHAT WIDGET
    Visible only to users with companion_access = true.
    Positioned bottom-left to avoid the Feedback button (bottom-right).
