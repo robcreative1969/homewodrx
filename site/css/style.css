@@ -999,6 +999,24 @@ sentry-feedback { display: none !important; visibility: hidden !important; }
   30% { transform: translateY(-5px); }
 }
 
+/* ── Action button (log activity etc) ───────────────────────────────── */
+.companion-action-btn {
+  align-self: flex-start;
+  margin-top: 2px;
+  background: none;
+  border: 1.5px solid var(--or);
+  color: var(--or);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: .02em;
+  transition: background .15s, color .15s;
+}
+.companion-action-btn:hover { background: var(--or); color: #fff; }
+.companion-action-btn:disabled { opacity: .5; cursor: default; }
+
 /* ── Input row ───────────────────────────────────────────────────────── */
 .companion-input-row {
   display: flex; gap: 8px; align-items: flex-end;
