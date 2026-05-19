@@ -956,6 +956,15 @@ document.addEventListener('DOMContentLoaded', async function() {
   renderProfile(profileData, isOwnProfile);
   loadLiftPRs(profileData, isOwnProfile);
   loadActivity(profileData, isOwnProfile);
+
+  // Auto-open log activity modal if arriving from companion action button
+  if (isOwnProfile && params.get('log') === 'activity') {
+    var autoType = params.get('type') || '';
+    // Small delay to let the activity section render first
+    setTimeout(function() { openLogActivityModal(autoType); }, 400);
+    // Clean up the URL so refreshing doesn't re-open the modal
+    history.replaceState(null, '', window.location.pathname);
+  }
 });
 
 /* ── Render profile header ── */
@@ -1424,7 +1433,7 @@ function openResultModal(wod, score, isRx) {
   openModal('result-modal');
 }
 /* ── Log Activity modal ── */
-function openLogActivityModal() {
+function openLogActivityModal(activityType) {
   // Default date to today
   var today = new Date().toISOString().slice(0, 10);
   document.getElementById('la-date').value = today;
@@ -1434,6 +1443,11 @@ function openLogActivityModal() {
   document.getElementById('la-err').style.display = 'none';
   document.getElementById('la-save-btn').disabled = false;
   document.getElementById('la-save-btn').textContent = 'Save Activity';
+  // Pre-fill activity type if provided (e.g. from companion action button)
+  if (activityType) {
+    var typeEl = document.getElementById('la-type');
+    if (typeEl) typeEl.value = activityType;
+  }
   document.getElementById('log-activity-modal').classList.add('open');
 }
 
