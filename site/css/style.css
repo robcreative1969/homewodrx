@@ -876,3 +876,168 @@ sentry-feedback { display: none !important; visibility: hidden !important; }
   .card { border: 1px solid #ccc; box-shadow: none; }
   a { color: #000; }
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   COMPANION CHAT WIDGET
+   Visible only to users with companion_access = true.
+   Positioned bottom-left to avoid the Feedback button (bottom-right).
+══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Toggle button ───────────────────────────────────────────────────── */
+#companion-toggle {
+  position: fixed;
+  left: 20px; bottom: 20px;
+  width: 52px; height: 52px; border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--or);
+  color: var(--or);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(196,18,18,.30);
+  z-index: 1001;
+  transition: transform .15s, box-shadow .15s;
+  padding: 0;
+}
+#companion-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(196,18,18,.40);
+}
+#companion-toggle.active { background: var(--or); color: #fff; }
+
+/* ── Panel ───────────────────────────────────────────────────────────── */
+#companion-panel {
+  position: fixed;
+  left: 20px; bottom: 84px;
+  width: 360px;
+  max-height: 520px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.14);
+  display: flex; flex-direction: column;
+  z-index: 1000;
+  overflow: hidden;
+  /* hidden by default — toggled via JS */
+  opacity: 0; pointer-events: none;
+  transform: translateY(12px);
+  transition: opacity .18s, transform .18s;
+}
+#companion-panel.open {
+  opacity: 1; pointer-events: all;
+  transform: translateY(0);
+}
+
+/* ── Header ──────────────────────────────────────────────────────────── */
+.companion-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.companion-header-left { display: flex; align-items: center; gap: 10px; }
+.companion-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--or); color: #fff;
+  font-family: var(--font-head); font-size: 0.85rem; letter-spacing: 0.05em;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.companion-title {
+  font-size: 0.875rem; font-weight: 700; color: var(--text); line-height: 1.2;
+}
+.companion-sub { font-size: 0.72rem; color: var(--muted); }
+.companion-close {
+  background: none; border: none; cursor: pointer;
+  color: var(--muted); padding: 4px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  transition: color .1s;
+}
+.companion-close:hover { color: var(--text); }
+
+/* ── Messages ────────────────────────────────────────────────────────── */
+.companion-messages {
+  flex: 1; overflow-y: auto;
+  padding: 14px 14px 8px;
+  display: flex; flex-direction: column; gap: 10px;
+  scroll-behavior: smooth;
+}
+.companion-messages::-webkit-scrollbar { width: 4px; }
+.companion-messages::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
+
+.companion-msg {
+  max-width: 86%;
+  font-size: 0.855rem; line-height: 1.55;
+  padding: 9px 12px; border-radius: 12px;
+  word-wrap: break-word;
+}
+.companion-msg.user {
+  align-self: flex-end;
+  background: var(--or); color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.companion-msg.assistant {
+  align-self: flex-start;
+  background: #f2f2f2; color: var(--text);
+  border-bottom-left-radius: 4px;
+}
+
+/* Typing indicator */
+.companion-typing {
+  align-self: flex-start;
+  background: #f2f2f2; border-radius: 12px; border-bottom-left-radius: 4px;
+  padding: 10px 14px; display: flex; gap: 5px; align-items: center;
+}
+.companion-typing span {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #aaa; display: block;
+  animation: companion-bounce 1.2s infinite ease-in-out;
+}
+.companion-typing span:nth-child(2) { animation-delay: .2s; }
+.companion-typing span:nth-child(3) { animation-delay: .4s; }
+@keyframes companion-bounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-5px); }
+}
+
+/* ── Input row ───────────────────────────────────────────────────────── */
+.companion-input-row {
+  display: flex; gap: 8px; align-items: flex-end;
+  padding: 10px 12px 12px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+#companion-input {
+  flex: 1; resize: none;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  padding: 9px 12px;
+  font-family: var(--font-body); font-size: 0.855rem; color: var(--text);
+  outline: none; max-height: 100px; overflow-y: auto;
+  transition: border-color .15s;
+  line-height: 1.4;
+}
+#companion-input:focus { border-color: var(--or); }
+#companion-input::placeholder { color: var(--muted2); }
+#companion-send {
+  width: 36px; height: 36px; border-radius: 9px;
+  background: var(--or); color: #fff; border: none;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+  transition: opacity .15s;
+}
+#companion-send:disabled { opacity: .4; cursor: default; }
+#companion-send:not(:disabled):hover { opacity: .88; }
+
+/* ── Mobile (portrait) ───────────────────────────────────────────────── */
+@media (max-width: 767px) and (orientation: portrait) {
+  #companion-toggle {
+    left: 16px;
+    bottom: calc(var(--tab-h) + env(safe-area-inset-bottom) + 14px);
+    width: 44px; height: 44px;
+  }
+  #companion-panel {
+    left: 8px; right: 8px;
+    width: auto;
+    bottom: calc(var(--tab-h) + env(safe-area-inset-bottom) + 70px);
+    max-height: 60vh;
+  }
+}
