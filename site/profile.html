@@ -1478,8 +1478,12 @@ async function saveActivityLog() {
     var { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) throw new Error('Not logged in');
 
+    var username = (user.user_metadata && user.user_metadata.full_name)
+      || (user.email ? user.email.split('@')[0] : 'athlete');
+
     var { error } = await supabaseClient.from('results').insert({
       user_id:       user.id,
+      username:      username,
       date:          date,
       workout_type:  'cardio',
       activity_type: type,
