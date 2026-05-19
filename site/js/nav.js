@@ -616,7 +616,8 @@ const Companion = {
             <label>Activity Type</label>
             <select id="cla-type">
               <option value="run">Run</option>
-              <option value="bike">Bike</option>
+              <option value="bike_road">Bike — Road Ride</option>
+              <option value="bike_trail">Bike — Trail Ride</option>
               <option value="row">Row</option>
               <option value="swim">Swim</option>
               <option value="hike">Hike</option>
