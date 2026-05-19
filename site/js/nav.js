@@ -555,6 +555,10 @@ const Companion = {
 
   // ── Inject HTML ────────────────────────────────────────────────────
   _inject() {
+    // Guard: bail if widget already in the DOM (prevents double-injection
+    // when maybeInit is called more than once in the same page load)
+    if (document.getElementById('companion-panel')) return;
+
     document.body.insertAdjacentHTML('beforeend', `
       <button id="companion-toggle" onclick="Companion.toggle()" title="Training Companion" aria-label="Open training companion">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -719,6 +723,9 @@ const Companion = {
       const raw = sessionStorage.getItem(this.STORAGE_KEY);
       if (!raw) return;
       const history = JSON.parse(raw);
+      // Clear first — prevents doubling if _restoreHistory is somehow called twice
+      const msgs = document.getElementById('companion-messages');
+      if (msgs) msgs.innerHTML = '';
       history.forEach(({ role, text }) => this._appendMsg(role, text));
     } catch (e) {}
   },
