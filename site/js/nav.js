@@ -525,6 +525,7 @@ async function doSignOut(e) {
 const Companion = {
   FUNCTION_URL: 'https://irtppmztpcakanhefljs.supabase.co/functions/v1/companion-chat',
   STORAGE_KEY:  'hwrx_companion_chat',
+  DRAFT_KEY:    'hwrx_companion_draft',
   ACCESS_KEY:   'hwrx_companion',
   _session: null,
   _open: false,
@@ -586,7 +587,7 @@ const Companion = {
             rows="1"
             maxlength="500"
             onkeydown="Companion.onKey(event)"
-            oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,96)+'px'"
+            oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,96)+'px';Companion._saveDraft(this.value)"
           ></textarea>
           <button id="companion-send" onclick="Companion.send()" aria-label="Send">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -618,7 +619,10 @@ const Companion = {
         this._saveHistory();
       }
       this._scrollToBottom();
-      setTimeout(() => document.getElementById('companion-input')?.focus(), 150);
+      setTimeout(() => {
+        this._restoreDraft();
+        document.getElementById('companion-input')?.focus();
+      }, 150);
     }
   },
 
@@ -640,6 +644,7 @@ const Companion = {
     input.value = '';
     input.style.height = 'auto';
     if (sendBtn) sendBtn.disabled = true;
+    this._saveDraft('');
 
     this._appendMsg('user', message);
     this._saveHistory();
@@ -715,6 +720,22 @@ const Companion = {
       if (!raw) return;
       const history = JSON.parse(raw);
       history.forEach(({ role, text }) => this._appendMsg(role, text));
+    } catch (e) {}
+  },
+
+  _saveDraft(text) {
+    try { sessionStorage.setItem(this.DRAFT_KEY, text); } catch (e) {}
+  },
+
+  _restoreDraft() {
+    try {
+      const draft = sessionStorage.getItem(this.DRAFT_KEY);
+      if (!draft) return;
+      const input = document.getElementById('companion-input');
+      if (!input) return;
+      input.value = draft;
+      input.style.height = 'auto';
+      input.style.height = Math.min(input.scrollHeight, 96) + 'px';
     } catch (e) {}
   },
 };
