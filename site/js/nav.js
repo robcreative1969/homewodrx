@@ -667,7 +667,7 @@ const Companion = {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({ message, history: this._getHistoryForAPI() }),
       });
 
       const json = await res.json();
@@ -721,6 +721,33 @@ const Companion = {
       const history = JSON.parse(raw);
       history.forEach(({ role, text }) => this._appendMsg(role, text));
     } catch (e) {}
+  },
+
+  // Returns the last 20 stored messages formatted for the Claude API.
+  // Excludes the canned opener ("What's on your training agenda?") since it's
+  // not a real AI response. Caps at 20 messages (10 exchanges) to keep token
+  // usage reasonable. The current user message is NOT included — it's sent
+  // separately as the final entry in the Edge Function's messages array.
+  _getHistoryForAPI() {
+    try {
+      const raw = sessionStorage.getItem(this.STORAGE_KEY);
+      if (!raw) return [];
+      const stored = JSON.parse(raw); // [{role, text}, ...]
+      // Drop the canned opener if it's the first message
+      const filtered = (stored[0]?.role === 'assistant' &&
+        stored[0]?.text?.includes("What's on your training agenda"))
+        ? stored.slice(1)
+        : stored;
+      // Drop the last entry — it's the user message we just appended before send()
+      const withoutCurrent = filtered.slice(0, -1);
+      // Cap at last 20 messages and map to API format
+      return withoutCurrent.slice(-20).map(({ role, text }) => ({
+        role,
+        content: text,
+      }));
+    } catch (e) {
+      return [];
+    }
   },
 
   _saveDraft(text) {
