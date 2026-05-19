@@ -44,10 +44,13 @@ const Nav = {
     }
 
     // Async Supabase verify — corrects state if cache is stale
-    // db.js may not be loaded on every page (e.g. shop), so guard all db calls
+    // If db.js isn't loaded on this page, skip the verify entirely — don't
+    // call updateAuth(null) which would clear the cache and flash guest state.
+    if (typeof db === 'undefined') return;
+
     await this.ensureSupabase();
-    const currentUser = typeof db !== 'undefined' ? await db.getUser() : null;
-    if (currentUser && typeof db !== 'undefined') db.updateLastSeen();
+    const currentUser = await db.getUser();
+    if (currentUser) db.updateLastSeen();
 
     let profileUsername = null;
     let avatarUrl = null;
