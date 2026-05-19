@@ -605,11 +605,67 @@ const Companion = {
       </div>
     `);
 
+    // ── Global Log Activity modal (used by companion action button) ────
+    document.body.insertAdjacentHTML('beforeend', `
+      <div class="modal-overlay" id="companion-log-modal">
+        <div class="modal" style="max-width:480px">
+          <button class="modal-close" onclick="Companion._closeLogModal()">✕</button>
+          <div class="modal-title">Log an Activity</div>
+          <p class="modal-sub">Running, biking, rowing, hiking — any cardio session worth remembering.</p>
+          <div class="modal-field">
+            <label>Activity Type</label>
+            <select id="cla-type">
+              <option value="run">Run</option>
+              <option value="bike">Bike</option>
+              <option value="row">Row</option>
+              <option value="swim">Swim</option>
+              <option value="hike">Hike</option>
+              <option value="ski">Ski Erg</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="modal-field">
+            <label>Date</label>
+            <input type="date" id="cla-date">
+          </div>
+          <div style="display:flex;gap:12px">
+            <div class="modal-field" style="flex:1">
+              <label>Distance (optional)</label>
+              <input type="text" id="cla-distance" placeholder="e.g. 5 mi or 8 km">
+            </div>
+            <div class="modal-field" style="flex:1">
+              <label>Duration (optional)</label>
+              <input type="text" id="cla-duration" placeholder="e.g. 42:30">
+            </div>
+          </div>
+          <div class="modal-field">
+            <label>Notes (optional)</label>
+            <textarea rows="2" id="cla-notes" placeholder="How did it feel? Splits, route, conditions…"></textarea>
+          </div>
+          <div class="modal-err" id="cla-err"></div>
+          <div class="modal-foot">
+            <button class="btn-modal-cancel" onclick="Companion._closeLogModal()">Cancel</button>
+            <button class="btn-modal-save" id="cla-save-btn" onclick="Companion._saveLogActivity()">Save Activity</button>
+          </div>
+        </div>
+      </div>
+    `);
+    // Close on backdrop click
+    document.getElementById('companion-log-modal')?.addEventListener('click', (e) => {
+      if (e.target === document.getElementById('companion-log-modal')) this._closeLogModal();
+    });
+
     this._restoreHistory();
 
     // Close panel on Escape
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && this._open) this.toggle();
+      if (e.key === 'Escape') {
+        if (document.getElementById('companion-log-modal')?.classList.contains('open')) {
+          this._closeLogModal();
+        } else if (this._open) {
+          this.toggle();
+        }
+      }
     });
   },
 
@@ -714,17 +770,82 @@ const Companion = {
     btn.className = 'companion-action-btn';
     btn.textContent = '+ Log Activity';
     btn.onclick = () => {
-      // If profile page modal function is available, open it directly
-      if (typeof openLogActivityModal === 'function') {
-        openLogActivityModal(activityType);
-      } else {
-        // Navigate to profile page with params to auto-open the modal
-        window.location.href = `/profile.html?log=activity&type=${encodeURIComponent(activityType)}`;
-      }
-      btn.disabled = true;
-      btn.textContent = '✓ Opening…';
+      this._openLogModal(activityType);
     };
     document.getElementById('companion-messages')?.appendChild(btn);
+  },
+
+  // ── Log Activity modal (global — works on any page) ───────────────
+  _openLogModal(activityType) {
+    const modal = document.getElementById('companion-log-modal');
+    if (!modal) return;
+    // Reset fields
+    const today = new Date().toISOString().slice(0, 10);
+    document.getElementById('cla-date').value = today;
+    document.getElementById('cla-distance').value = '';
+    document.getElementById('cla-duration').value = '';
+    document.getElementById('cla-notes').value = '';
+    const errEl = document.getElementById('cla-err');
+    if (errEl) { errEl.textContent = ''; errEl.style.display = 'none'; }
+    const saveBtn = document.getElementById('cla-save-btn');
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save Activity'; }
+    // Pre-fill activity type
+    const typeEl = document.getElementById('cla-type');
+    if (typeEl && activityType) typeEl.value = activityType;
+    modal.classList.add('open');
+  },
+
+  _closeLogModal() {
+    document.getElementById('companion-log-modal')?.classList.remove('open');
+  },
+
+  async _saveLogActivity() {
+    const saveBtn = document.getElementById('cla-save-btn');
+    const errEl   = document.getElementById('cla-err');
+    const type    = document.getElementById('cla-type')?.value || 'other';
+    const date    = document.getElementById('cla-date')?.value;
+    const dist    = document.getElementById('cla-distance')?.value.trim() || '';
+    const dur     = document.getElementById('cla-duration')?.value.trim() || '';
+    const notes   = document.getElementById('cla-notes')?.value.trim() || '';
+
+    if (!date) {
+      if (errEl) { errEl.textContent = 'Please select a date.'; errEl.style.display = 'block'; }
+      return;
+    }
+
+    if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving…'; }
+    if (errEl) errEl.style.display = 'none';
+
+    try {
+      const session = this._session;
+      if (!session) throw new Error('Not logged in');
+      const user = session.user;
+      const username = (user.user_metadata?.full_name) || (user.email?.split('@')[0]) || 'athlete';
+
+      const labelMap = { run:'Run', bike:'Bike', row:'Row', swim:'Swim', hike:'Hike', ski:'Ski Erg', other:'Activity' };
+      const label = labelMap[type] || 'Activity';
+      const parts = [dist, dur].filter(Boolean);
+      const scoreDisplay = label + (parts.length ? ' — ' + parts.join(' / ') : '');
+
+      const { error } = await supabaseClient.from('results').insert({
+        user_id:        user.id,
+        username:       username,
+        date:           date,
+        workout_type:   'cardio',
+        activity_type:  type,
+        score_display:  scoreDisplay,
+        is_rx:          false,
+        benchmark_slug: null,
+        notes:          notes || null,
+      });
+
+      if (error) throw error;
+
+      this._closeLogModal();
+    } catch (err) {
+      if (errEl) { errEl.textContent = 'Save failed: ' + (err.message || 'Unknown error'); errEl.style.display = 'block'; }
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save Activity'; }
+    }
   },
 
   _scrollToBottom() {
