@@ -386,6 +386,53 @@
 }
 .auth-gate-footer a { color: var(--or); font-weight: 600; }
 .auth-gate-divider { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
+
+/* ── Companion card ── */
+#companion-card {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 22px 24px 20px;
+  margin-bottom: 20px; position: relative; overflow: hidden;
+}
+#companion-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--or), #e85555);
+}
+.companion-hdr {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
+}
+.companion-label {
+  display: flex; align-items: center; gap: 8px;
+  font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted2);
+}
+.companion-label svg { color: var(--or); flex-shrink: 0; }
+.companion-archetype {
+  font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+  background: rgba(196,18,18,.08); color: var(--or); border-radius: 20px;
+  padding: 3px 10px; display: none;
+}
+.companion-msg {
+  font-size: 1rem; line-height: 1.6; color: var(--text); min-height: 44px;
+}
+.companion-msg.loading {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.companion-pulse {
+  height: 14px; border-radius: 6px; background: var(--border);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+.companion-pulse:nth-child(1) { width: 85%; }
+.companion-pulse:nth-child(2) { width: 65%; }
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .45; }
+}
+.companion-refresh {
+  position: absolute; bottom: 16px; right: 18px;
+  background: none; border: none; cursor: pointer; padding: 4px;
+  color: var(--muted2); border-radius: 6px; line-height: 0;
+  transition: color .15s, background .15s;
+}
+.companion-refresh:hover { color: var(--or); background: rgba(196,18,18,.06); }
   </style>
 
   <!-- Google Analytics -->
@@ -689,6 +736,24 @@
     </div>
   </div>
 
+  <!-- COMPANION GREETING (admin only during development) -->
+  <div id="companion-card" style="display:none">
+    <div class="companion-hdr">
+      <div class="companion-label">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a9 9 0 0 1 9 9c0 3.6-2.1 6.7-5.2 8.2L15 22H9l.2-2.8A10 10 0 0 1 3 11a9 9 0 0 1 9-9z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Training Companion
+      </div>
+      <span class="companion-archetype" id="companion-archetype"></span>
+    </div>
+    <div class="companion-msg loading" id="companion-msg">
+      <div class="companion-pulse"></div>
+      <div class="companion-pulse"></div>
+    </div>
+    <button class="companion-refresh" id="companion-refresh" title="Refresh greeting" onclick="loadCompanionGreeting()" style="display:none">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.49-9.36L23 10"/></svg>
+    </button>
+  </div>
+
   <!-- LIFT PRs -->
   <div class="mb-28" id="lifts-section">
     <div class="section-hdr">
@@ -753,6 +818,50 @@
     <div class="modal-foot">
       <button class="btn-modal-cancel" onclick="closeModal('lift-modal')">Cancel</button>
       <button class="btn-modal-save" onclick="saveLiftModal()">Save PRs</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOG ACTIVITY MODAL -->
+<div class="modal-overlay" id="log-activity-modal">
+  <div class="modal" style="max-width:480px">
+    <button class="modal-close" onclick="closeModal('log-activity-modal')">✕</button>
+    <div class="modal-title">Log an Activity</div>
+    <p class="modal-sub">Running, biking, rowing, hiking — any cardio session worth remembering.</p>
+    <div class="modal-field">
+      <label>Activity Type</label>
+      <select id="la-type">
+        <option value="run">Run</option>
+        <option value="bike">Bike</option>
+        <option value="row">Row</option>
+        <option value="swim">Swim</option>
+        <option value="hike">Hike</option>
+        <option value="ski">Ski Erg</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>Date</label>
+      <input type="date" id="la-date">
+    </div>
+    <div style="display:flex;gap:12px">
+      <div class="modal-field" style="flex:1">
+        <label>Distance (optional)</label>
+        <input type="text" id="la-distance" placeholder="e.g. 5 mi or 8 km">
+      </div>
+      <div class="modal-field" style="flex:1">
+        <label>Duration (optional)</label>
+        <input type="text" id="la-duration" placeholder="e.g. 42:30">
+      </div>
+    </div>
+    <div class="modal-field">
+      <label>Notes (optional)</label>
+      <textarea rows="2" id="la-notes" placeholder="How did it feel? Splits, route, conditions…"></textarea>
+    </div>
+    <div class="la-err" id="la-err" style="display:none;color:#dc2626;font-size:.8rem;margin-bottom:10px;"></div>
+    <div class="modal-foot">
+      <button class="btn-modal-cancel" onclick="closeModal('log-activity-modal')">Cancel</button>
+      <button class="btn-modal-save" id="la-save-btn" onclick="saveActivityLog()">Save Activity</button>
     </div>
   </div>
 </div>
@@ -1005,6 +1114,12 @@ function renderProfile(data, isOwn) {
       document.getElementById('edit-medical').value = med.join('\n');
     }
   }
+
+  // Companion card — admin only during development
+  if (data && data.is_admin && isOwn) {
+    document.getElementById('companion-card').style.display = '';
+    loadCompanionGreeting();
+  }
 }
 
 /* ── Lift PRs ── */
@@ -1126,9 +1241,17 @@ function loadActivity(profileData, isOwn) {
     return;
   }
 
-  // Show generate button only for own profile
+  // Show generate + log activity buttons only for own profile
   if (isOwn) {
     var actHdr = document.querySelector('.activity-hdr');
+
+    var logBtn = document.createElement('button');
+    logBtn.className = 'btn-gen-wod';
+    logBtn.style.cssText = 'background:none;border:1.5px solid var(--border);color:var(--text);margin-right:8px;';
+    logBtn.innerHTML = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Log Activity';
+    logBtn.onclick = openLogActivityModal;
+    actHdr.appendChild(logBtn);
+
     var genBtn = document.createElement('a');
     genBtn.href = '/wodbuilder.html';
     genBtn.className = 'btn-gen-wod';
@@ -1300,9 +1423,126 @@ function openResultModal(wod, score, isRx) {
   document.getElementById('result-notes').value = '';
   openModal('result-modal');
 }
+/* ── Log Activity modal ── */
+function openLogActivityModal() {
+  // Default date to today
+  var today = new Date().toISOString().slice(0, 10);
+  document.getElementById('la-date').value = today;
+  document.getElementById('la-distance').value = '';
+  document.getElementById('la-duration').value = '';
+  document.getElementById('la-notes').value = '';
+  document.getElementById('la-err').style.display = 'none';
+  document.getElementById('la-save-btn').disabled = false;
+  document.getElementById('la-save-btn').textContent = 'Save Activity';
+  document.getElementById('log-activity-modal').classList.add('open');
+}
+
+async function saveActivityLog() {
+  var btn    = document.getElementById('la-save-btn');
+  var errEl  = document.getElementById('la-err');
+  var type   = document.getElementById('la-type').value;
+  var date   = document.getElementById('la-date').value;
+  var dist   = document.getElementById('la-distance').value.trim();
+  var dur    = document.getElementById('la-duration').value.trim();
+  var notes  = document.getElementById('la-notes').value.trim();
+
+  if (!date) { errEl.textContent = 'Please select a date.'; errEl.style.display = 'block'; return; }
+
+  // Compose a human-readable score_display string
+  var typeLabelMap = { run:'Run', bike:'Bike', row:'Row', swim:'Swim', hike:'Hike', ski:'Ski Erg', other:'Activity' };
+  var typeLabel = typeLabelMap[type] || 'Activity';
+  var parts = [];
+  if (dist) parts.push(dist);
+  if (dur)  parts.push(dur);
+  var scoreDisplay = typeLabel + (parts.length ? ' — ' + parts.join(' / ') : '');
+
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+  errEl.style.display = 'none';
+
+  try {
+    var { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) throw new Error('Not logged in');
+
+    var { error } = await supabaseClient.from('results').insert({
+      user_id:       user.id,
+      date:          date,
+      workout_type:  'cardio',
+      activity_type: type,
+      score_display: scoreDisplay,
+      is_rx:         false,
+      benchmark_slug: null,
+      notes:         notes || null,
+    });
+
+    if (error) throw error;
+
+    closeModal('log-activity-modal');
+
+    // Refresh the results count
+    supabaseClient.from('results').select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .then(function(res) {
+        var count = res.count || 0;
+        var el = document.getElementById('val-results');
+        if (el) el.textContent = count;
+        var el2 = document.getElementById('metric-results');
+        if (el2) el2.textContent = count;
+      });
+
+  } catch(err) {
+    errEl.textContent = 'Save failed: ' + err.message;
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Save Activity';
+  }
+}
+
 document.querySelectorAll('.modal-overlay').forEach(function(m) {
   m.addEventListener('click', function(e) { if (e.target === m) m.classList.remove('open'); });
 });
+
+/* ── Companion greeting ── */
+function loadCompanionGreeting() {
+  var card = document.getElementById('companion-card');
+  var msgEl = document.getElementById('companion-msg');
+  var arcEl = document.getElementById('companion-archetype');
+  var refreshBtn = document.getElementById('companion-refresh');
+
+  // Show loading state
+  msgEl.className = 'companion-msg loading';
+  msgEl.innerHTML = '<div class="companion-pulse"></div><div class="companion-pulse"></div>';
+  arcEl.style.display = 'none';
+  refreshBtn.style.display = 'none';
+
+  supabaseClient.auth.getSession().then(function(res) {
+    var token = res.data && res.data.session && res.data.session.access_token;
+    if (!token) return;
+
+    fetch('https://irtppmztpcakanhefljs.supabase.co/functions/v1/companion-greeting', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.message) {
+        msgEl.className = 'companion-msg';
+        msgEl.textContent = data.message;
+        if (data.archetype) {
+          arcEl.textContent = data.archetype;
+          arcEl.style.display = '';
+        }
+        refreshBtn.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    })
+    .catch(function() { card.style.display = 'none'; });
+  });
+}
 
 /* ── Auth gate ── */
 function showAuthGate() {

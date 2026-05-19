@@ -376,6 +376,9 @@
       <div class="step-label">Step 4 of 5</div>
       <div class="step-q">What equipment do you have access to?</div>
       <div class="step-hint">Select everything available to you. This helps your companion suggest workouts that actually match what you have.</div>
+      <div id="equip-prefill-note" style="display:none; background:#f0fdf4; border:1px solid #bbf7d0; color:#166534; border-radius:8px; padding:10px 14px; font-size:0.82rem; margin-bottom:14px;">
+        We found your equipment from your profile — update anything that's changed.
+      </div>
       <div class="check-grid" id="equipment-grid">
         <!-- Helper to stamp a check card without repeating the SVG everywhere -->
         <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="barbell"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Barbell</span></label>
@@ -682,6 +685,41 @@ async function saveProfile() {
   }
 }
 
+// ── Pre-fill helpers ──────────────────────────────────────────────────────
+function prefillQ1(value) {
+  const card = document.querySelector(`#q1-options input[value="${value}"]`)?.closest('.option-card');
+  if (card) {
+    card.classList.add('selected');
+    card.querySelector('input').checked = true;
+    const btn = document.getElementById('next-1');
+    if (btn) btn.disabled = false;
+  }
+}
+
+function prefillEquipment(equipArray) {
+  if (!equipArray || !equipArray.length) return;
+  const grid = document.getElementById('equipment-grid');
+  let anyMatched = false;
+  equipArray.forEach(item => {
+    const cb = grid.querySelector(`input[value="${item}"]`);
+    if (cb) {
+      cb.checked = true;
+      cb.closest('.check-card').classList.add('selected');
+      anyMatched = true;
+    } else {
+      // Item not in the standard list — append to Other field
+      const otherField = document.getElementById('equipment-other');
+      if (otherField) {
+        const current = otherField.value.trim();
+        otherField.value = current ? current + ', ' + item : item;
+      }
+    }
+  });
+  if (anyMatched) {
+    document.getElementById('equip-prefill-note').style.display = 'block';
+  }
+}
+
 // ── Init ──────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
   await initSupabase();
@@ -699,6 +737,38 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   _user = session.user;
   document.getElementById('wizard-card').style.display = '';
+
+  // Fetch existing profile and pre-fill any fields already set
+  try {
+    const { data: profile } = await supabaseClient
+      .from('profiles')
+      .select('primary_goal, sport_activity_focus, equipment_available, injuries')
+      .eq('id', _user.id)
+      .single();
+
+    if (profile) {
+      // Q1 — primary goal
+      if (profile.primary_goal) prefillQ1(profile.primary_goal);
+
+      // Q3 — sport / activity focus
+      if (profile.sport_activity_focus) {
+        document.getElementById('sport-input').value = profile.sport_activity_focus;
+      }
+
+      // Q4 — equipment (pre-check existing selections)
+      if (profile.equipment_available?.length) {
+        prefillEquipment(profile.equipment_available);
+      }
+
+      // Q5 — injuries (pre-fill textarea)
+      if (profile.injuries?.length) {
+        document.getElementById('injuries-input').value = profile.injuries.join(', ');
+      }
+    }
+  } catch(e) {
+    // Pre-fill is best-effort — don't block the wizard if it fails
+    console.warn('companion-onboarding: profile pre-fill failed', e);
+  }
 });
 </script>
 
