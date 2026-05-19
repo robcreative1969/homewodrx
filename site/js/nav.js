@@ -685,6 +685,9 @@ const Companion = {
         this._appendMsg('assistant', msg);
       } else {
         this._appendMsg('assistant', json.reply);
+        if (json.action?.type === 'log_activity') {
+          this._appendAction(json.action);
+        }
       }
     } catch (err) {
       document.getElementById('companion-typing')?.remove();
@@ -703,6 +706,25 @@ const Companion = {
     el.className = `companion-msg ${role}`;
     el.textContent = text;
     document.getElementById('companion-messages')?.appendChild(el);
+  },
+
+  _appendAction(action) {
+    const activityType = action.activity_type || 'other';
+    const btn = document.createElement('button');
+    btn.className = 'companion-action-btn';
+    btn.textContent = '+ Log Activity';
+    btn.onclick = () => {
+      // If profile page modal function is available, open it directly
+      if (typeof openLogActivityModal === 'function') {
+        openLogActivityModal(activityType);
+      } else {
+        // Navigate to profile page with params to auto-open the modal
+        window.location.href = `/profile.html?log=activity&type=${encodeURIComponent(activityType)}`;
+      }
+      btn.disabled = true;
+      btn.textContent = '✓ Opening…';
+    };
+    document.getElementById('companion-messages')?.appendChild(btn);
   },
 
   _scrollToBottom() {
