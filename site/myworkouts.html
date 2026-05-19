@@ -460,6 +460,9 @@ textarea.form-input { resize:vertical; min-height:80px; line-height:1.5; }
       <button class="filter-tab" data-type="generated" onclick="filterCards('generated', this)">
         Generated <span class="tab-count" id="count-generated">0</span>
       </button>
+      <button class="filter-tab" data-type="cardio" onclick="filterCards('cardio', this)">
+        Activity <span class="tab-count" id="count-cardio">0</span>
+      </button>
       <a href="/wodbuilder.html" class="filter-tab" style="margin-left:auto;text-decoration:none;border-color:var(--or);color:var(--or);">
         + Build a WOD
       </a>
@@ -587,6 +590,22 @@ textarea.form-input { resize:vertical; min-height:80px; line-height:1.5; }
 <script>
 var MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
+/* ─── Activity type → human label ─── */
+function getActivityLabel(type) {
+  var labels = {
+    run:        'Run',
+    bike:       'Bike Ride',
+    bike_road:  'Bike — Road Ride',
+    bike_trail: 'Bike — Trail Ride',
+    row:        'Row',
+    swim:       'Swim',
+    hike:       'Hike',
+    ski:        'Ski Erg',
+    other:      'Activity'
+  };
+  return labels[type] || 'Activity';
+}
+
 var allWorkouts    = [];   // enriched result rows
 var visibleCount   = 20;
 var currentType    = 'all';
@@ -660,24 +679,28 @@ document.addEventListener('DOMContentLoaded', async function() {
 
   /* ── Build cards from results (one card per logged result) ── */
   var resultCards = results.map(function(r) {
+    var isCardio = r.workout_type === 'cardio';
     var wod  = r.benchmark_slug ? benchmarkMap[r.benchmark_slug]
              : r.workout_id    ? workoutMap[r.workout_id] : null;
-    var type = r.benchmark_slug ? 'benchmark' : 'generated';
-    var name = wod ? (wod.name || wod.title || 'Custom WOD')
-                   : (r.benchmark_slug || 'Custom WOD');
+    var type = isCardio ? 'cardio' : (r.benchmark_slug ? 'benchmark' : 'generated');
+    var name = isCardio    ? getActivityLabel(r.activity_type)
+             : wod         ? (wod.name || wod.title || 'Custom WOD')
+             : (r.benchmark_slug || 'Custom WOD');
     return {
-      _resultId:    r.id,
-      _hasResult:   true,
-      wod_type:     type,
-      wod_name:     name,
-      slug:         r.benchmark_slug || null,
-      workout_id:   r.workout_id || null,
-      movements:    wod ? (wod.movements || []) : [],
-      scoring_type: wod ? (wod.scoring_type || 'free') : 'free',
-      created_at:   r.date || r.created_at,
-      score:        r.score_display,
-      is_rx:        r.is_rx,
-      notes:        r.notes,
+      _resultId:     r.id,
+      _hasResult:    true,
+      wod_type:      type,
+      wod_name:      name,
+      workout_type:  r.workout_type  || null,
+      activity_type: r.activity_type || null,
+      slug:          r.benchmark_slug || null,
+      workout_id:    r.workout_id || null,
+      movements:     wod ? (wod.movements || []) : [],
+      scoring_type:  wod ? (wod.scoring_type || 'free') : 'free',
+      created_at:    r.date || r.created_at,
+      score:         r.score_display,
+      is_rx:         r.is_rx,
+      notes:         r.notes,
     };
   });
 
@@ -745,7 +768,7 @@ function buildStats(workouts) {
 
 /* ─── Tab counts ─── */
 function buildTabCounts(workouts) {
-  var counts = { all: 0, benchmark: 0, daily20: 0, generated: 0 };
+  var counts = { all: 0, benchmark: 0, daily20: 0, generated: 0, cardio: 0 };
   workouts.forEach(function(w){
     counts.all++;
     var t = w.wod_type;
@@ -754,6 +777,7 @@ function buildTabCounts(workouts) {
   document.getElementById('count-all').textContent       = counts.all;
   document.getElementById('count-benchmark').textContent = counts.benchmark;
   document.getElementById('count-generated').textContent = counts.generated;
+  document.getElementById('count-cardio').textContent    = counts.cardio;
 }
 
 /* ─── Filter tabs ─── */
@@ -803,8 +827,12 @@ function buildCard(w) {
   /* Use a stable, quote-safe key to look up this card's data from onclick handlers */
   var cardKey = (w._resultId || w.workout_id || ('k' + Math.random().toString(36).slice(2)));
   _cardMap[cardKey] = w;
-  var chipClass = w.wod_type === 'benchmark' ? 'chip-red' : 'chip-blue';
-  var chipLabel = w.wod_type === 'benchmark' ? 'Benchmark' : 'Generated';
+  var chipClass = w.wod_type === 'benchmark' ? 'chip-red'
+                : w.wod_type === 'cardio'    ? 'chip-green'
+                : 'chip-blue';
+  var chipLabel = w.wod_type === 'benchmark' ? 'Benchmark'
+                : w.wod_type === 'cardio'    ? 'Activity'
+                : 'Generated';
 
   var d       = new Date(w.created_at);
   var dateStr = d.toLocaleDateString('en-US',{ month:'short', day:'numeric', year:'numeric' });
@@ -833,12 +861,15 @@ function buildCard(w) {
   /* Result strip */
   var resultHtml = '';
   if (w.score) {
-    var rxClass = w.is_rx ? 'rx-yes' : 'rx-no';
-    var rxLabel = w.is_rx ? 'Rx' : 'Scaled';
+    var isCardioCard = w.workout_type === 'cardio';
     resultHtml  = '<div class="wod-result-strip">';
     resultHtml += '<div class="result-main">';
     resultHtml += '<span class="result-score">' + esc(w.score) + '</span>';
-    resultHtml += '<span class="result-rx-badge ' + rxClass + '">' + rxLabel + '</span>';
+    if (!isCardioCard) {
+      var rxClass = w.is_rx ? 'rx-yes' : 'rx-no';
+      var rxLabel = w.is_rx ? 'Rx' : 'Scaled';
+      resultHtml += '<span class="result-rx-badge ' + rxClass + '">' + rxLabel + '</span>';
+    }
     resultHtml += '</div>';
     if (w.notes) resultHtml += '<span class="result-notes">' + esc(w.notes) + '</span>';
     resultHtml += '</div>';
@@ -908,6 +939,13 @@ function loadMore() {
 function openLogModalFromCard(key) {
   var w = _cardMap[key];
   if (!w) return;
+  if (w.workout_type === 'cardio') {
+    /* Route cardio to the companion Log Activity modal */
+    if (typeof Companion !== 'undefined' && Companion._openLogModal) {
+      Companion._openLogModal(w.activity_type || 'other');
+    }
+    return;
+  }
   openLogModal(w.slug || null, w.workout_id || null, w.wod_name || 'WOD', w.scoring_type || 'free');
 }
 function openDeleteModalFromCard(key) {
