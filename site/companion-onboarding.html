@@ -377,96 +377,28 @@
       <div class="step-q">What equipment do you have access to?</div>
       <div class="step-hint">Select everything available to you. This helps your companion suggest workouts that actually match what you have.</div>
       <div class="check-grid" id="equipment-grid">
-        <label class="check-card" onclick="toggleCheck(this)">
-          <input type="checkbox" value="barbell">
-          <div class="check-box">
-            <svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none">
-              <path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <span class="check-label">Barbell</span>
-        </label>
-        <label class="check-card" onclick="toggleCheck(this)">
-          <input type="checkbox" value="dumbbells">
-          <div class="check-box">
-            <svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none">
-              <path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <span class="check-label">Dumbbells</span>
-        </label>
-        <label class="check-card" onclick="toggleCheck(this)">
-          <input type="checkbox" value="kettlebell">
-          <div class="check-box">
-            <svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none">
-              <path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <span class="check-label">Kettlebell</span>
-        </label>
-        <label class="check-card" onclick="toggleCheck(this)">
-          <input type="checkbox" value="pull-up bar">
-          <div class="check-box">
-            <svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none">
-              <path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <span class="check-label">Pull-up Bar / Rig</span>
-        </label>
-        <label class="check-card" onclick="toggleCheck(this)">
-          <input type="checkbox" value="rings">
-          <div class="check-box">
-            <svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none">
-              <path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <span class="check-label">Rings</span>
-        </label>
-        <label class="check-card" onclick="toggleCheck(this)">
-          <input type="checkbox" value="rower">
-          <div class="check-box">
-            <svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none">
-              <path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <span class="check-label">Rowing Machine</span>
-        </label>
-        <label class="check-card" onclick="toggleCheck(this)">
-          <input type="checkbox" value="assault bike">
-          <div class="check-box">
-            <svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none">
-              <path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <span class="check-label">Assault / Echo Bike</span>
-        </label>
-        <label class="check-card" onclick="toggleCheck(this)">
-          <input type="checkbox" value="jump rope">
-          <div class="check-box">
-            <svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none">
-              <path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <span class="check-label">Jump Rope</span>
-        </label>
-        <label class="check-card" onclick="toggleCheck(this)">
-          <input type="checkbox" value="box">
-          <div class="check-box">
-            <svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none">
-              <path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <span class="check-label">Plyo Box</span>
-        </label>
-        <label class="check-card" onclick="toggleCheck(this)">
-          <input type="checkbox" value="bodyweight only">
-          <div class="check-box">
-            <svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none">
-              <path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <span class="check-label">Bodyweight Only</span>
-        </label>
+        <!-- Helper to stamp a check card without repeating the SVG everywhere -->
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="barbell"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Barbell</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="dumbbells"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Dumbbells</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="kettlebell"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Kettlebell</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="pull-up bar"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Pull-up Bar / Rig</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="rings"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Rings</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="rower"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Rowing Machine</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="assault bike"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Assault / Echo Bike</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="ski erg"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Ski Erg</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="treadmill"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Treadmill</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="jump rope"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Jump Rope</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="box"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Plyo Box</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="wall ball"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Wall Ball</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="medicine ball"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Medicine Ball</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="slam ball"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Slam Ball</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="sandbag"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Sandbag</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="resistance bands"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Resistance Bands</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="bodyweight only"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Bodyweight Only</span></label>
+      </div>
+      <div style="margin-top: 14px;">
+        <label style="font-size:0.8rem; font-weight:600; color:var(--muted); display:block; margin-bottom:6px;">OTHER EQUIPMENT</label>
+        <input type="text" class="text-input" id="equipment-other" placeholder="e.g. sled, GHD, dip bars, cable machine…" maxlength="120">
       </div>
       <div class="step-nav">
         <button class="btn-back" onclick="goBack(4)">← Back</button>
@@ -630,9 +562,11 @@ function selectOption(card, group) {
   if (btn) btn.disabled = false;
 }
 
-function toggleCheck(card) {
-  card.classList.toggle('selected');
-  card.querySelector('input').checked = card.classList.contains('selected');
+function toggleCheck(e, card) {
+  e.preventDefault(); // prevent label from double-toggling the hidden input
+  const cb = card.querySelector('input[type="checkbox"]');
+  cb.checked = !cb.checked;
+  card.classList.toggle('selected', cb.checked);
 }
 
 // ── Read answers ──────────────────────────────────────────────────────────
@@ -645,6 +579,17 @@ function getCheckedValues(gridId) {
   return Array.from(
     document.querySelectorAll(`#${gridId} input[type="checkbox"]:checked`)
   ).map(cb => cb.value);
+}
+
+function getEquipment() {
+  const checked = getCheckedValues('equipment-grid');
+  const other = document.getElementById('equipment-other').value.trim();
+  if (other) {
+    // Split on commas in case they listed multiple things
+    const extras = other.split(',').map(s => s.trim()).filter(Boolean);
+    return [...checked, ...extras];
+  }
+  return checked;
 }
 
 // ── Summary ───────────────────────────────────────────────────────────────
@@ -667,7 +612,7 @@ function buildSummary() {
   const goal    = getRadioValue('q1');
   const style   = getRadioValue('q2');
   const sport   = document.getElementById('sport-input').value.trim();
-  const equip   = getCheckedValues('equipment-grid');
+  const equip   = getEquipment();
   const injuries = document.getElementById('injuries-input').value.trim();
   const blend   = computeArchetypeBlend(goal, style);
 
@@ -706,7 +651,7 @@ async function saveProfile() {
   const goal    = getRadioValue('q1');
   const style   = getRadioValue('q2');
   const sport   = document.getElementById('sport-input').value.trim();
-  const equip   = getCheckedValues('equipment-grid');
+  const equip   = getEquipment();
   const injuriesRaw = document.getElementById('injuries-input').value.trim();
   const injuries = injuriesRaw
     ? injuriesRaw.split(',').map(s => s.trim()).filter(Boolean)
