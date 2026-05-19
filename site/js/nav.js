@@ -467,6 +467,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (shouldInit) {
     const activePage = document.body.getAttribute('data-active-page') || '';
     await Nav.init(activePage);
+
+    // Init companion widget if user is logged in (checks companion_access internally)
+    try {
+      if (typeof supabaseClient !== 'undefined' && supabaseClient) {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session) await Companion.maybeInit(session);
+      }
+    } catch (e) { /* non-fatal — companion widget is enhancement only */ }
   }
 });
 
@@ -502,6 +510,211 @@ async function doSignOut(e) {
   localStorage.removeItem('hwrx_initial');
   localStorage.removeItem('hwrx_name');
   localStorage.removeItem('hwrx_handle');
+  localStorage.removeItem('hwrx_companion');
+  sessionStorage.removeItem('hwrx_companion_chat');
   try { await db.signOut(); } catch (err) {}
   location.href = '/';
 }
+
+// ============================================================================
+// COMPANION CHAT WIDGET
+// Injected sitewide via nav.js — only for users with companion_access = true.
+// Conversation persists within the browser session (sessionStorage).
+// ============================================================================
+
+const Companion = {
+  FUNCTION_URL: 'https://irtppmztpcakanhefljs.supabase.co/functions/v1/companion-chat',
+  STORAGE_KEY:  'hwrx_companion_chat',
+  ACCESS_KEY:   'hwrx_companion',
+  _session: null,
+  _open: false,
+
+  // ── Entry point ────────────────────────────────────────────────────
+  async maybeInit(session) {
+    // Fast path: cached access flag
+    let hasAccess = localStorage.getItem(this.ACCESS_KEY) === '1';
+
+    if (!hasAccess) {
+      try {
+        const { data } = await supabaseClient
+          .from('profiles')
+          .select('companion_access')
+          .eq('id', session.user.id)
+          .single();
+        hasAccess = data?.companion_access === true;
+        if (hasAccess) localStorage.setItem(this.ACCESS_KEY, '1');
+      } catch (e) { /* non-fatal */ }
+    }
+
+    if (!hasAccess) return;
+
+    this._session = session;
+    this._inject();
+  },
+
+  // ── Inject HTML ────────────────────────────────────────────────────
+  _inject() {
+    document.body.insertAdjacentHTML('beforeend', `
+      <button id="companion-toggle" onclick="Companion.toggle()" title="Training Companion" aria-label="Open training companion">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+      </button>
+
+      <div id="companion-panel" role="dialog" aria-label="Training Companion">
+        <div class="companion-header">
+          <div class="companion-header-left">
+            <div class="companion-avatar">RX</div>
+            <div>
+              <div class="companion-title">Training Companion</div>
+              <div class="companion-sub">HomeWodRX</div>
+            </div>
+          </div>
+          <button class="companion-close" onclick="Companion.toggle()" aria-label="Close">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="companion-messages" id="companion-messages"></div>
+
+        <div class="companion-input-row">
+          <textarea
+            id="companion-input"
+            placeholder="Ask anything about your training…"
+            rows="1"
+            maxlength="500"
+            onkeydown="Companion.onKey(event)"
+            oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,96)+'px'"
+          ></textarea>
+          <button id="companion-send" onclick="Companion.send()" aria-label="Send">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    `);
+
+    this._restoreHistory();
+
+    // Close panel on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this._open) this.toggle();
+    });
+  },
+
+  // ── Open / close ───────────────────────────────────────────────────
+  toggle() {
+    this._open = !this._open;
+    document.getElementById('companion-panel')?.classList.toggle('open', this._open);
+    document.getElementById('companion-toggle')?.classList.toggle('active', this._open);
+    if (this._open) {
+      // Show intro message if history is empty
+      const msgs = document.getElementById('companion-messages');
+      if (msgs && msgs.children.length === 0) {
+        this._appendMsg('assistant', "What's on your training agenda?");
+        this._saveHistory();
+      }
+      this._scrollToBottom();
+      setTimeout(() => document.getElementById('companion-input')?.focus(), 150);
+    }
+  },
+
+  // ── Keyboard: Enter sends, Shift+Enter newline ─────────────────────
+  onKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      this.send();
+    }
+  },
+
+  // ── Send message ───────────────────────────────────────────────────
+  async send() {
+    const input = document.getElementById('companion-input');
+    const sendBtn = document.getElementById('companion-send');
+    const message = input?.value.trim();
+    if (!message) return;
+
+    input.value = '';
+    input.style.height = 'auto';
+    if (sendBtn) sendBtn.disabled = true;
+
+    this._appendMsg('user', message);
+    this._saveHistory();
+
+    // Typing indicator
+    const typing = document.createElement('div');
+    typing.className = 'companion-typing';
+    typing.innerHTML = '<span></span><span></span><span></span>';
+    typing.id = 'companion-typing';
+    document.getElementById('companion-messages')?.appendChild(typing);
+    this._scrollToBottom();
+
+    try {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) throw new Error('Not logged in');
+
+      const res = await fetch(this.FUNCTION_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ message }),
+      });
+
+      const json = await res.json();
+      document.getElementById('companion-typing')?.remove();
+
+      if (!res.ok) {
+        const msg = json.message || json.error || 'Something went wrong. Try again.';
+        this._appendMsg('assistant', msg);
+      } else {
+        this._appendMsg('assistant', json.reply);
+      }
+    } catch (err) {
+      document.getElementById('companion-typing')?.remove();
+      this._appendMsg('assistant', 'Connection error. Check your network and try again.');
+    }
+
+    this._saveHistory();
+    this._scrollToBottom();
+    if (sendBtn) sendBtn.disabled = false;
+    input?.focus();
+  },
+
+  // ── DOM helpers ────────────────────────────────────────────────────
+  _appendMsg(role, text) {
+    const el = document.createElement('div');
+    el.className = `companion-msg ${role}`;
+    el.textContent = text;
+    document.getElementById('companion-messages')?.appendChild(el);
+  },
+
+  _scrollToBottom() {
+    const msgs = document.getElementById('companion-messages');
+    if (msgs) msgs.scrollTop = msgs.scrollHeight;
+  },
+
+  // ── Session storage ────────────────────────────────────────────────
+  _saveHistory() {
+    const msgs = document.getElementById('companion-messages');
+    if (!msgs) return;
+    const history = Array.from(msgs.querySelectorAll('.companion-msg')).map(el => ({
+      role: el.classList.contains('user') ? 'user' : 'assistant',
+      text: el.textContent,
+    }));
+    try { sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(history)); } catch (e) {}
+  },
+
+  _restoreHistory() {
+    try {
+      const raw = sessionStorage.getItem(this.STORAGE_KEY);
+      if (!raw) return;
+      const history = JSON.parse(raw);
+      history.forEach(({ role, text }) => this._appendMsg(role, text));
+    } catch (e) {}
+  },
+};
