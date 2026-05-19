@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Companion Setup — HomeWodRX</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/db.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
+
+  <style>
+    :root {
+      --red: #C41212;
+      --red-light: #fef2f2;
+      --step-dot: #ddd;
+      --step-active: var(--red);
+      --step-done: #22c55e;
+    }
+
+    body { background: #f5f5f5; min-height: 100vh; }
+
+    /* ── Wizard shell ───────────────────────────────────────────────── */
+    .wizard-wrap {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-start;
+      padding: 40px 20px 80px;
+    }
+
+    .wizard-header {
+      text-align: center; margin-bottom: 36px; width: 100%;
+    }
+    .wizard-logo {
+      text-decoration: none; display: inline-block; margin-bottom: 24px;
+    }
+    .wizard-logo img { height: 36px; display: block; }
+
+    /* Progress dots */
+    .progress-dots {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--step-dot); transition: background 0.2s;
+    }
+    .dot.active { background: var(--step-active); width: 24px; border-radius: 5px; }
+    .dot.done   { background: var(--step-done); }
+
+    /* ── Card ──────────────────────────────────────────────────────── */
+    .wizard-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      width: 100%; max-width: 560px;
+      padding: 40px 36px;
+    }
+    @media (max-width: 560px) { .wizard-card { padding: 28px 20px; } }
+
+    .step { display: none; }
+    .step.active { display: block; }
+
+    .step-label {
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 8px;
+    }
+    .step-q {
+      font-family: var(--font-head); font-size: clamp(1.5rem, 4vw, 2rem);
+      letter-spacing: 0.04em; line-height: 1.15; color: var(--text);
+      margin-bottom: 6px;
+    }
+    .step-hint {
+      font-size: 0.85rem; color: var(--muted); margin-bottom: 28px; line-height: 1.5;
+    }
+
+    /* ── Option cards (radio) ──────────────────────────────────────── */
+    .options { display: flex; flex-direction: column; gap: 10px; }
+
+    .option-card {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 14px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      user-select: none;
+    }
+    .option-card:hover { border-color: #aaa; }
+    .option-card.selected {
+      border-color: var(--red); background: var(--red-light);
+    }
+    .option-card input[type="radio"] { display: none; }
+
+    .option-dot {
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 2px solid var(--border);
+      flex-shrink: 0; margin-top: 1px;
+      transition: border-color 0.15s, background 0.15s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .option-card.selected .option-dot {
+      border-color: var(--red); background: var(--red);
+    }
+    .option-dot::after {
+      content: ''; width: 7px; height: 7px; border-radius: 50%;
+      background: #fff; display: none;
+    }
+    .option-card.selected .option-dot::after { display: block; }
+
+    .option-text strong { display: block; font-weight: 600; font-size: 0.9rem; color: var(--text); }
+    .option-text span { font-size: 0.8rem; color: var(--muted); line-height: 1.4; }
+
+    /* ── Checkboxes (equipment) ────────────────────────────────────── */
+    .check-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    }
+    @media (max-width: 400px) { .check-grid { grid-template-columns: 1fr; } }
+
+    .check-card {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      cursor: pointer; transition: border-color 0.15s, background 0.15s;
+      user-select: none;
+    }
+    .check-card:hover { border-color: #aaa; }
+    .check-card.selected { border-color: var(--red); background: var(--red-light); }
+    .check-card input[type="checkbox"] { display: none; }
+
+    .check-box {
+      width: 18px; height: 18px; border-radius: 4px;
+      border: 2px solid var(--border); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .check-card.selected .check-box { border-color: var(--red); background: var(--red); }
+    .check-icon { display: none; }
+    .check-card.selected .check-icon { display: block; }
+
+    .check-label { font-size: 0.875rem; font-weight: 500; color: var(--text); }
+
+    /* ── Text input ────────────────────────────────────────────────── */
+    .text-input {
+      width: 100%; padding: 12px 14px;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      font-family: var(--font-body); font-size: 0.9rem; color: var(--text);
+      background: #fff; outline: none;
+      transition: border-color 0.15s;
+      box-sizing: border-box;
+    }
+    .text-input:focus { border-color: var(--red); }
+    .text-input::placeholder { color: var(--muted2); }
+
+    .skip-note {
+      font-size: 0.78rem; color: var(--muted); margin-top: 10px;
+    }
+
+    /* ── Nav buttons ───────────────────────────────────────────────── */
+    .step-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 32px;
+    }
+    .btn-back {
+      background: none; border: none; font-size: 0.875rem;
+      color: var(--muted); cursor: pointer; padding: 0;
+      font-family: var(--font-body);
+    }
+    .btn-back:hover { color: var(--text); }
+    .btn-next {
+      background: var(--red); color: #fff;
+      border: none; border-radius: 8px;
+      padding: 12px 28px; font-size: 0.9rem; font-weight: 600;
+      cursor: pointer; font-family: var(--font-body);
+      transition: opacity 0.15s;
+    }
+    .btn-next:hover { opacity: 0.88; }
+    .btn-next:disabled { opacity: 0.4; cursor: default; }
+
+    /* ── Summary step ──────────────────────────────────────────────── */
+    .summary-row {
+      display: flex; gap: 10px; padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-key {
+      font-size: 0.8rem; font-weight: 600; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      width: 130px; flex-shrink: 0; padding-top: 2px;
+    }
+    .summary-val { font-size: 0.875rem; color: var(--text); line-height: 1.5; }
+
+    /* ── Auth gate ─────────────────────────────────────────────────── */
+    #auth-gate {
+      text-align: center; padding: 40px 20px;
+      display: none;
+    }
+    #auth-gate.visible { display: block; }
+    #auth-gate p { color: var(--muted); margin-bottom: 20px; }
+
+    /* ── Success ───────────────────────────────────────────────────── */
+    .success-wrap { text-align: center; padding: 12px 0; }
+    .success-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: #dcfce7; display: flex; align-items: center;
+      justify-content: center; margin: 0 auto 20px;
+    }
+    .success-title {
+      font-family: var(--font-head); font-size: 2rem;
+      letter-spacing: 0.05em; color: var(--text); margin-bottom: 10px;
+    }
+    .success-sub { font-size: 0.9rem; color: var(--muted); line-height: 1.6; margin-bottom: 28px; }
+
+    /* ── Error message ─────────────────────────────────────────────── */
+    .err-msg {
+      background: #fef2f2; border: 1px solid #fecaca; color: #dc2626;
+      border-radius: 8px; padding: 12px 14px;
+      font-size: 0.875rem; margin-top: 16px; display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="wizard-wrap">
+
+  <!-- Header -->
+  <div class="wizard-header">
+    <a href="/" class="wizard-logo">
+      <img src="/HomeWODRx-logo-black-red-040626.png" alt="HomeWodRX">
+    </a>
+    <div class="progress-dots" id="progress-dots">
+      <div class="dot active" data-step="1"></div>
+      <div class="dot" data-step="2"></div>
+      <div class="dot" data-step="3"></div>
+      <div class="dot" data-step="4"></div>
+      <div class="dot" data-step="5"></div>
+      <div class="dot" data-step="6"></div>
+    </div>
+  </div>
+
+  <!-- Auth gate -->
+  <div id="auth-gate" class="wizard-card">
+    <p>You need to be logged in to set up your companion profile.</p>
+    <a href="/login.html?redirect=/companion-onboarding.html" class="btn btn-primary">Log In</a>
+  </div>
+
+  <!-- Wizard card -->
+  <div class="wizard-card" id="wizard-card" style="display:none">
+
+    <!-- Step 1: Primary Goal -->
+    <div class="step active" id="step-1">
+      <div class="step-label">Step 1 of 5</div>
+      <div class="step-q">What's your primary training goal?</div>
+      <div class="step-hint">This shapes how your companion talks to you and what it prioritizes.</div>
+      <div class="options" id="q1-options">
+        <label class="option-card" onclick="selectOption(this, 'q1')">
+          <input type="radio" name="q1" value="general_health">
+          <div class="option-dot"></div>
+          <div class="option-text">
+            <strong>Stay healthy and move well for life</strong>
+            <span>Longevity, energy, feeling strong as you age</span>
+          </div>
+        </label>
+        <label class="option-card" onclick="selectOption(this, 'q1')">
+          <input type="radio" name="q1" value="specific_activity">
+          <div class="option-dot"></div>
+          <div class="option-text">
+            <strong>Train to fuel a sport or activity</strong>
+            <span>The gym is the engine — the trail, court, or field is the point</span>
+          </div>
+        </label>
+        <label class="option-card" onclick="selectOption(this, 'q1')">
+          <input type="radio" name="q1" value="sport_performance">
+          <div class="option-dot"></div>
+          <div class="option-text">
+            <strong>Get stronger and fitter — I'm chasing real performance</strong>
+            <span>PRs, benchmarks, measurable progress</span>
+          </div>
+        </label>
+        <label class="option-card" onclick="selectOption(this, 'q1')">
+          <input type="radio" name="q1" value="rebuilding">
+          <div class="option-dot"></div>
+          <div class="option-text">
+            <strong>Coming back from injury or a long break</strong>
+            <span>Rebuilding consistency and trust in my body</span>
+          </div>
+        </label>
+        <label class="option-card" onclick="selectOption(this, 'q1')">
+          <input type="radio" name="q1" value="just_getting_started">
+          <div class="option-dot"></div>
+          <div class="option-text">
+            <strong>Brand new to functional fitness</strong>
+            <span>Learning the movements and building a base</span>
+          </div>
+        </label>
+      </div>
+      <div class="step-nav">
+        <span></span>
+        <button class="btn-next" id="next-1" onclick="goNext(1)" disabled>Continue</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Coaching Style -->
+    <div class="step" id="step-2">
+      <div class="step-label">Step 2 of 5</div>
+      <div class="step-q">What kind of guidance fits you best?</div>
+      <div class="step-hint">There's no right answer — pick what actually resonates.</div>
+      <div class="options" id="q2-options">
+        <label class="option-card" onclick="selectOption(this, 'q2')">
+          <input type="radio" name="q2" value="structured">
+          <div class="option-dot"></div>
+          <div class="option-text">
+            <strong>Give me a structured plan I can follow</strong>
+            <span>Specifics, progressions, data I can act on</span>
+          </div>
+        </label>
+        <label class="option-card" onclick="selectOption(this, 'q2')">
+          <input type="radio" name="q2" value="flexible">
+          <div class="option-dot"></div>
+          <div class="option-text">
+            <strong>Keep it flexible — I train by feel</strong>
+            <span>Options and ideas, not a rigid schedule</span>
+          </div>
+        </label>
+        <label class="option-card" onclick="selectOption(this, 'q2')">
+          <input type="radio" name="q2" value="benchmark_focused">
+          <div class="option-dot"></div>
+          <div class="option-text">
+            <strong>I want to be pushed — tell me when I can do more</strong>
+            <span>Honest about what will actually move the needle</span>
+          </div>
+        </label>
+        <label class="option-card" onclick="selectOption(this, 'q2')">
+          <input type="radio" name="q2" value="variety_first">
+          <div class="option-dot"></div>
+          <div class="option-text">
+            <strong>Keep it interesting — variety over routine</strong>
+            <span>Mix it up. Boredom is the enemy of consistency.</span>
+          </div>
+        </label>
+      </div>
+      <div class="step-nav">
+        <button class="btn-back" onclick="goBack(2)">← Back</button>
+        <button class="btn-next" id="next-2" onclick="goNext(2)" disabled>Continue</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Sport / Activity Focus -->
+    <div class="step" id="step-3">
+      <div class="step-label">Step 3 of 5</div>
+      <div class="step-q">What are you training for outside the gym?</div>
+      <div class="step-hint">If you're training to support a specific sport or pursuit, name it. Your companion will connect training to that goal specifically. Leave blank if not applicable.</div>
+      <input
+        type="text"
+        class="text-input"
+        id="sport-input"
+        placeholder="e.g. mountain biking, skiing, running, basketball…"
+        maxlength="80"
+      />
+      <div class="skip-note">This field is optional — skip it if you're training for general fitness.</div>
+      <div class="step-nav">
+        <button class="btn-back" onclick="goBack(3)">← Back</button>
+        <button class="btn-next" onclick="goNext(3)">Continue</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Equipment -->
+    <div class="step" id="step-4">
+      <div class="step-label">Step 4 of 5</div>
+      <div class="step-q">What equipment do you have access to?</div>
+      <div class="step-hint">Select everything available to you. This helps your companion suggest workouts that actually match what you have.</div>
+      <div class="check-grid" id="equipment-grid">
+        <label class="check-card" onclick="toggleCheck(this)">
+          <input type="checkbox" value="barbell">
+          <div class="check-box">
+            <svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none">
+              <path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="check-label">Barbell</span>
+        </label>
+        <label class="check-card" onclick="toggleCheck(this)">
+          <input type="checkbox" value="dumbbells">
+          <div class="check-box">
+            <svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none">
+              <path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="check-label">Dumbbells</span>
+        </label>
+        <label class="check-card" onclick="toggleCheck(this)">
+          <input type="checkbox" value="kettlebell">
+          <div class="check-box">
+            <svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none">
+              <path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="check-label">Kettlebell</span>
+        </label>
+        <label class="check-card" onclick="toggleCheck(this)">
+          <input type="checkbox" value="pull-up bar">
+          <div class="check-box">
+            <svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none">
+              <path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="check-label">Pull-up Bar / Rig</span>
+        </label>
+        <label class="check-card" onclick="toggleCheck(this)">
+          <input type="checkbox" value="rings">
+          <div class="check-box">
+            <svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none">
+              <path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="check-label">Rings</span>
+        </label>
+        <label class="check-card" onclick="toggleCheck(this)">
+          <input type="checkbox" value="rower">
+          <div class="check-box">
+            <svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none">
+              <path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="check-label">Rowing Machine</span>
+        </label>
+        <label class="check-card" onclick="toggleCheck(this)">
+          <input type="checkbox" value="assault bike">
+          <div class="check-box">
+            <svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none">
+              <path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="check-label">Assault / Echo Bike</span>
+        </label>
+        <label class="check-card" onclick="toggleCheck(this)">
+          <input type="checkbox" value="jump rope">
+          <div class="check-box">
+            <svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none">
+              <path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="check-label">Jump Rope</span>
+        </label>
+        <label class="check-card" onclick="toggleCheck(this)">
+          <input type="checkbox" value="box">
+          <div class="check-box">
+            <svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none">
+              <path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="check-label">Plyo Box</span>
+        </label>
+        <label class="check-card" onclick="toggleCheck(this)">
+          <input type="checkbox" value="bodyweight only">
+          <div class="check-box">
+            <svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none">
+              <path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="check-label">Bodyweight Only</span>
+        </label>
+      </div>
+      <div class="step-nav">
+        <button class="btn-back" onclick="goBack(4)">← Back</button>
+        <button class="btn-next" onclick="goNext(4)">Continue</button>
+      </div>
+    </div>
+
+    <!-- Step 5: Injuries -->
+    <div class="step" id="step-5">
+      <div class="step-label">Step 5 of 5</div>
+      <div class="step-q">Any injuries or physical limitations?</div>
+      <div class="step-hint">Your companion uses this to avoid suggesting things that could aggravate existing issues — not to limit what you can do, just to be smart about it. Be as specific or vague as you want.</div>
+      <textarea
+        class="text-input"
+        id="injuries-input"
+        placeholder="e.g. left shoulder impingement (ongoing), lower back (resolved 2024), right knee — no impact…"
+        rows="4"
+        style="resize: vertical;"
+        maxlength="400"
+      ></textarea>
+      <div class="skip-note">Skip this if you have no current limitations.</div>
+      <div class="step-nav">
+        <button class="btn-back" onclick="goBack(5)">← Back</button>
+        <button class="btn-next" onclick="goNext(5)">Review & Save</button>
+      </div>
+    </div>
+
+    <!-- Step 6: Summary -->
+    <div class="step" id="step-6">
+      <div class="step-label">Almost done</div>
+      <div class="step-q">Does this look right?</div>
+      <div class="step-hint" style="margin-bottom: 20px;">Your companion will use this profile to personalize every response. You can update it anytime in Settings.</div>
+
+      <div id="summary-content"></div>
+
+      <div class="err-msg" id="save-err"></div>
+
+      <div class="step-nav">
+        <button class="btn-back" onclick="goBack(6)">← Edit</button>
+        <button class="btn-next" id="save-btn" onclick="saveProfile()">Save & Start</button>
+      </div>
+    </div>
+
+    <!-- Step 7: Success -->
+    <div class="step" id="step-7">
+      <div class="success-wrap">
+        <div class="success-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div class="success-title">You're set up.</div>
+        <p class="success-sub">Your companion profile is saved. Head to your profile page to start a conversation.</p>
+        <a href="/profile.html" class="btn btn-primary" style="display:inline-block; text-decoration:none;">Go to Profile</a>
+      </div>
+    </div>
+
+  </div><!-- /wizard-card -->
+</div><!-- /wizard-wrap -->
+
+<script src="/js/nav.js"></script>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   COMPANION ONBOARDING — HomeWodRX
+   Collects 5 answers, computes archetype_blend, saves to profiles table.
+   Fields written: primary_goal, preferred_training_style, sport_activity_focus,
+                   equipment_available, injuries, archetype_blend
+═══════════════════════════════════════════════════════════════════════════ */
+
+let _user = null;
+let currentStep = 1;
+
+// ── Archetype scoring ──────────────────────────────────────────────────────
+// Each question contributes weights; we normalize at the end to sum to 1.0.
+const GOAL_WEIGHTS = {
+  general_health:     { health_first: 1.5, longevity_athlete: 0.5 },
+  specific_activity:  { sport_chaser: 1.5, longevity_athlete: 0.5 },
+  sport_performance:  { performance_athlete: 1.5, longevity_athlete: 0.3 },
+  rebuilding:         { rebuilding: 2.0, health_first: 0.5 },
+  just_getting_started: { just_getting_started: 2.0, health_first: 0.3 },
+};
+
+const STYLE_WEIGHTS = {
+  structured:        { performance_athlete: 0.8, longevity_athlete: 0.4 },
+  flexible:          { health_first: 0.8, sport_chaser: 0.4 },
+  benchmark_focused: { performance_athlete: 1.0 },
+  variety_first:     { health_first: 0.5, sport_chaser: 0.5 },
+};
+
+function computeArchetypeBlend(goal, style) {
+  const scores = {};
+
+  const addWeights = (weights) => {
+    for (const [key, val] of Object.entries(weights)) {
+      scores[key] = (scores[key] || 0) + val;
+    }
+  };
+
+  if (GOAL_WEIGHTS[goal])  addWeights(GOAL_WEIGHTS[goal]);
+  if (STYLE_WEIGHTS[style]) addWeights(STYLE_WEIGHTS[style]);
+
+  // Normalize to sum to 1.0
+  const total = Object.values(scores).reduce((a, b) => a + b, 0);
+  if (total === 0) return { health_first: 1.0 };
+
+  const blend = {};
+  for (const [key, val] of Object.entries(scores)) {
+    const normalized = Math.round((val / total) * 100) / 100;
+    if (normalized >= 0.05) blend[key] = normalized; // drop negligible
+  }
+
+  // Re-normalize after rounding/pruning
+  const total2 = Object.values(blend).reduce((a, b) => a + b, 0);
+  for (const key of Object.keys(blend)) {
+    blend[key] = Math.round((blend[key] / total2) * 100) / 100;
+  }
+
+  return blend;
+}
+
+// ── Step navigation ───────────────────────────────────────────────────────
+function goNext(from) {
+  showStep(from + 1);
+  if (from + 1 === 6) buildSummary();
+}
+
+function goBack(from) {
+  showStep(from - 1);
+}
+
+function showStep(n) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(`step-${n}`);
+  if (el) { el.classList.add('active'); currentStep = n; }
+  updateDots(n);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateDots(n) {
+  const dots = document.querySelectorAll('.dot');
+  dots.forEach((dot, i) => {
+    const step = i + 1;
+    dot.classList.remove('active', 'done');
+    if (step < n)  dot.classList.add('done');
+    if (step === n && n <= 5) dot.classList.add('active');
+    if (n >= 6) dot.classList.add('done'); // all done on summary/success
+  });
+}
+
+// ── Option selection ──────────────────────────────────────────────────────
+function selectOption(card, group) {
+  document.querySelectorAll(`#q${group.slice(-1)}-options .option-card`)
+    .forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  card.querySelector('input').checked = true;
+
+  // Enable continue button
+  const btnId = `next-${group.slice(-1)}`;
+  const btn = document.getElementById(btnId);
+  if (btn) btn.disabled = false;
+}
+
+function toggleCheck(card) {
+  card.classList.toggle('selected');
+  card.querySelector('input').checked = card.classList.contains('selected');
+}
+
+// ── Read answers ──────────────────────────────────────────────────────────
+function getRadioValue(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : null;
+}
+
+function getCheckedValues(gridId) {
+  return Array.from(
+    document.querySelectorAll(`#${gridId} input[type="checkbox"]:checked`)
+  ).map(cb => cb.value);
+}
+
+// ── Summary ───────────────────────────────────────────────────────────────
+const GOAL_LABELS = {
+  general_health:      'Health & longevity',
+  specific_activity:   'Training for a sport / pursuit',
+  sport_performance:   'Performance improvement',
+  rebuilding:          'Rebuilding after injury / break',
+  just_getting_started: 'Brand new to functional fitness',
+};
+
+const STYLE_LABELS = {
+  structured:        'Structured plan',
+  flexible:          'Flexible / by feel',
+  benchmark_focused: 'Be pushed, honest feedback',
+  variety_first:     'Variety first',
+};
+
+function buildSummary() {
+  const goal    = getRadioValue('q1');
+  const style   = getRadioValue('q2');
+  const sport   = document.getElementById('sport-input').value.trim();
+  const equip   = getCheckedValues('equipment-grid');
+  const injuries = document.getElementById('injuries-input').value.trim();
+  const blend   = computeArchetypeBlend(goal, style);
+
+  // Top archetype
+  const topArchetype = Object.entries(blend).sort(([,a],[,b]) => b-a)[0];
+  const archetypeLabel = topArchetype
+    ? `${topArchetype[0].replace(/_/g, ' ')} (${Math.round(topArchetype[1] * 100)}%)`
+    : '—';
+
+  const rows = [
+    ['Goal',       GOAL_LABELS[goal]  || goal],
+    ['Style',      STYLE_LABELS[style] || style],
+    ['Pursuit',    sport || 'Not specified'],
+    ['Equipment',  equip.length ? equip.join(', ') : 'None selected'],
+    ['Limitations', injuries || 'None'],
+    ['Archetype',  archetypeLabel],
+  ];
+
+  document.getElementById('summary-content').innerHTML =
+    rows.map(([k, v]) =>
+      `<div class="summary-row">
+        <div class="summary-key">${k}</div>
+        <div class="summary-val">${v}</div>
+      </div>`
+    ).join('');
+}
+
+// ── Save to Supabase ──────────────────────────────────────────────────────
+async function saveProfile() {
+  const btn = document.getElementById('save-btn');
+  const errEl = document.getElementById('save-err');
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+  errEl.style.display = 'none';
+
+  const goal    = getRadioValue('q1');
+  const style   = getRadioValue('q2');
+  const sport   = document.getElementById('sport-input').value.trim();
+  const equip   = getCheckedValues('equipment-grid');
+  const injuriesRaw = document.getElementById('injuries-input').value.trim();
+  const injuries = injuriesRaw
+    ? injuriesRaw.split(',').map(s => s.trim()).filter(Boolean)
+    : [];
+  const blend = computeArchetypeBlend(goal, style);
+
+  try {
+    const { error } = await supabaseClient
+      .from('profiles')
+      .update({
+        primary_goal:            goal,
+        preferred_training_style: style,
+        sport_activity_focus:    sport || null,
+        equipment_available:     equip,
+        injuries:                injuries,
+        archetype_blend:         blend,
+      })
+      .eq('id', _user.id);
+
+    if (error) throw error;
+
+    showStep(7);
+  } catch (err) {
+    errEl.textContent = `Save failed: ${err.message}`;
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Save & Start';
+  }
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  await initSupabase();
+
+  if (!supabaseClient) {
+    document.getElementById('auth-gate').classList.add('visible');
+    return;
+  }
+
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (!session) {
+    document.getElementById('auth-gate').classList.add('visible');
+    return;
+  }
+
+  _user = session.user;
+  document.getElementById('wizard-card').style.display = '';
+});
+</script>
+
+</body>
+</html>
