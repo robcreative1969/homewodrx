@@ -147,6 +147,50 @@
 
     .check-label { font-size: 0.875rem; font-weight: 500; color: var(--text); }
 
+    /* ── Weight pickers (dumbbell / kettlebell sub-sections) ──────── */
+    .weight-picker {
+      margin-top: 16px;
+      background: #fafafa;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .weight-picker-label {
+      font-size: 0.8rem; font-weight: 600; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.07em;
+      margin-bottom: 0;
+    }
+    .weight-picker-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .wt-toggle {
+      display: inline-flex; background: #e8e8e8;
+      border-radius: 20px; padding: 2px; gap: 2px; flex-shrink: 0;
+    }
+    .wt-btn {
+      padding: 3px 11px; border: none; border-radius: 18px;
+      font-size: 0.72rem; font-weight: 700; cursor: pointer;
+      background: none; color: var(--muted);
+      font-family: var(--font-body);
+      transition: background 0.15s, color 0.15s;
+    }
+    .wt-btn.wt-active { background: #fff; color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+    .weight-chip-grid {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .weight-chip {
+      display: inline-flex; align-items: center;
+      padding: 6px 14px;
+      border: 1.5px solid var(--border); border-radius: 20px;
+      font-size: 0.85rem; font-weight: 500; color: var(--text);
+      background: #fff; cursor: pointer; user-select: none;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+    }
+    .weight-chip:hover { border-color: #aaa; }
+    .weight-chip.selected { border-color: var(--red); background: var(--red-light); color: var(--red); }
+    .weight-chip input[type="checkbox"] { display: none; }
+
     /* ── Text input ────────────────────────────────────────────────── */
     .text-input {
       width: 100%; padding: 12px 14px;
@@ -380,29 +424,80 @@
         We found your equipment from your profile — update anything that's changed.
       </div>
       <div class="check-grid" id="equipment-grid">
-        <!-- Helper to stamp a check card without repeating the SVG everywhere -->
         <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="barbell"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Barbell</span></label>
         <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="dumbbells"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Dumbbells</span></label>
-        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="kettlebell"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Kettlebell</span></label>
-        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="pull-up bar"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Pull-up Bar / Rig</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="kettlebells"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Kettlebell(s)</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="pull_up_bar"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Pull-up Bar / Rig</span></label>
         <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="rings"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Rings</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="squat_rack"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Squat Rack</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="bench"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Bench</span></label>
         <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="rower"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Rowing Machine</span></label>
-        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="assault bike"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Assault / Echo Bike</span></label>
-        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="ski erg"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Ski Erg</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="bike"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Assault / Echo Bike</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="ski_erg"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Ski Erg</span></label>
         <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="treadmill"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Treadmill</span></label>
-        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="jump rope"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Jump Rope</span></label>
-        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="box"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Plyo Box</span></label>
-        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="wall ball"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Wall Ball</span></label>
-        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="medicine ball"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Medicine Ball</span></label>
-        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="slam ball"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Slam Ball</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="jump_rope"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Jump Rope</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="plyo_box"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Plyo Box</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="wall_ball"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Wall Ball</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="med_ball"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Medicine Ball</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="slam_ball"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Slam Ball</span></label>
         <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="sandbag"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Sandbag</span></label>
-        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="resistance bands"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Resistance Bands</span></label>
-        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="bodyweight only"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Bodyweight Only</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="ghd"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">GHD</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="cable_machine"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Cables</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="resistance_bands"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Resistance Bands</span></label>
+        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="bodyweight_only"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Bodyweight Only</span></label>
       </div>
       <div style="margin-top: 14px;">
         <label style="font-size:0.8rem; font-weight:600; color:var(--muted); display:block; margin-bottom:6px;">OTHER EQUIPMENT</label>
         <input type="text" class="text-input" id="equipment-other" placeholder="e.g. sled, GHD, dip bars, cable machine…" maxlength="120">
       </div>
+
+      <!-- Dumbbell weight picker — revealed when Dumbbells is checked -->
+      <div class="weight-picker" id="dumbbell-picker" style="display:none;">
+        <div class="weight-picker-header">
+          <div class="weight-picker-label" id="db-unit-label">Which dumbbell weights do you have? (lbs)</div>
+          <div class="wt-toggle">
+            <button class="wt-btn wt-active" data-u="lbs" onclick="setWeightUnit('lbs')">lbs</button>
+            <button class="wt-btn" data-u="kg" onclick="setWeightUnit('kg')">kg</button>
+          </div>
+        </div>
+        <div class="weight-chip-grid" id="dumbbell-weight-grid">
+          <label class="weight-chip" onclick="toggleWeightChip(this)"><input type="checkbox" value="5"><span>5</span></label>
+          <label class="weight-chip" onclick="toggleWeightChip(this)"><input type="checkbox" value="10"><span>10</span></label>
+          <label class="weight-chip" onclick="toggleWeightChip(this)"><input type="checkbox" value="15"><span>15</span></label>
+          <label class="weight-chip" onclick="toggleWeightChip(this)"><input type="checkbox" value="20"><span>20</span></label>
+          <label class="weight-chip" onclick="toggleWeightChip(this)"><input type="checkbox" value="25"><span>25</span></label>
+          <label class="weight-chip" onclick="toggleWeightChip(this)"><input type="checkbox" value="30"><span>30</span></label>
+          <label class="weight-chip" onclick="toggleWeightChip(this)"><input type="checkbox" value="35"><span>35</span></label>
+          <label class="weight-chip" onclick="toggleWeightChip(this)"><input type="checkbox" value="40"><span>40</span></label>
+          <label class="weight-chip" onclick="toggleWeightChip(this)"><input type="checkbox" value="45"><span>45</span></label>
+          <label class="weight-chip" onclick="toggleWeightChip(this)"><input type="checkbox" value="50"><span>50</span></label>
+          <label class="weight-chip" onclick="toggleWeightChip(this)"><input type="checkbox" value="55"><span>55</span></label>
+          <label class="weight-chip" onclick="toggleWeightChip(this)"><input type="checkbox" value="60"><span>60</span></label>
+        </div>
+        <div style="margin-top:10px;">
+          <input type="text" class="text-input" id="dumbbell-other" placeholder="Other weights in lbs, e.g. 70, 80…" maxlength="60" style="font-size:0.85rem; padding:8px 12px;">
+        </div>
+      </div>
+
+      <!-- Kettlebell weight picker — revealed when Kettlebell is checked -->
+      <div class="weight-picker" id="kettlebell-picker" style="display:none;">
+        <div class="weight-picker-header">
+          <div class="weight-picker-label" id="kb-unit-label">Which kettlebell weights do you have? (lbs)</div>
+        </div>
+        <div class="weight-chip-grid" id="kettlebell-weight-grid">
+          <label class="weight-chip" onclick="toggleWeightChip(this)"><input type="checkbox" value="18"><span>18</span></label>
+          <label class="weight-chip" onclick="toggleWeightChip(this)"><input type="checkbox" value="26"><span>26</span></label>
+          <label class="weight-chip" onclick="toggleWeightChip(this)"><input type="checkbox" value="35"><span>35</span></label>
+          <label class="weight-chip" onclick="toggleWeightChip(this)"><input type="checkbox" value="44"><span>44</span></label>
+          <label class="weight-chip" onclick="toggleWeightChip(this)"><input type="checkbox" value="53"><span>53</span></label>
+          <label class="weight-chip" onclick="toggleWeightChip(this)"><input type="checkbox" value="62"><span>62</span></label>
+          <label class="weight-chip" onclick="toggleWeightChip(this)"><input type="checkbox" value="70"><span>70</span></label>
+        </div>
+        <div style="margin-top:10px;">
+          <input type="text" class="text-input" id="kettlebell-other" placeholder="Other weights in lbs, e.g. 80, 88…" maxlength="60" style="font-size:0.85rem; padding:8px 12px;">
+        </div>
+      </div>
+
       <div class="step-nav">
         <button class="btn-back" onclick="goBack(4)">← Back</button>
         <button class="btn-next" onclick="goNext(4)">Continue</button>
@@ -469,7 +564,8 @@
    COMPANION ONBOARDING — HomeWodRX
    Collects 5 answers, computes archetype_blend, saves to profiles table.
    Fields written: primary_goal, preferred_training_style, sport_activity_focus,
-                   equipment_available, injuries, archetype_blend
+                   equipment_available, dumbbell_weights, kettlebell_weights,
+                   injuries, archetype_blend
 ═══════════════════════════════════════════════════════════════════════════ */
 
 let _user = null;
@@ -570,6 +666,67 @@ function toggleCheck(e, card) {
   const cb = card.querySelector('input[type="checkbox"]');
   cb.checked = !cb.checked;
   card.classList.toggle('selected', cb.checked);
+  // Show/hide weight pickers when dumbbells or kettlebell are toggled
+  if (cb.value === 'dumbbells') {
+    document.getElementById('dumbbell-picker').style.display = cb.checked ? '' : 'none';
+  }
+  if (cb.value === 'kettlebells') {
+    document.getElementById('kettlebell-picker').style.display = cb.checked ? '' : 'none';
+  }
+}
+
+// ── Weight unit toggle ────────────────────────────────────────────────────
+let _weightUnit = 'lbs';
+
+function lbsToDisplay(lbs) {
+  return _weightUnit === 'kg' ? Math.round(lbs * 0.453592) : lbs;
+}
+
+function setWeightUnit(u) {
+  _weightUnit = u;
+  // Update toggle buttons
+  document.querySelectorAll('.wt-btn[data-u]').forEach(b =>
+    b.classList.toggle('wt-active', b.dataset.u === u)
+  );
+  const unitLabel = u === 'kg' ? 'kg' : 'lbs';
+  // Update picker labels
+  const dbLabel = document.getElementById('db-unit-label');
+  const kbLabel = document.getElementById('kb-unit-label');
+  if (dbLabel) dbLabel.textContent = `Which dumbbell weights do you have? (${unitLabel})`;
+  if (kbLabel) kbLabel.textContent = `Which kettlebell weights do you have? (${unitLabel})`;
+  // Update chip spans
+  document.querySelectorAll('#dumbbell-weight-grid .weight-chip, #kettlebell-weight-grid .weight-chip')
+    .forEach(chip => {
+      const val = parseInt(chip.querySelector('input').value, 10);
+      chip.querySelector('span').textContent = lbsToDisplay(val);
+    });
+  // Update other-field placeholders
+  const dbOther = document.getElementById('dumbbell-other');
+  const kbOther = document.getElementById('kettlebell-other');
+  if (dbOther) dbOther.placeholder = u === 'kg'
+    ? 'Other weights in kg, e.g. 32, 36…'
+    : 'Other weights in lbs, e.g. 70, 80…';
+  if (kbOther) kbOther.placeholder = u === 'kg'
+    ? 'Other weights in kg, e.g. 36, 40…'
+    : 'Other weights in lbs, e.g. 80, 88…';
+  // If the other fields have values, convert them
+  [{ field: dbOther }, { field: kbOther }].forEach(({ field }) => {
+    if (!field || !field.value.trim()) return;
+    const nums = field.value.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n) && n > 0);
+    if (!nums.length) return;
+    // Convert: if switching to kg, assume values were lbs; if switching to lbs, assume values were kg
+    const converted = u === 'kg'
+      ? nums.map(n => Math.round(n * 0.453592))
+      : nums.map(n => Math.round(n / 0.453592));
+    field.value = converted.join(', ');
+  });
+}
+
+function toggleWeightChip(chip) {
+  event.preventDefault();
+  const cb = chip.querySelector('input[type="checkbox"]');
+  cb.checked = !cb.checked;
+  chip.classList.toggle('selected', cb.checked);
 }
 
 // ── Read answers ──────────────────────────────────────────────────────────
@@ -593,6 +750,33 @@ function getEquipment() {
     return [...checked, ...extras];
   }
   return checked;
+}
+
+function getWeightArray(gridId, otherId) {
+  // Collect checked preset weights (values are always in lbs)
+  const checked = Array.from(
+    document.querySelectorAll(`#${gridId} input[type="checkbox"]:checked`)
+  ).map(cb => parseInt(cb.value, 10));
+  // Parse freeform extras — convert from kg if the unit toggle is on kg
+  const otherVal = document.getElementById(otherId)?.value.trim() || '';
+  let extras = otherVal
+    ? otherVal.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n) && n > 0)
+    : [];
+  if (_weightUnit === 'kg') {
+    extras = extras.map(n => Math.round(n / 0.453592));
+  } else {
+    extras = extras.map(n => Math.round(n));
+  }
+  const all = [...new Set([...checked, ...extras])].sort((a, b) => a - b);
+  return all.length ? all : null;
+}
+
+function getDumbbellWeights() {
+  return getWeightArray('dumbbell-weight-grid', 'dumbbell-other');
+}
+
+function getKettlebellWeights() {
+  return getWeightArray('kettlebell-weight-grid', 'kettlebell-other');
 }
 
 // ── Summary ───────────────────────────────────────────────────────────────
@@ -625,11 +809,20 @@ function buildSummary() {
     ? `${topArchetype[0].replace(/_/g, ' ')} (${Math.round(topArchetype[1] * 100)}%)`
     : '—';
 
+  const dbWeights = getDumbbellWeights();
+  const kbWeights = getKettlebellWeights();
+
   const rows = [
     ['Goal',       GOAL_LABELS[goal]  || goal],
     ['Style',      STYLE_LABELS[style] || style],
     ['Pursuit',    sport || 'Not specified'],
     ['Equipment',  equip.length ? equip.join(', ') : 'None selected'],
+    ...(dbWeights ? [['Dumbbells', _weightUnit === 'kg'
+        ? dbWeights.map(w => Math.round(w * 0.453592)).join(', ') + ' kg'
+        : dbWeights.join(', ') + ' lbs']] : []),
+    ...(kbWeights ? [['Kettlebells', _weightUnit === 'kg'
+        ? kbWeights.map(w => Math.round(w * 0.453592)).join(', ') + ' kg'
+        : kbWeights.join(', ') + ' lbs']] : []),
     ['Limitations', injuries || 'None'],
     ['Archetype',  archetypeLabel],
   ];
@@ -669,6 +862,8 @@ async function saveProfile() {
         preferred_training_style: style,
         sport_activity_focus:    sport || null,
         equipment_available:     equip,
+        dumbbell_weights:        getDumbbellWeights(),
+        kettlebell_weights:      getKettlebellWeights(),
         injuries:                injuries,
         archetype_blend:         blend,
       })
@@ -693,6 +888,32 @@ function prefillQ1(value) {
     card.querySelector('input').checked = true;
     const btn = document.getElementById('next-1');
     if (btn) btn.disabled = false;
+  }
+}
+
+function prefillWeightChips(gridId, weights) {
+  if (!weights?.length) return;
+  const grid = document.getElementById(gridId);
+  if (!grid) return;
+  const leftover = [];
+  weights.forEach(w => {
+    const cb = grid.querySelector(`input[value="${w}"]`);
+    if (cb) {
+      cb.checked = true;
+      cb.closest('.weight-chip').classList.add('selected');
+    } else {
+      leftover.push(w); // not in preset list — goes into the Other field
+    }
+  });
+  if (leftover.length) {
+    const otherId = gridId === 'dumbbell-weight-grid' ? 'dumbbell-other' : 'kettlebell-other';
+    const otherField = document.getElementById(otherId);
+    if (otherField) {
+      const display = _weightUnit === 'kg'
+        ? leftover.map(w => Math.round(w * 0.453592))
+        : leftover;
+      otherField.value = display.join(', ');
+    }
   }
 }
 
@@ -742,11 +963,14 @@ window.addEventListener('DOMContentLoaded', async () => {
   try {
     const { data: profile } = await supabaseClient
       .from('profiles')
-      .select('primary_goal, sport_activity_focus, equipment_available, injuries')
+      .select('primary_goal, sport_activity_focus, equipment_available, dumbbell_weights, kettlebell_weights, injuries, preferred_units')
       .eq('id', _user.id)
       .single();
 
     if (profile) {
+      // Apply weight unit preference first (so chip labels render correctly before prefill)
+      if (profile.preferred_units === 'metric') setWeightUnit('kg');
+
       // Q1 — primary goal
       if (profile.primary_goal) prefillQ1(profile.primary_goal);
 
@@ -758,6 +982,21 @@ window.addEventListener('DOMContentLoaded', async () => {
       // Q4 — equipment (pre-check existing selections)
       if (profile.equipment_available?.length) {
         prefillEquipment(profile.equipment_available);
+        // If dumbbells/kettlebell were pre-checked, show their weight pickers
+        if (profile.equipment_available.includes('dumbbells')) {
+          document.getElementById('dumbbell-picker').style.display = '';
+        }
+        if (profile.equipment_available.includes('kettlebells')) {
+          document.getElementById('kettlebell-picker').style.display = '';
+        }
+      }
+
+      // Q4b — prefill specific weights if saved
+      if (profile.dumbbell_weights?.length) {
+        prefillWeightChips('dumbbell-weight-grid', profile.dumbbell_weights);
+      }
+      if (profile.kettlebell_weights?.length) {
+        prefillWeightChips('kettlebell-weight-grid', profile.kettlebell_weights);
       }
 
       // Q5 — injuries (pre-fill textarea)
