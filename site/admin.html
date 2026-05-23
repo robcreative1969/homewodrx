@@ -456,7 +456,7 @@
         </select>
         <select id="workouts-status" onchange="loadWorkouts()" style="background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:9px 12px;color:var(--tx);font-size:13px;outline:none">
           <option value="">All Status</option>
-          <option value="pending">⏳ Pending Review</option>
+          <option value="pending">Pending Review</option>
           <option value="public">Public Only</option>
           <option value="private">Private Only</option>
           <option value="featured">Featured</option>
@@ -1503,7 +1503,15 @@ function searchWorkouts(){
   renderWorkoutsTable();
 }
 function renderWorkoutsTable(){
-  const filtered=workoutsData.filter(w=>w.title?.toLowerCase().includes(workoutsSearch));
+  const status=document.getElementById('workouts-status')?.value||'';
+  const filtered=workoutsData.filter(w=>{
+    if(!w.title?.toLowerCase().includes(workoutsSearch))return false;
+    if(status==='pending')return w.is_public===true&&w.is_approved===false;
+    if(status==='public')return w.is_public===true&&w.is_approved===true;
+    if(status==='private')return w.is_public===false;
+    if(status==='featured')return w.is_featured===true;
+    return true;
+  });
   if(!filtered.length){document.getElementById('workouts-table-wrap').innerHTML='<p style="color:var(--mu)">No workouts found.</p>';return;}
   let html=`<table class="table"><thead><tr><th>Title</th><th>Creator</th><th>Format</th><th>Duration</th><th>Level</th><th>Focus</th><th>Status</th><th>Featured</th><th>Results</th><th>Actions</th></tr></thead><tbody>`;
   filtered.forEach(w=>{
