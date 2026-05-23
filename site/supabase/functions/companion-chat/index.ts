@@ -130,7 +130,7 @@ function buildSystemPrompt(profile: Profile, results: WorkoutResult[], liftPRs: 
 
   const equipmentList = profile.equipment_available?.length
     ? profile.equipment_available.join(', ')
-    : 'not specified'
+    : 'none — assume bodyweight movements only'
 
   const units = profile.preferred_units ?? 'imperial'
 
