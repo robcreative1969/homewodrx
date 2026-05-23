@@ -491,8 +491,12 @@
               <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="ghd"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>GHD</label>
               <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="cable_machine"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Cables</label>
               <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="resistance_bands"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Resistance Bands</label>
-              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="bodyweight_only"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Bodyweight Only</label>
             </div>
+            <!-- No-gear option — outside the equip-grid so it's never included in getSEquipment() -->
+            <button type="button" id="s-no-gear-btn" onclick="toggleSNoGear(this)"
+              style="width:100%;margin-top:10px;padding:11px 16px;border:1.5px solid var(--border);border-radius:var(--radius);background:var(--bg);color:var(--muted);font-size:0.85rem;font-weight:600;font-family:var(--font-body);cursor:pointer;text-align:left;transition:border-color .15s,color .15s,background .15s;">
+              I don't have any gear — just bodyweight
+            </button>
             <div style="margin-top:10px;">
               <input type="text" id="s-equipment-other" placeholder="Other equipment, e.g. sled, GHD, dip bars…" maxlength="120"
                 style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:0.85rem;font-family:var(--font-body);color:var(--text);background:var(--bg);outline:none;box-sizing:border-box;">
@@ -1065,6 +1069,9 @@ async function loadProfile() {
       if (data.equipment_available.includes('kettlebells')) {
         document.getElementById('s-kettlebell-picker').style.display = '';
       }
+    } else if (data.equipment_available !== null) {
+      // Empty array means user explicitly set no gear
+      setSNoGearActive(true);
     }
     // Apply weight unit preference before prefilling chips
     if (data.preferred_units === 'metric') setSWeightUnit('kg');
@@ -1136,6 +1143,34 @@ function toggleEquipCard(e, card) {
   if (cb.value === 'kettlebells') {
     document.getElementById('s-kettlebell-picker').style.display = cb.checked ? '' : 'none';
   }
+  // Selecting any real equipment deselects "I don't have any gear"
+  if (cb.checked) setSNoGearActive(false);
+}
+
+function toggleSNoGear(btn) {
+  const isActive = btn.classList.contains('s-no-gear-active');
+  if (isActive) {
+    setSNoGearActive(false);
+  } else {
+    // Deselect all equipment chips
+    document.querySelectorAll('#s-equipment-grid input[type="checkbox"]').forEach(cb => {
+      cb.checked = false;
+      cb.closest('.equip-card').classList.remove('selected');
+    });
+    document.getElementById('s-dumbbell-picker').style.display = 'none';
+    document.getElementById('s-kettlebell-picker').style.display = 'none';
+    setSNoGearActive(true);
+  }
+}
+
+function setSNoGearActive(active) {
+  const btn = document.getElementById('s-no-gear-btn');
+  if (!btn) return;
+  btn.classList.toggle('s-no-gear-active', active);
+  btn.style.borderColor = active ? 'var(--or)' : 'var(--border)';
+  btn.style.color       = active ? 'var(--or)' : 'var(--muted)';
+  btn.style.background  = active ? 'rgba(196,18,18,.06)' : 'var(--bg)';
+  btn.style.fontWeight  = active ? '700' : '600';
 }
 
 function toggleWeightChipS(e, chip) {

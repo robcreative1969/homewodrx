@@ -444,8 +444,12 @@
         <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="ghd"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">GHD</span></label>
         <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="cable_machine"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Cables</span></label>
         <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="resistance_bands"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Resistance Bands</span></label>
-        <label class="check-card" onclick="toggleCheck(event, this)"><input type="checkbox" value="bodyweight_only"><div class="check-box"><svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-label">Bodyweight Only</span></label>
       </div>
+      <!-- No-gear option — outside the equipment-grid so it's never included in the saved array -->
+      <button type="button" id="no-gear-btn" onclick="toggleNoGear(this)"
+        style="width:100%;margin-top:10px;padding:11px 16px;border:1.5px solid var(--border);border-radius:var(--radius);background:var(--bg);color:var(--muted);font-size:0.85rem;font-weight:600;font-family:var(--font-body);cursor:pointer;text-align:left;transition:border-color .15s,color .15s,background .15s;">
+        I don't have any gear — just bodyweight
+      </button>
       <div style="margin-top: 14px;">
         <label style="font-size:0.8rem; font-weight:600; color:var(--muted); display:block; margin-bottom:6px;">OTHER EQUIPMENT</label>
         <input type="text" class="text-input" id="equipment-other" placeholder="e.g. sled, GHD, dip bars, cable machine…" maxlength="120">
@@ -673,6 +677,34 @@ function toggleCheck(e, card) {
   if (cb.value === 'kettlebells') {
     document.getElementById('kettlebell-picker').style.display = cb.checked ? '' : 'none';
   }
+  // Selecting any real equipment deselects "I don't have any gear"
+  if (cb.checked) setNoGearActive(false);
+}
+
+function toggleNoGear(btn) {
+  const isActive = btn.classList.contains('no-gear-active');
+  if (isActive) {
+    setNoGearActive(false);
+  } else {
+    // Deselect all equipment chips
+    document.querySelectorAll('#equipment-grid input[type="checkbox"]').forEach(cb => {
+      cb.checked = false;
+      cb.closest('.check-card').classList.remove('selected');
+    });
+    document.getElementById('dumbbell-picker').style.display = 'none';
+    document.getElementById('kettlebell-picker').style.display = 'none';
+    setNoGearActive(true);
+  }
+}
+
+function setNoGearActive(active) {
+  const btn = document.getElementById('no-gear-btn');
+  if (!btn) return;
+  btn.classList.toggle('no-gear-active', active);
+  btn.style.borderColor  = active ? 'var(--or)' : 'var(--border)';
+  btn.style.color        = active ? 'var(--or)' : 'var(--muted)';
+  btn.style.background   = active ? 'rgba(196,18,18,.06)' : 'var(--bg)';
+  btn.style.fontWeight   = active ? '700' : '600';
 }
 
 // ── Weight unit toggle ────────────────────────────────────────────────────
@@ -989,6 +1021,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (profile.equipment_available.includes('kettlebells')) {
           document.getElementById('kettlebell-picker').style.display = '';
         }
+      } else if (profile.equipment_available !== null) {
+        // Empty array (not null) means user explicitly said no gear
+        setNoGearActive(true);
       }
 
       // Q4b — prefill specific weights if saved

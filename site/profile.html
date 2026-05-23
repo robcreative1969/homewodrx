@@ -683,28 +683,9 @@
       <div class="edit-sep">
         <span class="edit-sep-label">Equipment Available</span>
       </div>
-      <div class="equip-grid" id="equip-grid">
-        <button type="button" class="equip-chip" data-eq="barbell"        onclick="toggleEquip(this)">Barbell</button>
-        <button type="button" class="equip-chip" data-eq="dumbbells"      onclick="toggleEquip(this)">Dumbbells</button>
-        <button type="button" class="equip-chip" data-eq="kettlebells"    onclick="toggleEquip(this)">Kettlebells</button>
-        <button type="button" class="equip-chip" data-eq="pull_up_bar"    onclick="toggleEquip(this)">Pull-up Bar</button>
-        <button type="button" class="equip-chip" data-eq="rower"          onclick="toggleEquip(this)">Rower</button>
-        <button type="button" class="equip-chip" data-eq="bike"           onclick="toggleEquip(this)">Assault / Echo Bike</button>
-        <button type="button" class="equip-chip" data-eq="rings"          onclick="toggleEquip(this)">Rings</button>
-        <button type="button" class="equip-chip" data-eq="jump_rope"      onclick="toggleEquip(this)">Jump Rope</button>
-        <button type="button" class="equip-chip" data-eq="bodyweight_only"  onclick="toggleEquip(this)">Bodyweight Only</button>
-        <button type="button" class="equip-chip" data-eq="squat_rack"      onclick="toggleEquip(this)">Squat Rack</button>
-        <button type="button" class="equip-chip" data-eq="bench"           onclick="toggleEquip(this)">Bench</button>
-        <button type="button" class="equip-chip" data-eq="cable_machine"   onclick="toggleEquip(this)">Cables</button>
-        <button type="button" class="equip-chip" data-eq="med_ball"        onclick="toggleEquip(this)">Medicine Ball</button>
-        <button type="button" class="equip-chip" data-eq="slam_ball"       onclick="toggleEquip(this)">Slam Ball</button>
-        <button type="button" class="equip-chip" data-eq="treadmill"         onclick="toggleEquip(this)">Treadmill</button>
-        <button type="button" class="equip-chip" data-eq="plyo_box"         onclick="toggleEquip(this)">Plyo Box</button>
-        <button type="button" class="equip-chip" data-eq="ghd"              onclick="toggleEquip(this)">GHD</button>
-        <button type="button" class="equip-chip" data-eq="ski_erg"          onclick="toggleEquip(this)">Ski Erg</button>
-        <button type="button" class="equip-chip" data-eq="resistance_bands" onclick="toggleEquip(this)">Resistance Bands</button>
-        <button type="button" class="equip-chip" data-eq="wall_ball"        onclick="toggleEquip(this)">Wall Ball</button>
-        <button type="button" class="equip-chip" data-eq="sandbag"          onclick="toggleEquip(this)">Sandbag</button>
+      <div style="padding: 4px 0 8px; color: var(--muted); font-size: 0.85rem; line-height: 1.5;">
+        Equipment and weight preferences are managed in
+        <a href="/settings" style="color: var(--or); text-decoration: none; font-weight: 600;">Settings → Equipment</a>.
       </div>
 
       <!-- ── Health Notes ── -->
@@ -1147,12 +1128,6 @@ function renderProfile(data, isOwn) {
       document.getElementById('edit-training-style').value = data.preferred_training_style || '';
       toggleSportField();
 
-      // Equipment chips
-      var eq = Array.isArray(data.equipment_available) ? data.equipment_available : [];
-      document.querySelectorAll('#equip-grid .equip-chip').forEach(function(chip) {
-        chip.classList.toggle('on', eq.indexOf(chip.dataset.eq) !== -1);
-      });
-
       // Injuries
       var inj = Array.isArray(data.injuries) ? data.injuries : [];
       document.getElementById('edit-injuries').value = inj.join('\n');
@@ -1398,12 +1373,6 @@ async function saveProfile() {
       : wVal;
   }
 
-  // Equipment (JSONB array)
-  var equipment = [];
-  document.querySelectorAll('#equip-grid .equip-chip.on').forEach(function(chip) {
-    equipment.push(chip.dataset.eq);
-  });
-
   // Injuries / Medical (one entry per non-empty line)
   function linesTo(id) {
     return document.getElementById(id).value.trim()
@@ -1430,7 +1399,6 @@ async function saveProfile() {
     primary_goal:             document.getElementById('edit-primary-goal').value   || null,
     sport_activity_focus:     document.getElementById('edit-sport-focus').value.trim() || null,
     preferred_training_style: document.getElementById('edit-training-style').value || null,
-    equipment_available:      equipment,
     injuries:                 linesTo('edit-injuries'),
     medical_conditions:       linesTo('edit-medical'),
     updated_at:               new Date().toISOString(),
