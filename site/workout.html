@@ -1051,12 +1051,20 @@ function buildMetaStackHTML(w, isBm) {
     adminHtml += '<div class="admin-row"><button class="admin-delete-btn" onclick="deleteCurrentWorkout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg> Delete Workout</button></div>';
   }
 
+  var isAiSource = (w._source === 'ai');
+  var ctaCardHtml = isAiSource
+    ? '<div class="cta-card">' +
+        '<div class="ai-nudge">Built by your Training Companion — save to keep it.</div>' +
+        '<button class="cta-btn" id="ai-save-btn" onclick="saveAiWorkout()">SAVE TO MY WORKOUTS &rarr;</button>' +
+      '</div>'
+    : '<div class="cta-card">' +
+        '<h3>LOG RESULT</h3>' +
+        '<p>' + escHtml(ctaSub) + '</p>' +
+        '<button class="cta-btn" onclick="openResultModal()">LOG YOUR RESULT &rarr;</button>' +
+      '</div>';
+
   return '<div class="meta-stack">' +
-    '<div class="cta-card">' +
-      '<h3>LOG RESULT</h3>' +
-      '<p>' + escHtml(ctaSub) + '</p>' +
-      '<button class="cta-btn" onclick="openResultModal()">LOG YOUR RESULT &rarr;</button>' +
-    '</div>' +
+    ctaCardHtml +
     '<div class="action-col">' +
       '<a href="' + timerUrl + '" class="action-btn">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' +
@@ -1463,44 +1471,59 @@ async function loadWarmupCooldown(w) {
   if (!supabaseClient) return;
 
   try {
-    // Map WOD movement display names → canonical movements-table names where they differ
-    var MOVEMENT_NAME_MAP = {
-      'Run': 'Running',
-      'Row': 'Rowing',
-      'Row (Calories)': 'Rowing',
-      'Clean-and-Jerks': 'Clean and Jerks',
-      'Clean & Jerks': 'Clean and Jerks',
-      'Deadlift': 'Deadlifts',
-      'Back Squats': 'Back Squat',
-      'Push Presses': 'Push Press',
-      'Wall Ball Shots': 'Wall Balls',
-      'Sprint': 'Running',
-      'Run Backwards': 'Running',
-      'Shuttle Runs': 'Running',
-    };
+    var muscleTags;
+    var excludeNames;  // movement names to exclude from warm-up suggestions
 
-    // Clean WOD movement names: strip parenthetical qualifiers, then apply normalization map
-    var wodMovNames = (w.movements || []).map(function(m) {
-      var n = (m.name || '').replace(/\s*\([^)]*\)\s*/g, '').trim();
-      return MOVEMENT_NAME_MAP[n] || n;
-    }).filter(Boolean);
-    // Deduplicate (e.g. multiple Run segments all map to Running)
-    wodMovNames = wodMovNames.filter(function(v, i, a) { return a.indexOf(v) === i; });
-    if (!wodMovNames.length) return;
+    if (Array.isArray(w.muscle_groups) && w.muscle_groups.length) {
+      // AI-generated workout: muscle_groups provided directly — skip the DB name lookup
+      muscleTags   = w.muscle_groups.filter(function(mg) { return mg !== 'full'; });
+      excludeNames = (w.movements || []).map(function(m) {
+        return (m.name || '').replace(/\s*\([^)]*\)\s*/g, '').trim();
+      }).filter(Boolean);
+      excludeNames = excludeNames.filter(function(v, i, a) { return a.indexOf(v) === i; });
+    } else {
+      // Standard workout: resolve muscle_groups via movement name DB lookup
+      // Map WOD movement display names → canonical movements-table names where they differ
+      var MOVEMENT_NAME_MAP = {
+        'Run': 'Running',
+        'Row': 'Rowing',
+        'Row (Calories)': 'Rowing',
+        'Clean-and-Jerks': 'Clean and Jerks',
+        'Clean & Jerks': 'Clean and Jerks',
+        'Deadlift': 'Deadlifts',
+        'Back Squats': 'Back Squat',
+        'Push Presses': 'Push Press',
+        'Wall Ball Shots': 'Wall Balls',
+        'Sprint': 'Running',
+        'Run Backwards': 'Running',
+        'Shuttle Runs': 'Running',
+      };
 
-    // Fetch muscle_groups for the WOD's movements
-    var movRes = await supabaseClient
-      .from('movements')
-      .select('name, muscle_groups')
-      .in('name', wodMovNames);
-    if (movRes.error || !movRes.data || !movRes.data.length) return;
+      // Clean WOD movement names: strip parenthetical qualifiers, then apply normalization map
+      var wodMovNames = (w.movements || []).map(function(m) {
+        var n = (m.name || '').replace(/\s*\([^)]*\)\s*/g, '').trim();
+        return MOVEMENT_NAME_MAP[n] || n;
+      }).filter(Boolean);
+      // Deduplicate (e.g. multiple Run segments all map to Running)
+      wodMovNames = wodMovNames.filter(function(v, i, a) { return a.indexOf(v) === i; });
+      if (!wodMovNames.length) return;
 
-    // Aggregate unique muscle group tags (exclude 'full' — too generic for targeting)
-    var muscleSet = {};
-    movRes.data.forEach(function(m) {
-      (m.muscle_groups || []).forEach(function(mg) { if (mg !== 'full') muscleSet[mg] = true; });
-    });
-    var muscleTags = Object.keys(muscleSet);
+      // Fetch muscle_groups for the WOD's movements
+      var movRes = await supabaseClient
+        .from('movements')
+        .select('name, muscle_groups')
+        .in('name', wodMovNames);
+      if (movRes.error || !movRes.data || !movRes.data.length) return;
+
+      // Aggregate unique muscle group tags (exclude 'full' — too generic for targeting)
+      var muscleSet = {};
+      movRes.data.forEach(function(m) {
+        (m.muscle_groups || []).forEach(function(mg) { if (mg !== 'full') muscleSet[mg] = true; });
+      });
+      muscleTags   = Object.keys(muscleSet);
+      excludeNames = wodMovNames;
+    }
+
     if (!muscleTags.length) return;
 
     // Fetch cool-down stretches that overlap with WOD muscle groups
@@ -1511,13 +1534,15 @@ async function loadWarmupCooldown(w) {
       .limit(5);
 
     // Fetch warm-up movements: eligible + overlaps muscle tags + not already in the WOD
-    var warmupRes = await supabaseClient
+    var warmupQuery = supabaseClient
       .from('movements')
       .select('name, slug')
       .eq('warmup_eligible', true)
-      .overlaps('muscle_groups', muscleTags)
-      .not('name', 'in', '(' + wodMovNames.map(function(n) { return '"' + n + '"'; }).join(',') + ')')
-      .limit(4);
+      .overlaps('muscle_groups', muscleTags);
+    if (excludeNames && excludeNames.length) {
+      warmupQuery = warmupQuery.not('name', 'in', '(' + excludeNames.map(function(n) { return '"' + n + '"'; }).join(',') + ')');
+    }
+    var warmupRes = await warmupQuery.limit(4);
 
     // Render warm-up card
     if (warmupRes.data && warmupRes.data.length && warmupCard && warmupContainer) {
@@ -1543,6 +1568,67 @@ async function loadWarmupCooldown(w) {
     }
   } catch(e) {
     console.warn('loadWarmupCooldown error:', e);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SAVE AI WORKOUT
+// Called from the meta stack CTA when viewing an unsaved AI-generated workout.
+// Writes the workout to the DB, then redirects to the saved ?id= URL.
+// ─────────────────────────────────────────────────────────────────────────────
+async function saveAiWorkout() {
+  if (!currentWod || currentWod._source !== 'ai') return;
+
+  var btn = document.getElementById('ai-save-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+
+  try {
+    var user = currentUser || await db.getUser();
+    if (!user) {
+      openWorkoutAuthModal('login');
+      if (btn) { btn.disabled = false; btn.textContent = 'SAVE TO MY WORKOUTS →'; }
+      return;
+    }
+
+    var username = localStorage.getItem('hwrx_name')
+      || (user.email ? user.email.split('@')[0] : null)
+      || 'athlete';
+
+    // Build the record to insert — strip the internal _source marker
+    var payload = {
+      user_id:          user.id,
+      username:         username,
+      title:            currentWod.title,
+      format:           currentWod.format,
+      scoring_type:     currentWod.scoring_type,
+      duration_estimate: currentWod.duration_estimate || null,
+      scheme:           currentWod.scheme || null,
+      description:      currentWod.description || null,
+      movements:        currentWod.movements || [],
+      equipment:        currentWod.equipment || [],
+      muscle_groups:    currentWod.muscle_groups || [],
+      coaching_tips:    currentWod.coaching_tips || [],
+      is_public:        false,
+      source:           'ai',
+    };
+
+    var result = await db.saveWorkout(payload);
+    if (result.error) throw new Error(result.error.message || 'Save failed');
+
+    var newId = result.data && result.data.id;
+    if (!newId) throw new Error('No ID returned from save');
+
+    // Clear sessionStorage entry now that it's persisted
+    try { sessionStorage.removeItem('hwrx_ai_workout'); } catch(e) {}
+
+    // Redirect to the saved workout (canonical URL with ?id=)
+    window.location.href = '/workout.html?id=' + newId;
+
+  } catch(e) {
+    console.error('saveAiWorkout error:', e);
+    if (btn) { btn.disabled = false; btn.textContent = 'SAVE TO MY WORKOUTS →'; }
+    var errModal = document.getElementById('workout-auth-modal');
+    if (!errModal) alert('Save failed: ' + (e.message || 'Unknown error'));
   }
 }
 
@@ -2212,6 +2298,31 @@ async function loadWorkout() {
   if (!main) return;
 
   await initAuth();
+
+  // ── AI-generated workout: read from sessionStorage ─────────────────────────
+  var sourceParam = new URLSearchParams(window.location.search).get('source');
+  if (sourceParam === 'ai') {
+    try {
+      var raw = sessionStorage.getItem('hwrx_ai_workout');
+      if (raw) {
+        var aiWod = JSON.parse(raw);
+        aiWod._source = 'ai';
+        try { window._ALL_BENCHMARKS = (await db.getAllBenchmarks()) || []; } catch(e) { window._ALL_BENCHMARKS = []; }
+        currentWod = aiWod;
+        renderUserWodLayout(aiWod);
+        return;
+      }
+    } catch(e) {
+      console.warn('loadWorkout: failed to parse AI workout from sessionStorage', e);
+    }
+    main.innerHTML =
+      '<div class="error-wrap">' +
+        '<h2>Workout Not Found</h2>' +
+        '<p>This workout was generated by your Training Companion but couldn\'t be loaded. Open the companion and try again.</p>' +
+        '<a href="/" style="color:var(--or);font-weight:700">Back to Home &rarr;</a>' +
+      '</div>';
+    return;
+  }
 
   var slug    = getWorkoutSlug();
   var idParam = new URLSearchParams(window.location.search).get('id');
