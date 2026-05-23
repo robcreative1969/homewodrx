@@ -532,6 +532,7 @@ const Companion = {
   ACCESS_KEY:   'hwrx_companion',
   _session: null,
   _open: false,
+  _pendingWorkout: null,
 
   // ── Entry point ────────────────────────────────────────────────────
   async maybeInit(session) {
@@ -744,6 +745,9 @@ const Companion = {
         this._appendMsg('assistant', json.reply);
         if (json.action?.type === 'log_activity') {
           this._appendAction(json.action);
+        } else if (json.action?.type === 'generate_workout' && json.action.workout) {
+          this._pendingWorkout = json.action.workout;
+          this._appendWorkoutCard(json.action.workout);
         }
       }
     } catch (err) {
@@ -774,6 +778,50 @@ const Companion = {
       this._openLogModal(activityType);
     };
     document.getElementById('companion-messages')?.appendChild(btn);
+  },
+
+  _appendWorkoutCard(workout) {
+    // Replace any previous workout card (iteration)
+    document.getElementById('companion-workout-card')?.remove();
+
+    var h = function(s) {
+      return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    };
+
+    var title     = workout.title || 'Custom Workout';
+    var scheme    = workout.scheme || workout.format || '';
+    var durMin    = workout.duration_estimate;
+    var movements = Array.isArray(workout.movements) ? workout.movements : [];
+
+    var movLines = movements.slice(0, 5).map(function(m) {
+      return '<div class="cwc-mov"><span class="cwc-reps">' + h(m.reps) + '</span> ' + h(m.name) + '</div>';
+    }).join('');
+    if (movements.length > 5) {
+      movLines += '<div class="cwc-more">+' + (movements.length - 5) + ' more</div>';
+    }
+
+    var metaParts = [scheme, durMin ? durMin + ' min' : ''].filter(Boolean);
+    var metaStr   = metaParts.join(' · ');
+
+    var card = document.createElement('div');
+    card.id = 'companion-workout-card';
+    card.className = 'companion-workout-card';
+    card.innerHTML =
+      '<div class="cwc-title">' + h(title) + '</div>' +
+      (metaStr ? '<div class="cwc-meta">' + h(metaStr) + '</div>' : '') +
+      '<div class="cwc-movements">' + movLines + '</div>' +
+      '<button class="cwc-create-btn" onclick="Companion._openGeneratedWorkout()">Create Workout →</button>';
+
+    document.getElementById('companion-messages')?.appendChild(card);
+    this._scrollToBottom();
+  },
+
+  _openGeneratedWorkout() {
+    if (!this._pendingWorkout) return;
+    try {
+      sessionStorage.setItem('hwrx_ai_workout', JSON.stringify(this._pendingWorkout));
+    } catch(e) {}
+    window.location.href = '/workout.html?source=ai';
   },
 
   // ── Log Activity modal (global — works on any page) ───────────────
