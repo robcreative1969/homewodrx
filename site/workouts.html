@@ -732,7 +732,13 @@ function render() {
 
   if (isAll) {
     buildD20Archive(searchQuery).then(d20Count => {
-      document.getElementById('shown-count').textContent = benchmarkCount + d20Count;
+      const total = benchmarkCount + d20Count;
+      document.getElementById('shown-count').textContent = total;
+      if (total === 0) {
+        document.getElementById('d20-archive').style.display = 'none';
+        empty.style.display = '';
+        empty.classList.add('visible');
+      }
     });
   }
 
