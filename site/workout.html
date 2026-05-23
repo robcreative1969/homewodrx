@@ -1596,15 +1596,26 @@ async function saveAiWorkout() {
       || 'athlete';
 
     // Build the record to insert — strip the internal _source marker
+    // Derive body_focus from muscle_groups (take first non-cardio tag, or 'full body')
+    var mgTags = currentWod.muscle_groups || [];
+    var focusTag = mgTags.find(function(t) { return t !== 'cardio' && t !== 'full'; }) || null;
+    var bodyFocusMap = {
+      quads: 'Legs', hamstrings: 'Legs', glutes: 'Legs', posterior_chain: 'Back',
+      core: 'Core', shoulders: 'Shoulders', chest: 'Chest', back: 'Back', arms: 'Arms',
+    };
+    var bodyFocus = focusTag ? (bodyFocusMap[focusTag] || null) : (mgTags.includes('full') ? 'Full body' : null);
+
     var payload = {
       user_id:          user.id,
       username:         username,
       title:            currentWod.title,
       format:           currentWod.format,
       scoring_type:     currentWod.scoring_type,
-      duration:          currentWod.duration_estimate || null,
+      duration:         currentWod.duration_estimate || null,
       scheme:           currentWod.scheme || null,
       description:      currentWod.description || null,
+      level:            currentWod.level || null,
+      body_focus:       bodyFocus,
       movements:        currentWod.movements || [],
       equipment:        currentWod.equipment || [],
       muscle_groups:    currentWod.muscle_groups || [],
