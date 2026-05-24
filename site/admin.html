@@ -27,6 +27,9 @@
 }
 .admin-page{max-width:1248px;margin:0 auto;padding:32px 24px 80px}
 .admin-lock{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg,#faf9f7)}
+#auth-loading{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg,#faf9f7)}
+#auth-loading .spinner{width:32px;height:32px;border:3px solid var(--bd,#e5e7eb);border-top-color:var(--or,#C41212);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 .lock-card{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:40px;width:100%;max-width:400px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.08)}
 .lock-card h1{font-family:var(--font-head,'Bebas Neue',sans-serif);font-size:2rem;letter-spacing:.04em;margin-bottom:8px;color:var(--tx)}
 .lock-card p{color:var(--mu);font-size:14px;margin-bottom:24px}
@@ -164,6 +167,9 @@
 </head>
 <body data-nav-init="true" style="background:var(--bg,#faf9f7);color:var(--text,#1a1a1a)">
 
+<!-- AUTH LOADING STATE -->
+<div id="auth-loading"><div class="spinner"></div></div>
+
 <!-- LOCK SCREEN -->
 <!-- Confirm delete modal -->
 <div id="confirm-overlay" class="confirm-overlay">
@@ -177,7 +183,7 @@
   </div>
 </div>
 
-<div id="lock-screen" class="admin-lock">
+<div id="lock-screen" class="admin-lock" style="display:none">
   <div class="lock-card">
     <h1>Admin Panel</h1>
     <p id="lock-subtitle">Sign in with your admin account to access site controls.</p>
@@ -969,10 +975,11 @@ async function updatePassword(){
   // Check if this is a password reset callback
   const hash=window.location.hash;
   if(hash && hash.includes('type=recovery')){
-    // Supabase recovery flow — show new password form
+    document.getElementById('auth-loading').style.display='none';
     document.getElementById('login-form').style.display='none';
     document.getElementById('new-password-form').style.display='block';
     document.getElementById('lock-subtitle').textContent='Set your new password';
+    document.getElementById('lock-screen').style.display='flex';
     return;
   }
 
@@ -980,13 +987,15 @@ async function updatePassword(){
   if(user){
     const isAdmin=await db.isAdmin();
     if(isAdmin){
-      document.getElementById('lock-screen').style.display='none';
+      document.getElementById('auth-loading').style.display='none';
       document.getElementById('admin-panel').style.display='block';
       initAdmin();
       return;
     }
   }
-  // Not logged in or not admin — show lock screen (already visible by default)
+  // Not logged in or not admin — show lock screen
+  document.getElementById('auth-loading').style.display='none';
+  document.getElementById('lock-screen').style.display='flex';
 })();
 
 async function initAdmin(){
