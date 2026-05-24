@@ -238,8 +238,9 @@
 
   <!-- Stats Bar -->
   <div class="stats-bar">
-    <div class="stat-card"><div class="num" id="stat-benchmarks">—</div><div class="lbl">Benchmarks</div></div>
+    <div class="stat-card"><div class="num" id="stat-benchmarks">—</div><div class="lbl">WOD Library</div></div>
     <div class="stat-card"><div class="num" id="stat-workouts">—</div><div class="lbl">Community WODs</div></div>
+    <div class="stat-card"><div class="num" id="stat-ai">—</div><div class="lbl">AI WODs</div></div>
     <div class="stat-card"><div class="num" id="stat-results">—</div><div class="lbl">Total Results</div></div>
     <div class="stat-card"><div class="num" id="stat-users">—</div><div class="lbl">Athletes</div></div>
     <div class="stat-card"><div class="num" id="stat-nominations">—</div><div class="lbl">Nominations Pending</div></div>
@@ -466,6 +467,65 @@
         <span style="font-size:13px;color:var(--mu)"><strong id="workouts-count">0</strong> workouts</span>
       </div>
       <div id="workouts-table-wrap"><p style="color:var(--mu);font-size:14px">Loading workouts...</p></div>
+    </div>
+
+    <!-- Workout Edit Form -->
+    <div id="wf-form-section" class="section" style="display:none;margin-top:20px">
+      <h2 id="wf-form-title">Edit Workout</h2>
+      <div class="alert" id="wf-form-alert"></div>
+      <input type="hidden" id="wf-id">
+      <div style="margin-bottom:14px;font-size:12px;color:var(--mu)" id="wf-meta"></div>
+      <div class="grid-2">
+        <div class="field"><label>Title</label><input type="text" id="wf-title" placeholder="Workout name"></div>
+        <div class="field"><label>Format</label>
+          <select id="wf-format">
+            <option value="AMRAP">AMRAP</option>
+            <option value="EMOM">EMOM</option>
+            <option value="For Time">For Time</option>
+            <option value="Circuit">Circuit</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>Duration (minutes)</label><input type="number" id="wf-duration" min="1" max="120"></div>
+        <div class="field"><label>Level</label>
+          <select id="wf-level">
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>Body Focus</label>
+          <select id="wf-body-focus">
+            <option value="full-body">Full Body</option>
+            <option value="upper-body">Upper Body</option>
+            <option value="lower-body">Lower Body</option>
+            <option value="core">Core</option>
+            <option value="conditioning">Conditioning</option>
+          </select>
+        </div>
+        <div class="field"><label>Scoring Type</label>
+          <select id="wf-scoring-type">
+            <option value="time">Time</option>
+            <option value="rounds_reps">Rounds + Reps</option>
+            <option value="total_reps">Total Reps</option>
+            <option value="weight">Weight</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Description</label><textarea id="wf-description" rows="4" placeholder="What is this workout?"></textarea></div>
+      <div class="field"><label>Scoring Notes</label><textarea id="wf-scoring-notes" rows="2" placeholder="e.g. Target: 3+ rounds. Sub-10 min is elite."></textarea></div>
+      <div style="display:flex;gap:24px;margin-bottom:16px;flex-wrap:wrap">
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--tx);cursor:pointer"><input type="checkbox" id="wf-is-public"> Public</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--tx);cursor:pointer"><input type="checkbox" id="wf-is-approved"> Approved</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--tx);cursor:pointer"><input type="checkbox" id="wf-is-featured"> Featured</label>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <button class="save-btn" onclick="saveWorkout()">Save Changes</button>
+        <button class="del-btn" onclick="closeWorkoutForm()">Cancel</button>
+      </div>
     </div>
   </div>
 
@@ -947,13 +1007,14 @@ function setTodayDate(){
 
 async function loadStats(){
   if(!supabaseClient){
-    ['stat-benchmarks','stat-workouts','stat-results','stat-users','stat-nominations','stat-pending-review','stat-movements'].forEach(id=>document.getElementById(id).textContent='—');
+    ['stat-benchmarks','stat-workouts','stat-ai','stat-results','stat-users','stat-nominations','stat-pending-review','stat-movements'].forEach(id=>document.getElementById(id).textContent='—');
     return;
   }
   try{
-    const[bm,w,r,p,n,pr,mv]=await Promise.all([
-      supabaseClient.from('benchmarks').select('*',{count:'exact',head:true}),
-      supabaseClient.from('workouts').select('*',{count:'exact',head:true}),
+    const[bm,w,ai,r,p,n,pr,mv]=await Promise.all([
+      supabaseClient.from('benchmark_workouts').select('*',{count:'exact',head:true}),
+      supabaseClient.from('workouts').select('*',{count:'exact',head:true}).or('source.is.null,source.neq.ai'),
+      supabaseClient.from('workouts').select('*',{count:'exact',head:true}).eq('source','ai'),
       supabaseClient.from('results').select('*',{count:'exact',head:true}),
       supabaseClient.from('profiles').select('*',{count:'exact',head:true}),
       supabaseClient.from('workouts').select('*',{count:'exact',head:true}).eq('nomination_pending',true),
@@ -962,6 +1023,7 @@ async function loadStats(){
     ]);
     document.getElementById('stat-benchmarks').textContent=bm.count||0;
     document.getElementById('stat-workouts').textContent=w.count||0;
+    document.getElementById('stat-ai').textContent=ai.count||0;
     document.getElementById('stat-results').textContent=r.count||0;
     document.getElementById('stat-users').textContent=p.count||0;
     document.getElementById('stat-nominations').textContent=n.count||0;
@@ -1543,7 +1605,58 @@ async function rejectWorkout(id,title){
   if(error)showAlert('workouts-alert','Error: '+error.message,'err');
   else{showAlert('workouts-alert',`"${title}" rejected and removed.`,'ok');await loadWorkouts();await loadStats();}
 }
-async function editWorkout(id){alert('Inline edit coming soon. For now, use the generator page or edit directly in Supabase.');}
+async function editWorkout(id){
+  const w=workoutsData.find(x=>x.id===id);
+  if(!w){showAlert('workouts-alert','Workout not found.','err');return;}
+  const formSection=document.getElementById('wf-form-section');
+  document.getElementById('wf-form-title').textContent=`Edit: ${w.title||'Workout'}`;
+  document.getElementById('wf-id').value=w.id;
+  document.getElementById('wf-title').value=w.title||'';
+  document.getElementById('wf-format').value=w.format||'AMRAP';
+  document.getElementById('wf-duration').value=w.duration||20;
+  document.getElementById('wf-level').value=w.level||'intermediate';
+  document.getElementById('wf-body-focus').value=w.body_focus||'full-body';
+  document.getElementById('wf-scoring-type').value=w.scoring_type||'time';
+  document.getElementById('wf-description').value=w.description||'';
+  document.getElementById('wf-scoring-notes').value=w.scoring_notes||'';
+  document.getElementById('wf-is-public').checked=!!w.is_public;
+  document.getElementById('wf-is-approved').checked=!!w.is_approved;
+  document.getElementById('wf-is-featured').checked=!!w.is_featured;
+  const sourceLabel=w.source==='ai'?'<span class="pill pill-or" style="font-size:11px">AI-Generated</span>':'<span class="pill pill-mu" style="font-size:11px">Community</span>';
+  document.getElementById('wf-meta').innerHTML=`${sourceLabel} &nbsp;·&nbsp; Created ${new Date(w.created_at).toLocaleDateString()} &nbsp;·&nbsp; Creator: ${escHtml(w.username||w.user_id||'unknown')}`;
+  document.getElementById('wf-form-alert').textContent='';
+  document.getElementById('wf-form-alert').style.display='none';
+  formSection.style.display='block';
+  formSection.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function closeWorkoutForm(){
+  document.getElementById('wf-form-section').style.display='none';
+  document.getElementById('wf-id').value='';
+}
+async function saveWorkout(){
+  const id=document.getElementById('wf-id').value;
+  if(!id||!supabaseClient)return;
+  const row={
+    title:document.getElementById('wf-title').value.trim(),
+    format:document.getElementById('wf-format').value,
+    duration:parseInt(document.getElementById('wf-duration').value)||20,
+    level:document.getElementById('wf-level').value,
+    body_focus:document.getElementById('wf-body-focus').value,
+    scoring_type:document.getElementById('wf-scoring-type').value,
+    description:document.getElementById('wf-description').value.trim(),
+    scoring_notes:document.getElementById('wf-scoring-notes').value.trim(),
+    is_public:document.getElementById('wf-is-public').checked,
+    is_approved:document.getElementById('wf-is-approved').checked,
+    is_featured:document.getElementById('wf-is-featured').checked,
+  };
+  if(!row.title){showAlert('wf-form-alert','Title is required.','err');return;}
+  const{error}=await supabaseClient.from('workouts').update(row).eq('id',id);
+  if(error){showAlert('wf-form-alert','Error: '+error.message,'err');return;}
+  showAlert('wf-form-alert','Saved!','ok');
+  await loadWorkouts();
+  await loadStats();
+  setTimeout(()=>closeWorkoutForm(),1200);
+}
 async function deleteWorkout(id,title){
   if(!confirm(`Delete workout "${title}"?`))return;
   if(!supabaseClient)return;
