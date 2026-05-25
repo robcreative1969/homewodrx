@@ -1,5 +1,6 @@
 {
   "routes": [
+    { "src": "/sitemap\\.xml", "dest": "/api/sitemap" },
     { "src": "/generator",     "headers": { "Location": "/wodbuilder"     }, "status": 301 },
     { "src": "/generator.html","headers": { "Location": "/wodbuilder"     }, "status": 301 },
     { "src": "/stretch$",      "headers": { "Location": "/stretchbuilder" }, "status": 301 },

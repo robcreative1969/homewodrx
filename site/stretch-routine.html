@@ -323,7 +323,6 @@
 
 </div><!-- /page-wrap -->
 
-<script src="/js/stretch-routines-db.js"></script>
 <script>
 // ── Get slug from URL ───────────────────────────────────────────────────────
 function getSlug() {
@@ -376,14 +375,39 @@ function copyLink() {
 }
 
 // ── Render page ─────────────────────────────────────────────────────────────
-function render() {
+async function render() {
   var slug = getSlug();
-  var r = getRoutineBySlug(slug);
+  if (!slug || slug === 'stretch-routines') {
+    window.location.href = '/stretch-routines';
+    return;
+  }
 
-  if (!r) {
+  // Parallel fetch: this routine (full) + all routines (lightweight for related cards)
+  var results = await Promise.all([
+    supabaseClient
+      .from('stretch_routines')
+      .select('*')
+      .eq('slug', slug)
+      .single(),
+    supabaseClient
+      .from('stretch_routines')
+      .select('slug, name, icon, duration, level_label')
+      .order('name')
+  ]);
+
+  var routineRes = results[0];
+  var allRes     = results[1];
+
+  if (routineRes.error || !routineRes.data) {
     document.getElementById('not-found').style.display = 'block';
     return;
   }
+
+  var r = routineRes.data;
+  r.levelLabel = r.level_label; // normalize for render code below
+  r.stretches  = r.stretches || [];
+  r.benefits   = r.benefits  || [];
+  r.focus      = r.focus     || [];
 
   document.getElementById('routine-content').style.display = 'block';
 
@@ -459,12 +483,13 @@ function render() {
   document.getElementById('steps-list').innerHTML = stepsListHtml;
 
   // Related routines
-  var others = STRETCH_ROUTINES.filter(function(x) { return x.slug !== r.slug; }).slice(0, 4);
+  var allRoutines = (allRes.data || []);
+  var others = allRoutines.filter(function(x) { return x.slug !== slug; }).slice(0, 4);
   document.getElementById('related-grid').innerHTML = others.map(function(x) {
     return '<a href="/stretch-routines/' + x.slug + '" class="rel-card">'
       + '<div class="rel-icon">' + x.icon + '</div>'
       + '<div class="rel-name">' + x.name + '</div>'
-      + '<div class="rel-meta">⏱ ' + x.duration + ' min · ' + x.levelLabel + '</div>'
+      + '<div class="rel-meta">⏱ ' + x.duration + ' min · ' + x.level_label + '</div>'
       + '</a>';
   }).join('');
 }
