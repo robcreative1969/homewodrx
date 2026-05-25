@@ -1,5 +1,65 @@
 [
   {
+    "slug": "staying-motivated-solo-training",
+    "file": "/blog/staying-motivated-solo-training.html",
+    "title": "Staying Motivated When You Train Alone",
+    "excerpt": "No coach, no class energy, no one pushing you. Here's how solo athletes build the structure and habits that keep them consistent long after motivation fades.",
+    "category": "mindset",
+    "categoryLabel": "Mindset",
+    "date": "May 18, 2026",
+    "readTime": "7 min read"
+  },
+  {
+    "slug": "sleep-and-athletic-performance",
+    "file": "/blog/sleep-and-athletic-performance.html",
+    "title": "Sleep Is the Most Underrated Performance Tool You Already Have",
+    "excerpt": "No supplement, no training protocol, and no optimization closes the gap when you're chronically short on sleep. Here's what's actually happening — and how to fix it.",
+    "category": "recovery",
+    "categoryLabel": "Recovery",
+    "date": "May 15, 2026",
+    "readTime": "8 min read"
+  },
+  {
+    "slug": "finding-balance-in-life",
+    "file": "/blog/finding-balance-in-life.html",
+    "title": "Finding Balance: How to Keep Training Without Letting It Take Over Your Life",
+    "excerpt": "Guilt when you miss a session. Irritability when life interrupts the plan. There's a version of fitness enthusiasm that quietly turns toxic — and none of it makes you a better athlete.",
+    "category": "recovery",
+    "categoryLabel": "Recovery",
+    "date": "May 15, 2026",
+    "readTime": "7 min read"
+  },
+  {
+    "slug": "garage-gym-all-seasons",
+    "file": "/blog/garage-gym-all-seasons.html",
+    "title": "A Garage for All Seasons: How to Stay Motivated to Train All Year Long",
+    "excerpt": "Summer heat, winter darkness, spring restarts — the garage gym tests you in every season. Here's how to show up anyway.",
+    "category": "training",
+    "categoryLabel": "Training",
+    "date": "May 15, 2026",
+    "readTime": "7 min read"
+  },
+  {
+    "slug": "glp1-fitness-guide",
+    "file": "/blog/glp1-fitness-guide.html",
+    "title": "What's Going On in the World of GLP-1: What Athletes Need to Know",
+    "excerpt": "Ozempic, Wegovy, Mounjaro — GLP-1 drugs are everywhere. Here's what the research actually says about muscle, training, and performance.",
+    "category": "health",
+    "categoryLabel": "Health & Performance",
+    "date": "May 15, 2026",
+    "readTime": "8 min read"
+  },
+  {
+    "slug": "best-gear-car-vacation",
+    "file": "/blog/best-gear-car-vacation.html",
+    "title": "The Best Fitness Gear to Pack for a Car Vacation",
+    "excerpt": "Long drives wreck your hips and kill your routine. A small kit of the right gear keeps you moving — and fits in a bag you'd already have packed.",
+    "category": "equipment",
+    "categoryLabel": "Gear",
+    "date": "May 15, 2026",
+    "readTime": "6 min read"
+  },
+  {
     "slug": "wod-formats-explained",
     "file": "/blog/wod-formats-explained.html",
     "title": "AMRAP, For Time, EMOM: Understanding WOD Formats Without the Jargon",
