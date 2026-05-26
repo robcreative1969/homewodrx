@@ -487,9 +487,8 @@ async function render() {
   var others = allRoutines.filter(function(x) { return x.slug !== slug; }).slice(0, 4);
   document.getElementById('related-grid').innerHTML = others.map(function(x) {
     return '<a href="/stretch-routines/' + x.slug + '" class="rel-card">'
-      + '<div class="rel-icon">' + x.icon + '</div>'
       + '<div class="rel-name">' + x.name + '</div>'
-      + '<div class="rel-meta">⏱ ' + x.duration + ' min · ' + x.level_label + '</div>'
+      + '<div class="rel-meta">' + x.duration + ' min · ' + x.level_label + '</div>'
       + '</a>';
   }).join('');
 }
