@@ -32,12 +32,20 @@ const STATIC_PAGES = [
 // ── Blog posts (static files — update when new posts are published) ───────────
 // Only include posts confirmed live on the site. Add slugs here when new posts go up.
 const BLOG_SLUGS = [
+  'best-gear-car-vacation',
   'best-home-gym-equipment',
   'building-garage-gym',
+  'day-by-day-fitness-mindset',
+  'finding-balance-in-life',
+  'garage-gym-all-seasons',
+  'glp1-fitness-guide',
   'hero-wod-guide',
   'how-to-scale-wods',
   'named-benchmark-wods-guide',
   'rogue-vs-titan-home-gym',
+  'sleep-and-athletic-performance',
+  'staying-connected-fitness',
+  'staying-motivated-solo-training',
   'weekly-training-program-home',
   'why-stretching-matters',
   'wod-formats-explained',
