@@ -2255,7 +2255,7 @@ async function bcCall(payload, alertId, countId) {
   el.className = 'alert alert-info vis';
   if (countId) document.getElementById(countId).textContent = '';
 
-  const SUPABASE_URL = window.SUPABASE_URL || (typeof CONFIG !== 'undefined' && CONFIG.supabaseUrl) || '';
+  const SUPABASE_URL = 'https://irtppmztpcakanhefljs.supabase.co';
   const secret = window.BROADCAST_SECRET
     || prompt('Enter broadcast admin secret (stored in BROADCAST_ADMIN_SECRET env var):');
   if (!secret) { el.textContent = 'Cancelled — no secret provided.'; el.className='alert alert-err vis'; return; }
