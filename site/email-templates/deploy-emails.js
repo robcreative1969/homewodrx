@@ -6,31 +6,32 @@
  * to your Supabase project in one shot.
  *
  * USAGE:
- *   1. Fill in your credentials in the CONFIG section below
+ *   1. Set environment variables (see below)
  *   2. Run:  node deploy-emails.js
  *
  * REQUIREMENTS:
  *   - Node.js 18+ (uses built-in fetch)
- *   - A Supabase Personal Access Token (not the service role key)
+ *   - SUPABASE_TOKEN: a Supabase Personal Access Token (not the service role key)
  *     → Get one at: https://supabase.com/dashboard/account/tokens
- *   - A Resend API key (after setting up Resend with your domain)
+ *   - RESEND_API_KEY: your Resend API key
  *     → Get one at: https://resend.com/api-keys
+ *
+ * EXAMPLE:
+ *   SUPABASE_TOKEN=sbp_xxx RESEND_API_KEY=re_xxx node deploy-emails.js
  */
 
 const fs = require('fs');
 const path = require('path');
 
 // ============================================================
-//  CONFIG — Fill these in before running
+//  CONFIG — credentials read from environment variables
 // ============================================================
 const CONFIG = {
-  // Supabase Personal Access Token
-  // → https://supabase.com/dashboard/account/tokens
-  supabaseToken: 'sbp_v0_ea086a3e5ff7d5f6229dac4e9652922e3883d43f',
+  // Set via: export SUPABASE_TOKEN=sbp_...
+  supabaseToken: process.env.SUPABASE_TOKEN || '',
 
-  // Your Resend API key
-  // → https://resend.com/api-keys
-  resendApiKey: 're_H1gzhPDL_C5HNBWdyp42jL1rdBHft1HGG',
+  // Set via: export RESEND_API_KEY=re_...
+  resendApiKey: process.env.RESEND_API_KEY || '',
 
   // Sender details
   senderEmail: 'noreply@homewodrx.com',
@@ -48,12 +49,14 @@ function readTemplate(filename) {
 
 async function deploy() {
   // Validate config
-  if (CONFIG.supabaseToken === 'YOUR_SUPABASE_PERSONAL_ACCESS_TOKEN') {
-    console.error('❌  Please set your Supabase Personal Access Token in the CONFIG section.');
+  if (!CONFIG.supabaseToken) {
+    console.error('❌  SUPABASE_TOKEN environment variable is not set.');
+    console.error('    Run: export SUPABASE_TOKEN=sbp_...');
     process.exit(1);
   }
-  if (CONFIG.resendApiKey === 'YOUR_RESEND_API_KEY') {
-    console.error('❌  Please set your Resend API key in the CONFIG section.');
+  if (!CONFIG.resendApiKey) {
+    console.error('❌  RESEND_API_KEY environment variable is not set.');
+    console.error('    Run: export RESEND_API_KEY=re_...');
     process.exit(1);
   }
 
