@@ -675,14 +675,6 @@
 
       <div class="section-eyebrow">Notifications</div>
 
-      <!-- Coming soon note -->
-      <div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:var(--radius);padding:14px 18px;display:flex;align-items:flex-start;gap:10px;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span style="font-size:0.8rem;color:#92400e;line-height:1.6;">
-          <strong>Email notifications are coming soon.</strong> Your preferences below are saved but no emails are sent yet. We'll flip the switch once the email system is fully live.
-        </span>
-      </div>
-
       <div class="s-card">
         <div class="s-card-hdr">
           <div class="s-card-title">Email Notifications</div>
@@ -698,20 +690,6 @@
             <div class="toggle-wrap">
               <label class="toggle">
                 <input type="checkbox" id="notif-daily" onchange="markNotifDirty()"/>
-                <span class="toggle-track"></span>
-                <span class="toggle-thumb"></span>
-              </label>
-            </div>
-          </div>
-
-          <div class="inline-row">
-            <div class="inline-label">
-              <strong>Weekly Training Summary</strong>
-              <span>A recap of your workouts and PRs from the past week</span>
-            </div>
-            <div class="toggle-wrap">
-              <label class="toggle">
-                <input type="checkbox" id="notif-weekly" onchange="markNotifDirty()"/>
                 <span class="toggle-track"></span>
                 <span class="toggle-thumb"></span>
               </label>
@@ -788,14 +766,6 @@
     <div class="settings-section" id="section-privacy">
 
       <div class="section-eyebrow">Privacy</div>
-
-      <!-- Status note -->
-      <div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:var(--radius);padding:14px 18px;display:flex;align-items:flex-start;gap:10px;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span style="font-size:0.8rem;color:#92400e;line-height:1.6;">
-          <strong>Privacy controls are being rolled out.</strong> Your choices below are saved to your account. Full enforcement — profile page gating, search filtering, and leaderboard opt-out — is being wired up now.
-        </span>
-      </div>
 
       <!-- Profile visibility -->
       <div class="s-card">
@@ -1021,11 +991,12 @@ async function loadProfile() {
 
     // Notifications
     const notif = data.notifications || {};
-    document.getElementById('notif-daily').checked   = notif.daily   !== false;
-    document.getElementById('notif-weekly').checked  = notif.weekly  !== false;
-    document.getElementById('notif-content').checked = notif.content !== true; // default off
-    document.getElementById('notif-product').checked = notif.product !== false;
-    document.getElementById('notif-tips').checked    = notif.tips    !== true;
+    // All email preferences are opt-in: only checked if explicitly saved as true.
+    // (The digest sender only emails users with notifications.daily === true.)
+    document.getElementById('notif-daily').checked   = notif.daily   === true;
+    document.getElementById('notif-content').checked = notif.content === true;
+    document.getElementById('notif-product').checked = notif.product === true;
+    document.getElementById('notif-tips').checked    = notif.tips    === true;
 
     // Update notif card desc with real email
     document.getElementById('notif-email-desc').textContent =
@@ -1353,7 +1324,6 @@ function markNotifDirty() {
 async function saveNotifications() {
   const notif = {
     daily:   document.getElementById('notif-daily').checked,
-    weekly:  document.getElementById('notif-weekly').checked,
     content: document.getElementById('notif-content').checked,
     product: document.getElementById('notif-product').checked,
     tips:    document.getElementById('notif-tips').checked,
