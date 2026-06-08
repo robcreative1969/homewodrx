@@ -698,12 +698,12 @@
 
           <div class="inline-row">
             <div class="inline-label">
-              <strong>New Movements &amp; Content</strong>
-              <span>Alerts when new technique guides or stretches are added</span>
+              <strong>New Blog Posts</strong>
+              <span>Get notified when a new article is published on the blog</span>
             </div>
             <div class="toggle-wrap">
               <label class="toggle">
-                <input type="checkbox" id="notif-content" onchange="markNotifDirty()"/>
+                <input type="checkbox" id="notif-blog" onchange="markNotifDirty()"/>
                 <span class="toggle-track"></span>
                 <span class="toggle-thumb"></span>
               </label>
@@ -994,7 +994,7 @@ async function loadProfile() {
     // All email preferences are opt-in: only checked if explicitly saved as true.
     // (The digest sender only emails users with notifications.daily === true.)
     document.getElementById('notif-daily').checked   = notif.daily   === true;
-    document.getElementById('notif-content').checked = notif.content === true;
+    document.getElementById('notif-blog').checked    = (notif.blog ?? notif.content) === true;
     document.getElementById('notif-product').checked = notif.product === true;
     document.getElementById('notif-tips').checked    = notif.tips    === true;
 
@@ -1324,7 +1324,7 @@ function markNotifDirty() {
 async function saveNotifications() {
   const notif = {
     daily:   document.getElementById('notif-daily').checked,
-    content: document.getElementById('notif-content').checked,
+    blog:    document.getElementById('notif-blog').checked,
     product: document.getElementById('notif-product').checked,
     tips:    document.getElementById('notif-tips').checked,
   };

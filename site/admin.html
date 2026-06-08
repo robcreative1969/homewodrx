@@ -265,6 +265,7 @@
     <button class="tab-btn" onclick="showAdminTab('workouts')">Workouts</button>
     <button class="tab-btn" onclick="showAdminTab('benchmarks')">Benchmarks</button>
     <button class="tab-btn" onclick="showAdminTab('movements')">Movements</button>
+    <button class="tab-btn" onclick="showAdminTab('broadcast')">📣 Broadcast</button>
   </div>
 
   <!-- ─── TAB: DAILY WOD ──────────────────────────────────── -->
@@ -723,6 +724,102 @@
       </div>
     </div>
   </div>
+
+  <!-- ─── TAB: BROADCAST ──────────────────────────────────── -->
+  <div id="tab-broadcast" class="tab-pane">
+
+    <!-- ── New Blog Post Notification ──────────────────────────── -->
+    <div class="section">
+      <h2>New Blog Post Notification</h2>
+      <p class="desc">Sends to all users with <strong>New Blog Posts</strong> email enabled. Pick a post or fill in manually.</p>
+      <div class="alert" id="bc-blog-alert"></div>
+
+      <div class="field">
+        <label>Pick a post (auto-fills fields below)</label>
+        <select id="bc-blog-picker" onchange="bcPickPost(this.value)" style="background:var(--dk2);border:1px solid var(--bd);border-radius:7px;padding:10px 12px;color:var(--tx);font-size:13px;outline:none;width:100%;max-width:560px">
+          <option value="">— Choose from published posts —</option>
+        </select>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Post Title</label>
+          <input type="text" id="bc-blog-title" placeholder="e.g. Kettlebell-Only WODs: Complete Conditioning...">
+        </div>
+        <div class="field">
+          <label>Category</label>
+          <input type="text" id="bc-blog-category" placeholder="e.g. Training">
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label>Post URL</label>
+          <input type="url" id="bc-blog-url" placeholder="https://homewodrx.com/blog/slug">
+        </div>
+        <div class="field">
+          <label>Reading Time (e.g. "7 min read")</label>
+          <input type="text" id="bc-blog-reading-time" placeholder="7 min read">
+        </div>
+      </div>
+      <div class="field">
+        <label>Excerpt (shown in email body + preview text)</label>
+        <textarea id="bc-blog-excerpt" rows="3" placeholder="A short, punchy 1–2 sentence description of what the post covers."></textarea>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:center;margin-top:8px">
+        <button class="save-btn" onclick="bcSendBlog()">Send to Blog Subscribers</button>
+        <button class="save-btn" style="background:var(--dk2);color:var(--tx);border:1px solid var(--bd)" onclick="bcTestBlog()">Send Test to My Email</button>
+        <span id="bc-blog-count" style="font-size:13px;color:var(--mu)"></span>
+      </div>
+    </div>
+
+    <!-- ── Product Announcement Broadcast ──────────────────────── -->
+    <div class="section" style="margin-top:32px">
+      <h2>Product Announcement</h2>
+      <p class="desc">Sends to all users with <strong>Product Updates &amp; Announcements</strong> email enabled. Use intentionally — this is a manual broadcast.</p>
+      <div class="alert" id="bc-ann-alert"></div>
+
+      <div class="field">
+        <label>Email Subject Line</label>
+        <input type="text" id="bc-ann-subject" placeholder="e.g. Introducing the AI Training Companion">
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label>Eyebrow Label</label>
+          <input type="text" id="bc-ann-eyebrow" value="What's New" placeholder="e.g. What's New / New Feature / Big News">
+        </div>
+        <div class="field">
+          <label>Headline</label>
+          <input type="text" id="bc-ann-headline" placeholder="e.g. Meet your AI Training Companion">
+        </div>
+      </div>
+      <div class="field">
+        <label>Body (HTML supported — use &lt;p&gt; tags for paragraphs)</label>
+        <textarea id="bc-ann-body" rows="6" placeholder="&lt;p&gt;We've been building something big...&lt;/p&gt;&#10;&lt;p&gt;Describe the feature or update here.&lt;/p&gt;"></textarea>
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label>CTA Button Label (optional)</label>
+          <input type="text" id="bc-ann-cta-label" placeholder="e.g. Try It Now">
+        </div>
+        <div class="field">
+          <label>CTA URL (optional)</label>
+          <input type="url" id="bc-ann-cta-url" placeholder="https://homewodrx.com/...">
+        </div>
+      </div>
+      <div class="field">
+        <label>Preview Text (shown in inbox before email is opened)</label>
+        <input type="text" id="bc-ann-preview" placeholder="e.g. We just shipped something that changes how you train at home.">
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:center;margin-top:8px">
+        <button class="save-btn" onclick="bcSendAnnouncement()" style="background:#b45309">Send Announcement</button>
+        <button class="save-btn" style="background:var(--dk2);color:var(--tx);border:1px solid var(--bd)" onclick="bcTestAnnouncement()">Send Test to My Email</button>
+        <span id="bc-ann-count" style="font-size:13px;color:var(--mu)"></span>
+      </div>
+    </div>
+
+  </div><!-- /tab-broadcast -->
 
 </div><!-- /admin-page -->
 </div><!-- /admin-panel -->
@@ -1340,6 +1437,7 @@ function showAdminTab(tab){
   if(tab==='workouts')loadWorkouts();
   if(tab==='benchmarks')loadBenchmarksAdmin();
   if(tab==='movements')loadMovementsAdmin();
+  if(tab==='broadcast')initBroadcast();
 }
 
 function showAlert(id,msg,type){
@@ -2068,6 +2166,152 @@ async function deleteBenchmarkFromForm(){
   showAlert('benchmarks-alert','Benchmark deleted.','ok');
   closeBenchmarkForm();
   await loadBenchmarksAdmin();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// BROADCAST
+// Calls the send-broadcast Edge Function, which handles recipient queries,
+// template rendering, and Resend delivery.
+// Required secret: BROADCAST_ADMIN_SECRET (set in Supabase Edge Function secrets,
+// must also be stored in config.js as BROADCAST_SECRET or entered at runtime).
+// ─────────────────────────────────────────────────────────────────────────────
+
+const BLOG_POSTS = [
+  { slug:"kettlebell-only-wods",      title:"Kettlebell-Only WODs: Complete Conditioning With One Piece of Iron",     category:"Training",  readTime:"7 min read" },
+  { slug:"day-by-day-fitness-mindset", title:"Taking It Day by Day: The Case for Small, Consistent Wins",              category:"Mindset",   readTime:"6 min read" },
+  { slug:"staying-connected-fitness",  title:"How to Stay Connected to Your Fitness When Life Gets in the Way",        category:"Mindset",   readTime:"6 min read" },
+  { slug:"staying-motivated-solo-training", title:"Staying Motivated When You Train Alone",                            category:"Mindset",   readTime:"5 min read" },
+  { slug:"sleep-and-athletic-performance",  title:"Sleep Is the Most Underrated Performance Tool You Already Have",    category:"Recovery",  readTime:"7 min read" },
+];
+
+let _bcInitDone = false;
+
+function initBroadcast() {
+  if (_bcInitDone) return;
+  _bcInitDone = true;
+  const sel = document.getElementById('bc-blog-picker');
+  BLOG_POSTS.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p.slug;
+    opt.textContent = p.title;
+    sel.appendChild(opt);
+  });
+  // Also load full list from blog-posts.json if accessible
+  fetch('/blog-posts.json').then(r=>r.json()).then(posts=>{
+    sel.innerHTML = '<option value="">— Choose from published posts —</option>';
+    posts.forEach(p=>{
+      const opt=document.createElement('option');
+      opt.value=p.slug;
+      opt.textContent=p.title;
+      sel.appendChild(opt);
+    });
+    // Extend local cache
+    window._bcPostsCache = posts;
+  }).catch(()=>{ window._bcPostsCache = BLOG_POSTS; });
+}
+
+function bcPickPost(slug) {
+  if (!slug) return;
+  const posts = window._bcPostsCache || BLOG_POSTS;
+  const p = posts.find(x => x.slug === slug);
+  if (!p) return;
+  document.getElementById('bc-blog-title').value        = p.title || '';
+  document.getElementById('bc-blog-category').value     = p.category ? (p.category.charAt(0).toUpperCase()+p.category.slice(1)) : '';
+  document.getElementById('bc-blog-url').value          = `https://homewodrx.com/blog/${p.slug}`;
+  document.getElementById('bc-blog-reading-time').value = p.readTime || '';
+  // excerpt is manual — clear so admin fills it in
+  document.getElementById('bc-blog-excerpt').value = '';
+}
+
+function bcBlogPayload(testEmail) {
+  return {
+    type: 'blog',
+    test_email: testEmail || null,
+    post_title:    document.getElementById('bc-blog-title').value.trim(),
+    post_url:      document.getElementById('bc-blog-url').value.trim(),
+    post_excerpt:  document.getElementById('bc-blog-excerpt').value.trim(),
+    post_category: document.getElementById('bc-blog-category').value.trim(),
+    reading_time:  document.getElementById('bc-blog-reading-time').value.trim(),
+  };
+}
+
+function bcAnnPayload(testEmail) {
+  return {
+    type: 'announcement',
+    test_email:   testEmail || null,
+    subject:      document.getElementById('bc-ann-subject').value.trim(),
+    eyebrow:      document.getElementById('bc-ann-eyebrow').value.trim() || 'What\'s New',
+    headline:     document.getElementById('bc-ann-headline').value.trim(),
+    body_html:    document.getElementById('bc-ann-body').value.trim(),
+    preview_text: document.getElementById('bc-ann-preview').value.trim(),
+    cta_label:    document.getElementById('bc-ann-cta-label').value.trim(),
+    cta_url:      document.getElementById('bc-ann-cta-url').value.trim(),
+  };
+}
+
+async function bcCall(payload, alertId, countId) {
+  const el = document.getElementById(alertId);
+  el.textContent = 'Sending…';
+  el.className = 'alert alert-info vis';
+  if (countId) document.getElementById(countId).textContent = '';
+
+  const SUPABASE_URL = window.SUPABASE_URL || (typeof CONFIG !== 'undefined' && CONFIG.supabaseUrl) || '';
+  const secret = window.BROADCAST_SECRET
+    || prompt('Enter broadcast admin secret (stored in BROADCAST_ADMIN_SECRET env var):');
+  if (!secret) { el.textContent = 'Cancelled — no secret provided.'; el.className='alert alert-err vis'; return; }
+  window.BROADCAST_SECRET = secret; // cache for session
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/send-broadcast`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-broadcast-secret': secret },
+      body: JSON.stringify(payload),
+    });
+    const json = await res.json().catch(()=>({}));
+    if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
+    const sent = json.sent ?? json.count ?? '?';
+    const msg  = payload.test_email
+      ? `✅ Test sent to ${payload.test_email}`
+      : `✅ Sent to ${sent} subscriber${sent===1?'':'s'}`;
+    el.textContent = msg;
+    el.className = 'alert alert-ok vis';
+    if (countId) document.getElementById(countId).textContent = `Last send: ${sent} recipients`;
+  } catch(e) {
+    el.textContent = 'Error: ' + (e.message || 'Unknown error');
+    el.className = 'alert alert-err vis';
+  }
+}
+
+async function bcSendBlog() {
+  const p = bcBlogPayload();
+  if (!p.post_title || !p.post_url || !p.post_excerpt) {
+    showAlert('bc-blog-alert','Title, URL, and excerpt are required.','err'); return;
+  }
+  if (!confirm(`Send blog notification to ALL subscribers?\n\n"${p.post_title}"\n\nThis cannot be undone.`)) return;
+  await bcCall(p, 'bc-blog-alert', 'bc-blog-count');
+}
+
+async function bcTestBlog() {
+  const p = bcBlogPayload();
+  if (!p.post_title) { showAlert('bc-blog-alert','Fill in at least the title before testing.','err'); return; }
+  const { data:{ user } } = await supabaseClient.auth.getUser();
+  await bcCall({...p, test_email: user?.email || ''}, 'bc-blog-alert', null);
+}
+
+async function bcSendAnnouncement() {
+  const p = bcAnnPayload();
+  if (!p.subject || !p.headline || !p.body_html) {
+    showAlert('bc-ann-alert','Subject, headline, and body are required.','err'); return;
+  }
+  if (!confirm(`Send product announcement to ALL subscribers?\n\nSubject: "${p.subject}"\n\nThis cannot be undone.`)) return;
+  await bcCall(p, 'bc-ann-alert', 'bc-ann-count');
+}
+
+async function bcTestAnnouncement() {
+  const p = bcAnnPayload();
+  if (!p.subject) { showAlert('bc-ann-alert','Fill in at least the subject before testing.','err'); return; }
+  const { data:{ user } } = await supabaseClient.auth.getUser();
+  await bcCall({...p, test_email: user?.email || ''}, 'bc-ann-alert', null);
 }
 </script>
 <script src="/js/nav.js"></script>
