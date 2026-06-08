@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{post_title}} — HomeWODrx Blog</title>
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+  <style>
+    :root { color-scheme: light dark; supported-color-schemes: light dark; }
+    .email-dark-logo { display:none; }
+    @media (prefers-color-scheme: dark) {
+      [style*="background-color:#f3f3f3"] { background-color:#161616 !important; }
+      [style*="background-color:#ffffff"] { background-color:#222222 !important; }
+      [style*="background-color:#f8f8f8"] { background-color:#1e1e1e !important; }
+      [style*="background-color:#fdf8f0"] { background-color:#261e10 !important; }
+      [style*="border:1px solid #e5e5e5"] { border-color:#333333 !important; }
+      [style*="border-top:1px solid #e5e5e5"] { border-top-color:#333333 !important; }
+      [style*="border-bottom:1px solid #f0f0f0"] { border-bottom-color:#2e2e2e !important; }
+      [style*="color:#1a1a1a"] { color:#f5f5f5 !important; }
+      [style*="color:#444444"] { color:#c9c9c9 !important; }
+      [style*="color:#666666"] { color:#a8a8a8 !important; }
+      [style*="color:#999999"] { color:#8a8a8a !important; }
+      [style*="color:#C41212"] { color:#ff5a5a !important; }
+      .email-light-logo { display:none !important; }
+      .email-dark-logo  { display:block !important; }
+    }
+    [data-ogsc] .email-light-logo { display:none !important; }
+    [data-ogsc] .email-dark-logo  { display:block !important; }
+  </style>
+</head>
+<body style="margin:0;padding:0;background-color:#f3f3f3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
+
+  <!-- Preview text -->
+  <span style="display:none;font-size:1px;color:#f3f3f3;max-height:0;max-width:0;opacity:0;overflow:hidden;">{{post_excerpt_short}}</span>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f3f3f3;min-height:100vh;">
+    <tr>
+      <td align="center" style="padding:40px 16px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;background-color:#ffffff;border-radius:16px;border:1px solid #e5e5e5;overflow:hidden;">
+
+          <!-- Logo -->
+          <tr>
+            <td align="center" style="padding:36px 40px 24px;">
+              <a href="https://homewodrx.com" style="text-decoration:none;">
+                <img class="email-light-logo" src="https://homewodrx.com/HomeWODRx-logo-black-red-040626.png" alt="HomeWODrx" width="200" style="display:block;width:200px;height:auto;border:0;" />
+                <img class="email-dark-logo" src="https://homewodrx.com/HomeWODRx-logo-white-red-black-strip-040626.png" alt="HomeWODrx" width="200" style="width:200px;height:auto;border:0;" />
+              </a>
+            </td>
+          </tr>
+
+          <!-- Eyebrow -->
+          <tr>
+            <td style="padding:0 40px 6px;">
+              <p style="margin:0;font-size:11px;font-weight:700;color:#C41212;text-transform:uppercase;letter-spacing:1.2px;">New on the Blog</p>
+            </td>
+          </tr>
+
+          <!-- Headline -->
+          <tr>
+            <td style="padding:0 40px 16px;">
+              <h1 style="margin:0 0 14px;font-size:24px;font-weight:800;color:#1a1a1a;line-height:1.25;letter-spacing:-0.3px;">{{post_title}}</h1>
+              <p style="margin:0;font-size:15px;color:#444444;line-height:1.7;">{{post_excerpt}}</p>
+            </td>
+          </tr>
+
+          <!-- Meta row (category + reading time) -->
+          <tr>
+            <td style="padding:0 40px 28px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="background-color:#fdf8f0;border-radius:6px;padding:6px 12px;">
+                    <span style="font-size:12px;font-weight:600;color:#C41212;">{{post_category}}</span>
+                    <span style="font-size:12px;color:#999999;margin:0 6px;">·</span>
+                    <span style="font-size:12px;color:#666666;">{{reading_time}} min read</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- CTA -->
+          <tr>
+            <td align="left" style="padding:0 40px 36px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="background-color:#C41212;border-radius:10px;">
+                    <a href="{{post_url}}" style="display:inline-block;padding:14px 36px;font-size:15px;font-weight:800;color:#ffffff;text-decoration:none;letter-spacing:0.3px;border-radius:10px;">
+                      Read the Article →
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Divider -->
+          <tr><td style="padding:0 40px;"><div style="border-top:1px solid #e5e5e5;"></div></td></tr>
+
+          <!-- Also on the blog (optional recent posts section) -->
+          <tr>
+            <td style="padding:24px 40px 4px;">
+              <p style="margin:0;font-size:11px;font-weight:700;color:#C41212;text-transform:uppercase;letter-spacing:1.2px;">Also on the blog</p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:16px 40px 28px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr><td style="padding:0 0 12px;border-bottom:1px solid #f0f0f0;">
+                  <a href="{{recent_post_1_url}}" style="text-decoration:none;">
+                    <strong style="display:block;font-size:14px;color:#1a1a1a;margin-bottom:3px;line-height:1.4;">{{recent_post_1_title}}</strong>
+                    <span style="font-size:12px;color:#999999;">{{recent_post_1_category}} · {{recent_post_1_reading_time}} min read</span>
+                  </a>
+                </td></tr>
+                <tr><td style="padding:12px 0 0;">
+                  <a href="{{recent_post_2_url}}" style="text-decoration:none;">
+                    <strong style="display:block;font-size:14px;color:#1a1a1a;margin-bottom:3px;line-height:1.4;">{{recent_post_2_title}}</strong>
+                    <span style="font-size:12px;color:#999999;">{{recent_post_2_category}} · {{recent_post_2_reading_time}} min read</span>
+                  </a>
+                </td></tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Divider -->
+          <tr><td style="padding:0 40px;"><div style="border-top:1px solid #e5e5e5;"></div></td></tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color:#f8f8f8;padding:22px 40px;border-top:1px solid #e5e5e5;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td>
+                    <p style="margin:0 0 2px;font-size:13px;font-weight:700;color:#1a1a1a;">HomeWODrx</p>
+                    <p style="margin:0;font-size:12px;color:#666666;line-height:1.6;">
+                      Every WOD. Every Athlete. One Platform.<br>
+                      <a href="https://homewodrx.com" style="color:#C41212;text-decoration:none;">homewodrx.com</a>
+                    </p>
+                  </td>
+                  <td align="right" valign="top">
+                    <p style="margin:0;font-size:11px;color:#999999;line-height:1.8;text-align:right;">
+                      You're receiving this because you<br>opted in to blog updates.<br>
+                      <a href="{{unsubscribe_url}}" style="color:#999999;text-decoration:underline;">Unsubscribe</a>
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
