@@ -709,8 +709,8 @@
         </button>
 
         <div class="timer-actions">
-          <button class="t-action-btn btn-pause"      id="btn-pause"      onclick="togglePause()">⏸ Pause</button>
-          <button class="t-action-btn btn-done-early" id="btn-done-early" onclick="finishTimer()" style="display:none">✓ Done!</button>
+          <button class="t-action-btn btn-pause"      id="btn-pause"      onclick="togglePause()">Pause</button>
+          <button class="t-action-btn btn-done-early" id="btn-done-early" onclick="finishTimer()" style="display:none">Done!</button>
           <button class="t-action-btn btn-reset"      id="btn-reset"      onclick="resetTimer()">↺ Reset</button>
         </div>
 
@@ -734,7 +734,7 @@
       <div class="done-time-wrap">
         <div class="done-clock-label" id="done-label">Your time</div>
         <div class="done-clock" id="done-clock">0:00</div>
-        <button class="done-edit-btn" id="done-edit-btn" onclick="toggleTimeEditor()">✏ Edit time</button>
+        <button class="done-edit-btn" id="done-edit-btn" onclick="toggleTimeEditor()">Edit time</button>
         <div class="done-time-editor" id="done-time-editor">
           <div class="time-editor-fields">
             <div class="time-field-wrap">
@@ -755,7 +755,7 @@
               </div>
             </div>
           </div>
-          <button class="time-editor-confirm" onclick="confirmTimeEdit()">✓ Confirm</button>
+          <button class="time-editor-confirm" onclick="confirmTimeEdit()">Confirm</button>
           <div class="time-editor-note">Forgot to stop the clock? No sweat — fix your time before logging.</div>
         </div>
       </div>
@@ -910,7 +910,7 @@ function startActiveTimer() {
   _lastBeepSec = -1; _tabataPhaseKey = '';
 
   document.getElementById('active-badge').textContent   = T.mode;
-  document.getElementById('btn-pause').textContent      = '⏸ Pause';
+  document.getElementById('btn-pause').textContent      = 'Pause';
   document.getElementById('btn-pause').classList.remove('is-paused');
   document.getElementById('timer-clock').className      = 'timer-clock';
   document.getElementById('btn-done-early').style.display = T.mode==='FOR TIME' ? '' : 'none';
@@ -1045,7 +1045,7 @@ function togglePause() {
   if (T.isPaused) {
     T.totalPausedMs += Date.now() - T.pausedAt;
     T.pausedAt = null; T.isPaused = false;
-    document.getElementById('btn-pause').textContent = '⏸ Pause';
+    document.getElementById('btn-pause').textContent = 'Pause';
     document.getElementById('btn-pause').classList.remove('is-paused');
     document.getElementById('timer-clock').classList.remove('paused');
     beep(880,0.1,0.3);
@@ -1053,7 +1053,7 @@ function togglePause() {
   } else {
     cancelAnimationFrame(T.rafId);
     T.pausedAt = Date.now(); T.isPaused = true;
-    document.getElementById('btn-pause').textContent = '▶ Resume';
+    document.getElementById('btn-pause').textContent = 'Resume';
     document.getElementById('btn-pause').classList.add('is-paused');
     document.getElementById('timer-clock').classList.add('paused');
     document.getElementById('phase-label').textContent = 'PAUSED';
