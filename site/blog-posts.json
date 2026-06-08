@@ -1,5 +1,25 @@
 [
   {
+    "slug": "day-by-day-fitness-mindset",
+    "file": "/blog/day-by-day-fitness-mindset.html",
+    "title": "Taking It Day by Day: The Case for Small, Consistent Wins",
+    "excerpt": "Big transformations fail more often than they succeed. Small daily wins compound. Why thinking day by day beats chasing the dramatic overhaul.",
+    "category": "mindset",
+    "categoryLabel": "Mindset",
+    "date": "June 7, 2026",
+    "readTime": "6 min read"
+  },
+  {
+    "slug": "staying-connected-fitness",
+    "file": "/blog/staying-connected-fitness.html",
+    "title": "How to Stay Connected to Your Fitness When Life Gets in the Way",
+    "excerpt": "Work deadlines, travel, family — training will get interrupted. How to stay connected to your fitness when you can't train the way you want to.",
+    "category": "mindset",
+    "categoryLabel": "Mindset",
+    "date": "June 7, 2026",
+    "readTime": "6 min read"
+  },
+  {
     "slug": "staying-motivated-solo-training",
     "file": "/blog/staying-motivated-solo-training.html",
     "title": "Staying Motivated When You Train Alone",
