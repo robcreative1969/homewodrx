@@ -381,6 +381,31 @@
   .auth-gate-title { font-family: var(--font-head); font-size: 1.6rem; letter-spacing: 0.06em; color: var(--text); }
   .auth-gate-desc  { font-size: 0.9rem; color: var(--muted); max-width: 360px; line-height: 1.6; }
   .auth-gate-btns  { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+  /* ── Sidebar group labels ─────────────────────────────────────────────── */
+  .sidebar-group-label {
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--muted2);
+    padding: 16px 12px 4px; line-height: 1;
+  }
+  .sidebar-group-label:first-child { padding-top: 4px; }
+
+  /* ── Pill selectors (Training Preferences) ────────────────────────────── */
+  .pref-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .pref-row-label {
+    font-size: 0.8rem; font-weight: 600; color: var(--muted);
+    margin-top: 16px; margin-bottom: 2px;
+  }
+  .pref-row-label:first-child { margin-top: 0; }
+  .pill-option {
+    padding: 7px 16px; border: 1.5px solid var(--border);
+    border-radius: 999px; background: var(--bg); color: var(--muted);
+    font-size: 0.82rem; font-weight: 500; font-family: var(--font-body);
+    cursor: pointer; transition: border-color .15s, background .15s, color .15s;
+    line-height: 1.4;
+  }
+  .pill-option:hover { border-color: var(--or); color: var(--text); }
+  .pill-option.selected { border-color: var(--or); background: var(--or); color: #fff; }
   </style>
 </head>
 <body data-nav-init="true" data-active-page="settings">
@@ -389,7 +414,7 @@
 <div class="page-header">
   <div class="page-header-inner">
     <h1 class="page-title">Settings</h1>
-    <p class="page-subtitle">Manage your account, notifications, and privacy preferences</p>
+    <p class="page-subtitle">Manage your account, training preferences, notifications, and privacy</p>
   </div>
 </div>
 
@@ -399,12 +424,21 @@
   <!-- SIDEBAR -->
   <aside class="settings-sidebar">
     <nav class="sidebar-nav">
+      <div class="sidebar-group-label">Account</div>
       <button class="sidebar-item active" id="tab-account" onclick="showSection('account', this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
         </svg>
         Account
       </button>
+      <div class="sidebar-group-label">Personalization</div>
+      <button class="sidebar-item" id="tab-training" onclick="showSection('training', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>
+        </svg>
+        Training Preferences
+      </button>
+      <div class="sidebar-group-label">Settings</div>
       <button class="sidebar-item" id="tab-notifications" onclick="showSection('notifications', this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
@@ -445,119 +479,6 @@
     <div class="settings-section" id="section-account">
 
       <div class="section-eyebrow">Account</div>
-
-      <!-- Profile info — edit on profile page -->
-      <div class="s-card">
-        <div class="s-card-hdr">
-          <div class="s-card-title">Profile Information</div>
-          <div class="s-card-desc">Edit your name, username, bio, fitness details, and profile photo</div>
-        </div>
-        <div class="s-card-body" style="flex-direction:row;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
-          <p style="font-size:0.875rem;color:var(--muted);line-height:1.6;margin:0;">
-            Your full profile — including name, bio, experience level, and avatar — is managed from your Profile page.
-          </p>
-          <a href="/profile.html" class="btn btn-primary btn-sm" style="white-space:nowrap;flex-shrink:0;">Go to Profile</a>
-        </div>
-      </div>
-
-      <!-- Equipment & Weights -->
-      <div class="s-card">
-        <div class="s-card-hdr">
-          <div class="s-card-title">Equipment</div>
-          <div class="s-card-desc">Used by your AI Companion and Smart WOD Builder to suggest workouts you can actually do</div>
-        </div>
-        <div class="s-card-body">
-
-          <div>
-            <div class="form-row" style="margin-bottom:10px;"><label>Available Equipment</label></div>
-            <div class="equip-grid" id="s-equipment-grid">
-              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="barbell"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Barbell</label>
-              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="dumbbells"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Dumbbells</label>
-              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="kettlebells"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Kettlebell(s)</label>
-              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="pull_up_bar"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Pull-up Bar / Rig</label>
-              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="rings"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Rings</label>
-              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="squat_rack"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Squat Rack</label>
-              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="bench"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Bench</label>
-              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="rower"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Rowing Machine</label>
-              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="bike"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Assault / Echo Bike</label>
-              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="ski_erg"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Ski Erg</label>
-              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="treadmill"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Treadmill</label>
-              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="jump_rope"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Jump Rope</label>
-              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="plyo_box"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Plyo Box</label>
-              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="wall_ball"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Wall Ball</label>
-              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="med_ball"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Medicine Ball</label>
-              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="slam_ball"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Slam Ball</label>
-              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="sandbag"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Sandbag</label>
-              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="ghd"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>GHD</label>
-              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="cable_machine"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Cables</label>
-              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="resistance_bands"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Resistance Bands</label>
-            </div>
-            <!-- No-gear option — outside the equip-grid so it's never included in getSEquipment() -->
-            <button type="button" id="s-no-gear-btn" onclick="toggleSNoGear(this)"
-              style="width:100%;margin-top:10px;padding:11px 16px;border:1.5px solid var(--border);border-radius:var(--radius);background:var(--bg);color:var(--muted);font-size:0.85rem;font-weight:600;font-family:var(--font-body);cursor:pointer;text-align:left;transition:border-color .15s,color .15s,background .15s;">
-              I don't have any gear — just bodyweight
-            </button>
-            <div style="margin-top:10px;">
-              <input type="text" id="s-equipment-other" placeholder="Other equipment, e.g. sled, GHD, dip bars…" maxlength="120"
-                style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:0.85rem;font-family:var(--font-body);color:var(--text);background:var(--bg);outline:none;box-sizing:border-box;">
-            </div>
-          </div>
-
-          <!-- Dumbbell weight picker -->
-          <div class="weight-picker-s" id="s-dumbbell-picker" style="display:none;">
-            <div class="weight-picker-s-header">
-              <div class="weight-picker-s-label" id="s-db-unit-label">Dumbbell weights you own (lbs)</div>
-              <div class="wt-toggle-s">
-                <button class="wt-btn-s wt-active-s" data-su="lbs" onclick="setSWeightUnit('lbs')">lbs</button>
-                <button class="wt-btn-s" data-su="kg" onclick="setSWeightUnit('kg')">kg</button>
-              </div>
-            </div>
-            <div class="weight-chip-row" id="s-dumbbell-weight-grid">
-              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="5"><span>5</span></label>
-              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="10"><span>10</span></label>
-              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="15"><span>15</span></label>
-              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="20"><span>20</span></label>
-              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="25"><span>25</span></label>
-              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="30"><span>30</span></label>
-              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="35"><span>35</span></label>
-              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="40"><span>40</span></label>
-              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="45"><span>45</span></label>
-              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="50"><span>50</span></label>
-              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="55"><span>55</span></label>
-              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="60"><span>60</span></label>
-            </div>
-            <input type="text" id="s-dumbbell-other" placeholder="Other weights in lbs, e.g. 70, 80…" maxlength="60"
-              style="margin-top:8px;width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:0.82rem;font-family:var(--font-body);color:var(--text);background:var(--card);outline:none;box-sizing:border-box;">
-          </div>
-
-          <!-- Kettlebell weight picker -->
-          <div class="weight-picker-s" id="s-kettlebell-picker" style="display:none;">
-            <div class="weight-picker-s-header">
-              <div class="weight-picker-s-label" id="s-kb-unit-label">Kettlebell weights you own (lbs)</div>
-            </div>
-            <div class="weight-chip-row" id="s-kettlebell-weight-grid">
-              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="18"><span>18</span></label>
-              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="26"><span>26</span></label>
-              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="35"><span>35</span></label>
-              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="44"><span>44</span></label>
-              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="53"><span>53</span></label>
-              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="62"><span>62</span></label>
-              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="70"><span>70</span></label>
-            </div>
-            <input type="text" id="s-kettlebell-other" placeholder="Other weights in lbs, e.g. 80, 88…" maxlength="60"
-              style="margin-top:8px;width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:0.82rem;font-family:var(--font-body);color:var(--text);background:var(--card);outline:none;box-sizing:border-box;">
-          </div>
-
-        </div>
-        <div class="card-foot">
-          <div class="card-foot-left">
-            <span class="save-note" id="equip-note"></span>
-          </div>
-          <div class="card-foot-right">
-            <button class="btn btn-primary btn-sm" onclick="saveEquipment()">Save Equipment</button>
-          </div>
-        </div>
-      </div>
 
       <!-- Email -->
       <div class="s-card">
@@ -667,6 +588,168 @@
       </div>
 
     </div><!-- /account -->
+
+    <!-- ══════════════════════════════
+         TRAINING PREFERENCES SECTION
+    ══════════════════════════════ -->
+    <div class="settings-section" id="section-training">
+
+      <div class="section-eyebrow">Training Preferences</div>
+
+      <!-- Goals & Training Style -->
+      <div class="s-card">
+        <div class="s-card-hdr">
+          <div class="s-card-title">Goals &amp; Training Style</div>
+          <div class="s-card-desc">Helps your AI Companion and Smart WOD Builder tailor recommendations to you</div>
+        </div>
+        <div class="s-card-body">
+          <div class="pref-row-label">Primary Goal</div>
+          <div class="pref-row" id="goal-group">
+            <button class="pill-option" data-val="longevity" onclick="selectPill(this,'goal-group')">Longevity &amp; Health</button>
+            <button class="pill-option" data-val="sport_performance" onclick="selectPill(this,'goal-group')">Performance &amp; PRs</button>
+            <button class="pill-option" data-val="specific_activity" onclick="selectPill(this,'goal-group')">Sport / Activity</button>
+            <button class="pill-option" data-val="rebuilding" onclick="selectPill(this,'goal-group')">Rebuilding</button>
+            <button class="pill-option" data-val="just_getting_started" onclick="selectPill(this,'goal-group')">Just Starting</button>
+          </div>
+          <div class="pref-row-label">Training Style</div>
+          <div class="pref-row" id="style-group">
+            <button class="pill-option" data-val="structured" onclick="selectPill(this,'style-group')">Structured Plan</button>
+            <button class="pill-option" data-val="flexible" onclick="selectPill(this,'style-group')">Flexible / By Feel</button>
+            <button class="pill-option" data-val="benchmark_focused" onclick="selectPill(this,'style-group')">Benchmark Focused</button>
+          </div>
+        </div>
+        <div class="card-foot">
+          <div class="card-foot-left">
+            <span class="save-note" id="goals-note"></span>
+          </div>
+          <div class="card-foot-right">
+            <button class="btn btn-primary btn-sm" onclick="saveGoals()">Save</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Units -->
+      <div class="s-card">
+        <div class="s-card-hdr">
+          <div class="s-card-title">Units</div>
+          <div class="s-card-desc">Sets the default weight unit across workout suggestions and your equipment weights</div>
+        </div>
+        <div class="s-card-body">
+          <div class="pref-row" id="units-group">
+            <button class="pill-option selected" data-val="imperial" onclick="selectPill(this,'units-group'); setSWeightUnit('lbs')">Imperial — lbs</button>
+            <button class="pill-option" data-val="metric" onclick="selectPill(this,'units-group'); setSWeightUnit('kg')">Metric — kg</button>
+          </div>
+        </div>
+        <div class="card-foot">
+          <div class="card-foot-left">
+            <span class="save-note" id="units-note"></span>
+          </div>
+          <div class="card-foot-right">
+            <button class="btn btn-primary btn-sm" onclick="saveUnits()">Save</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Equipment & Weights -->
+      <div class="s-card">
+        <div class="s-card-hdr">
+          <div class="s-card-title">Equipment</div>
+          <div class="s-card-desc">Used by your AI Companion and Smart WOD Builder to suggest workouts you can actually do</div>
+        </div>
+        <div class="s-card-body">
+
+          <div>
+            <div class="form-row" style="margin-bottom:10px;"><label>Available Equipment</label></div>
+            <div class="equip-grid" id="s-equipment-grid">
+              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="barbell"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Barbell</label>
+              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="dumbbells"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Dumbbells</label>
+              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="kettlebells"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Kettlebell(s)</label>
+              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="pull_up_bar"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Pull-up Bar / Rig</label>
+              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="rings"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Rings</label>
+              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="squat_rack"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Squat Rack</label>
+              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="bench"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Bench</label>
+              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="rower"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Rowing Machine</label>
+              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="bike"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Assault / Echo Bike</label>
+              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="ski_erg"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Ski Erg</label>
+              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="treadmill"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Treadmill</label>
+              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="jump_rope"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Jump Rope</label>
+              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="plyo_box"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Plyo Box</label>
+              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="wall_ball"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Wall Ball</label>
+              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="med_ball"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Medicine Ball</label>
+              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="slam_ball"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Slam Ball</label>
+              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="sandbag"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Sandbag</label>
+              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="ghd"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>GHD</label>
+              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="cable_machine"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Cables</label>
+              <label class="equip-card" onclick="toggleEquipCard(event,this)"><input type="checkbox" value="resistance_bands"><div class="equip-box"><svg class="equip-check-icon" width="10" height="8" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Resistance Bands</label>
+            </div>
+            <!-- No-gear option — outside the equip-grid so it's never included in getSEquipment() -->
+            <button type="button" id="s-no-gear-btn" onclick="toggleSNoGear(this)"
+              style="width:100%;margin-top:10px;padding:11px 16px;border:1.5px solid var(--border);border-radius:var(--radius);background:var(--bg);color:var(--muted);font-size:0.85rem;font-weight:600;font-family:var(--font-body);cursor:pointer;text-align:left;transition:border-color .15s,color .15s,background .15s;">
+              I don't have any gear — just bodyweight
+            </button>
+            <div style="margin-top:10px;">
+              <input type="text" id="s-equipment-other" placeholder="Other equipment, e.g. sled, GHD, dip bars…" maxlength="120"
+                style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:0.85rem;font-family:var(--font-body);color:var(--text);background:var(--bg);outline:none;box-sizing:border-box;">
+            </div>
+          </div>
+
+          <!-- Dumbbell weight picker -->
+          <div class="weight-picker-s" id="s-dumbbell-picker" style="display:none;">
+            <div class="weight-picker-s-header">
+              <div class="weight-picker-s-label" id="s-db-unit-label">Dumbbell weights you own (lbs)</div>
+              <div class="wt-toggle-s">
+                <button class="wt-btn-s wt-active-s" data-su="lbs" onclick="setSWeightUnit('lbs')">lbs</button>
+                <button class="wt-btn-s" data-su="kg" onclick="setSWeightUnit('kg')">kg</button>
+              </div>
+            </div>
+            <div class="weight-chip-row" id="s-dumbbell-weight-grid">
+              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="5"><span>5</span></label>
+              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="10"><span>10</span></label>
+              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="15"><span>15</span></label>
+              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="20"><span>20</span></label>
+              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="25"><span>25</span></label>
+              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="30"><span>30</span></label>
+              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="35"><span>35</span></label>
+              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="40"><span>40</span></label>
+              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="45"><span>45</span></label>
+              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="50"><span>50</span></label>
+              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="55"><span>55</span></label>
+              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="60"><span>60</span></label>
+            </div>
+            <input type="text" id="s-dumbbell-other" placeholder="Other weights in lbs, e.g. 70, 80…" maxlength="60"
+              style="margin-top:8px;width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:0.82rem;font-family:var(--font-body);color:var(--text);background:var(--card);outline:none;box-sizing:border-box;">
+          </div>
+
+          <!-- Kettlebell weight picker -->
+          <div class="weight-picker-s" id="s-kettlebell-picker" style="display:none;">
+            <div class="weight-picker-s-header">
+              <div class="weight-picker-s-label" id="s-kb-unit-label">Kettlebell weights you own (lbs)</div>
+            </div>
+            <div class="weight-chip-row" id="s-kettlebell-weight-grid">
+              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="18"><span>18</span></label>
+              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="26"><span>26</span></label>
+              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="35"><span>35</span></label>
+              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="44"><span>44</span></label>
+              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="53"><span>53</span></label>
+              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="62"><span>62</span></label>
+              <label class="weight-chip-s" onclick="toggleWeightChipS(event,this)"><input type="checkbox" value="70"><span>70</span></label>
+            </div>
+            <input type="text" id="s-kettlebell-other" placeholder="Other weights in lbs, e.g. 80, 88…" maxlength="60"
+              style="margin-top:8px;width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:0.82rem;font-family:var(--font-body);color:var(--text);background:var(--card);outline:none;box-sizing:border-box;">
+          </div>
+
+        </div>
+        <div class="card-foot">
+          <div class="card-foot-left">
+            <span class="save-note" id="equip-note"></span>
+          </div>
+          <div class="card-foot-right">
+            <button class="btn btn-primary btn-sm" onclick="saveEquipment()">Save Equipment</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /training -->
 
     <!-- ══════════════════════════════
          NOTIFICATIONS SECTION
@@ -982,7 +1065,7 @@ async function loadProfile() {
   try {
     const { data, error } = await supabaseClient
       .from('profiles')
-      .select('first_name, last_name, username, notifications, privacy_visibility, privacy_history, privacy_searchable, privacy_leaderboard, equipment_available, dumbbell_weights, kettlebell_weights, preferred_units')
+      .select('first_name, last_name, username, notifications, privacy_visibility, privacy_history, privacy_searchable, privacy_leaderboard, equipment_available, dumbbell_weights, kettlebell_weights, preferred_units, primary_goal, preferred_training_style')
       .eq('id', _user.id)
       .single();
 
@@ -1044,6 +1127,21 @@ async function loadProfile() {
       // Empty array means user explicitly set no gear
       setSNoGearActive(true);
     }
+    // Goals & Training Style pills
+    if (data.primary_goal) {
+      const goalBtn = document.querySelector(`#goal-group [data-val="${data.primary_goal}"]`);
+      if (goalBtn) goalBtn.classList.add('selected');
+    }
+    if (data.preferred_training_style) {
+      const styleBtn = document.querySelector(`#style-group [data-val="${data.preferred_training_style}"]`);
+      if (styleBtn) styleBtn.classList.add('selected');
+    }
+    // Units pill
+    const unitVal = data.preferred_units || 'imperial';
+    document.querySelectorAll('#units-group .pill-option').forEach(b => {
+      b.classList.toggle('selected', b.dataset.val === unitVal);
+    });
+
     // Apply weight unit preference before prefilling chips
     if (data.preferred_units === 'metric') setSWeightUnit('kg');
     if (data.dumbbell_weights?.length) {
@@ -1237,6 +1335,53 @@ function showSection(name, btn) {
   document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
   document.getElementById('section-' + name).classList.add('active');
   btn.classList.add('active');
+}
+
+// ── Pill selector helper ──────────────────────────────────────────────────
+function selectPill(btn, groupId) {
+  document.querySelectorAll('#' + groupId + ' .pill-option').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+// ── Save Goals & Training Style ───────────────────────────────────────────
+async function saveGoals() {
+  if (!_user) return;
+  const goalBtn  = document.querySelector('#goal-group .pill-option.selected');
+  const styleBtn = document.querySelector('#style-group .pill-option.selected');
+  const noteEl   = document.getElementById('goals-note');
+  try {
+    const { error } = await supabaseClient
+      .from('profiles')
+      .update({
+        primary_goal:             goalBtn  ? goalBtn.dataset.val  : null,
+        preferred_training_style: styleBtn ? styleBtn.dataset.val : null,
+      })
+      .eq('id', _user.id);
+    if (error) throw error;
+    showToast('Goals saved');
+    noteEl.textContent = '';
+  } catch(e) {
+    showToast('Save failed — ' + e.message, true);
+  }
+}
+
+// ── Save Units ────────────────────────────────────────────────────────────
+async function saveUnits() {
+  if (!_user) return;
+  const unitBtn = document.querySelector('#units-group .pill-option.selected');
+  const noteEl  = document.getElementById('units-note');
+  const val     = unitBtn ? unitBtn.dataset.val : 'imperial';
+  try {
+    const { error } = await supabaseClient
+      .from('profiles')
+      .update({ preferred_units: val })
+      .eq('id', _user.id);
+    if (error) throw error;
+    showToast('Units saved');
+    noteEl.textContent = '';
+  } catch(e) {
+    showToast('Save failed — ' + e.message, true);
+  }
 }
 
 // Profile info is now edited on the profile page — no save needed here
