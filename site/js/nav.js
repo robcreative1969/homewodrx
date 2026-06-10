@@ -108,11 +108,15 @@ const Nav = {
     const isWorkout  = ['workouts','workout','generator','wodbuilder','timer','daily-wod'].includes(activePage);
     const isMovement = ['movements','movement'].includes(activePage);
     const isStretch  = ['stretch','stretchbuilder','stretches','stretch-movement','stretch-routines','stretch-routine'].includes(activePage);
+    const isShop     = activePage === 'shop';
+    const isBlog     = activePage === 'blog';
     const isProfile  = ['profile','myworkouts','settings'].includes(activePage);
 
     const wA  = isWorkout  ? ' active' : '';
     const mA  = isMovement ? ' active' : '';
     const sA  = isStretch  ? ' active' : '';
+    const shA = isShop     ? ' active' : '';
+    const bA  = isBlog     ? ' active' : '';
     const pA  = isProfile  ? ' active' : '';
 
     return `<nav class="site-nav">
