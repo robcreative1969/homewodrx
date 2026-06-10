@@ -1,4 +1,14 @@
 {
+  "headers": [
+    {
+      "source": "/js/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=300, stale-while-revalidate=60" }]
+    },
+    {
+      "source": "/css/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=300, stale-while-revalidate=60" }]
+    }
+  ],
   "routes": [
     { "src": "/sitemap\\.xml", "dest": "/api/sitemap" },
     { "src": "/generator",     "headers": { "Location": "/wodbuilder"     }, "status": 301 },
