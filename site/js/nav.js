@@ -105,17 +105,15 @@ const Nav = {
   },
 
   render(activePage) {
-    const isWorkout = ['workouts','workout','movements','movement','generator','wodbuilder','timer','daily-wod'].includes(activePage);
-    const isStretch = ['stretch','stretchbuilder','stretches','stretch-movement','stretch-routines','stretch-routine'].includes(activePage);
-    const isShop    = activePage === 'shop';
-    const isBlog    = activePage === 'blog';
-    const isProfile = ['profile','myworkouts','settings'].includes(activePage);
+    const isWorkout  = ['workouts','workout','generator','wodbuilder','timer','daily-wod'].includes(activePage);
+    const isMovement = ['movements','movement'].includes(activePage);
+    const isStretch  = ['stretch','stretchbuilder','stretches','stretch-movement','stretch-routines','stretch-routine'].includes(activePage);
+    const isProfile  = ['profile','myworkouts','settings'].includes(activePage);
 
-    const wA  = isWorkout ? ' active' : '';
-    const sA  = isStretch ? ' active' : '';
-    const shA = isShop    ? ' active' : '';
-    const bA  = isBlog    ? ' active' : '';
-    const pA  = isProfile ? ' active' : '';
+    const wA  = isWorkout  ? ' active' : '';
+    const mA  = isMovement ? ' active' : '';
+    const sA  = isStretch  ? ' active' : '';
+    const pA  = isProfile  ? ' active' : '';
 
     return `<nav class="site-nav">
 <div class="nav-inner">
@@ -306,6 +304,17 @@ const Nav = {
       Train
     </a>
 
+    <a href="/movements.html" class="tab-item${mA}" aria-label="Movements">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="5" r="3"/>
+        <path d="M6.5 8.5C4.5 10 3 12.5 3 15c0 2 1 3.5 3 4"/>
+        <path d="M17.5 8.5C19.5 10 21 12.5 21 15c0 2-1 3.5-3 4"/>
+        <path d="M9 21h6"/>
+        <path d="M12 8v13"/>
+      </svg>
+      Movements
+    </a>
+
     <a href="/stretches.html" class="tab-item${sA}" aria-label="Stretch">
       <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
         <circle cx="12" cy="3.5" r="2.5"/>
@@ -316,23 +325,6 @@ const Nav = {
         <line x1="13" y1="16" x2="15" y2="22" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" fill="none"/>
       </svg>
       Stretch
-    </a>
-
-    <a href="/shop.html" class="tab-item${shA}" aria-label="Shop">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <rect x="5" y="9" width="14" height="13" rx="2" fill="currentColor"/>
-        <path d="M9 9V6.5a3 3 0 0 1 6 0V9" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="butt"/>
-      </svg>
-      Shop
-    </a>
-
-    <a href="/blog.html" class="tab-item${bA}" aria-label="Blog">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path fill="currentColor" d="M18 3H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4l2 2 2-2h4a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/>
-        <line x1="8" y1="9" x2="16" y2="9" stroke="white" stroke-width="1.75" stroke-linecap="round"/>
-        <line x1="8" y1="13" x2="13" y2="13" stroke="white" stroke-width="1.75" stroke-linecap="round"/>
-      </svg>
-      Blog
     </a>
 
     <a href="/profile.html" class="tab-item${pA}" aria-label="Profile">
