@@ -610,13 +610,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     chip.classList.add('active');
     updateMoreFiltersBtn();
     updateActivePills();
-    // Auto-close panel after selection
-    const panel = document.getElementById('filters-panel');
-    const btn   = document.getElementById('more-filters-btn');
-    if (panel.classList.contains('open')) {
-      panel.classList.remove('open');
-      btn.setAttribute('aria-expanded', 'false');
-    }
     render();
   });
 
