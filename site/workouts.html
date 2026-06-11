@@ -827,7 +827,10 @@ async function buildD20Archive(q) {
 function render() {
   const isD20 = activeCategory === 'daily20';
   const isAll = activeCategory === 'all';
-  const showD20 = isD20 || isAll;
+  // Hide D20 archive when equipment or type filters are active —
+  // those filters don't apply to Daily 20 workouts.
+  const secondaryFiltersActive = activeEquip !== 'all' || activeType !== 'all';
+  const showD20 = (isD20 || isAll) && !secondaryFiltersActive;
 
   document.getElementById('wod-grid').style.display         = isD20 ? 'none' : '';
   document.getElementById('d20-archive').style.display      = showD20 ? 'block' : 'none';
