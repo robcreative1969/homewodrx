@@ -578,12 +578,12 @@ const EQUIP_DISPLAY = {
   run:'Running', dumbbell:'Dumbbells', kettlebell:'Kettlebell',
 };
 
-// Maps workouts.html chip values → _d20MovDB equipment_category keys
+// Maps workouts.html chip values → _d20MovDB equipment_category keys (arrays to handle DB inconsistencies)
 const D20_EQUIP_MAP = {
-  bodyweight: 'bodyweight',
-  dumbbell:   'dumbbell',
-  kettlebell: 'kettlebell',
-  pullUpBar:  'pullupbar',
+  bodyweight: ['bodyweight'],
+  dumbbell:   ['dumbbells'],
+  kettlebell: ['kettlebell'],
+  pullUpBar:  ['pullupbar'],
 };
 // Chips that never appear in D20 workouts — gray out when Daily 20 tab is active
 const D20_EQUIP_NA = ['barbell', 'run'];
@@ -843,9 +843,9 @@ async function buildD20Archive(q) {
 
     // Filter by equipment — check if any generated movement uses the selected category
     if (activeEquip !== 'all') {
-      const d20Cat = D20_EQUIP_MAP[activeEquip];
-      if (!d20Cat) continue; // equipment not in D20 pool (barbell, run)
-      const hasEquip = (wod?.rows || []).some(r => movEquipLookup[r.movement] === d20Cat);
+      const d20Cats = D20_EQUIP_MAP[activeEquip];
+      if (!d20Cats) continue; // equipment not in D20 pool (barbell, run)
+      const hasEquip = (wod?.rows || []).some(r => d20Cats.includes(movEquipLookup[r.movement]));
       if (!hasEquip) continue;
     }
 
