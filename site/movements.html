@@ -49,24 +49,68 @@
 
     /* ── Page header ── */
     .page-header { background: var(--white); border-bottom: 1px solid var(--border); }
-    .page-header-inner { max-width: 1248px; margin: 0 auto; padding: 32px 24px 24px; }
+    .page-header-inner { max-width: 1248px; margin: 0 auto; padding: 32px 24px 0; }
     .page-title-row { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-bottom: 20px; }
     .page-title { font-family: var(--font-head); font-size: 3rem; letter-spacing: .04em; line-height: 1; }
     .page-subtitle { font-size: .9rem; color: var(--muted); }
     .page-subtitle strong { color: var(--text); font-weight: 700; }
 
-    /* filter sections */
-    .filter-section { display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px; }
-    .filter-section + .filter-section { padding-top: 18px; }
-    .filter-divider { height: 1px; background: var(--border); }
+    /* ── Search row ── */
+    .search-row { display: flex; gap: 10px; align-items: center; padding-bottom: 14px; }
+    .more-filters-btn {
+      display: flex; align-items: center; gap: 7px;
+      padding: 10px 15px; border: 1.5px solid var(--border); border-radius: 9px;
+      font-family: var(--font-body); font-size: .88rem; font-weight: 600;
+      color: var(--text); background: var(--white); cursor: pointer;
+      white-space: nowrap; transition: all .15s; flex-shrink: 0;
+    }
+    .more-filters-btn:hover { border-color: var(--or); color: var(--or); }
+    .more-filters-btn.has-filters { border-color: var(--or); color: var(--or); background: var(--or-xlight); }
+    .filter-count-badge {
+      display: inline-block; background: var(--or); color: #fff;
+      border-radius: 20px; padding: 1px 7px; font-size: .7rem; font-weight: 800; line-height: 1.4;
+    }
+
+    /* ── More Filters panel ── */
+    .filters-panel {
+      display: none; background: var(--bg); border: 1.5px solid var(--border);
+      border-radius: 10px; padding: 16px 18px; margin-bottom: 14px;
+    }
+    .filters-panel.open { display: block; }
+    .filter-group { display: flex; flex-direction: column; gap: 8px; }
     .filter-label {
       font-size: .72rem; font-weight: 700; text-transform: uppercase;
       letter-spacing: .07em; color: var(--muted);
     }
     .chip-row { display: flex; flex-wrap: wrap; gap: 7px; }
 
+    /* ── Active filter pills ── */
+    .active-filters {
+      display: none; align-items: center; gap: 7px; flex-wrap: wrap;
+      padding: 0 0 14px;
+    }
+    .active-filters.visible { display: flex; }
+    .af-label { font-size: .78rem; color: var(--muted); font-weight: 600; flex-shrink: 0; }
+    .active-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--or-xlight); color: var(--or);
+      border: 1px solid var(--or-light); border-radius: 20px;
+      padding: 3px 10px; font-size: .78rem; font-weight: 600;
+    }
+    .pill-x {
+      cursor: pointer; font-size: .8rem; line-height: 1; margin-left: 2px;
+      opacity: .7; transition: opacity .1s;
+    }
+    .pill-x:hover { opacity: 1; }
+    .af-clear {
+      font-size: .78rem; color: var(--or); font-weight: 700; cursor: pointer;
+      background: none; border: none; font-family: var(--font-body); padding: 0 4px;
+      transition: opacity .15s;
+    }
+    .af-clear:hover { opacity: .75; }
+
     /* search */
-    .search-wrap { position: relative; }
+    .search-wrap { position: relative; flex: 1; }
     .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
     .search-input {
       width: 100%; padding: 11px 14px 11px 42px; border: 1.5px solid var(--border); border-radius: 9px;
@@ -163,7 +207,7 @@
 
     /* ── Responsive ── */
     @media (max-width: 700px) {
-      .page-header-inner { padding: 20px 16px 16px; }
+      .page-header-inner { padding: 20px 16px 0; }
       .main { padding: 20px 16px 48px; }
       .page-title { font-size: 2.2rem; }
       .mv-grid { grid-template-columns: 1fr; }
@@ -193,42 +237,51 @@
       </p>
     </div>
 
-    <!-- Category filter -->
-    <div class="filter-section">
-      <span class="filter-label">Category</span>
-      <div class="chip-row" id="cat-chips">
-        <button class="chip active" data-cat="all">All</button>
-        <button class="chip" data-cat="bodyweight">Bodyweight</button>
-        <button class="chip" data-cat="barbell">Barbell</button>
-        <button class="chip" data-cat="kettlebell">Kettlebell</button>
-        <button class="chip" data-cat="dumbbells">Dumbbell</button>
-        <button class="chip" data-cat="pullupbar">Pull-up Bar</button>
-        <button class="chip" data-cat="rings">Rings</button>
-        <button class="chip" data-cat="jumprope">Jump Rope</button>
-        <button class="chip" data-cat="resistancebands">Resistance Bands</button>
-        <button class="chip" data-cat="running">Running</button>
-        <button class="chip" data-cat="rower">Rower</button>
-        <button class="chip" data-cat="assaultbike">Assault Bike</button>
-        <button class="chip" data-cat="skierg">Ski Erg</button>
-        <button class="chip" data-cat="slamball">Slam Ball</button>
-        <button class="chip" data-cat="medicineball">Medicine Ball</button>
-        <button class="chip" data-cat="rope">Rope</button>
-        <button class="chip" data-cat="box">Box</button>
-        <button class="chip" data-cat="ghd">GHD</button>
-      </div>
-    </div>
-    <div class="filter-divider"></div>
-
-    <!-- Search -->
-    <div class="filter-section">
-      <span class="filter-label">Search</span>
+    <!-- Search row + More Filters button -->
+    <div class="search-row">
       <div class="search-wrap">
         <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
         <input class="search-input" id="search" type="text" placeholder="Search by movement name or coaching cue…" autocomplete="off">
       </div>
+      <button class="more-filters-btn" id="more-filters-btn" aria-expanded="false" aria-controls="filters-panel">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
+        </svg>
+        Filter by category
+      </button>
     </div>
+
+    <!-- Collapsible filters panel -->
+    <div class="filters-panel" id="filters-panel" role="region" aria-label="Category filter">
+      <div class="filter-group">
+        <span class="filter-label">Equipment Category</span>
+        <div class="chip-row" id="cat-chips">
+          <button class="chip active" data-cat="all">All</button>
+          <button class="chip" data-cat="bodyweight">Bodyweight</button>
+          <button class="chip" data-cat="barbell">Barbell</button>
+          <button class="chip" data-cat="kettlebell">Kettlebell</button>
+          <button class="chip" data-cat="dumbbells">Dumbbell</button>
+          <button class="chip" data-cat="pullupbar">Pull-up Bar</button>
+          <button class="chip" data-cat="rings">Rings</button>
+          <button class="chip" data-cat="jumprope">Jump Rope</button>
+          <button class="chip" data-cat="resistancebands">Resistance Bands</button>
+          <button class="chip" data-cat="running">Running</button>
+          <button class="chip" data-cat="rower">Rower</button>
+          <button class="chip" data-cat="assaultbike">Assault Bike</button>
+          <button class="chip" data-cat="skierg">Ski Erg</button>
+          <button class="chip" data-cat="slamball">Slam Ball</button>
+          <button class="chip" data-cat="medicineball">Medicine Ball</button>
+          <button class="chip" data-cat="rope">Rope</button>
+          <button class="chip" data-cat="box">Box</button>
+          <button class="chip" data-cat="ghd">GHD</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active filter pills -->
+    <div class="active-filters" id="active-filters" aria-live="polite"></div>
 
   </div>
 </div>
@@ -459,12 +512,82 @@ function render() {
   }).join('');
 }
 
+// ─────────────────────────────────────────
+// MORE FILTERS — toggle, button state, pills
+// ─────────────────────────────────────────
+function toggleFiltersPanel() {
+  const panel = document.getElementById('filters-panel');
+  const btn   = document.getElementById('more-filters-btn');
+  const open  = panel.classList.toggle('open');
+  btn.setAttribute('aria-expanded', open);
+}
+
+const CAT_DISPLAY = {
+  bodyweight: 'Bodyweight', barbell: 'Barbell', kettlebell: 'Kettlebell',
+  dumbbells: 'Dumbbell', pullupbar: 'Pull-up Bar', rings: 'Rings',
+  jumprope: 'Jump Rope', resistancebands: 'Resistance Bands', running: 'Running',
+  rower: 'Rower', assaultbike: 'Assault Bike', skierg: 'Ski Erg',
+  slamball: 'Slam Ball', medicineball: 'Medicine Ball', rope: 'Rope',
+  box: 'Box', ghd: 'GHD',
+};
+
+function updateMoreFiltersBtn() {
+  const btn   = document.getElementById('more-filters-btn');
+  const count = activeCategory !== 'all' ? 1 : 0;
+  const filterSVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>`;
+  if (count > 0) {
+    btn.classList.add('has-filters');
+    btn.innerHTML = `${filterSVG} Filter by category <span class="filter-count-badge">${count}</span>`;
+  } else {
+    btn.classList.remove('has-filters');
+    btn.innerHTML = `${filterSVG} Filter by category`;
+  }
+}
+
+function updateActivePills() {
+  const container = document.getElementById('active-filters');
+  const pills = [];
+  if (activeCategory !== 'all') {
+    const label = CAT_DISPLAY[activeCategory] || activeCategory;
+    pills.push(`<span class="active-pill">${label} <span class="pill-x" data-clear="cat" role="button" aria-label="Remove ${label} filter">✕</span></span>`);
+  }
+  if (searchQuery) {
+    const raw = document.getElementById('search').value;
+    pills.push(`<span class="active-pill">"${raw}" <span class="pill-x" data-clear="search" role="button" aria-label="Clear search">✕</span></span>`);
+  }
+  if (pills.length > 0) {
+    container.innerHTML = `<span class="af-label">Active:</span>${pills.join('')}<button class="af-clear" onclick="clearAllFilters()">Clear all</button>`;
+    container.classList.add('visible');
+  } else {
+    container.innerHTML = '';
+    container.classList.remove('visible');
+  }
+  // pill-x click handlers
+  container.querySelectorAll('.pill-x').forEach(x => {
+    x.addEventListener('click', () => {
+      const t = x.dataset.clear;
+      if (t === 'cat') {
+        activeCategory = 'all';
+        document.querySelectorAll('[data-cat]').forEach(c => c.classList.toggle('active', c.dataset.cat === 'all'));
+      } else if (t === 'search') {
+        searchQuery = '';
+        document.getElementById('search').value = '';
+      }
+      updateMoreFiltersBtn();
+      updateActivePills();
+      render();
+    });
+  });
+}
+
 function clearAllFilters() {
   activeCategory = 'all';
   searchQuery = '';
   document.getElementById('search').value = '';
   document.querySelectorAll('[data-cat]').forEach(c =>
     c.classList.toggle('active', c.dataset.cat === 'all'));
+  updateMoreFiltersBtn();
+  updateActivePills();
   render();
 }
 
@@ -475,6 +598,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   ALL_MOVEMENTS = await loadMovements();
   document.getElementById('total-count').textContent = ALL_MOVEMENTS.length;
 
+  // More filters toggle
+  document.getElementById('more-filters-btn').addEventListener('click', toggleFiltersPanel);
+
   // Category chips
   document.getElementById('cat-chips').addEventListener('click', e => {
     const chip = e.target.closest('[data-cat]');
@@ -482,6 +608,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     activeCategory = chip.dataset.cat;
     document.querySelectorAll('[data-cat]').forEach(c => c.classList.remove('active'));
     chip.classList.add('active');
+    updateMoreFiltersBtn();
+    updateActivePills();
+    // Auto-close panel after selection
+    const panel = document.getElementById('filters-panel');
+    const btn   = document.getElementById('more-filters-btn');
+    if (panel.classList.contains('open')) {
+      panel.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
     render();
   });
 
@@ -489,7 +624,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   let searchTimer;
   document.getElementById('search').addEventListener('input', e => {
     clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => { searchQuery = expandQuery(e.target.value); render(); }, 180);
+    searchTimer = setTimeout(() => {
+      searchQuery = expandQuery(e.target.value);
+      updateActivePills();
+      render();
+    }, 180);
   });
 
   render();
