@@ -55,15 +55,60 @@
     .page-subtitle { font-size: .9rem; color: var(--muted); }
     .page-subtitle strong { color: var(--text); font-weight: 700; }
 
-    /* filter sections */
-    .filter-section { display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px; }
-    .filter-section + .filter-section { padding-top: 18px; }
-    .filter-divider { height: 1px; background: var(--border); }
+    /* ── Search row ── */
+    .search-row { display: flex; gap: 10px; align-items: center; padding-bottom: 14px; }
+    .more-filters-btn {
+      display: flex; align-items: center; gap: 7px;
+      padding: 10px 15px; border: 1.5px solid var(--border); border-radius: 9px;
+      font-family: var(--font-body); font-size: .88rem; font-weight: 600;
+      color: var(--text); background: var(--white); cursor: pointer;
+      white-space: nowrap; transition: all .15s; flex-shrink: 0;
+    }
+    .more-filters-btn:hover { border-color: var(--or); color: var(--or); }
+    .more-filters-btn.has-filters { border-color: var(--or); color: var(--or); background: var(--or-xlight); }
+    .filter-count-badge {
+      display: inline-block; background: var(--or); color: #fff;
+      border-radius: 20px; padding: 1px 7px; font-size: .7rem; font-weight: 800; line-height: 1.4;
+    }
+
+    /* ── More Filters panel ── */
+    .filters-panel {
+      display: none; background: var(--bg); border: 1.5px solid var(--border);
+      border-radius: 10px; padding: 16px 18px; margin-bottom: 14px;
+    }
+    .filters-panel.open { display: block; }
+    .filter-group { display: flex; flex-direction: column; gap: 8px; }
+    .filter-group + .filter-group { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
     .filter-label {
       font-size: .72rem; font-weight: 700; text-transform: uppercase;
       letter-spacing: .07em; color: var(--muted);
     }
     .chip-row { display: flex; flex-wrap: wrap; gap: 7px; }
+
+    /* ── Active filter pills ── */
+    .active-filters {
+      display: none; align-items: center; gap: 7px; flex-wrap: wrap;
+      padding: 0 0 12px;
+    }
+    .active-filters.visible { display: flex; }
+    .af-label { font-size: .78rem; color: var(--muted); font-weight: 600; flex-shrink: 0; }
+    .active-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--or-xlight); color: var(--or);
+      border: 1px solid var(--or-light); border-radius: 20px;
+      padding: 3px 10px; font-size: .78rem; font-weight: 600;
+    }
+    .pill-x {
+      cursor: pointer; font-size: .8rem; line-height: 1; margin-left: 2px;
+      opacity: .7; transition: opacity .1s;
+    }
+    .pill-x:hover { opacity: 1; }
+    .af-clear {
+      font-size: .78rem; color: var(--or); font-weight: 700; cursor: pointer;
+      background: none; border: none; font-family: var(--font-body); padding: 0 4px;
+      transition: opacity .15s;
+    }
+    .af-clear:hover { opacity: .75; }
 
     /* search in header */
     .search-wrap { position: relative; }
@@ -285,55 +330,61 @@
       </p>
     </div>
 
-    <!-- Equipment filter -->
-    <div class="filter-section">
-      <span class="filter-label">Equipment</span>
-      <div class="chip-row" id="equip-chips">
-        <button class="chip active" data-equip="all">All</button>
-        <button class="chip" data-equip="bodyweight">Bodyweight</button>
-        <button class="chip" data-equip="barbell">Barbell</button>
-        <button class="chip" data-equip="pullUpBar">Pull-up Bar</button>
-        <button class="chip" data-equip="run">Running</button>
-        <button class="chip" data-equip="dumbbell">Dumbbells</button>
-        <button class="chip" data-equip="kettlebell">Kettlebell</button>
-      </div>
-    </div>
-    <div class="filter-divider"></div>
-
-    <!-- WOD type filter -->
-    <div class="filter-section">
-      <span class="filter-label">WOD Type</span>
-      <div class="chip-row" id="type-chips">
-        <button class="chip active" data-type="all">All</button>
-        <button class="chip" data-type="For Time">For Time</button>
-        <button class="chip" data-type="AMRAP">AMRAP</button>
-        <button class="chip" data-type="EMOM">EMOM</button>
-        <button class="chip" data-type="Circuit">Circuit</button>
-        <button class="chip" data-type="Chipper">Chipper</button>
-        <button class="chip" data-type="Tabata">Tabata</button>
-      </div>
-    </div>
-    <div class="filter-divider"></div>
-
-    <!-- Search -->
-    <div class="filter-section">
-      <span class="filter-label">Search</span>
-      <div class="search-wrap">
+    <!-- Search row + More Filters button -->
+    <div class="search-row">
+      <div class="search-wrap" style="flex:1;">
         <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
         <input class="search-input" id="search" type="text" placeholder="Search by name or movement…" autocomplete="off">
       </div>
+      <button class="more-filters-btn" id="more-filters-btn" aria-expanded="false" aria-controls="filters-panel">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
+        </svg>
+        More filters
+      </button>
     </div>
+
+    <!-- Collapsible filters panel -->
+    <div class="filters-panel" id="filters-panel" role="region" aria-label="Secondary filters">
+      <div class="filter-group">
+        <span class="filter-label">Equipment</span>
+        <div class="chip-row" id="equip-chips">
+          <button class="chip active" data-equip="all">All</button>
+          <button class="chip" data-equip="bodyweight">Bodyweight</button>
+          <button class="chip" data-equip="barbell">Barbell</button>
+          <button class="chip" data-equip="pullUpBar">Pull-up Bar</button>
+          <button class="chip" data-equip="run">Running</button>
+          <button class="chip" data-equip="dumbbell">Dumbbells</button>
+          <button class="chip" data-equip="kettlebell">Kettlebell</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">WOD Type</span>
+        <div class="chip-row" id="type-chips">
+          <button class="chip active" data-type="all">All</button>
+          <button class="chip" data-type="For Time">For Time</button>
+          <button class="chip" data-type="AMRAP">AMRAP</button>
+          <button class="chip" data-type="EMOM">EMOM</button>
+          <button class="chip" data-type="Circuit">Circuit</button>
+          <button class="chip" data-type="Chipper">Chipper</button>
+          <button class="chip" data-type="Tabata">Tabata</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active filter pills -->
+    <div class="active-filters" id="active-filters" aria-live="polite"></div>
 
     <!-- Category tabs -->
     <div class="cat-tabs" id="cat-tabs">
-      <button class="cat-tab active" data-cat="all">All <span class="tab-count" id="cnt-all">107</span></button>
-      <button class="cat-tab" data-cat="hero">Hero <span class="tab-count" id="cnt-hero">0</span></button>
-      <button class="cat-tab" data-cat="classic_benchmark">Classic <span class="tab-count" id="cnt-classic_benchmark">0</span></button>
+      <button class="cat-tab active" data-cat="all">All <span class="tab-count" id="cnt-all">—</span></button>
+      <button class="cat-tab" data-cat="classic_benchmark">Classic Benchmarks <span class="tab-count" id="cnt-classic_benchmark">0</span></button>
+      <button class="cat-tab" data-cat="hero">The Heroes <span class="tab-count" id="cnt-hero">0</span></button>
+      <button class="cat-tab" data-cat="memorial">Memorials &amp; Tributes <span class="tab-count" id="cnt-memorial">0</span></button>
       <button class="cat-tab" data-cat="competition">Competition <span class="tab-count" id="cnt-competition">0</span></button>
-      <button class="cat-tab" data-cat="community">Community <span class="tab-count" id="cnt-community">0</span></button>
-      <button class="cat-tab" data-cat="memorial">Memorial <span class="tab-count" id="cnt-memorial">0</span></button>
+      <button class="cat-tab" data-cat="community">Community WODs <span class="tab-count" id="cnt-community">0</span></button>
       <button class="cat-tab" data-cat="daily20">Daily 20 <span class="tab-count" id="cnt-daily20">90</span></button>
     </div>
 
@@ -506,6 +557,75 @@ function filteredWods() {
     return 0;
   });
   return list;
+}
+
+// ─────────────────────────────────────────
+// MORE FILTERS — toggle, button state, pills
+// ─────────────────────────────────────────
+function toggleFiltersPanel() {
+  const panel = document.getElementById('filters-panel');
+  const btn   = document.getElementById('more-filters-btn');
+  const open  = panel.classList.toggle('open');
+  btn.setAttribute('aria-expanded', open);
+}
+
+const EQUIP_DISPLAY = {
+  bodyweight:'Bodyweight', barbell:'Barbell', pullUpBar:'Pull-up Bar',
+  run:'Running', dumbbell:'Dumbbells', kettlebell:'Kettlebell',
+};
+
+function updateMoreFiltersBtn() {
+  const btn   = document.getElementById('more-filters-btn');
+  const count = (activeEquip !== 'all' ? 1 : 0) + (activeType !== 'all' ? 1 : 0);
+  if (count > 0) {
+    btn.classList.add('has-filters');
+    btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg> More filters <span class="filter-count-badge">${count}</span>`;
+  } else {
+    btn.classList.remove('has-filters');
+    btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg> More filters`;
+  }
+}
+
+function updateActivePills() {
+  const container = document.getElementById('active-filters');
+  const pills = [];
+  if (activeEquip !== 'all') {
+    const label = EQUIP_DISPLAY[activeEquip] || activeEquip;
+    pills.push(`<span class="active-pill">${label} <span class="pill-x" data-clear="equip" role="button" aria-label="Remove ${label} filter">✕</span></span>`);
+  }
+  if (activeType !== 'all') {
+    pills.push(`<span class="active-pill">${activeType} <span class="pill-x" data-clear="type" role="button" aria-label="Remove ${activeType} filter">✕</span></span>`);
+  }
+  if (searchQuery) {
+    const raw = document.getElementById('search').value;
+    pills.push(`<span class="active-pill">"${raw}" <span class="pill-x" data-clear="search" role="button" aria-label="Clear search">✕</span></span>`);
+  }
+  if (pills.length > 0) {
+    container.innerHTML = `<span class="af-label">Active:</span>${pills.join('')}<button class="af-clear" onclick="clearAllFilters()">Clear all</button>`;
+    container.classList.add('visible');
+  } else {
+    container.innerHTML = '';
+    container.classList.remove('visible');
+  }
+  // pill-x click handlers
+  container.querySelectorAll('.pill-x').forEach(x => {
+    x.addEventListener('click', () => {
+      const t = x.dataset.clear;
+      if (t === 'equip') {
+        activeEquip = 'all';
+        document.querySelectorAll('[data-equip]').forEach(p => p.classList.toggle('active', p.dataset.equip === 'all'));
+      } else if (t === 'type') {
+        activeType = 'all';
+        document.querySelectorAll('[data-type]').forEach(p => p.classList.toggle('active', p.dataset.type === 'all'));
+      } else if (t === 'search') {
+        searchQuery = '';
+        document.getElementById('search').value = '';
+      }
+      updateMoreFiltersBtn();
+      updateActivePills();
+      render();
+    });
+  });
 }
 
 // ─────────────────────────────────────────
@@ -762,6 +882,8 @@ function clearAllFilters() {
   document.querySelectorAll('[data-equip]').forEach(p => p.classList.toggle('active', p.dataset.equip === 'all'));
   document.querySelectorAll('[data-type]').forEach(p => p.classList.toggle('active', p.dataset.type === 'all'));
   history.replaceState(null, '', location.pathname);
+  updateMoreFiltersBtn();
+  updateActivePills();
   render();
 }
 
@@ -836,6 +958,9 @@ document.addEventListener('DOMContentLoaded', () => {
     render();
   });
 
+  // More Filters toggle
+  document.getElementById('more-filters-btn').addEventListener('click', toggleFiltersPanel);
+
   // Equipment chips
   document.getElementById('equip-chips').addEventListener('click', e => {
     const chip = e.target.closest('[data-equip]');
@@ -843,6 +968,8 @@ document.addEventListener('DOMContentLoaded', () => {
     activeEquip = chip.dataset.equip;
     document.querySelectorAll('[data-equip]').forEach(p => p.classList.remove('active'));
     chip.classList.add('active');
+    updateMoreFiltersBtn();
+    updateActivePills();
     render();
   });
 
@@ -853,6 +980,8 @@ document.addEventListener('DOMContentLoaded', () => {
     activeType = chip.dataset.type;
     document.querySelectorAll('[data-type]').forEach(p => p.classList.remove('active'));
     chip.classList.add('active');
+    updateMoreFiltersBtn();
+    updateActivePills();
     render();
   });
 
@@ -860,7 +989,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let searchTimer;
   document.getElementById('search').addEventListener('input', e => {
     clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => { searchQuery = expandQuery(e.target.value); render(); }, 180);
+    searchTimer = setTimeout(() => {
+      searchQuery = expandQuery(e.target.value);
+      updateActivePills();
+      render();
+    }, 180);
   });
 
   // Sort
