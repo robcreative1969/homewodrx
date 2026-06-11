@@ -1,129 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<!-- Sentry Error Monitoring -->
-<script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Stretch Routines — Curated Mobility Programs | HomeWODrx</title>
-<meta name="description" content="Curated stretch and mobility routines for functional fitness athletes. Pre-WOD warm-ups, post-WOD cool downs, targeted hip, shoulder, and morning yoga flows."/>
-<meta property="og:title" content="Stretch Routines — Curated Mobility Programs | HomeWODrx"/>
-<meta property="og:description" content="Follow proven stretch routines built for functional fitness athletes. Pre-WOD warm-ups, post-WOD cool downs, hip openers, shoulder mobility, and more."/>
-<meta property="og:type" content="website"/>
-<meta property="og:url" content="https://homewodrx.com/stretch-routines"/>
-<meta property="og:image" content="https://homewodrx.com/images/og-default.png"/>
-<link rel="canonical" href="https://homewodrx.com/stretch-routines"/>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  "name": "Stretch Routines — HomeWODrx",
-  "description": "Curated stretch and mobility routines for functional fitness athletes.",
-  "url": "https://homewodrx.com/stretch-routines",
-  "breadcrumb": {
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://homewodrx.com/" },
-      { "@type": "ListItem", "position": 2, "name": "Stretch Routines", "item": "https://homewodrx.com/stretch-routines" }
-    ]
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stretch Routines — Curated Mobility Programs | HomeWODrx</title>
+  <meta name="description" content="Curated stretch and mobility routines for functional fitness athletes. Pre-WOD warm-ups, post-WOD cool downs, targeted hip, shoulder, and morning yoga flows.">
+  <meta property="og:title" content="Stretch Routines — Curated Mobility Programs | HomeWODrx">
+  <meta property="og:description" content="Follow proven stretch routines built for functional fitness athletes. Pre-WOD warm-ups, post-WOD cool downs, hip openers, shoulder mobility, and more.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://homewodrx.com/stretch-routines">
+  <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
+  <link rel="canonical" href="https://homewodrx.com/stretch-routines">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Stretch Routines — HomeWODrx",
+    "description": "Curated stretch and mobility routines for functional fitness athletes.",
+    "url": "https://homewodrx.com/stretch-routines",
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://homewodrx.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Stretch Routines", "item": "https://homewodrx.com/stretch-routines" }
+      ]
+    }
   }
-}
-</script>
-<link rel="icon" type="image/x-icon" href="/favicon.ico"/>
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="/css/style.css"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-HZM475VDN3');</script>
-<!-- Vercel Analytics -->
-<script defer src="/_vercel/insights/script.js"></script>
-<script src="/js/config.js"></script>
-<script src="/js/db.js"></script>
-<script src="/js/nav.js"></script>
-<style>
-/* ── PAGE HEADER ─────────────────────────────────────── */
-.page-header{background:var(--white);border-bottom:1px solid var(--border);padding:28px 0 24px}
-.page-header-inner{max-width:1248px;margin:0 auto;padding:0 24px}
-.page-title{font-family:var(--font-head);font-size:3rem;letter-spacing:.04em;line-height:1;color:var(--text)}
-.page-sub{font-size:.9rem;color:var(--muted);margin-top:6px;max-width:580px;line-height:1.6}
-@media(max-width:600px){.page-title{font-size:2.2rem}}
+  </script>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 
-/* ── ROUTINES GRID ───────────────────────────────────── */
-.routines-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;}
-@media(max-width:480px){.routines-grid{grid-template-columns:1fr;}}
+  <!-- Sentry -->
+  <style>sentry-feedback,#sentry-feedback{display:none!important;visibility:hidden!important}</style>
+  <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
 
-/* ── ROUTINE CARD ────────────────────────────────────── */
-.routine-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;text-decoration:none;color:var(--text);display:flex;flex-direction:column;transition:box-shadow .18s,border-color .18s,transform .15s;cursor:pointer;}
-.routine-card:hover{box-shadow:var(--shadow-lg);border-color:var(--or);transform:translateY(-2px);}
-.card-header{padding:22px 22px 16px;border-bottom:1px solid var(--border);}
-.card-icon{font-size:2rem;margin-bottom:10px;display:block;}
-.card-name{font-family:var(--font-head);font-size:1.6rem;letter-spacing:.04em;line-height:1.05;color:var(--text);margin-bottom:6px;}
-.card-tagline{font-size:.875rem;color:var(--muted);line-height:1.45;}
-.card-meta{padding:14px 22px;display:flex;flex-wrap:wrap;gap:8px;}
-.meta-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:.75rem;font-weight:700;letter-spacing:.02em;}
-.chip-duration{background:rgba(196,18,18,.08);color:var(--or);border:1px solid rgba(196,18,18,.2);}
-.chip-level{background:rgba(34,197,94,.08);color:#16a34a;border:1px solid rgba(34,197,94,.2);}
-.chip-level.intermediate{background:rgba(249,115,22,.08);color:#ea580c;border:1px solid rgba(249,115,22,.2);}
-.chip-modality{background:rgba(99,102,241,.08);color:#4f46e5;border:1px solid rgba(99,102,241,.2);}
-.card-footer{margin-top:auto;padding:12px 22px 18px;display:flex;align-items:center;justify-content:space-between;}
-.card-steps{font-size:.8rem;color:var(--muted);}
-.card-cta{font-size:.82rem;font-weight:700;color:var(--or);display:flex;align-items:center;gap:4px;}
-.card-cta svg{width:14px;height:14px;transition:transform .15s;}
-.routine-card:hover .card-cta svg{transform:translateX(3px);}
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-/* ── SECTION LABEL ───────────────────────────────────── */
-.section-label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:14px;}
+  <!-- Shared styles -->
+  <link rel="stylesheet" href="/css/style.css">
 
-/* ── ALSO SEE ─────────────────────────────────────────── */
-.also-see{margin-top:48px;padding:24px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);}
-.also-see h3{font-family:var(--font-head);font-size:1.5rem;letter-spacing:.04em;margin-bottom:8px;}
-.also-see p{font-size:.9rem;color:var(--muted);margin-bottom:16px;line-height:1.5;}
-.also-links{display:flex;flex-wrap:wrap;gap:10px;}
-.also-link{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;background:var(--or);color:white;border-radius:8px;text-decoration:none;font-size:.875rem;font-weight:600;transition:background .15s;}
-.also-link:hover{background:var(--or-dark);}
-.also-link-ghost{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border:1.5px solid var(--border);border-radius:8px;text-decoration:none;font-size:.875rem;font-weight:600;color:var(--text);transition:all .15s;}
-.also-link-ghost:hover{border-color:var(--or);color:var(--or);}
-</style>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-HZM475VDN3');
+  </script>
+  <!-- Vercel Analytics -->
+  <script defer src="/_vercel/insights/script.js"></script>
+
+  <style>
+    /* ── Page vars ── */
+    :root {
+      --gr:        #1a472a;
+      --gr-mid:    #2d6a4f;
+      --gr-dark:   #153a22;
+      --gr-light:  #f0f7f3;
+      --gr-border: #c8e0d4;
+      --gr-xlight: #e8f5ef;
+    }
+
+    /* Fix ham-panel positioning */
+    .ham-panel { position: fixed !important; top: var(--nav-h); }
+
+    /* ── Page header ── */
+    .page-header { padding: 0; background: var(--white); border-bottom: 1px solid var(--border); }
+    .page-header-inner { max-width: 1248px; margin: 0 auto; padding: 32px 24px 0; }
+    .page-title-row { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-bottom: 20px; }
+    .page-title { font-family: var(--font-head); font-size: 3rem; letter-spacing: .04em; line-height: 1; color: var(--text); }
+    .page-subtitle { font-size: .9rem; color: var(--muted); max-width: 580px; line-height: 1.6; }
+
+    /* ── Search row ── */
+    .search-row { display: flex; gap: 10px; align-items: center; padding-bottom: 14px; }
+    .search-wrap { position: relative; flex: 1; }
+    .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+    .search-input {
+      width: 100%; padding: 11px 14px 11px 42px; border: 1.5px solid var(--border); border-radius: 9px;
+      font-family: var(--font-body); font-size: .92rem; color: var(--text); background: var(--bg);
+      outline: none; transition: border-color .15s, background .15s;
+    }
+    .search-input::placeholder { color: var(--muted); }
+    .search-input:focus { border-color: var(--gr-mid); background: var(--white); }
+
+    /* ── Filter chips row ── */
+    .filter-row { padding-bottom: 14px; }
+    .filter-row-inner { display: flex; flex-wrap: wrap; gap: 7px; }
+    .chip {
+      cursor: pointer; display: inline-block;
+      font-family: var(--font-body); font-size: .875rem; font-weight: 500;
+      padding: .28rem .7rem; border-radius: 20px; line-height: 1.4;
+      border: 1px solid var(--border); background: var(--white); color: var(--text);
+      transition: all 150ms; white-space: nowrap;
+    }
+    .chip:hover  { border-color: var(--gr-mid); color: var(--gr); }
+    .chip.active { background: var(--gr); border-color: var(--gr); color: #fff; }
+
+    /* ── Active filter pills ── */
+    .active-filters { display: none; align-items: center; gap: 7px; flex-wrap: wrap; padding: 0 0 12px; }
+    .active-filters.visible { display: flex; }
+    .af-label { font-size: .78rem; color: var(--muted); font-weight: 600; flex-shrink: 0; }
+    .active-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--gr-xlight); color: var(--gr);
+      border: 1px solid var(--gr-border); border-radius: 20px;
+      padding: 3px 10px; font-size: .78rem; font-weight: 600;
+    }
+    .pill-x { cursor: pointer; font-size: .8rem; line-height: 1; margin-left: 2px; opacity: .7; transition: opacity .1s; }
+    .pill-x:hover { opacity: 1; }
+    .af-clear {
+      font-size: .78rem; color: var(--gr); font-weight: 700; cursor: pointer;
+      background: none; border: none; font-family: var(--font-body); padding: 0 4px; transition: opacity .15s;
+    }
+    .af-clear:hover { opacity: .75; }
+
+    /* ── Main content ── */
+    .page-wrap { max-width: 1248px; margin: 0 auto; padding: 28px 24px 100px; }
+
+    /* ── Results meta ── */
+    .results-meta { display: flex; align-items: center; margin-bottom: 20px; }
+    .results-count { font-size: .88rem; color: var(--muted); }
+    .results-count strong { color: var(--text); font-weight: 700; }
+
+    /* ── Routines grid ── */
+    .routines-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+
+    /* ── Routine card ── */
+    .routine-card {
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      text-decoration: none; color: var(--text);
+      display: flex; flex-direction: column;
+      transition: box-shadow .18s, border-color .18s, transform .15s; cursor: pointer;
+    }
+    .routine-card:hover { box-shadow: var(--shadow-lg); border-color: var(--or); transform: translateY(-2px); }
+    .card-header { padding: 22px 22px 16px; border-bottom: 1px solid var(--border); }
+    .card-name { font-family: var(--font-head); font-size: 1.6rem; letter-spacing: .04em; line-height: 1.05; color: var(--text); margin-bottom: 6px; }
+    .card-tagline { font-size: .875rem; color: var(--muted); line-height: 1.45; }
+    .card-meta { padding: 14px 22px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .meta-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: 6px; font-size: .75rem; font-weight: 700; letter-spacing: .02em;
+    }
+    .chip-duration  { background: rgba(196,18,18,.08);  color: var(--or);    border: 1px solid rgba(196,18,18,.2); }
+    .chip-level     { background: rgba(34,197,94,.08);   color: #16a34a;     border: 1px solid rgba(34,197,94,.2); }
+    .chip-level.intermediate { background: rgba(249,115,22,.08); color: #ea580c; border: 1px solid rgba(249,115,22,.2); }
+    .chip-modality  { background: rgba(99,102,241,.08);  color: #4f46e5;     border: 1px solid rgba(99,102,241,.2); }
+    .card-footer { margin-top: auto; padding: 12px 22px 18px; display: flex; align-items: center; justify-content: space-between; }
+    .card-steps { font-size: .8rem; color: var(--muted); }
+    .card-cta { font-size: .82rem; font-weight: 700; color: var(--or); display: flex; align-items: center; gap: 4px; }
+    .card-cta svg { width: 14px; height: 14px; transition: transform .15s; }
+    .routine-card:hover .card-cta svg { transform: translateX(3px); }
+
+    /* ── Empty state ── */
+    .no-results { color: var(--muted); grid-column: 1 / -1; padding: 20px 0; font-size: .9rem; display: none; }
+    .no-results.visible { display: block; }
+
+    /* ── Also see ── */
+    .also-see { margin-top: 48px; padding: 24px; background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); }
+    .also-see h3 { font-family: var(--font-head); font-size: 1.5rem; letter-spacing: .04em; margin-bottom: 8px; }
+    .also-see p { font-size: .9rem; color: var(--muted); margin-bottom: 16px; line-height: 1.5; }
+    .also-links { display: flex; flex-wrap: wrap; gap: 10px; }
+    .also-link {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 18px; background: var(--or); color: white;
+      border-radius: 8px; text-decoration: none; font-size: .875rem; font-weight: 600; transition: background .15s;
+    }
+    .also-link:hover { background: var(--or-dark); }
+    .also-link-ghost {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 18px; border: 1.5px solid var(--border); border-radius: 8px;
+      text-decoration: none; font-size: .875rem; font-weight: 600; color: var(--text); transition: all .15s;
+    }
+    .also-link-ghost:hover { border-color: var(--or); color: var(--or); }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .page-header-inner { padding: 20px 16px 0; }
+      .page-wrap  { padding: 20px 16px 60px; }
+      .page-title { font-size: 2.2rem; }
+      .routines-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body data-nav-init="true" data-active-page="stretch">
 
-<!-- PAGE HEADER -->
+<!-- ── PAGE HEADER ── -->
 <div class="page-header">
   <div class="page-header-inner">
-    <h1 class="page-title">STRETCH ROUTINES</h1>
-    <p class="page-sub">Curated, step-by-step mobility sequences built for functional fitness athletes — from pre-WOD warm-ups to targeted recovery work.</p>
+
+    <div class="page-title-row">
+      <h1 class="page-title">STRETCH ROUTINES</h1>
+      <p class="page-subtitle">Curated, step-by-step mobility sequences built for functional fitness athletes — from pre-WOD warm-ups to targeted recovery work.</p>
+    </div>
+
+    <!-- Search -->
+    <div class="search-row">
+      <div class="search-wrap">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input class="search-input" id="routine-search" type="text" placeholder="Search routines…" autocomplete="off">
+      </div>
+    </div>
+
+    <!-- Filter chips (visible by default — small enough set) -->
+    <div class="filter-row">
+      <div class="filter-row-inner" id="filter-chips">
+        <button class="chip active" data-filter="all">All Routines</button>
+        <button class="chip" data-filter="All Levels">All Levels</button>
+        <button class="chip" data-filter="Intermediate+">Intermediate+</button>
+        <button class="chip" data-filter="Dynamic">Dynamic</button>
+        <button class="chip" data-filter="Static">Static</button>
+        <button class="chip" data-filter="Yoga">Yoga</button>
+        <button class="chip" data-filter="Mixed">Mixed</button>
+      </div>
+    </div>
+
+    <!-- Active filter pills -->
+    <div class="active-filters" id="active-filters" aria-live="polite"></div>
+
   </div>
 </div>
 
+<!-- ── MAIN ── -->
 <div class="page-wrap">
 
-  <!-- SEARCH + FILTER ROW -->
-  <div class="search-filter-row" style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
-    <div style="flex:1;min-width:200px;position:relative;">
-      <input type="text" id="routine-search" placeholder="Search routines…" style="width:100%;box-sizing:border-box;padding:9px 14px 9px 36px;border:1.5px solid var(--border);border-radius:8px;font-size:.875rem;background:var(--white);color:var(--text);outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--or)'" onblur="this.style.borderColor='var(--border)'">
-      <svg style="position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--muted);pointer-events:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    </div>
-    <div class="filter-bar" id="filter-bar" style="margin-bottom:0">
-      <button class="filter-chip active" data-filter="all">All Routines</button>
-      <button class="filter-chip" data-filter="All Levels">All Levels</button>
-      <button class="filter-chip" data-filter="Intermediate+">Intermediate+</button>
-      <button class="filter-chip" data-filter="Dynamic">Dynamic</button>
-      <button class="filter-chip" data-filter="Static">Static</button>
-      <button class="filter-chip" data-filter="Yoga">Yoga</button>
-      <button class="filter-chip" data-filter="Mixed">Mixed</button>
-    </div>
+  <div class="results-meta">
+    <p class="results-count">Showing <strong id="shown-count">—</strong> routines</p>
   </div>
 
-  <!-- ROUTINES GRID -->
-  <div class="section-label" id="grid-label">5 routines</div>
-  <div class="routines-grid" id="routines-grid"></div>
+  <div class="routines-grid" id="routines-grid">
+    <p style="color:var(--muted);grid-column:1/-1;padding:20px 0;font-size:.9rem;">Loading routines…</p>
+  </div>
+  <div class="no-results" id="no-results">No routines match your filters.</div>
 
-  <!-- ALSO SEE -->
+  <!-- Also see -->
   <div class="also-see">
     <h3>More Stretch Tools</h3>
     <p>Build a custom routine with the generator, or browse all 50+ individual stretches in the library.</p>
@@ -135,89 +251,182 @@
 
 </div>
 
+<!-- ── DATA & SCRIPTS ── -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/js/config.js"></script>
+<script src="/js/db.js"></script>
+<script src="/js/nav.js"></script>
+
 <script>
-  // ── Render ──────────────────────────────────────────────────────────────
-  const grid = document.getElementById('routines-grid');
-  const label = document.getElementById('grid-label');
+// ─────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────
+let STRETCH_ROUTINES = [];
+let activeFilter = 'all';
+let searchQuery  = '';
 
-  let STRETCH_ROUTINES = [];
-  let activeFilter = 'all';
-  let searchQuery = '';
+const FILTER_LABELS = {
+  'All Levels': 'All Levels', 'Intermediate+': 'Intermediate+',
+  'Dynamic': 'Dynamic', 'Static': 'Static', 'Yoga': 'Yoga', 'Mixed': 'Mixed',
+};
 
-  function levelChipClass(r) {
-    return r.level_label === 'Intermediate+' ? 'chip-level intermediate' : 'chip-level';
+// ─────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────
+function levelChipClass(r) {
+  return r.level_label === 'Intermediate+' ? 'chip-level intermediate' : 'chip-level';
+}
+
+function renderCard(r) {
+  const stretchCount = Array.isArray(r.stretches) ? r.stretches.length : 0;
+  return `
+    <a href="/stretch-routines/${r.slug}" class="routine-card">
+      <div class="card-header">
+        <div class="card-name">${r.name}</div>
+        <div class="card-tagline">${r.tagline}</div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-chip chip-duration">${r.duration} min</span>
+        <span class="meta-chip ${levelChipClass(r)}">● ${r.level_label}</span>
+        <span class="meta-chip chip-modality">${r.modality}</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-steps">${stretchCount} stretches</span>
+        <span class="card-cta">View Routine
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </span>
+      </div>
+    </a>`;
+}
+
+function render() {
+  let list = STRETCH_ROUTINES;
+
+  if (activeFilter !== 'all') {
+    list = list.filter(r => r.level_label === activeFilter || r.modality === activeFilter);
+  }
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    list = list.filter(r =>
+      r.name.toLowerCase().includes(q) ||
+      (r.tagline  || '').toLowerCase().includes(q) ||
+      (r.modality || '').toLowerCase().includes(q)
+    );
   }
 
-  function renderCard(r) {
-    const stretchCount = Array.isArray(r.stretches) ? r.stretches.length : 0;
-    return `
-      <a href="/stretch-routines/${r.slug}" class="routine-card" data-modality="${r.modality}" data-level="${r.level_label}">
-        <div class="card-header">
-          <div class="card-name">${r.name}</div>
-          <div class="card-tagline">${r.tagline}</div>
-        </div>
-        <div class="card-meta">
-          <span class="meta-chip chip-duration">${r.duration} min</span>
-          <span class="meta-chip ${levelChipClass(r)}">● ${r.level_label}</span>
-          <span class="meta-chip chip-modality">${r.modality}</span>
-        </div>
-        <div class="card-footer">
-          <span class="card-steps">${stretchCount} stretches</span>
-          <span class="card-cta">View Routine
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </span>
-        </div>
-      </a>`;
+  const grid     = document.getElementById('routines-grid');
+  const noResult = document.getElementById('no-results');
+
+  document.getElementById('shown-count').textContent = list.length;
+
+  if (list.length === 0) {
+    grid.innerHTML = '';
+    noResult.classList.add('visible');
+  } else {
+    noResult.classList.remove('visible');
+    grid.innerHTML = list.map(renderCard).join('');
+  }
+}
+
+// ─────────────────────────────────────────
+// ACTIVE PILLS
+// ─────────────────────────────────────────
+function updateActivePills() {
+  const container = document.getElementById('active-filters');
+  const pills = [];
+
+  if (activeFilter !== 'all') {
+    const label = FILTER_LABELS[activeFilter] || activeFilter;
+    pills.push(`<span class="active-pill">${label} <span class="pill-x" data-clear="filter" role="button" aria-label="Remove ${label} filter">✕</span></span>`);
+  }
+  if (searchQuery) {
+    const raw = document.getElementById('routine-search').value;
+    pills.push(`<span class="active-pill">"${raw}" <span class="pill-x" data-clear="search" role="button" aria-label="Clear search">✕</span></span>`);
   }
 
-  function render() {
-    let routines = STRETCH_ROUTINES;
-    if (activeFilter && activeFilter !== 'all') {
-      routines = routines.filter(r =>
-        r.level_label === activeFilter || r.modality === activeFilter
-      );
-    }
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      routines = routines.filter(r =>
-        r.name.toLowerCase().includes(q) ||
-        (r.tagline || '').toLowerCase().includes(q) ||
-        (r.modality || '').toLowerCase().includes(q)
-      );
-    }
-    grid.innerHTML = routines.length
-      ? routines.map(renderCard).join('')
-      : '<p style="color:var(--muted);grid-column:1/-1;padding:20px 0;">No routines match this filter.</p>';
-    label.textContent = routines.length + (routines.length === 1 ? ' routine' : ' routines');
+  if (pills.length > 0) {
+    container.innerHTML = `<span class="af-label">Active:</span>${pills.join('')}<button class="af-clear" onclick="clearFilters()">Clear all</button>`;
+    container.classList.add('visible');
+  } else {
+    container.innerHTML = '';
+    container.classList.remove('visible');
   }
 
-  // ── Load from Supabase ────────────────────────────────────────────────────
-  async function loadRoutines() {
-    const { data } = await supabaseClient
+  container.querySelectorAll('.pill-x').forEach(x => {
+    x.addEventListener('click', () => {
+      if (x.dataset.clear === 'filter') {
+        activeFilter = 'all';
+        document.querySelectorAll('[data-filter]').forEach(p => p.classList.toggle('active', p.dataset.filter === 'all'));
+      } else if (x.dataset.clear === 'search') {
+        searchQuery = '';
+        document.getElementById('routine-search').value = '';
+      }
+      updateActivePills();
+      render();
+    });
+  });
+}
+
+// ─────────────────────────────────────────
+// CLEAR ALL
+// ─────────────────────────────────────────
+function clearFilters() {
+  activeFilter = 'all';
+  searchQuery  = '';
+  document.getElementById('routine-search').value = '';
+  document.querySelectorAll('[data-filter]').forEach(p => p.classList.toggle('active', p.dataset.filter === 'all'));
+  updateActivePills();
+  render();
+}
+
+// ─────────────────────────────────────────
+// SUPABASE LOAD
+// ─────────────────────────────────────────
+async function loadRoutines() {
+  try {
+    if (!supabaseClient) await initSupabase();
+    const { data, error } = await supabaseClient
       .from('stretch_routines')
       .select('name, slug, tagline, duration, level_label, modality, stretches')
       .order('name');
+    if (error) throw error;
     if (data) STRETCH_ROUTINES = data;
-    render();
+  } catch(e) {
+    console.warn('Supabase fetch failed:', e);
   }
-  loadRoutines();
+  render();
+}
 
-  // ── Filter chips ─────────────────────────────────────────────────────────
-  document.getElementById('filter-bar').addEventListener('click', function(e) {
-    const chip = e.target.closest('.filter-chip');
+// ─────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  // Filter chips
+  document.getElementById('filter-chips').addEventListener('click', e => {
+    const chip = e.target.closest('[data-filter]');
     if (!chip) return;
-    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
     activeFilter = chip.dataset.filter;
+    document.querySelectorAll('[data-filter]').forEach(p => p.classList.remove('active'));
+    chip.classList.add('active');
+    updateActivePills();
     render();
   });
 
-  // ── Search ────────────────────────────────────────────────────────────────
+  // Search
   let searchTimer;
-  document.getElementById('routine-search').addEventListener('input', function(e) {
+  document.getElementById('routine-search').addEventListener('input', e => {
     clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => { searchQuery = e.target.value.trim(); render(); }, 180);
+    searchTimer = setTimeout(() => {
+      searchQuery = e.target.value.trim();
+      updateActivePills();
+      render();
+    }, 180);
   });
+
+  loadRoutines();
+});
 </script>
 <script src="/js/footer.js"></script>
 </body>
