@@ -368,7 +368,6 @@
           <button class="chip" data-type="AMRAP">AMRAP</button>
           <button class="chip" data-type="EMOM">EMOM</button>
           <button class="chip" data-type="Circuit">Circuit</button>
-          <button class="chip" data-type="Chipper">Chipper</button>
           <button class="chip" data-type="Tabata">Tabata</button>
         </div>
       </div>
@@ -538,7 +537,7 @@ function filteredWods() {
   let list = [...WODS];
   if (activeCategory !== 'all') list = list.filter(w => w.cat === activeCategory);
   if (activeEquip    !== 'all') list = list.filter(matchesEquip);
-  if (activeType     !== 'all') list = list.filter(w => w.type === activeType);
+  if (activeType     !== 'all') list = list.filter(w => w.type === activeType || w.type.startsWith(activeType + ' ') || w.type.startsWith(activeType + ' ('));
   if (searchQuery) {
     const q = searchQuery;
     list = list.filter(w =>
