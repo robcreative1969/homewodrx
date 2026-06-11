@@ -103,6 +103,11 @@
       opacity: .7; transition: opacity .1s;
     }
     .pill-x:hover { opacity: 1; }
+
+    /* ── Disabled (not applicable) chip ── */
+    .chip.d20-na {
+      opacity: .35; cursor: not-allowed; pointer-events: none;
+    }
     .af-clear {
       font-size: .78rem; color: var(--or); font-weight: 700; cursor: pointer;
       background: none; border: none; font-family: var(--font-body); padding: 0 4px;
@@ -573,6 +578,36 @@ const EQUIP_DISPLAY = {
   run:'Running', dumbbell:'Dumbbells', kettlebell:'Kettlebell',
 };
 
+// Maps workouts.html chip values → _d20MovDB equipment_category keys
+const D20_EQUIP_MAP = {
+  bodyweight: 'bodyweight',
+  dumbbell:   'dumbbell',
+  kettlebell: 'kettlebell',
+  pullUpBar:  'pullupbar',
+};
+// Chips that never appear in D20 workouts — gray out when Daily 20 tab is active
+const D20_EQUIP_NA = ['barbell', 'run'];
+
+function updateEquipChipsForCategory(cat) {
+  const isD20 = cat === 'daily20';
+  document.querySelectorAll('[data-equip]').forEach(chip => {
+    const val = chip.dataset.equip;
+    if (val === 'all') return;
+    if (isD20 && D20_EQUIP_NA.includes(val)) {
+      chip.classList.add('d20-na');
+      // If currently selected, reset to All
+      if (activeEquip === val) {
+        activeEquip = 'all';
+        document.querySelectorAll('[data-equip]').forEach(p => p.classList.toggle('active', p.dataset.equip === 'all'));
+        updateMoreFiltersBtn();
+        updateActivePills();
+      }
+    } else {
+      chip.classList.remove('d20-na');
+    }
+  });
+}
+
 function updateMoreFiltersBtn() {
   const btn   = document.getElementById('more-filters-btn');
   const count = (activeEquip !== 'all' ? 1 : 0) + (activeType !== 'all' ? 1 : 0);
@@ -767,6 +802,14 @@ function buildD20MovHtml(rows) {
 async function buildD20Archive(q) {
   await d20DataReady;
 
+  // Build reverse lookup: movement name → equipment_category
+  const movEquipLookup = {};
+  if (_d20MovDB) {
+    Object.entries(_d20MovDB).forEach(([cat, movs]) => {
+      movs.forEach(m => { movEquipLookup[m.name] = cat; });
+    });
+  }
+
   const cards = [];
   const today = new Date();
   for (let i = 0; i < 90; i++) {
@@ -786,6 +829,9 @@ async function buildD20Archive(q) {
     else if (fmt === 'For Time') scheme = (diff === 'Advanced' ? '4' : '3') + ' ROUNDS FOR TIME';
     else                         scheme = '4 ROUNDS · 60 SEC REST';
 
+    // Filter by WOD type
+    if (activeType !== 'all' && fmt !== activeType) continue;
+
     // Filter by search query against date label, format, body focus, difficulty
     if (q) {
       const searchable = (label + ' ' + fmt + ' ' + body + ' ' + diff).toLowerCase();
@@ -793,7 +839,16 @@ async function buildD20Archive(q) {
     }
 
     // Generate actual movements using Supabase-backed DailyWOD engine
-    const wod     = generateD20Sync(dateStr, dow);
+    const wod = generateD20Sync(dateStr, dow);
+
+    // Filter by equipment — check if any generated movement uses the selected category
+    if (activeEquip !== 'all') {
+      const d20Cat = D20_EQUIP_MAP[activeEquip];
+      if (!d20Cat) continue; // equipment not in D20 pool (barbell, run)
+      const hasEquip = (wod?.rows || []).some(r => movEquipLookup[r.movement] === d20Cat);
+      if (!hasEquip) continue;
+    }
+
     const movHtml = wod ? buildD20MovHtml(wod.rows) : '';
 
     cards.push(
@@ -826,10 +881,8 @@ async function buildD20Archive(q) {
 function render() {
   const isD20 = activeCategory === 'daily20';
   const isAll = activeCategory === 'all';
-  // Hide D20 archive when equipment or type filters are active —
-  // those filters don't apply to Daily 20 workouts.
-  const secondaryFiltersActive = activeEquip !== 'all' || activeType !== 'all';
-  const showD20 = (isD20 || isAll) && !secondaryFiltersActive;
+  // Type + equipment filters both apply to D20 — handled inside buildD20Archive().
+  const showD20 = isD20 || isAll;
 
   document.getElementById('wod-grid').style.display         = isD20 ? 'none' : '';
   document.getElementById('d20-archive').style.display      = showD20 ? 'block' : 'none';
@@ -957,6 +1010,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (activeCategory === 'all') url.searchParams.delete('cat');
     else url.searchParams.set('cat', activeCategory);
     history.replaceState(null, '', url);
+    updateEquipChipsForCategory(activeCategory);
     render();
   });
 
