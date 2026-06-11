@@ -588,6 +588,12 @@
           'Stretch routine unavailable — <a href="/stretches" style="color:var(--gr,#22a357)">browse all stretches</a>.' +
         '</div>';
     }
+
+    // Scroll to section if the page was linked with #daily-10
+    if (window.location.hash === '#daily-10') {
+      var section = document.getElementById('daily-10');
+      if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   async function loadDailyWarmupCooldown(wod) {
