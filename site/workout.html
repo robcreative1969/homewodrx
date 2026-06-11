@@ -1647,6 +1647,8 @@ async function saveAiWorkout() {
 // ─────────────────────────────────────────────────────────────────────────────
 // RENDER RELATED WORKOUTS
 // ─────────────────────────────────────────────────────────────────────────────
+// Scoring priority: 1) shared movements (most specific), 2) same category,
+// 3) anything else — so results are always genuinely relevant.
 function renderRelatedWorkouts(container, w) {
   if (!container) return;
   try {
@@ -1655,21 +1657,31 @@ function renderRelatedWorkouts(container, w) {
       container.innerHTML = '<p style="color:var(--muted);font-size:.85rem">No related WODs found.</p>';
       return;
     }
+
     var category    = w.category || '';
     var currentSlug = w.slug || '';
     var currentName = (w.name || w.title || '').toLowerCase();
 
-    var related = bms.filter(function(b) {
-      return b.slug && b.slug !== currentSlug && (b.name || '').toLowerCase() !== currentName && (category ? b.category === category : true);
-    }).slice(0, 5);
+    // Build a set of movement names for the current WOD
+    var currentMoves = new Set(
+      (w.movements || []).map(function(m) { return (m.name || '').toLowerCase(); }).filter(Boolean)
+    );
 
-    if (related.length < 5) {
-      var others = bms.filter(function(b) {
-        return b.slug && b.slug !== currentSlug && (b.name || '').toLowerCase() !== currentName &&
-               !related.some(function(r) { return r.slug === b.slug; });
-      }).slice(0, 5 - related.length);
-      related = related.concat(others);
-    }
+    // Score every candidate
+    var candidates = bms
+      .filter(function(b) {
+        return b.slug && b.slug !== currentSlug && (b.name || '').toLowerCase() !== currentName;
+      })
+      .map(function(b) {
+        var bMoves = (b.movements || []).map(function(m) { return (m.name || '').toLowerCase(); });
+        var shared = bMoves.filter(function(mn) { return currentMoves.has(mn); }).length;
+        var sameCategory = (category && b.category === category) ? 1 : 0;
+        return { wod: b, score: shared * 10 + sameCategory };
+      })
+      .sort(function(a, b) { return b.score - a.score; });
+
+    // Take top 5 by score; ties broken by sort stability (DB order)
+    var related = candidates.slice(0, 5).map(function(c) { return c.wod; });
 
     if (!related.length) {
       container.innerHTML = '<p style="color:var(--muted);font-size:.85rem">No related WODs found.</p>';
