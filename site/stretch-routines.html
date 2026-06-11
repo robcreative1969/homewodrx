@@ -212,6 +212,7 @@
     <div class="filter-row">
       <div class="filter-row-inner" id="filter-chips">
         <button class="chip active" data-filter="all">All Routines</button>
+        <button class="chip" data-filter="daily10">Daily 10</button>
         <button class="chip" data-filter="All Levels">All Levels</button>
         <button class="chip" data-filter="Intermediate+">Intermediate+</button>
         <button class="chip" data-filter="Dynamic">Dynamic</button>
@@ -262,10 +263,12 @@
 // STATE
 // ─────────────────────────────────────────
 let STRETCH_ROUTINES = [];
+let DAILY_ROUTINES   = [];
 let activeFilter = 'all';
 let searchQuery  = '';
 
 const FILTER_LABELS = {
+  'daily10': 'Daily 10',
   'All Levels': 'All Levels', 'Intermediate+': 'Intermediate+',
   'Dynamic': 'Dynamic', 'Static': 'Static', 'Yoga': 'Yoga', 'Mixed': 'Mixed',
 };
@@ -275,6 +278,38 @@ const FILTER_LABELS = {
 // ─────────────────────────────────────────
 function levelChipClass(r) {
   return r.level_label === 'Intermediate+' ? 'chip-level intermediate' : 'chip-level';
+}
+
+function renderDailyCard(entry) {
+  const d = entry.stretch_data || {};
+  const dateStr = entry.stretch_date || d.date || '';
+  const rows    = d.rows || [];
+  const label   = d.label || 'Stretch Routine';
+  const totalMin = d.totalMin || 10;
+  // Format date for display: "June 11, 2026"
+  let dateFmt = dateStr;
+  try { dateFmt = new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }); } catch(e) {}
+  const href = '/daily-wod' + (dateStr ? '?date=' + dateStr : '') + '#daily-10';
+  return `
+    <a href="${href}" class="routine-card">
+      <div class="card-header">
+        <div class="card-name">${dateFmt}</div>
+        <div class="card-tagline">${label}</div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-chip chip-duration">${totalMin} min</span>
+        <span class="meta-chip chip-level">● All Levels</span>
+        <span class="meta-chip chip-modality">Mixed</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-steps">${rows.length} stretches</span>
+        <span class="card-cta">View Routine
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </span>
+      </div>
+    </a>`;
 }
 
 function renderCard(r) {
@@ -302,6 +337,31 @@ function renderCard(r) {
 }
 
 function render() {
+  const grid     = document.getElementById('routines-grid');
+  const noResult = document.getElementById('no-results');
+
+  // Daily 10 filter: show entries from daily_stretches table
+  if (activeFilter === 'daily10') {
+    let list = DAILY_ROUTINES;
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter(e => {
+        const d = e.stretch_data || {};
+        return (d.label || '').toLowerCase().includes(q) ||
+               (e.stretch_date || '').includes(q);
+      });
+    }
+    document.getElementById('shown-count').textContent = list.length;
+    if (list.length === 0) {
+      grid.innerHTML = '';
+      noResult.classList.add('visible');
+    } else {
+      noResult.classList.remove('visible');
+      grid.innerHTML = list.map(renderDailyCard).join('');
+    }
+    return;
+  }
+
   let list = STRETCH_ROUTINES;
 
   if (activeFilter !== 'all') {
@@ -315,9 +375,6 @@ function render() {
       (r.modality || '').toLowerCase().includes(q)
     );
   }
-
-  const grid     = document.getElementById('routines-grid');
-  const noResult = document.getElementById('no-results');
 
   document.getElementById('shown-count').textContent = list.length;
 
@@ -387,12 +444,22 @@ function clearFilters() {
 async function loadRoutines() {
   try {
     if (!supabaseClient) await initSupabase();
-    const { data, error } = await supabaseClient
-      .from('stretch_routines')
-      .select('name, slug, tagline, duration, level_label, modality, stretches')
-      .order('name');
-    if (error) throw error;
-    if (data) STRETCH_ROUTINES = data;
+
+    // Load curated routines + daily stretches in parallel
+    const [routinesRes, dailyRes] = await Promise.all([
+      supabaseClient
+        .from('stretch_routines')
+        .select('name, slug, tagline, duration, level_label, modality, stretches')
+        .order('name'),
+      supabaseClient
+        .from('daily_stretches')
+        .select('stretch_date, stretch_data')
+        .order('stretch_date', { ascending: false })
+        .limit(60)
+    ]);
+
+    if (!routinesRes.error && routinesRes.data) STRETCH_ROUTINES = routinesRes.data;
+    if (!dailyRes.error && dailyRes.data) DAILY_ROUTINES = dailyRes.data;
   } catch(e) {
     console.warn('Supabase fetch failed:', e);
   }

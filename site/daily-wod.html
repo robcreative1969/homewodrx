@@ -31,6 +31,7 @@
   <script src="/js/db.js"></script>
   <script src="/js/movements.js"></script>
   <script src="/js/daily-wod.js"></script>
+  <script src="/js/daily-stretch.js"></script>
   <style>
 /* ══ PAGE HEADER ══ */
 .page-header { background: var(--white); border-bottom: 1px solid var(--border); padding: 24px 24px 28px; }
@@ -142,6 +143,39 @@
   .bento { grid-template-columns: 1fr; gap: 12px; }
   .span3, .span6 { grid-column: span 1; }
   .wc-row { flex-direction: column; }
+}
+
+/* ══ DAILY 10 SECTION ══ */
+.d10-section { max-width: 1248px; margin: 0 auto; padding: 0 24px 60px; }
+.d10-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+.d10-badge { display: inline-flex; align-items: center; gap: 6px; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--gr, #22a357); }
+.d10-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gr, #22a357); animation: d20pulse 2s infinite; }
+.d10-title { font-family: var(--font-head); font-size: clamp(1.4rem,3vw,2rem); letter-spacing: .04em; color: var(--text); margin: 0; }
+.d10-link { font-size: .82rem; font-weight: 700; color: var(--gr, #22a357); text-decoration: none; white-space: nowrap; }
+.d10-link:hover { text-decoration: underline; }
+.d10-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.d10-card-header { padding: 16px 24px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.d10-theme { font-size: .88rem; font-weight: 700; color: var(--text); }
+.d10-meta { font-size: .78rem; color: var(--muted); }
+.d10-list { list-style: none; padding: 0; margin: 0; display: table; width: 100%; border-collapse: collapse; }
+.d10-row { display: table-row; }
+.d10-row:last-child .d10-hold, .d10-row:last-child .d10-name { border-bottom: none; }
+.d10-hold { display: table-cell; font-family: var(--font-head); font-size: 1.2rem; color: var(--gr, #22a357); letter-spacing: .04em; line-height: 1; white-space: nowrap; padding: 11px 18px 11px 24px; border-bottom: 1px solid #f3f3f3; vertical-align: middle; }
+.d10-name { display: table-cell; font-size: .975rem; font-weight: 600; padding: 11px 24px 11px 0; border-bottom: 1px solid #f3f3f3; vertical-align: middle; width: 100%; }
+.d10-name a { color: var(--text); text-decoration: none; transition: color .15s; }
+.d10-name a:hover { color: var(--gr, #22a357); }
+.d10-tip { display: block; font-size: .78rem; color: var(--muted); font-weight: 400; margin-top: 2px; }
+.d10-footer { padding: 14px 24px; background: #fafcfa; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.d10-total { font-size: .82rem; color: var(--muted); font-weight: 500; }
+.d10-cta { font-size: .82rem; font-weight: 700; color: var(--gr, #22a357); text-decoration: none; }
+.d10-cta:hover { text-decoration: underline; }
+.d10-skeleton { padding: 20px 24px; display: flex; flex-direction: column; gap: 12px; }
+.d10-skel-line { height: 14px; border-radius: 6px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: d10shimmer 1.4s infinite; }
+@keyframes d10shimmer { 0%{background-position:200%} 100%{background-position:-200%} }
+@media (max-width: 767px) {
+  .d10-section { padding: 0 14px 60px; }
+  .d10-hold { padding-left: 16px; font-size: 1rem; }
+  .d10-name { padding-right: 16px; }
 }
 
 /* ══ ANIMATIONS ══ */
@@ -478,7 +512,27 @@
         '</div>' +
       '</div>';
 
-    document.getElementById('workout-main').innerHTML = pageHeaderHtml + pageWrapHtml;
+    var daily10Html =
+      '<section id="daily-10" class="d10-section">' +
+        '<div class="d10-header">' +
+          '<div>' +
+            '<div class="d10-badge"><span class="d10-dot"></span>Daily 10</div>' +
+            '<h2 class="d10-title">Daily 10 &mdash; Today\'s Stretch Routine</h2>' +
+          '</div>' +
+          '<a href="/stretch-routines" class="d10-link">View Stretch Library &rarr;</a>' +
+        '</div>' +
+        '<div class="d10-card" id="daily-10-card">' +
+          '<div class="d10-skeleton">' +
+            '<div class="d10-skel-line" style="width:40%"></div>' +
+            '<div class="d10-skel-line" style="width:75%"></div>' +
+            '<div class="d10-skel-line" style="width:65%"></div>' +
+            '<div class="d10-skel-line" style="width:80%"></div>' +
+            '<div class="d10-skel-line" style="width:55%"></div>' +
+          '</div>' +
+        '</div>' +
+      '</section>';
+
+    document.getElementById('workout-main').innerHTML = pageHeaderHtml + pageWrapHtml + daily10Html;
 
     // Load warm-up and cool-down asynchronously after render
     loadDailyWarmupCooldown(wod);
@@ -493,6 +547,47 @@
     });
 
     loadLeaderboard('day', dateStr);
+    renderDailyStretch(dateStr);
+  }
+
+  async function renderDailyStretch(dateStr) {
+    var card = document.getElementById('daily-10-card');
+    if (!card) return;
+
+    try {
+      var routine = await DailyStretch.generate(dateStr);
+      if (!routine || !routine.rows || !routine.rows.length) throw new Error('no routine');
+
+      var rowsHtml = routine.rows.map(function(s) {
+        var slug = s.slug || s.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        var tipHtml = s.tip ? '<span class="d10-tip">' + escHtml(s.tip) + '</span>' : '';
+        return '<li class="d10-row">' +
+          '<span class="d10-hold">' + escHtml(s.display) + '</span>' +
+          '<span class="d10-name"><a href="/stretches/' + slug + '">' + escHtml(s.name) + '</a>' + tipHtml + '</span>' +
+        '</li>';
+      }).join('');
+
+      card.innerHTML =
+        '<div class="d10-card-header">' +
+          '<span class="d10-theme">' + escHtml(routine.label) + '</span>' +
+          '<span class="d10-meta">' + routine.rows.length + ' stretches &bull; ~' + (routine.totalMin || 10) + ' min</span>' +
+        '</div>' +
+        '<ul class="d10-list">' + rowsHtml + '</ul>' +
+        '<div class="d10-footer">' +
+          '<span class="d10-total">Total: ~' + (routine.totalMin || 10) + ' minutes</span>' +
+          '<a class="d10-cta" href="/stretch-routines">Browse past Daily 10 routines &rarr;</a>' +
+        '</div>';
+    } catch(e) {
+      // Static fallback
+      card.innerHTML =
+        '<div class="d10-card-header">' +
+          '<span class="d10-theme">Today\'s Stretch Routine</span>' +
+          '<span class="d10-meta">~10 min</span>' +
+        '</div>' +
+        '<div style="padding:20px 24px;color:var(--muted);font-size:.88rem">' +
+          'Stretch routine unavailable — <a href="/stretches" style="color:var(--gr,#22a357)">browse all stretches</a>.' +
+        '</div>';
+    }
   }
 
   async function loadDailyWarmupCooldown(wod) {

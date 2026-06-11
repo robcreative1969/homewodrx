@@ -417,36 +417,35 @@
         <div class="d20-note">Auto-regenerates daily · same for all visitors</div>
       </div>
 
-      <!-- Daily 10 Stretch — static teaser -->
-      <div class="d20-card stretch-card">
+      <!-- Daily 10 Stretch — populated by JS -->
+      <div class="d20-card stretch-card" id="daily-stretch-card">
         <div class="d20-head">
           <div class="d20-live">
             <span class="live-dot live-dot-green"></span>
             <span class="live-label live-label-green">The Daily 10</span>
             <span class="live-date" id="stretch-date-display"></span>
           </div>
-          <div class="d20-title">Hip &amp; <span style="color:#16a34a">Thoracic Reset</span></div>
-          <div class="d20-chips">
-            <span class="chip-green">Stretch · 10 min</span>
-            <span class="chip-grey">All Levels</span>
-            <span class="chip-grey">No Equipment</span>
+          <div class="d20-title" id="stretch-title">
+            <span class="skel" style="display:inline-block;width:160px;height:26px;">&nbsp;</span>
+          </div>
+          <div class="d20-chips" id="stretch-chips">
+            <span class="skel" style="display:inline-block;width:110px;height:20px;border-radius:20px;">&nbsp;</span>
+            <span class="skel" style="display:inline-block;width:70px;height:20px;border-radius:20px;">&nbsp;</span>
           </div>
         </div>
         <div class="d20-body">
-          <table class="d20-movements">
-            <tr><td>Hip Flexor Stretch</td><td>60 sec / side</td></tr>
-            <tr><td>Thoracic Rotation</td><td>60 sec / side</td></tr>
-            <tr><td>Couch Stretch</td><td>90 sec / side</td></tr>
-            <tr><td>Thread the Needle</td><td>45 sec / side</td></tr>
-            <tr><td>Child's Pose</td><td>60 sec</td></tr>
+          <table class="d20-movements" id="stretch-movements">
+            <tr><td><span class="skel" style="display:inline-block;width:150px;height:16px;">&nbsp;</span></td><td></td></tr>
+            <tr><td><span class="skel" style="display:inline-block;width:120px;height:16px;">&nbsp;</span></td><td></td></tr>
+            <tr><td><span class="skel" style="display:inline-block;width:140px;height:16px;">&nbsp;</span></td><td></td></tr>
           </table>
-          <div class="d20-scoring d20-scoring-green">Hold each stretch — breathe, don't bounce</div>
+          <div class="d20-scoring d20-scoring-green" id="stretch-scoring"></div>
         </div>
         <div class="d20-foot">
-          <a class="d20-btn d20-btn-sec d20-btn-green" href="/stretchbuilder.html">Full Stretch →</a>
+          <a class="d20-btn d20-btn-sec d20-btn-green" href="/daily-wod.html#daily-10">Full Routine →</a>
           <a class="d20-btn d20-btn-sec" href="/stretches.html">Browse Stretches →</a>
         </div>
-        <div class="d20-note">New mobility focus daily · pairs with The Daily 20</div>
+        <div class="d20-note">Auto-generates daily · pairs with The Daily 20</div>
       </div>
 
     </div>
@@ -607,6 +606,7 @@
 <script src="/js/db.js"></script>
 <script src="/js/nav.js"></script>
 <script src="/js/daily-wod.js"></script>
+<script src="/js/daily-stretch.js"></script>
 
 <script>
 // ─────────────────────────────────────────
@@ -743,11 +743,68 @@ async function renderDailyWOD() {
 }
 
 // ─────────────────────────────────────────
+// DAILY 10 STRETCH CARD
+// ─────────────────────────────────────────
+async function renderDailyStretch() {
+  try {
+    const routine = await DailyStretch.generate();
+    if (!routine) return;
+
+    const titleEl   = document.getElementById('stretch-title');
+    const chipsEl   = document.getElementById('stretch-chips');
+    const movEl     = document.getElementById('stretch-movements');
+    const scoringEl = document.getElementById('stretch-scoring');
+
+    if (titleEl) titleEl.textContent = routine.label || 'Daily Mobility';
+
+    if (chipsEl) {
+      const minLabel = routine.totalMin ? `Stretch · ${routine.totalMin} min` : 'Stretch · 10 min';
+      chipsEl.innerHTML =
+        `<span class="chip-green">${minLabel}</span>` +
+        `<span class="chip-grey">All Levels</span>` +
+        `<span class="chip-grey">No Equipment</span>`;
+    }
+
+    if (movEl && routine.rows && routine.rows.length) {
+      movEl.innerHTML = routine.rows.slice(0, 6).map(r => {
+        const nameHtml = r.slug
+          ? `<a href="/stretches/${r.slug}" style="color:inherit;text-decoration:none;">${r.name}</a>`
+          : r.name;
+        return `<tr><td>${nameHtml}</td><td>${r.display}</td></tr>`;
+      }).join('');
+    }
+
+    if (scoringEl) scoringEl.textContent = 'Hold each stretch — breathe, don\'t bounce';
+
+  } catch (e) {
+    console.warn('Could not load Daily Stretch:', e);
+    // Static fallback
+    const titleEl = document.getElementById('stretch-title');
+    if (titleEl) titleEl.textContent = 'Hip & Thoracic Reset';
+    const chipsEl = document.getElementById('stretch-chips');
+    if (chipsEl) chipsEl.innerHTML =
+      '<span class="chip-green">Stretch · 10 min</span>' +
+      '<span class="chip-grey">All Levels</span>' +
+      '<span class="chip-grey">No Equipment</span>';
+    const movEl = document.getElementById('stretch-movements');
+    if (movEl) movEl.innerHTML =
+      '<tr><td>Hip Flexor Stretch</td><td>40 sec / side</td></tr>' +
+      '<tr><td>Thoracic Rotation</td><td>40 sec / side</td></tr>' +
+      '<tr><td>Couch Stretch</td><td>45 sec / side</td></tr>' +
+      '<tr><td>Thread the Needle</td><td>45 sec / side</td></tr>' +
+      '<tr><td>Child\'s Pose</td><td>60 sec</td></tr>';
+    const scoringEl = document.getElementById('stretch-scoring');
+    if (scoringEl) scoringEl.textContent = 'Hold each stretch — breathe, don\'t bounce';
+  }
+}
+
+// ─────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
   initAuth();
   renderDailyWOD();
+  renderDailyStretch();
 });
 </script>
 <script src="/js/footer.js"></script>
