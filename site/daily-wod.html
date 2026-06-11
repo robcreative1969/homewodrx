@@ -578,14 +578,16 @@
           '<a class="d10-cta" href="/stretch-routines">Browse past Daily 10 routines &rarr;</a>' +
         '</div>';
     } catch(e) {
-      // Static fallback
+      console.error('Daily 10 render error:', e);
+      // Static fallback (error shown temporarily for debugging)
       card.innerHTML =
         '<div class="d10-card-header">' +
           '<span class="d10-theme">Today\'s Stretch Routine</span>' +
           '<span class="d10-meta">~10 min</span>' +
         '</div>' +
         '<div style="padding:20px 24px;color:var(--muted);font-size:.88rem">' +
-          'Stretch routine unavailable — <a href="/stretches" style="color:var(--gr,#22a357)">browse all stretches</a>.' +
+          'Stretch routine unavailable — ' + (e && e.message ? '<em style="color:#c41212">' + escHtml(e.message) + '</em>' : '') +
+          ' <a href="/stretches" style="color:var(--gr,#22a357)">browse all stretches</a>.' +
         '</div>';
     }
 
