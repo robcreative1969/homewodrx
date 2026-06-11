@@ -111,7 +111,7 @@
 .mv-cue-tip { font-size: .875rem; color: var(--text); line-height: 1.45; }
 /* Related WODs */
 .related-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
-.rel-card { display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: var(--radius); border: 1px solid var(--border); background: #fafafa; text-decoration: none; color: var(--text); transition: all .15s; }
+.rel-card { display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: var(--radius); border: 1px solid var(--border); background: #fafafa; text-decoration: none; color: var(--text); transition: all .15s; overflow: hidden; }
 .rel-card:hover { border-color: var(--or); background: var(--or-xlight); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(196,18,18,.12); }
 .rel-badge { font-size: .62rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; padding: 2px 8px; border-radius: 4px; align-self: flex-start; }
 .rb-girl      { background: #fce7f3; color: #9d174d; }
@@ -154,11 +154,11 @@
 @media (max-width: 767px) {
   .page-header { padding: 16px 16px 20px; }
   .page-wrap { padding: 16px 14px 80px; }
-  .wod-hero-card { padding: 20px 18px 18px; }
+  .wod-hero-card { padding: 20px 18px 18px; overflow-x: hidden; }
   .meta-stack { display: flex; flex-direction: column; gap: 10px; }
   .bento { grid-template-columns: 1fr; gap: 12px; }
   .span3, .span6 { grid-column: span 1; }
-  .related-grid { grid-template-columns: repeat(3, 1fr); }
+  .related-grid { grid-template-columns: repeat(2, 1fr); }
   .wc-row { flex-direction: column; }
 }
 
