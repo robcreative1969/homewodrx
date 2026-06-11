@@ -127,7 +127,7 @@
 .rel-card:hover .rel-arrow { color: var(--or); }
 .scale-row { display: flex; align-items: baseline; gap: 10px; font-size: .875rem; line-height: 1.8; border-bottom: 1px solid #f5f5f5; padding: 4px 0; }
 .scale-row:last-child { border: none; }
-.scale-mv { font-weight: 600; flex: 1; }
+.scale-mv { font-weight: 600; flex: 1; min-width: 0; }
 .scale-rx { color: var(--or); font-weight: 700; font-size: .8rem; white-space: nowrap; }
 .equip-chip { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; border: 1px solid var(--border); background: #fafafa; font-size: .82rem; font-weight: 600; color: var(--text); text-decoration: none; transition: all .15s; }
 .equip-chip:hover { border-color: var(--or); color: var(--or); background: var(--or-xlight); }
@@ -158,7 +158,7 @@
   .meta-stack { display: flex; flex-direction: column; gap: 10px; }
   .bento { grid-template-columns: 1fr; gap: 12px; }
   .span3, .span6 { grid-column: span 1; }
-  .related-grid { grid-template-columns: repeat(3, 180px); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .related-grid { grid-template-columns: repeat(3, 1fr); }
   .wc-row { flex-direction: column; }
 }
 
@@ -726,7 +726,7 @@
         return;
       }
       results.sort(function(a, b) { return (a.score_seconds || 999999) - (b.score_seconds || 999999); });
-      container.innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:.82rem">' +
+      container.innerHTML = '<div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table style="width:100%;border-collapse:collapse;font-size:.82rem">' +
         '<thead><tr>' +
           '<th style="padding:7px 10px;text-align:left;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);border-bottom:2px solid var(--border)">Rank</th>' +
           '<th style="padding:7px 10px;text-align:left;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);border-bottom:2px solid var(--border)">Athlete</th>' +
@@ -741,7 +741,7 @@
             '<td style="padding:8px 10px;border-bottom:1px solid var(--border)">' + (r.is_rx ? '<span style="font-size:.65rem;background:rgba(39,174,96,.12);color:#27ae60;border:1px solid rgba(39,174,96,.25);padding:2px 6px;border-radius:4px;font-weight:700">RX</span>' : '<span style="color:var(--muted);font-size:.78rem">Scaled</span>') + '</td>' +
           '</tr>';
         }).join('') +
-        '</tbody></table>';
+        '</tbody></table></div>';
     } catch (e) {
       container.innerHTML = '<p style="color:var(--muted);font-size:.88rem">Leaderboard unavailable.</p>';
     }
