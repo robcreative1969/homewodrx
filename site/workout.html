@@ -2085,9 +2085,10 @@ function showWorkoutToast(message, type) {
 // ─────────────────────────────────────────────────────────────────────────────
 // PRINT WORKOUT
 // ─────────────────────────────────────────────────────────────────────────────
-function printWorkout() {
+// Build the #print-area HTML without triggering window.print()
+function buildPrintArea() {
   var w = currentWod;
-  if (!w) { showWorkoutToast('No workout loaded.', 'error'); return; }
+  if (!w) return false;
   var name = w.name || w.title || 'WOD';
 
   var rows = (w.movements || []).map(function(m) {
@@ -2127,7 +2128,13 @@ function printWorkout() {
     '<div class="pfoot">Printed from homewodrx.com &middot; ' +
       new Date().toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' }) +
     '</div>';
+  return true;
+}
 
+// Called by the Print button in the UI
+function printWorkout() {
+  if (!currentWod) { showWorkoutToast('No workout loaded.', 'error'); return; }
+  buildPrintArea();
   requestAnimationFrame(function() {
     requestAnimationFrame(function() {
       window.print();
@@ -2136,12 +2143,14 @@ function printWorkout() {
   });
 }
 
-// Fallback: if user presses Cmd/Ctrl+P directly, populate #print-area on the fly
+// Fallback for Cmd/Ctrl+P — populate area before browser renders print preview
 window.addEventListener('beforeprint', function() {
   var pa = document.getElementById('print-area');
-  if (pa && !pa.innerHTML.trim() && currentWod) {
-    printWorkout();
-  }
+  if (pa && !pa.innerHTML.trim()) buildPrintArea();
+});
+window.addEventListener('afterprint', function() {
+  var pa = document.getElementById('print-area');
+  if (pa) pa.innerHTML = '';
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
