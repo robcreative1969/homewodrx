@@ -241,9 +241,15 @@
       font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
       margin-bottom: 12px;
     }
-    .bc-training  { background: var(--or-xlight); color: var(--or); }
-    .bc-equipment { background: #eff6ff; color: #2563eb; }
-    .bc-technique { background: #f0fdf4; color: #16a34a; }
+    .bc-training   { background: var(--or-xlight); color: var(--or); }
+    .bc-equipment  { background: #eff6ff; color: #2563eb; }
+    .bc-technique  { background: #f0fdf4; color: #16a34a; }
+    .bc-health     { background: #fdf4ff; color: #9333ea; }
+    .bc-mindset    { background: #fefce8; color: #ca8a04; }
+    .bc-mobility   { background: #f0fdf4; color: #16a34a; }
+    .bc-programming{ background: #eff6ff; color: #2563eb; }
+    .bc-recovery   { background: #fdf4ff; color: #9333ea; }
+    .bc-wod-guides { background: var(--or-xlight); color: var(--or); }
     .blog-card h3 {
       font-size: 1rem; font-weight: 800; line-height: 1.35;
       margin-bottom: 8px; color: var(--text); flex: 1;
@@ -512,35 +518,40 @@
       </div>
       <a class="view-all" href="/blog.html">All posts →</a>
     </div>
-    <div class="blog-grid">
-      <a class="blog-card" href="/blog/hero-wod-guide.html">
-        <span class="blog-cat bc-training">Training</span>
-        <h3>The Complete Guide to Hero WODs — History, Strategy &amp; Top 10</h3>
-        <p>Their history, what makes them different from other benchmarks, and how to attack them strategically without breaking yourself.</p>
-        <div class="blog-meta">
-          <span>Apr 12, 2026 · 8 min read</span>
-          <span class="blog-read-more">Read →</span>
-        </div>
-      </a>
-      <a class="blog-card" href="/blog/best-home-gym-equipment.html">
-        <span class="blog-cat bc-equipment">Equipment</span>
-        <h3>Best Home Gym Equipment for Functional Fitness Training (2026)</h3>
-        <p>From a starter kettlebell setup to a full garage rig — what to buy at every budget level.</p>
-        <div class="blog-meta">
-          <span>Apr 5, 2026 · 11 min read</span>
-          <span class="blog-read-more">Read →</span>
-        </div>
-      </a>
-      <a class="blog-card" href="/blog/how-to-scale-wods.html">
-        <span class="blog-cat bc-technique">Technique</span>
-        <h3>How to Scale Any WOD Without Feeling Like You Cheated</h3>
-        <p>The principles behind scaling weight, volume, and movements to hit the intended stimulus at any fitness level.</p>
-        <div class="blog-meta">
-          <span>Mar 28, 2026 · 6 min read</span>
-          <span class="blog-read-more">Read →</span>
-        </div>
-      </a>
+    <div class="blog-grid" id="homeBlogGrid">
+      <!-- Populated dynamically from /blog-posts.json -->
     </div>
+    <script>
+    (function() {
+      var CAT_CLASS = {
+        training: 'bc-training', equipment: 'bc-equipment', technique: 'bc-technique',
+        health: 'bc-health', mindset: 'bc-mindset', mobility: 'bc-mobility',
+        programming: 'bc-programming', recovery: 'bc-recovery', 'wod-guides': 'bc-wod-guides'
+      };
+      fetch('/blog-posts.json')
+        .then(function(r) { return r.json(); })
+        .then(function(posts) {
+          var grid = document.getElementById('homeBlogGrid');
+          if (!grid || !posts || !posts.length) return;
+          posts.slice(0, 3).forEach(function(post) {
+            var catClass = CAT_CLASS[post.category] || 'bc-training';
+            var a = document.createElement('a');
+            a.className = 'blog-card';
+            a.href = post.file;
+            a.innerHTML =
+              '<span class="blog-cat ' + catClass + '">' + post.categoryLabel + '</span>' +
+              '<h3>' + post.title + '</h3>' +
+              '<p>' + post.excerpt + '</p>' +
+              '<div class="blog-meta">' +
+                '<span>' + post.date + ' · ' + post.readTime + '</span>' +
+                '<span class="blog-read-more">Read →</span>' +
+              '</div>';
+            grid.appendChild(a);
+          });
+        })
+        .catch(function(err) { console.error('Blog preview failed:', err); });
+    })();
+    </script>
   </div>
 </section>
 
