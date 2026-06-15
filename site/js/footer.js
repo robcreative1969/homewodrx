@@ -37,6 +37,11 @@
           width: auto;
           margin-bottom: 12px;
         }
+        .hwrx-footer-logo--print { display: none; }
+        @media print {
+          .hwrx-footer-logo--screen { display: none; }
+          .hwrx-footer-logo--print  { display: block; }
+        }
         .hwrx-footer-brand p {
           font-size: .82rem;
           line-height: 1.65;
@@ -103,7 +108,8 @@
 
           <!-- Brand -->
           <div class="hwrx-footer-brand">
-            <img src="/HomeWODRx-logo-white-red-black-strip-040626.png" alt="HomeWODrx" class="hwrx-footer-logo">
+            <img src="/HomeWODRx-logo-white-red-black-strip-040626.png" alt="HomeWODrx" class="hwrx-footer-logo hwrx-footer-logo--screen">
+            <img src="/HomeWODRx-logo-black-red-040626.png" alt="HomeWODrx" class="hwrx-footer-logo hwrx-footer-logo--print">
             <p>The training platform for functional fitness athletes — at the box, the health club, or at home.</p>
           </div>
 
