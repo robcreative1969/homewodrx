@@ -135,6 +135,16 @@
 .article-footer{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:32px;margin-top:32px;border-top:1px solid var(--border);flex-wrap:wrap}
 .article-tags{display:flex;gap:6px;flex-wrap:wrap}
 .article-tag{padding:5px 12px;border-radius:20px;border:1px solid var(--border);font-size:.72rem;font-weight:600;color:var(--muted)}
+/* ── Print logo header (hidden on screen; shown in print via style.css @media print) ── */
+.print-logo {
+  display: none;
+  align-items: center; justify-content: space-between;
+  padding-bottom: 14px; border-bottom: 2px solid #C41212;
+  margin-bottom: 20px;
+}
+.print-logo img { height: 32px; }
+.print-logo-url { font-size: .75rem; color: #555; }
+
 /* ── Back to top ── */
 .back-to-top{position:fixed;bottom:24px;right:24px;z-index:500;width:44px;height:44px;border-radius:50%;background:var(--text);border:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow-md);opacity:0;transform:translateY(12px);transition:opacity .2s,transform .2s;pointer-events:none}
 .back-to-top.visible{opacity:1;transform:translateY(0);pointer-events:auto}
@@ -152,6 +162,12 @@
   </style>
 </head>
 <body data-nav-init="true" data-active-page="blog">
+
+<!-- Print-only logo header -->
+<div class="print-logo" aria-hidden="true">
+  <img src="/HomeWODRx-logo-black-red-040626.png" alt="HomeWodRX">
+  <span class="print-logo-url">homewodrx.com</span>
+</div>
 
 <div class="article-hero">
   <div class="article-hero-inner">

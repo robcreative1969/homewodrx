@@ -871,10 +871,60 @@ sentry-feedback { display: none !important; visibility: hidden !important; }
 
 /* ── Print ── */
 @media print {
-  .site-nav, .mobile-top-bar, .mobile-tab-bar, .site-footer { display: none !important; }
-  body { background: #fff; color: #000; }
+  /* ── Hide UI chrome ── */
+  .site-nav, .mobile-top-bar, .mobile-tab-bar, .site-footer,
+  #companion-toggle, #companion-panel,
+  .desk-feedback-btn, .mob-feedback-btn,
+  .back-to-top,
+  .mobile-toc,
+  .article-sidebar,
+  .inline-cta,
+  .article-breadcrumb,
+  .article-footer,
+  .related-strip { display: none !important; }
+
+  /* ── Show print logo ── */
+  .print-logo { display: flex !important; }
+
+  /* ── Base ── */
+  body { background: #fff; color: #000; font-size: 11pt; }
   .card { border: 1px solid #ccc; box-shadow: none; }
-  a { color: #000; }
+  a { color: #000; text-decoration: none; }
+
+  /* ── Article layout — single column, no card box ── */
+  .article-layout { display: block !important; padding: 0 !important; }
+  .article-wrap { padding: 0 !important; max-width: 100% !important; }
+  .article-hero { border: none !important; padding: 16px 0 12px !important; }
+  .article-hero-inner { padding: 0 !important; max-width: 100% !important; }
+  .article-hero h1 { font-size: 22pt !important; }
+  .article-meta { padding-bottom: 12px !important; }
+  .article-content {
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+  }
+  .article-content h2 { font-size: 15pt !important; page-break-after: avoid; margin-top: 24pt !important; }
+  .article-content h3 { font-size: 12pt !important; page-break-after: avoid; }
+  .article-content p, .article-content li { font-size: 11pt !important; line-height: 1.7 !important; }
+  p, li, .wod-box, .tip-box, .pull-quote { page-break-inside: avoid; }
+
+  /* ── WOD box — print-friendly dark→light ── */
+  .wod-box {
+    background: #f4f4f4 !important; color: #000 !important;
+    border: 1.5px solid #ccc !important; border-radius: 6px !important;
+  }
+  .wod-box::before { display: none !important; }
+  .wod-box-label { color: #555 !important; }
+  .wod-box-name  { color: #000 !important; }
+  .wod-box-detail { color: #222 !important; }
+
+  /* ── Tip box ── */
+  .tip-box { background: #f4f4f4 !important; border-color: #ccc !important; }
+  .tip-box p { color: #000 !important; }
+
+  /* ── Pull quote ── */
+  .pull-quote { background: #f9f9f9 !important; border-color: #ccc !important; color: #000 !important; }
 }
 
 /* ══════════════════════════════════════════════════════════════════════════

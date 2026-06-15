@@ -324,6 +324,16 @@
 }
 .icta-btn:hover { background: var(--or-dark); }
 
+/* ── Print logo header (hidden on screen; shown in print via style.css @media print) ── */
+.print-logo {
+  display: none;
+  align-items: center; justify-content: space-between;
+  padding-bottom: 14px; border-bottom: 2px solid #C41212;
+  margin-bottom: 20px;
+}
+.print-logo img { height: 32px; }
+.print-logo-url { font-size: .75rem; color: #555; }
+
 /* ── Back to top ── */
 .back-to-top {
   position: fixed; bottom: 24px; right: 24px; z-index: 500;
@@ -352,6 +362,12 @@
 </head>
 
 <body data-nav-init="true" data-active-page="blog">
+
+<!-- Print-only logo header -->
+<div class="print-logo" aria-hidden="true">
+  <img src="/HomeWODRx-logo-black-red-040626.png" alt="HomeWodRX">
+  <span class="print-logo-url">homewodrx.com</span>
+</div>
 
 <!-- ARTICLE HERO -->
 <div class="article-hero">
