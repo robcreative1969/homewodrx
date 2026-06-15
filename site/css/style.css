@@ -872,7 +872,7 @@ sentry-feedback { display: none !important; visibility: hidden !important; }
 /* ── Print ── */
 @media print {
   /* ── Hide UI chrome ── */
-  .site-nav, .mobile-top-bar, .mobile-tab-bar, .site-footer,
+  .site-nav, .mobile-top-bar, .mobile-tab-bar,
   #companion-toggle, #companion-panel,
   .desk-feedback-btn, .mob-feedback-btn,
   .back-to-top,
@@ -925,6 +925,15 @@ sentry-feedback { display: none !important; visibility: hidden !important; }
 
   /* ── Pull quote ── */
   .pull-quote { background: #f9f9f9 !important; border-color: #ccc !important; color: #000 !important; }
+
+  /* ── Footer — light background so black/red logo reads correctly ── */
+  .hwrx-footer { background: #fff !important; border-top: 1px solid #ddd !important; }
+  .hwrx-footer h4,
+  .hwrx-footer a,
+  .hwrx-footer p,
+  .hwrx-footer li { color: #000 !important; }
+  .hwrx-footer-disclosure,
+  .hwrx-footer-bottom { color: #555 !important; border-color: #ddd !important; }
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
