@@ -2113,7 +2113,7 @@ function printWorkout() {
 
   document.getElementById('print-area').innerHTML =
     '<div class="ph">' +
-      '<img src="/images/HomeWODRx-logo-black-red-040626.png" alt="HomeWODrx">' +
+      '<img src="/HomeWODRx-logo-black-red-040626.png" alt="HomeWODrx">' +
       '<div class="ph-url">homewodrx.com<br>Functional Fitness WODs</div>' +
     '</div>' +
     '<div class="pt">' + escHtml(name) + '</div>' +
@@ -2135,6 +2135,14 @@ function printWorkout() {
     });
   });
 }
+
+// Fallback: if user presses Cmd/Ctrl+P directly, populate #print-area on the fly
+window.addEventListener('beforeprint', function() {
+  var pa = document.getElementById('print-area');
+  if (pa && !pa.innerHTML.trim() && currentWod) {
+    printWorkout();
+  }
+});
 
 // ─────────────────────────────────────────────────────────────────────────────
 // AUTH MODAL
