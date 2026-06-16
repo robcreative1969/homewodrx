@@ -349,7 +349,7 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
     </div>
   </div>
 
-  <!-- Row 2: Body Focus + Experience + Duration -->
+  <!-- Row 2: Body Focus + Format -->
   <div class="config-grid">
     <div class="config-card">
       <div class="step-label">Step 2</div>
@@ -367,44 +367,75 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
       </div>
     </div>
 
-    <div style="display:flex;flex-direction:column;gap:14px">
-      <div class="config-card">
-        <div class="step-label">Step 3</div>
-        <div class="step-title">Experience level</div>
-        <div class="step-hint">Sets movement complexity and prescribed weights.</div>
-        <div class="pill-group" id="level-group">
-          <div class="pill" data-val="beginner">Beginner</div>
-          <div class="pill sel" data-val="intermediate">Intermediate</div>
-          <div class="pill" data-val="advanced">Advanced</div>
-        </div>
-      </div>
-      <div class="config-card">
-        <div class="step-label">Step 4</div>
-        <div class="step-title">How long do you have?</div>
-        <div class="step-hint">The builder will size the WOD to fit your window.</div>
-        <div class="pill-group" id="dur-group">
-          <div class="pill" data-val="10">10 min</div>
-          <div class="pill sel" data-val="20">20 min</div>
-          <div class="pill" data-val="30">30 min</div>
-          <div class="pill" data-val="45">45 min</div>
-          <div class="pill" data-val="60">60 min</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Row 3: Format (full width) -->
-  <div class="config-grid full" style="margin-bottom:20px">
     <div class="config-card">
-      <div class="step-label">Step 5</div>
+      <div class="step-label">Step 3</div>
       <div class="step-title">Workout format</div>
-      <div class="step-hint">Not sure? Leave it on Any Format — the builder picks what fits best for your equipment and time.</div>
+      <div class="step-hint">Not sure? Leave it on Any Format — the builder decides what fits best.</div>
       <div class="format-grid" id="format-group">
         <div class="format-card sel" data-val="any"><span class="format-name">Any Format</span><span class="format-desc">Let the builder decide</span></div>
         <div class="format-card" data-val="amrap"><span class="format-name">AMRAP</span><span class="format-desc">As many rounds as possible in a fixed time</span></div>
         <div class="format-card" data-val="emom"><span class="format-name">EMOM</span><span class="format-desc">Every minute on the minute</span></div>
         <div class="format-card" data-val="fortime"><span class="format-name">For Time</span><span class="format-desc">Complete all reps as fast as possible</span></div>
         <div class="format-card" data-val="circuit"><span class="format-name">Circuit</span><span class="format-desc">Rounds of all movements, rest between</span></div>
+        <div class="format-card" data-val="tabata"><span class="format-name">Tabata</span><span class="format-desc">8 rounds of 20s on / 10s off per movement</span></div>
+      </div>
+
+      <!-- Tabata options — revealed when Tabata is selected -->
+      <div id="tabata-options" style="display:none;margin-top:18px;border-top:1px solid var(--border,#e5e5e5);padding-top:16px">
+        <div style="font-size:10px;font-weight:700;color:var(--or,#C41212);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">Structure</div>
+        <div class="pill-group" id="tabata-structure-group">
+          <label class="pill sel" data-val="sequential">Sequential</label>
+          <label class="pill" data-val="rotating">Rotating</label>
+        </div>
+        <div id="tabata-structure-hint" style="font-size:11px;color:var(--muted,#666);margin-top:8px;line-height:1.5">
+          Complete 8 rounds of each movement before moving on. Rest 1 min between movements.
+        </div>
+        <!-- Advanced toggle -->
+        <div style="margin-top:14px">
+          <button onclick="toggleTabataAdvanced()" style="background:none;border:none;color:var(--muted,#666);font-size:12px;cursor:pointer;padding:0;font-family:inherit;display:flex;align-items:center;gap:5px">
+            <span id="tabata-adv-arrow" style="font-size:10px">▸</span> Advanced (work / rest intervals)
+          </button>
+          <div id="tabata-advanced" style="display:none;margin-top:12px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+              <div>
+                <div style="font-size:11px;color:var(--muted,#666);margin-bottom:6px">Work — <strong id="tabata-work-val" style="color:var(--or,#C41212)">20</strong>s</div>
+                <input type="range" id="tabata-work" min="10" max="40" step="5" value="20" style="width:100%;accent-color:var(--or,#C41212)" oninput="document.getElementById('tabata-work-val').textContent=this.value">
+                <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted,#666);margin-top:3px"><span>10s</span><span>40s</span></div>
+              </div>
+              <div>
+                <div style="font-size:11px;color:var(--muted,#666);margin-bottom:6px">Rest — <strong id="tabata-rest-val" style="color:var(--or,#C41212)">10</strong>s</div>
+                <input type="range" id="tabata-rest" min="5" max="30" step="5" value="10" style="width:100%;accent-color:var(--or,#C41212)" oninput="document.getElementById('tabata-rest-val').textContent=this.value">
+                <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted,#666);margin-top:3px"><span>5s</span><span>30s</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3: Duration + Level -->
+  <div class="config-grid" style="margin-bottom:20px">
+    <div class="config-card">
+      <div class="step-label">Step 4</div>
+      <div class="step-title">How long do you have?</div>
+      <div class="step-hint">The builder sizes the WOD to fit. For Tabata, this determines the number of movements.</div>
+      <div class="pill-group" id="dur-group">
+        <div class="pill" data-val="10">10 min</div>
+        <div class="pill sel" data-val="20">20 min</div>
+        <div class="pill" data-val="30">30 min</div>
+        <div class="pill" data-val="45">45 min</div>
+        <div class="pill" data-val="60">60 min</div>
+      </div>
+    </div>
+    <div class="config-card">
+      <div class="step-label">Step 5</div>
+      <div class="step-title">Experience level</div>
+      <div class="step-hint">Sets movement complexity and prescribed weights.</div>
+      <div class="pill-group" id="level-group">
+        <div class="pill" data-val="beginner">Beginner</div>
+        <div class="pill sel" data-val="intermediate">Intermediate</div>
+        <div class="pill" data-val="advanced">Advanced</div>
       </div>
     </div>
   </div>
@@ -559,7 +590,7 @@ async function loadMovements() {
   try {
     const res = await fetch(
       `${SUPABASE_URL}/rest/v1/movements?daily_wod_eligible=eq.true` +
-      `&select=name,slug,equipment_category,tags,wod_tip,timed,beginner_reps,intermediate_reps,advanced_reps,movement_pattern`,
+      `&select=name,slug,equipment_category,tags,wod_tip,timed,beginner_reps,intermediate_reps,advanced_reps,movement_pattern,tabata_suitable`,
       { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
     );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -578,6 +609,7 @@ async function loadMovements() {
         tags: m.tags || [],
         timed: m.timed || false,
         movement_pattern: m.movement_pattern || 'fullbody',
+        tabata_suitable: m.tabata_suitable || false,
       });
     });
   } catch (e) {
@@ -661,8 +693,31 @@ function setupPillGroups() {
     card.addEventListener('click', () => {
       document.querySelectorAll('#format-group .format-card').forEach(x => x.classList.remove('sel'));
       card.classList.add('sel');
+      // Show/hide Tabata options panel
+      const isTabata = card.getAttribute('data-val') === 'tabata';
+      document.getElementById('tabata-options').style.display = isTabata ? 'block' : 'none';
     });
   });
+  // Tabata structure toggle (Sequential / Rotating)
+  document.querySelectorAll('#tabata-structure-group .pill').forEach(p => {
+    p.addEventListener('click', () => {
+      document.querySelectorAll('#tabata-structure-group .pill').forEach(x => x.classList.remove('sel'));
+      p.classList.add('sel');
+      const hints = {
+        sequential: 'Complete 8 rounds of each movement before moving on. Rest 1 min between movements.',
+        rotating: 'Cycle through all movements each interval for 8 complete rotations. No long breaks.'
+      };
+      document.getElementById('tabata-structure-hint').textContent = hints[p.getAttribute('data-val')] || '';
+    });
+  });
+}
+
+function toggleTabataAdvanced() {
+  const panel = document.getElementById('tabata-advanced');
+  const arrow = document.getElementById('tabata-adv-arrow');
+  const open = panel.style.display !== 'none';
+  panel.style.display = open ? 'none' : 'block';
+  arrow.textContent = open ? '▸' : '▾';
 }
 function getSelected(gridId, attr) {
   return [...document.querySelectorAll(`#${gridId} .sel`)].map(c => c.getAttribute(attr));
@@ -700,6 +755,12 @@ function buildWorkout(equipment, bodyFocuses, level, formatPref, duration) {
   if (format === 'amrap')        workout = genAMRAP(pool, level, duration, bodyFocuses);
   else if (format === 'emom')    workout = genEMOM(pool, level, duration, bodyFocuses);
   else if (format === 'fortime') workout = genForTime(pool, level);
+  else if (format === 'tabata') {
+    const workSec   = parseInt(document.getElementById('tabata-work')?.value  || 20);
+    const restSec   = parseInt(document.getElementById('tabata-rest')?.value  || 10);
+    const structure = document.querySelector('#tabata-structure-group .sel')?.getAttribute('data-val') || 'sequential';
+    workout = genTabata(pool, level, duration, workSec, restSec, structure);
+  }
   else                           workout = genCircuit(pool, level, duration, bodyFocuses);
 
   return { ...workout, equipment, bodyFocus: bodyFocuses, level, duration, generatedAt: new Date().toISOString() };
@@ -884,6 +945,55 @@ function genCircuit(pool, level, duration, bodyFocus) {
     scoring: `Record total time and round splits.`,
     scoring_type: 'time'
   };
+}
+
+function genTabata(pool, level, duration, workSec, restSec, structure) {
+  workSec   = workSec   || 20;
+  restSec   = restSec   || 10;
+  structure = structure || 'sequential';
+  const intervalSec = workSec + restSec;
+
+  // Filter to tabata-suitable movements; fall back to full pool if too few
+  const tabataPool = pool.filter(m => m.tabata_suitable);
+  const usePool = tabataPool.length >= 2 ? tabataPool : pool;
+
+  // Calculate movement count from duration
+  // Sequential: each block ≈ 8 intervals + 1 min rest → intervalSec*8/60 + 1 min
+  // Rotating: all movements in 8 full cycles → movCount * intervalSec * 8 / 60
+  let movCount;
+  if (structure === 'sequential') {
+    const blockMin = (intervalSec * 8 / 60) + 1; // ~5 min at 20:10
+    movCount = Math.max(2, Math.min(5, Math.round(duration / blockMin)));
+  } else {
+    const cycleMin = intervalSec / 60;
+    movCount = Math.max(2, Math.min(6, Math.round(duration / (cycleMin * 8))));
+  }
+
+  const sel = balancedPick(usePool, movCount);
+
+  if (structure === 'sequential') {
+    const blockMin = Math.round(intervalSec * 8 / 60 * 10) / 10;
+    const totalMin = Math.round(movCount * blockMin + (movCount - 1));
+    return {
+      title: `${totalMin}-Min Tabata`,
+      format: 'Tabata',
+      description: `Complete 8 rounds of ${workSec}s on / ${restSec}s off for each movement before moving to the next. Rest 1 minute between movements. Push max reps every work interval — the score is your worst round.`,
+      rows: sel.map(m => ({ movement: m.name, reps: `8 × ${workSec}s on / ${restSec}s off`, tip: m.tip })),
+      scoring: `Tabata score = your LOWEST round of reps for each movement. Record each movement's score separately. Total = sum of all movement scores.`,
+      scoring_type: 'tabata'
+    };
+  } else {
+    const totalMin = Math.round(movCount * 8 * intervalSec / 60);
+    const cycleMin = Math.round(movCount * intervalSec / 60 * 10) / 10;
+    return {
+      title: `${totalMin}-Min Rotating Tabata`,
+      format: 'Tabata',
+      description: `Cycle through all ${movCount} movements for 8 complete rotations — ${workSec}s on / ${restSec}s off each. Each cycle takes ${cycleMin} minutes. No long rest between movements — stay moving.`,
+      rows: sel.map(m => ({ movement: m.name, reps: `${workSec}s on / ${restSec}s off (rotating)`, tip: m.tip })),
+      scoring: `Count total reps across all intervals for each movement. Max effort every ${workSec} seconds.`,
+      scoring_type: 'rounds_reps'
+    };
+  }
 }
 
 function renderWorkout(w) {
