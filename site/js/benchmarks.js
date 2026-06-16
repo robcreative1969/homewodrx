@@ -83,7 +83,7 @@ const BENCHMARKS = [
       { name: 'Push-Ups', reps: '10', tip: 'Chest to deck' },
       { name: 'Air Squats', reps: '15', tip: 'Below parallel' }
     ],
-    scoring_notes: 'Score is total rounds completed in 30 minutes. 30 rounds = 5 rounds/minute is very strong.',
+    scoring_notes: 'Score is total rounds completed out of a possible 30 (one per minute). Completing all 30 rounds unbroken is elite. 20+ rounds is a strong result for most athletes.',
     tips: ['Aim for 20–25 seconds of work, rest the remainder', 'If you can\'t complete a round, that\'s your stopping point', 'Pacing, pacing, pacing']
   },
 
@@ -505,7 +505,7 @@ const BENCHMARKS = [
   },
 
   {
-    slug: 'the_seven',
+    slug: 'the-seven',
     name: 'The Seven',
     category: 'hero',
     format: 'For Time',
@@ -571,7 +571,7 @@ const BENCHMARKS = [
   },
 
   {
-    slug: 'tommy_v',
+    slug: 'tommy-v',
     name: 'Tommy V',
     category: 'hero',
     format: 'For Time',
@@ -629,23 +629,47 @@ const BENCHMARKS = [
   },
 
   {
-    slug: 'brad',
-    name: 'Brad',
+    slug: 'bradley',
+    name: 'Bradley',
     category: 'hero',
     format: 'For Time',
-    duration_estimate: '10–20 min',
-    difficulty: 'intermediate',
+    duration_estimate: '25–40 min',
+    difficulty: 'advanced',
     body_focus: 'full-body',
     equipment: ['running', 'pullUpBar', 'bodyweight'],
     scoring_type: 'time',
-    description: 'Brad is ten rounds of 100m sprints, pull-ups, and burpees. Short sprints combined with gymnastics create an intense finisher.',
+    description: 'Bradley is ten rounds of alternating 100m sprints and calisthenics with a 30-second rest between rounds. Named in honor of U.S. Air Force Senior Airman Bradley R. Smith, killed in action January 3, 2010, in Kandahar Province, Afghanistan.',
     movements: [
-      { name: '100m Sprint', reps: '10 rounds', tip: 'All-out pace' },
-      { name: 'Pull-Ups', reps: '10', tip: 'Fast sets' },
-      { name: 'Burpees', reps: '10', tip: 'Chest to deck; full jump' }
+      { name: '100m Sprint', reps: '1', tip: 'All-out effort' },
+      { name: 'Pull-Ups', reps: '10', tip: 'Full extension at bottom, chin over bar' },
+      { name: '100m Sprint', reps: '1', tip: 'Maintain pace despite fatigue' },
+      { name: 'Burpees', reps: '10', tip: 'Chest to deck; full jump at top' }
     ],
-    scoring_notes: 'Record your finish time. Sub-15 min is strong.',
-    tips: ['The 100m sprints set the pace—go hard', 'Use pull-ups and burpees as recovery', 'The final round separates the fit from the tired']
+    scheme: '10 Rounds For Time',
+    scoring_notes: 'Record total time including rest. Sub-30 min is strong for most athletes.',
+    tips: ['The 30-sec rest is mandatory—use it strategically', 'Go hard on sprints but pace pull-ups in early rounds', 'Burpees become the separator in rounds 7–10']
+  },
+
+  {
+    slug: 'bradshaw',
+    name: 'Bradshaw',
+    category: 'hero',
+    format: 'For Time',
+    duration_estimate: '18–30 min',
+    difficulty: 'advanced',
+    body_focus: 'full-body',
+    equipment: ['barbell', 'pullUpBar', 'jumpRope'],
+    scoring_type: 'time',
+    description: 'Bradshaw is ten rounds of handstand push-ups, heavy deadlifts, pull-ups, and double-unders. Named in honor of U.S. Army 1st Lt. Brian Bradshaw, killed in action June 25, 2009, in Afghanistan.',
+    movements: [
+      { name: 'Handstand Push-Ups', reps: '3', tip: 'Head to floor; full lockout at top' },
+      { name: 'Deadlifts', reps: '6', rx_men: '225 lb', rx_women: '155 lb', tip: 'Flat back; reset and brace at bottom' },
+      { name: 'Pull-Ups', reps: '12', tip: 'Kipping allowed; maintain consistent pace' },
+      { name: 'Double-Unders', reps: '24', tip: 'Stay relaxed; rhythm over speed' }
+    ],
+    scheme: '10 Rounds For Time',
+    scoring_notes: 'Record total time. Sub-20 min is elite; sub-25 min is strong.',
+    tips: ['HSPUs will limit most athletes—break early if needed', 'Deadlift weight is heavy; protect your lower back with solid mechanics', 'Double-unders trip athletes up in later rounds—stay calm and reset if needed']
   },
 
   {
@@ -748,6 +772,29 @@ const BENCHMARKS = [
   },
 
   {
+    slug: 'lt-brad-clark',
+    name: 'Lt. Brad Clark',
+    category: 'memorial',
+    format: 'For Time',
+    duration_estimate: '15–25 min',
+    difficulty: 'intermediate',
+    body_focus: 'full-body',
+    equipment: ['dumbbell', 'jumpRope', 'bodyweight'],
+    scoring_type: 'time',
+    description: 'Lt. Brad Clark is a buy-in/cash-out workout surrounding six rounds of dumbbell clean-and-presses, burpees, and weighted lunges. Named in honor of Lieutenant Brad Clark of Hanover County Fire and EMS (VA), who died in the line of duty on October 10, 2019, after being struck by a vehicle while attending to a crash scene.',
+    movements: [
+      { name: 'Double-Unders', reps: '95', tip: 'Buy-in — steady rhythm to start' },
+      { name: 'DB Clean-and-Press', reps: '10 alt.', rx_men: '50 lb', rx_women: '35 lb', tip: 'Single arm, alternate each rep; power from the hip, full press overhead' },
+      { name: 'Burpees', reps: '11', tip: 'Steady, consistent pace each round' },
+      { name: 'Weighted Lunges', reps: '18 alt.', rx_men: '50 lb', rx_women: '35 lb', tip: 'Alternating legs, DB at side; keep torso upright' },
+      { name: 'Double-Unders', reps: '95', tip: 'Cash-out — finish strong' }
+    ],
+    scheme: 'For Time (Buy-In + 6 Rounds + Cash-Out)',
+    scoring_notes: 'Record total time. Sub-20 min is strong.',
+    tips: ['Pace the buy-in double-unders so you have legs for lunges', 'Alternate arms on every clean-and-press rep', 'The burpees are the separator—stay consistent through round 6']
+  },
+
+  {
     slug: 'luce',
     name: 'Luce',
     category: 'hero',
@@ -791,7 +838,7 @@ const BENCHMARKS = [
   // ===== OTHER BENCHMARKS =====
 
   {
-    slug: 'fight_gone_bad',
+    slug: 'fight-gone-bad',
     name: 'Fight Gone Bad',
     category: 'benchmark',
     format: 'Circuit',
@@ -813,7 +860,7 @@ const BENCHMARKS = [
   },
 
   {
-    slug: 'filthy_fifty',
+    slug: 'filthy-fifty',
     name: 'Filthy Fifty',
     category: 'benchmark',
     format: 'For Time',
@@ -840,7 +887,7 @@ const BENCHMARKS = [
   },
 
   {
-    slug: 'the_chief',
+    slug: 'the-chief',
     name: 'The Chief',
     category: 'benchmark',
     format: 'Other',
@@ -897,7 +944,7 @@ const BENCHMARKS = [
   },
 
   {
-    slug: 'king_kong',
+    slug: 'king-kong',
     name: 'King Kong',
     category: 'benchmark',
     format: 'For Time',
@@ -937,7 +984,7 @@ const BENCHMARKS = [
   },
 
   {
-    slug: 'tabata_something_else',
+    slug: 'tabata-something-else',
     name: 'Tabata Something Else',
     category: 'benchmark',
     format: 'Other',
@@ -958,7 +1005,7 @@ const BENCHMARKS = [
   },
 
   {
-    slug: 'annie_vs_ghost',
+    slug: 'annie-vs-ghost',
     name: 'Annie vs. The Ghost',
     category: 'benchmark',
     format: 'EMOM',
@@ -1035,7 +1082,7 @@ const BENCHMARKS = [
   },
 
   {
-    slug: 'chelsea_challenge',
+    slug: 'chelsea-challenge',
     name: 'Chelsea Challenge',
     category: 'benchmark',
     format: 'EMOM',
@@ -1055,7 +1102,7 @@ const BENCHMARKS = [
   },
 
   {
-    slug: 'death_by_pullups',
+    slug: 'death-by-pullups',
     name: 'Death by Pull-Ups',
     category: 'benchmark',
     format: 'Other',
