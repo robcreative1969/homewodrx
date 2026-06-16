@@ -17,6 +17,7 @@ const Nav = {
     document.body.insertAdjacentHTML('afterbegin', this.render(activePage));
     this.attachEventListeners();
     this.loadSearchScript();
+    this.loadAnalytics();
 
     // Sync pre-check: if we know the user was logged in last visit, show
     // avatar placeholder instantly so there's no guest→avatar flash
@@ -84,6 +85,14 @@ const Nav = {
     if (window.Search || document.querySelector('script[src="/js/search.js"]')) return;
     const script = document.createElement('script');
     script.src = '/js/search.js';
+    document.head.appendChild(script);
+  },
+
+  loadAnalytics() {
+    // Load analytics.js once — skip if already present or Analytics already defined
+    if (window.Analytics || document.querySelector('script[src="/js/analytics.js"]')) return;
+    const script = document.createElement('script');
+    script.src = '/js/analytics.js';
     document.head.appendChild(script);
   },
 
@@ -377,7 +386,15 @@ const Nav = {
       localStorage.removeItem('hwrx_handle');
       localStorage.removeItem('hwrx_avatar');
       if ($('nav-auth'))  $('nav-auth').style.display  = 'none';
-      if ($('nav-guest')) $('nav-guest').style.display = 'flex';
+      if ($('nav-guest')) {
+        $('nav-guest').style.display = 'flex';
+        // Point login link back to the current page so user returns after auth
+        const loginLinks = $('nav-guest').querySelectorAll('a[href="/login.html"]');
+        const dest = window.location.pathname + window.location.search + window.location.hash;
+        if (dest !== '/' && dest !== '/index.html') {
+          loginLinks.forEach(a => a.href = '/login.html?redirect=' + encodeURIComponent(dest));
+        }
+      }
       return;
     }
 

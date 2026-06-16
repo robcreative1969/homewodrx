@@ -56,6 +56,7 @@ const db = {
         id: data.user.id,
         username
       });
+      if (typeof Analytics !== 'undefined') Analytics.signup();
     }
 
     return { user: data?.user, error };
@@ -82,6 +83,7 @@ const db = {
         .update({ last_seen: new Date().toISOString() })
         .eq('id', data.user.id)
         .then(() => {});
+      if (typeof Analytics !== 'undefined') Analytics.login();
     }
 
     return { user: data?.user, error };
@@ -95,6 +97,7 @@ const db = {
     }
 
     const { error } = await supabaseClient.auth.signOut();
+    if (!error && typeof Analytics !== 'undefined') Analytics.logout();
     return { error };
   },
 

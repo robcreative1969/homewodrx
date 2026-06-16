@@ -444,9 +444,11 @@ const Search = (() => {
     if (total === 0) {
       resultsEl.innerHTML = '';
       emptyEl.style.display = 'block';
+      if (typeof Analytics !== 'undefined') Analytics.search(_currentQuery, 0);
       return;
     }
     emptyEl.style.display = 'none';
+    if (typeof Analytics !== 'undefined') Analytics.search(_currentQuery, total);
 
     let html = '';
 
