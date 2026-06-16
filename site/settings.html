@@ -1055,9 +1055,16 @@ function hideLoading() {
   document.getElementById('settings-loading').style.display = 'none';
 }
 function showSections() {
-  // Show sidebar and first section
+  // Show sidebar and first section (or hash-specified tab)
   document.querySelectorAll('.settings-section').forEach(s => s.style.display = '');
-  document.getElementById('section-account').classList.add('active');
+  const hash = window.location.hash.replace('#', '');
+  const validTabs = ['account', 'training', 'notifications', 'privacy'];
+  const tab = validTabs.includes(hash) ? hash : 'account';
+  document.getElementById('section-' + tab).classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (tab !== 'account') {
+    document.getElementById('tab-account').classList.remove('active');
+  }
 }
 
 // ── Load profile from Supabase ───────────────────────────────────────────
