@@ -670,7 +670,7 @@ function setupPillGroups() {
     });
   });
   // Format uses .format-card elements
-  const TABATA_EXCL_EQ = ['rower', 'treadmill'];
+  const TABATA_EXCL_EQ = ['rower', 'treadmill', 'running'];
   document.querySelectorAll('#format-group .format-card').forEach(card => {
     card.addEventListener('click', () => {
       document.querySelectorAll('#format-group .format-card').forEach(x => x.classList.remove('sel'));
