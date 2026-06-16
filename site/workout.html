@@ -804,7 +804,8 @@ function buildTimerUrl(w) {
     return (reps ? reps[0] : '') + ':' + (m.name || '');
   });
   const movesStr = movePairs.length ? '&moves=' + encodeURIComponent(movePairs.join(',')) : '';
-  const base = '/timer.html?wod=' + name + '&format=' + fmtLabel + '&time=' + mins + movesStr;
+  const slug = encodeURIComponent(w.slug || '');
+  const base = '/timer.html?wod=' + name + '&format=' + fmtLabel + '&time=' + mins + (slug ? '&slug=' + slug : '') + movesStr;
   if (fmt.includes('amrap'))   return base + '&mode=amrap';
   if (fmt.includes('emom'))    return base + '&mode=emom';
   if (fmt.includes('tabata'))  return base + '&mode=tabata';

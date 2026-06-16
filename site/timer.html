@@ -337,7 +337,9 @@
   .btn-pause      { background: var(--or); color: #fff; }
   .btn-pause.is-paused { background: #22C55E; }
   .btn-done-early { background: #22C55E; color: #fff; flex: 0.75; }
-  .btn-reset      { background: var(--dk-card); border: 1px solid var(--dk-bdr); color: var(--dk-tx); flex: 0.65; }
+  .btn-reset      { background: var(--dk-card); border: 1px solid var(--dk-bdr); color: var(--dk-tx); flex: 0.55; }
+  .btn-exit       { background: transparent; border: 1px solid rgba(255,255,255,0.15); color: var(--dk-mu); flex: 0.55; }
+  .btn-exit:hover { border-color: rgba(255,255,255,0.35); color: var(--dk-tx); }
 
   /* Active screen body */
   .active-body { display: flex; flex-direction: column; flex: 1; }
@@ -712,6 +714,7 @@
           <button class="t-action-btn btn-pause"      id="btn-pause"      onclick="togglePause()">Pause</button>
           <button class="t-action-btn btn-done-early" id="btn-done-early" onclick="finishTimer()" style="display:none">Done!</button>
           <button class="t-action-btn btn-reset"      id="btn-reset"      onclick="resetTimer()">↺ Reset</button>
+          <button class="t-action-btn btn-exit"       id="btn-exit"       onclick="exitTimer()">Exit</button>
         </div>
 
       </div><!-- /active-col-right -->
@@ -808,6 +811,7 @@ const T = {
   wodName:   null,
   wodFormat: null,
   wodMoves:  [],
+  wodSlug:   null,
 };
 
 // Snapshot config for "Same Config" rerun
@@ -1061,11 +1065,22 @@ function togglePause() {
   }
 }
 
-// ── Reset ────────────────────────────────────────────────────────────────
+// ── Reset (restart timer with same config) ───────────────────────────────
 function resetTimer() {
   cancelAnimationFrame(T.rafId);
   T.isDone = true;
-  showScreen('s-select');
+  rerunTimer();
+}
+
+// ── Exit (return to originating WOD page or /workouts) ──────────────────
+function exitTimer() {
+  cancelAnimationFrame(T.rafId);
+  T.isDone = true;
+  if (T.wodSlug) {
+    window.location.href = '/workouts/' + T.wodSlug;
+  } else {
+    window.location.href = '/workouts';
+  }
 }
 
 // ── Finish ───────────────────────────────────────────────────────────────
@@ -1166,6 +1181,7 @@ document.addEventListener('fullscreenchange', () => {
     if (!wodName) return;
     T.wodName   = wodName;
     T.wodFormat = p.get('format') || '';
+    T.wodSlug   = p.get('slug') || null;
     const t = p.get('time');
     const mins = t ? parseInt(t) : 20;
     if (t) T.durationSecs = mins * 60;
