@@ -26,6 +26,7 @@
     { "src": "/movements/db-dumbbell-thrusters$", "headers": { "Location": "/movements/db-thrusters"      }, "status": 301 },
     { "src": "/movements/dumbbell-thruster$",      "headers": { "Location": "/movements/db-thrusters"      }, "status": 301 },
     { "src": "/movements/([^/]+)", "dest": "/movement.html" },
+    { "src": "/workouts/([^/]*_[^/]*)", "dest": "/api/slug-redirect?slug=$1&base=workouts", "status": 301 },
     { "src": "/workouts/([^/]+)",  "dest": "/workout.html"  },
     { "src": "/stretches/([^/]+)", "dest": "/stretch-movement.html" },
     { "src": "/stretch-routines/([^/]+)", "dest": "/stretch-routine.html" },
