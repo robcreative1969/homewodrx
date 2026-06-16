@@ -477,7 +477,7 @@
       <div class="auth-gate-title">Sign In Required</div>
       <div class="auth-gate-desc">You need to be signed in to manage your settings.</div>
       <div class="auth-gate-btns">
-        <a href="/login.html" class="btn btn-primary">Log In</a>
+        <a href="/login.html?redirect=/settings" id="auth-gate-login" class="btn btn-primary">Log In</a>
         <a href="/signup.html" class="btn btn-ghost">Create Account</a>
       </div>
     </div>
@@ -1068,6 +1068,9 @@ function showAuthGate() {
   document.getElementById('settings-content').style.width = '100%';
   document.getElementById('settings-content').style.maxWidth = '560px';
   document.getElementById('settings-content').style.margin = '0 auto';
+  // Point login redirect back to this page (with hash if present)
+  const dest = '/settings' + (window.location.hash || '');
+  document.getElementById('auth-gate-login').href = '/login.html?redirect=' + encodeURIComponent(dest);
 }
 function hideLoading() {
   document.getElementById('settings-loading').style.display = 'none';
