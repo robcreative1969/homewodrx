@@ -883,6 +883,18 @@ function applyFilters() {
   const noResults = document.getElementById('no-results');
   if (noResults) noResults.classList.toggle('visible', query !== '' && visibleCards === 0);
 }
+
+// ── Affiliate click tracking ─────────────────────────────────
+// Reads product name from .card-name and category from parent section's data-cat.
+// No data attributes needed — the info is already in the DOM.
+document.addEventListener('click', function(e) {
+  const card = e.target.closest('.gear-card');
+  if (!card || typeof Analytics === 'undefined') return;
+  const productName = (card.querySelector('.card-name') || {}).textContent?.trim() || 'unknown';
+  const section     = card.closest('.gear-section');
+  const category    = section ? (section.dataset.cat || 'unknown') : 'unknown';
+  Analytics.affiliateClick(productName, category);
+});
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

@@ -599,6 +599,7 @@ function handleGenerate() {
         btn.classList.remove('loading'); btn.disabled = false; return;
       }
       renderResult(stretches, estimatedMinutes, prefs);
+      if (typeof Analytics !== 'undefined') Analytics.generateStretch(prefs.focusAreas, prefs.duration);
     } catch(e) {
       console.error(e);
       showToast('Something went wrong — please try again', 'error');

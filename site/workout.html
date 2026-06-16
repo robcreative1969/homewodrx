@@ -1941,6 +1941,7 @@ async function submitResult() {
   try {
     var res = await db.saveResult(result);
     if (res && res.error) throw res.error;
+    if (typeof Analytics !== 'undefined') Analytics.logResult(w.slug || null, w.id ? 'user_wod' : 'benchmark', st);
     closeResultModal();
     showPRCelebration(score, w.name || w.title || 'WOD');
     showWorkoutToast('Result logged!', 'success');
@@ -2136,6 +2137,7 @@ function buildPrintArea() {
 function printWorkout() {
   if (!currentWod) { showWorkoutToast('No workout loaded.', 'error'); return; }
   buildPrintArea();
+  if (typeof Analytics !== 'undefined') Analytics.print(currentWod.slug || null);
   requestAnimationFrame(function() {
     requestAnimationFrame(function() {
       window.print();
@@ -2272,12 +2274,14 @@ function shareWodX(e) {
   var name = currentWod ? (currentWod.name || currentWod.title || 'WOD') : 'WOD';
   var url  = encodeURIComponent(window.location.href);
   var text = encodeURIComponent('Just checked out ' + name + ' on HomeWODrx!');
+  if (typeof Analytics !== 'undefined') Analytics.share(currentWod && currentWod.slug || null, 'x');
   window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + url, '_blank', 'width=550,height=420');
 }
 
 function shareWodFB(e) {
   e.preventDefault();
   var url = encodeURIComponent(window.location.href);
+  if (typeof Analytics !== 'undefined') Analytics.share(currentWod && currentWod.slug || null, 'facebook');
   window.open('https://www.facebook.com/sharer/sharer.php?u=' + url, '_blank', 'width=580,height=400');
 }
 
@@ -2285,11 +2289,13 @@ function shareWodWA(e) {
   e.preventDefault();
   var name = currentWod ? (currentWod.name || currentWod.title || 'WOD') : 'WOD';
   var text = encodeURIComponent('Check out ' + name + ' on HomeWODrx: ' + window.location.href);
+  if (typeof Analytics !== 'undefined') Analytics.share(currentWod && currentWod.slug || null, 'whatsapp');
   window.open('https://wa.me/?text=' + text, '_blank');
 }
 
 function copyWodLink(btn) {
   navigator.clipboard.writeText(window.location.href).then(function() {
+    if (typeof Analytics !== 'undefined') Analytics.share(currentWod && currentWod.slug || null, 'copy_link');
     btn.classList.add('copied');
     btn.textContent = '✓ Copied!';
     setTimeout(function() {

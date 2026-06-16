@@ -703,6 +703,7 @@
       <div class="pfoot">homewodrx.com &bull; ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div>
     `;
     // Give browser one paint cycle to render injected HTML before opening print dialog
+    if (typeof Analytics !== 'undefined') Analytics.print('daily_wod');
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         window.print();
@@ -840,6 +841,7 @@
       };
       const { error } = await db.saveResult(result);
       if (error) throw error;
+      if (typeof Analytics !== 'undefined') Analytics.logResult(dateStr, 'daily_wod', currentWod?.scoring_type || 'time');
       closeResultModal();
       document.getElementById('result-score').value = '';
       document.getElementById('result-notes').value = '';
@@ -864,6 +866,7 @@
 
   function shareDailyX(e) {
     e.preventDefault();
+    if (typeof Analytics !== 'undefined') Analytics.share('daily_wod', 'x');
     var url  = encodeURIComponent(window.location.href);
     var text = encodeURIComponent('Today\'s Daily 20 on HomeWODrx!');
     window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + url, '_blank', 'width=550,height=420');
@@ -871,17 +874,20 @@
 
   function shareDailyFB(e) {
     e.preventDefault();
+    if (typeof Analytics !== 'undefined') Analytics.share('daily_wod', 'facebook');
     window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.href), '_blank', 'width=580,height=400');
   }
 
   function shareDailyWA(e) {
     e.preventDefault();
+    if (typeof Analytics !== 'undefined') Analytics.share('daily_wod', 'whatsapp');
     var text = encodeURIComponent('Check out today\'s Daily 20 on HomeWODrx: ' + window.location.href);
     window.open('https://wa.me/?text=' + text, '_blank');
   }
 
   function copyDailyLink(btn) {
     navigator.clipboard.writeText(window.location.href).then(function() {
+      if (typeof Analytics !== 'undefined') Analytics.share('daily_wod', 'copy_link');
       btn.classList.add('copied');
       var prev = btn.innerHTML;
       btn.textContent = '✓ Copied!';

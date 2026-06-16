@@ -728,6 +728,7 @@ function generateWorkout() {
     const workout = buildWorkout(equipment, bodyFocuses, level, formatPref, duration);
     currentWorkout = workout;
     renderWorkout(workout);
+    if (typeof Analytics !== 'undefined') Analytics.generateWod('smart', workout.format || formatPref);
     btn.classList.remove('loading'); btn.disabled = false;
     document.getElementById('workout-result').scrollIntoView({ behavior:'smooth', block:'start' });
   }, 600);

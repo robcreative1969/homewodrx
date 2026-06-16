@@ -896,6 +896,7 @@ function beginCountdown() {
   parts.push(T.mode);
   document.getElementById('cd-sub').textContent = parts.join(' · ');
 
+  if (typeof Analytics !== 'undefined') Analytics.timerStart(T.mode, T.wodName || null);
   showScreen('s-countdown');
   cdStep(3);
 }
@@ -1089,6 +1090,7 @@ function finishTimer() {
   T.isDone = true;
   cancelAnimationFrame(T.rafId);
   T.finalSecs = Math.floor((Date.now() - T.startTs - T.totalPausedMs) / 1000);
+  if (typeof Analytics !== 'undefined') Analytics.timerComplete(T.mode, T.wodName || null, T.finalSecs);
   beepSeq([880,1100,1320,880]);
   buildDoneScreen();
   showScreen('s-done');
