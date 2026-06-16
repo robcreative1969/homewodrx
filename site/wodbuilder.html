@@ -53,6 +53,7 @@
 .eq-card{background:var(--white,#fff);border:1.5px solid var(--bd);border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .15s;user-select:none;color:var(--tx)}
 .eq-card:hover{border-color:var(--or);background:rgba(196,18,18,.04)}
 .eq-card.sel{border-color:var(--or);background:rgba(196,18,18,.08);box-shadow:0 0 0 1px var(--or)}
+.eq-card.tabata-disabled{opacity:.3;pointer-events:none;filter:grayscale(1)}
 .eq-card .icon{font-size:24px;margin-bottom:5px;display:block}
 .eq-card .name{font-size:11px;font-weight:700}
 
@@ -388,27 +389,7 @@ input[type=range]::-moz-range-track{height:8px;background:var(--bd);border-radiu
           <label class="pill" data-val="rotating">Rotating</label>
         </div>
         <div id="tabata-structure-hint" style="font-size:11px;color:var(--muted,#666);margin-top:8px;line-height:1.5">
-          Complete 8 rounds of each movement before moving on. Rest 1 min between movements.
-        </div>
-        <!-- Advanced toggle -->
-        <div style="margin-top:14px">
-          <button onclick="toggleTabataAdvanced()" style="background:none;border:none;color:var(--muted,#666);font-size:12px;cursor:pointer;padding:0;font-family:inherit;display:flex;align-items:center;gap:5px">
-            <span id="tabata-adv-arrow" style="font-size:10px">▸</span> Advanced (work / rest intervals)
-          </button>
-          <div id="tabata-advanced" style="display:none;margin-top:12px">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-              <div>
-                <div style="font-size:11px;color:var(--muted,#666);margin-bottom:6px">Work — <strong id="tabata-work-val" style="color:var(--or,#C41212)">20</strong>s</div>
-                <input type="range" id="tabata-work" min="10" max="40" step="5" value="20" style="width:100%;accent-color:var(--or,#C41212)" oninput="document.getElementById('tabata-work-val').textContent=this.value">
-                <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted,#666);margin-top:3px"><span>10s</span><span>40s</span></div>
-              </div>
-              <div>
-                <div style="font-size:11px;color:var(--muted,#666);margin-bottom:6px">Rest — <strong id="tabata-rest-val" style="color:var(--or,#C41212)">10</strong>s</div>
-                <input type="range" id="tabata-rest" min="5" max="30" step="5" value="10" style="width:100%;accent-color:var(--or,#C41212)" oninput="document.getElementById('tabata-rest-val').textContent=this.value">
-                <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted,#666);margin-top:3px"><span>5s</span><span>30s</span></div>
-              </div>
-            </div>
-          </div>
+          Complete all 8 rounds of one movement before moving to the next.
         </div>
       </div>
     </div>
@@ -689,13 +670,26 @@ function setupPillGroups() {
     });
   });
   // Format uses .format-card elements
+  const TABATA_EXCL_EQ = ['rower', 'treadmill'];
   document.querySelectorAll('#format-group .format-card').forEach(card => {
     card.addEventListener('click', () => {
       document.querySelectorAll('#format-group .format-card').forEach(x => x.classList.remove('sel'));
       card.classList.add('sel');
-      // Show/hide Tabata options panel
       const isTabata = card.getAttribute('data-val') === 'tabata';
+      // Show/hide Tabata options panel
       document.getElementById('tabata-options').style.display = isTabata ? 'block' : 'none';
+      // Gray out / restore incompatible equipment
+      document.querySelectorAll('#eq-grid .eq-card').forEach(c => {
+        const val = c.getAttribute('data-val');
+        if (TABATA_EXCL_EQ.includes(val)) {
+          if (isTabata) {
+            c.classList.add('tabata-disabled');
+            c.classList.remove('sel');
+          } else {
+            c.classList.remove('tabata-disabled');
+          }
+        }
+      });
     });
   });
   // Tabata structure toggle (Sequential / Rotating)
@@ -704,7 +698,7 @@ function setupPillGroups() {
       document.querySelectorAll('#tabata-structure-group .pill').forEach(x => x.classList.remove('sel'));
       p.classList.add('sel');
       const hints = {
-        sequential: 'Complete 8 rounds of each movement before moving on. Rest 1 min between movements.',
+        sequential: 'Complete all 8 rounds of one movement before moving to the next.',
         rotating: 'Cycle through all movements each interval for 8 complete rotations. No long breaks.'
       };
       document.getElementById('tabata-structure-hint').textContent = hints[p.getAttribute('data-val')] || '';
@@ -712,13 +706,6 @@ function setupPillGroups() {
   });
 }
 
-function toggleTabataAdvanced() {
-  const panel = document.getElementById('tabata-advanced');
-  const arrow = document.getElementById('tabata-adv-arrow');
-  const open = panel.style.display !== 'none';
-  panel.style.display = open ? 'none' : 'block';
-  arrow.textContent = open ? '▸' : '▾';
-}
 function getSelected(gridId, attr) {
   return [...document.querySelectorAll(`#${gridId} .sel`)].map(c => c.getAttribute(attr));
 }
@@ -756,10 +743,8 @@ function buildWorkout(equipment, bodyFocuses, level, formatPref, duration) {
   else if (format === 'emom')    workout = genEMOM(pool, level, duration, bodyFocuses);
   else if (format === 'fortime') workout = genForTime(pool, level);
   else if (format === 'tabata') {
-    const workSec   = parseInt(document.getElementById('tabata-work')?.value  || 20);
-    const restSec   = parseInt(document.getElementById('tabata-rest')?.value  || 10);
     const structure = document.querySelector('#tabata-structure-group .sel')?.getAttribute('data-val') || 'sequential';
-    workout = genTabata(pool, level, duration, workSec, restSec, structure);
+    workout = genTabata(pool, level, duration, 20, 10, structure);
   }
   else                           workout = genCircuit(pool, level, duration, bodyFocuses);
 
@@ -977,7 +962,7 @@ function genTabata(pool, level, duration, workSec, restSec, structure) {
     return {
       title: `${totalMin}-Min Tabata`,
       format: 'Tabata',
-      description: `Complete 8 rounds of ${workSec}s on / ${restSec}s off for each movement before moving to the next. Rest 1 minute between movements. Push max reps every work interval — the score is your worst round.`,
+      description: `Complete all 8 rounds of ${workSec}s on / ${restSec}s off for each movement before moving to the next. Push max reps every work interval — the score is your worst round.`,
       rows: sel.map(m => ({ movement: m.name, reps: `8 × ${workSec}s on / ${restSec}s off`, tip: m.tip })),
       scoring: `Tabata score = your LOWEST round of reps for each movement. Record each movement's score separately. Total = sum of all movement scores.`,
       scoring_type: 'tabata'
