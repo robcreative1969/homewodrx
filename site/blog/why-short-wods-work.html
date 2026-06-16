@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Sentry Error Monitoring -->
+  <style>sentry-feedback,#sentry-feedback{display:none!important;visibility:hidden!important}</style>
+  <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>The 20-Minute Workout: Why Short WODs Work So Well — HomeWodRX Blog</title>
+
+  <meta name="description" content="Twenty minutes of the right work is more than enough. Here's the science and programming logic behind why short WODs produce real results for home and garage gym athletes.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://homewodrx.com/blog/why-short-wods-work">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="HomeWodRX">
+  <meta property="og:title" content="The 20-Minute Workout: Why Short WODs Work So Well — HomeWodRX">
+  <meta property="og:description" content="Twenty minutes of the right work is more than enough. Here's the science and programming logic behind why short WODs produce real results for home and garage gym athletes.">
+  <meta property="og:url" content="https://homewodrx.com/blog/why-short-wods-work">
+  <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://homewodrx.com/images/og-default.png">
+
+  <!-- Article schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The 20-Minute Workout: Why Short WODs Work So Well",
+    "description": "Twenty minutes of the right work is more than enough. Here's the science and programming logic behind why short WODs produce real results for home and garage gym athletes.",
+    "datePublished": "2026-06-15",
+    "dateModified": "2026-06-15",
+    "author": { "@type": "Organization", "name": "HomeWodRX" },
+    "publisher": { "@type": "Organization", "name": "HomeWodRX", "url": "https://homewodrx.com" },
+    "url": "https://homewodrx.com/blog/why-short-wods-work",
+    "mainEntityOfPage": "https://homewodrx.com/blog/why-short-wods-work",
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://homewodrx.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://homewodrx.com/blog.html" },
+        { "@type": "ListItem", "position": 3, "name": "The 20-Minute Workout: Why Short WODs Work So Well", "item": "https://homewodrx.com/blog/why-short-wods-work" }
+      ]
+    }
+  }
+  </script>
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Shared site styles -->
+  <link rel="stylesheet" href="/css/style.css">
+
+  <!-- Page-specific styles -->
+  <style>
+/* ── Article hero ── */
+.article-hero {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 48px 0;
+}
+.article-hero-inner { max-width: 1248px; margin: 0 auto; padding: 0 24px; }
+.article-breadcrumb {
+  display: flex; align-items: center; gap: 8px;
+  font-size: .78rem; color: var(--muted); margin-bottom: 20px;
+}
+.article-breadcrumb a { color: var(--or); font-weight: 600; }
+.article-breadcrumb .sep { color: var(--muted2); }
+.article-category {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+  color: #34d399; background: rgba(5,150,105,.15); border: 1px solid rgba(5,150,105,.25);
+  padding: 5px 12px; border-radius: 20px; margin-bottom: 18px;
+}
+.article-hero h1 {
+  font-family: var(--font-head); font-size: clamp(32px, 5.5vw, 58px);
+  letter-spacing: .04em; line-height: 1.05; color: var(--text);
+  max-width: 800px; margin-bottom: 18px;
+}
+.article-hero h1 em { color: var(--or); font-style: normal; }
+.article-meta {
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+  padding-bottom: 28px;
+}
+.meta-item { display: flex; align-items: center; gap: 6px; font-size: .82rem; color: var(--muted); }
+.meta-item svg { width: 14px; height: 14px; opacity: .6; }
+.meta-divider { width: 1px; height: 14px; background: var(--border2); }
+
+/* ── Article body layout ── */
+.article-wrap {
+  max-width: 1248px; margin: 0 auto; padding: 0 24px;
+}
+.article-layout {
+  display: grid; grid-template-columns: 1fr 300px;
+  gap: 32px; padding: 40px 0 80px; align-items: start;
+}
+@media (max-width: 900px) { .article-layout { grid-template-columns: 1fr; } }
+
+/* ── Article content card ── */
+.article-content {
+  background: var(--white); border-radius: var(--radius-lg);
+  border: 1.5px solid var(--border); padding: 40px 44px;
+  box-shadow: var(--shadow); min-width: 0;
+}
+@media (max-width: 640px) { .article-content { padding: 24px 20px; } }
+
+.article-content p { font-size: 1rem; line-height: 1.8; color: #2a2a2a; margin-bottom: 20px; }
+.article-content h2 {
+  font-family: var(--font-head); font-size: clamp(24px, 3.5vw, 32px);
+  letter-spacing: .04em; color: var(--text); margin: 40px 0 14px; line-height: 1.1;
+}
+.article-content h2:first-child { margin-top: 0; }
+.article-content h3 { font-size: 1.05rem; font-weight: 700; color: var(--text); margin: 28px 0 10px; }
+.article-content ul, .article-content ol { padding-left: 22px; margin-bottom: 20px; }
+.article-content li { font-size: 1rem; line-height: 1.75; color: #2a2a2a; margin-bottom: 6px; }
+.article-content strong { font-weight: 700; color: var(--text); }
+.article-content a { color: var(--or); font-weight: 600; }
+.article-content a:hover { text-decoration: underline; }
+
+/* Pull quote */
+.pull-quote {
+  padding: 16px 20px; border: 1px solid rgba(196,18,18,.2);
+  background: rgba(196,18,18,.06); border-radius: var(--radius);
+  margin: 28px 0; font-size: 1.05rem; color: var(--text);
+  font-weight: 600; line-height: 1.55; font-style: italic;
+}
+
+/* Tip callout */
+.tip-box {
+  display: flex; gap: 14px; background: #f0fdf4;
+  border: 1.5px solid #bbf7d0; border-radius: var(--radius);
+  padding: 16px 18px; margin: 24px 0;
+}
+.tip-icon { flex-shrink: 0; display: flex; align-items: flex-start; }
+.tip-icon svg { width: 20px; height: 20px; stroke: #16a34a; margin-top: 1px; }
+.tip-box p { margin-bottom: 0; font-size: .9rem; color: #166534; }
+.tip-box strong { color: #14532d; }
+
+/* Article footer */
+.article-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding-top: 32px; margin-top: 32px;
+  border-top: 1px solid var(--border); flex-wrap: wrap;
+}
+.article-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.article-tag {
+  padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border);
+  font-size: .72rem; font-weight: 600; color: var(--muted);
+}
+
+/* Related posts */
+.related-strip { margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--border); }
+.related-strip h3 { font-family: var(--font-head); font-size: 1.4rem; letter-spacing: .04em; margin-bottom: 16px; margin-top: 0 !important; }
+.related-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 560px) { .related-grid { grid-template-columns: 1fr; } }
+.rel-card {
+  display: flex; gap: 12px; padding: 14px;
+  background: var(--bg); border-radius: var(--radius);
+  border: 1.5px solid var(--border); transition: border-color .15s; text-decoration: none;
+}
+.rel-card:hover { border-color: var(--or); }
+.rel-body { min-width: 0; }
+.rel-tag { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--or); margin-bottom: 3px; }
+.rel-title { font-size: .82rem; font-weight: 700; color: var(--text); line-height: 1.35; }
+.rel-read  { font-size: .72rem; color: var(--muted2); margin-top: 3px; }
+
+/* ── Sidebar ── */
+.article-sidebar { display: none; }
+@media (min-width: 901px) {
+  .article-sidebar {
+    display: flex; flex-direction: column; gap: 16px;
+    position: sticky; top: calc(var(--nav-h) + 20px);
+  }
+}
+.sidebar-card {
+  background: var(--white); border-radius: var(--radius-lg);
+  border: 1.5px solid var(--border); box-shadow: var(--shadow); overflow: hidden;
+}
+.sidebar-card-hdr {
+  padding: 14px 18px; border-bottom: 1px solid var(--border);
+  font-size: .72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--muted);
+}
+.toc-list { list-style: none; padding: 14px 18px; display: flex; flex-direction: column; gap: 2px; }
+.toc-list li a {
+  display: block; padding: 6px 10px; border-radius: 6px;
+  font-size: .82rem; color: var(--muted); font-weight: 500;
+  transition: background .12s, color .12s; text-decoration: none;
+}
+.toc-list li a:hover { background: rgba(196,18,18,.08); color: var(--or); }
+.toc-list li a.active { background: rgba(196,18,18,.08); color: var(--or); font-weight: 700; }
+
+/* Sidebar CTA */
+.sidebar-cta {
+  background: var(--text); border-radius: var(--radius-lg);
+  padding: 22px 20px; position: relative; overflow: hidden;
+}
+.sidebar-cta::before {
+  content: ''; position: absolute; top: -30px; right: -30px;
+  width: 120px; height: 120px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(196,18,18,.3) 0%, transparent 70%);
+}
+.scta-eyebrow { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--or); margin-bottom: 8px; }
+.scta-title { font-family: var(--font-head); font-size: 1.3rem; letter-spacing: .04em; color: #fff; margin-bottom: 8px; line-height: 1.1; }
+.scta-body { font-size: .8rem; color: rgba(255,255,255,.6); line-height: 1.55; margin-bottom: 16px; }
+.scta-features { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.scta-feature { font-size: .75rem; color: rgba(255,255,255,.65); display: flex; align-items: center; gap: 6px; }
+.scta-feature::before { content: '✓'; color: var(--or); font-weight: 700; flex-shrink: 0; }
+.scta-btn {
+  display: block; text-align: center; width: 100%; padding: 11px;
+  background: var(--or); color: #fff; border: none; border-radius: var(--radius);
+  font-size: .875rem; font-weight: 700; cursor: pointer; transition: background .15s;
+  text-decoration: none; font-family: var(--font-body);
+}
+.scta-btn:hover { background: var(--or-dark); }
+
+/* Sidebar share */
+.share-card-body { padding: 14px 18px; display: flex; flex-direction: column; gap: 8px; }
+.share-pill {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 14px; border-radius: 8px; border: 1.5px solid var(--border);
+  background: none; font-family: var(--font-body); font-size: .82rem; font-weight: 600;
+  color: var(--text); cursor: pointer; transition: border-color .15s, color .15s, background .15s;
+  text-align: left; width: 100%;
+}
+.share-pill svg { width: 16px; height: 16px; flex-shrink: 0; }
+.share-pill:hover        { border-color: var(--border2); }
+.share-x:hover     { border-color: #000; color: #000; background: #f5f5f5; }
+.share-fb:hover    { border-color: #1877f2; color: #1877f2; background: #f0f4ff; }
+.share-wa:hover    { border-color: #25d366; color: #25d366; background: #f0fdf4; }
+.share-copy:hover  { border-color: var(--or); color: var(--or); background: rgba(196,18,18,.06); }
+.share-pill.copied { border-color: #16a34a; color: #16a34a; background: #f0fdf4; }
+
+/* ── Mobile TOC ── */
+.mobile-toc {
+  display: none; background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 24px; overflow: hidden;
+}
+@media (max-width: 900px) { .mobile-toc { display: block; } }
+.mobile-toc-btn {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; background: none; border: none;
+  font-family: var(--font-body); font-size: .82rem; font-weight: 700;
+  color: var(--text); cursor: pointer; gap: 8px;
+}
+.mobile-toc-btn span { display: flex; align-items: center; gap: 8px; }
+.mobile-toc-label { color: var(--muted); font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
+.mobile-toc-chev { width: 16px; height: 16px; transition: transform .2s; flex-shrink: 0; color: var(--muted); }
+.mobile-toc.open .mobile-toc-chev { transform: rotate(180deg); }
+.mobile-toc-body { display: none; border-top: 1px solid var(--border); padding: 8px 12px 12px; }
+.mobile-toc.open .mobile-toc-body { display: block; }
+.mobile-toc-body a {
+  display: block; padding: 8px 10px; border-radius: 6px;
+  font-size: .85rem; color: var(--muted); font-weight: 500;
+  transition: background .12s, color .12s; text-decoration: none;
+}
+.mobile-toc-body a:hover { background: rgba(196,18,18,.08); color: var(--or); }
+
+/* ── Inline CTA (mobile only) ── */
+.inline-cta {
+  display: none; background: var(--text); border-radius: var(--radius-lg);
+  padding: 24px 22px; margin: 36px 0; position: relative; overflow: hidden;
+}
+@media (max-width: 900px) { .inline-cta { display: block; } }
+.inline-cta::before {
+  content: ''; position: absolute; top: -30px; right: -30px;
+  width: 140px; height: 140px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(196,18,18,.3) 0%, transparent 70%);
+  pointer-events: none;
+}
+.inline-cta-inner { position: relative; z-index: 1; }
+.icta-eyebrow { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--or); margin-bottom: 6px; }
+.icta-title { font-family: var(--font-head); font-size: 1.5rem; letter-spacing: .04em; color: #fff; margin-bottom: 6px; line-height: 1.1; }
+.icta-body { font-size: .85rem; color: rgba(255,255,255,.6); line-height: 1.55; margin-bottom: 16px; }
+.icta-features { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 18px; }
+.icta-feature { font-size: .78rem; color: rgba(255,255,255,.65); display: flex; align-items: center; gap: 6px; }
+.icta-feature::before { content: '✓'; color: var(--or); font-weight: 700; flex-shrink: 0; }
+.icta-btn {
+  display: block; text-align: center; width: 100%; padding: 13px;
+  background: var(--or); color: #fff; border: none; border-radius: var(--radius);
+  font-size: .9rem; font-weight: 700; cursor: pointer; transition: background .15s;
+  font-family: var(--font-body); text-decoration: none;
+}
+.icta-btn:hover { background: var(--or-dark); }
+
+/* ── Print logo header (hidden on screen; shown in print via style.css @media print) ── */
+.print-logo {
+  display: none;
+  align-items: center; justify-content: space-between;
+  padding-bottom: 14px; border-bottom: 2px solid #C41212;
+  margin-bottom: 20px;
+}
+.print-logo img { height: 32px; }
+.print-logo-url { font-size: .75rem; color: #555; }
+
+/* ── Back to top ── */
+.back-to-top {
+  position: fixed; bottom: 24px; right: 24px; z-index: 500;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--text); border: none; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; box-shadow: var(--shadow-md);
+  opacity: 0; transform: translateY(12px);
+  transition: opacity .2s, transform .2s; pointer-events: none;
+}
+.back-to-top.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.back-to-top:hover { background: var(--or); }
+.back-to-top svg { width: 18px; height: 18px; }
+  </style>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-HZM475VDN3');
+  </script>
+  <!-- Vercel Analytics -->
+  <script defer src="/_vercel/insights/script.js"></script>
+</head>
+
+<body data-nav-init="true" data-active-page="blog">
+
+<!-- Print-only logo header -->
+<div class="print-logo" aria-hidden="true">
+  <img src="/HomeWODRx-logo-black-red-040626.png" alt="HomeWodRX">
+  <span class="print-logo-url">homewodrx.com</span>
+</div>
+
+<!-- ARTICLE HERO -->
+<div class="article-hero">
+  <div class="article-hero-inner">
+
+    <nav class="article-breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span class="sep">›</span>
+      <a href="/blog.html">Blog</a>
+      <span class="sep">›</span>
+      <span>The 20-Minute Workout: Why Short WODs Work So Well</span>
+    </nav>
+
+    <div class="article-category">Programming</div>
+
+    <h1>The 20-Minute Workout: Why Short WODs <em>Work So Well</em></h1>
+
+    <div class="article-meta">
+      <span class="meta-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        June 15, 2026
+      </span>
+      <div class="meta-divider"></div>
+      <span class="meta-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        6 min read
+      </span>
+      <div class="meta-divider"></div>
+      <span class="meta-item">By the HomeWodRX team</span>
+    </div>
+  </div>
+</div>
+
+<!-- ARTICLE BODY + SIDEBAR -->
+<div class="article-wrap">
+  <div class="article-layout">
+
+    <!-- CONTENT -->
+    <article class="article-content" id="article">
+
+      <!-- Mobile TOC -->
+      <div class="mobile-toc" id="mobileToc">
+        <button class="mobile-toc-btn" onclick="toggleMobileToc()" aria-expanded="false">
+          <span><span class="mobile-toc-label">In this article</span></span>
+          <svg class="mobile-toc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+        <div class="mobile-toc-body">
+          <a href="#twenty-minutes-is-not-cutting-it-short">20 Minutes Is Not Cutting It Short</a>
+          <a href="#intensity-is-the-lever">Intensity Is the Lever, Not Duration</a>
+          <a href="#what-good-short-programming-looks-like">What Good Short Programming Looks Like</a>
+          <a href="#when-short-beats-long">When Short WODs Beat Longer Ones</a>
+          <a href="#putting-it-into-practice">Putting It Into Practice</a>
+          <a href="#final-thoughts">Final Thoughts</a>
+        </div>
+      </div>
+
+      <h2 id="twenty-minutes-is-not-cutting-it-short">20 Minutes Is Not Cutting It Short</h2>
+      <p>The garage gym athlete staring at a 20-minute window often feels like they're cheating. The box session was an hour. The old program had a strength block, a skill piece, and a long conditioning workout. Twenty minutes feels like a warmup by comparison — like you're getting away with something.</p>
+      <p>You're not getting away with anything. You're training smarter than most people.</p>
+      <p>Some of the most demanding benchmark workouts ever programmed run well under 20 minutes. Fran — a WOD that has humbled some of the fittest athletes in the world — is typically done in under eight. Diane, Grace, Isabel: all short, all brutal, all effective. The duration was never the point. The work was.</p>
+      <p>The idea that longer automatically means better is one of the more persistent myths in training culture. It's not true for elite athletes, and it's definitely not true for the home gym athlete trying to get the most out of a busy week.</p>
+
+      <div class="pull-quote">
+        "Some of the most demanding benchmark workouts ever programmed run well under 20 minutes. Duration was never the point — the work was."
+      </div>
+
+      <h2 id="intensity-is-the-lever">Intensity Is the Lever, Not Duration</h2>
+      <p>What drives adaptation in conditioning training — cardiovascular fitness, metabolic efficiency, muscular endurance — is intensity relative to your capacity, not clock time. A 20-minute workout at genuine effort does more for your fitness than a 60-minute session you phone in.</p>
+      <p>High-intensity, short-duration work taxes your aerobic and anaerobic systems simultaneously. You're working at outputs that steady-state cardio can't reach. After you stop, your body continues burning energy at an elevated rate as it clears metabolic byproducts and restores baseline. This effect — sometimes called excess post-exercise oxygen consumption — is proportionally larger with high-intensity work.</p>
+      <p>None of this requires you to go to the edge every session. But it does mean that the intensity you bring matters far more than how long you're moving. A focused 18-minute AMRAP that actually challenges you will do more than 45 minutes of easy rowing while you watch a video.</p>
+
+      <div class="tip-box">
+        <div class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></div>
+        <p><strong>Rate your effort honestly:</strong> A short WOD only delivers if you actually push. Before you start, commit to a pace that will make the last few minutes uncomfortable. If the final round feels the same as the first, you had more in the tank.</p>
+      </div>
+
+      <h2 id="what-good-short-programming-looks-like">What Good Short Programming Looks Like</h2>
+      <p>Not all 20-minute workouts are equal. The format matters. Here's what tends to work well in a short window:</p>
+
+      <h3>AMRAPs and For-Time couplets or triplets</h3>
+      <p>Two or three movements cycled continuously give you constant work without long transitions. The simplicity keeps intensity high — you're not spending 30 seconds mentally prepping for a complex movement sequence.</p>
+
+      <h3>EMOMs with built-in rest</h3>
+      <p>An every-minute-on-the-minute format lets you accumulate quality reps while managing fatigue. A 12–16 minute EMOM can be extraordinarily effective without feeling like a death march. The rest interval within each minute keeps your output consistent across the whole workout.</p>
+
+      <h3>Ladder or descending rep schemes</h3>
+      <p>21-15-9, 10-8-6-4-2, rounds of decreasing volume — these structures give you natural checkpoints and a finish line you can see. Mentally they're easier to attack than "20 minutes of work." Physically they often produce better effort because athletes push when the end is visible.</p>
+      <p>If you want a short WOD built around the gear you actually have, the <a href="/generator">WOD Generator</a> builds sessions in whatever time window you set. It's the fastest way to get a dialed-in 15 or 20-minute workout without staring at a blank whiteboard.</p>
+
+      <!-- Inline CTA — mobile only -->
+      <div class="inline-cta">
+        <div class="inline-cta-inner">
+          <div class="icta-eyebrow">Free Account</div>
+          <div class="icta-title">Track Your WODs</div>
+          <div class="icta-body">Log your times, track improvement across short benchmark workouts, and see your training history build over weeks and months — free forever.</div>
+          <div class="icta-features">
+            <div class="icta-feature">Log results after every WOD</div>
+            <div class="icta-feature">Full training history</div>
+            <div class="icta-feature">Track personal bests</div>
+          </div>
+          <a href="/signup.html" class="icta-btn">Create Free Account</a>
+        </div>
+      </div>
+
+      <h2 id="when-short-beats-long">When Short WODs Beat Longer Ones</h2>
+      <p>There's a case for longer training sessions — aerobic base work, heavy strength days, skills that take time to practice — and none of that is going away. But short WODs specifically outperform longer ones in a few situations worth naming.</p>
+      <p><strong>When you're pressed for time.</strong> This is the obvious one, but it bears saying plainly: a high-quality 20-minute session beats skipping the workout entirely by an enormous margin. Don't let the perfect session crowd out a good one. Twenty minutes, done with intention, keeps your fitness moving in the right direction.</p>
+      <p><strong>When you're managing fatigue.</strong> Longer sessions accumulate more systemic stress. If your recovery is compromised — poor sleep, a rough week, back-to-back training days — a shorter, intense session lets you train without digging a recovery hole you can't fill.</p>
+      <p><strong>When you need variety in your programming.</strong> A week that alternates between one longer session and two shorter ones gives your body different stimuli and keeps training from feeling monotonous. Short, fast WODs develop a different energy system expression than longer, more aerobic work. Both belong in a well-rounded program.</p>
+      <p><strong>When you're returning from a break.</strong> Coming back after time off, a short WOD is forgiving in the best way. You can work hard, feel the effort, and be done before you've accumulated enough volume to make you miserable for four days. It's a smarter re-entry than trying to replicate your old long-session output on day one.</p>
+
+      <h2 id="putting-it-into-practice">Putting It Into Practice</h2>
+      <p>If your default is to skip training when you only have 20 minutes, the first shift is mental: decide in advance that 20 minutes counts and plan accordingly. Have a handful of go-to short formats ready — a two-movement AMRAP, an EMOM with burpees and pull-ups, a fast descending ladder with a barbell movement and bodyweight work. When you only have the window, you run one of those. No negotiation.</p>
+      <p>The second shift is effort. Short workouts only pay off when you actually push. That means scaling intelligently — <a href="/workouts">check the benchmark WODs</a> for reference weights and rep counts — and committing to a pace that makes the finish feel earned. A 12-minute workout you genuinely worked through beats a half-hearted 30-minute session every time.</p>
+      <p>And log it. The <a href="/signup.html">free account</a> gives you a training history that captures short sessions right alongside long ones. Seeing your numbers improve across benchmark workouts — even when the workouts themselves are brief — is a real motivator to keep showing up.</p>
+
+      <h2 id="final-thoughts">Final Thoughts</h2>
+      <p>Twenty minutes is not a consolation prize. It's a completely legitimate training window when you use it well. The athletes who build lasting fitness aren't necessarily the ones with the most time — they're the ones who make consistent use of whatever time they have.</p>
+      <p>Short WODs, done with real effort, check the box. They keep the habit intact, they develop your conditioning, and they add up over weeks and months into meaningful progress. Stop apologizing for the short session and start defending it. It's enough.</p>
+
+      <!-- Article footer: tags -->
+      <div class="article-footer">
+        <div class="article-tags">
+          <span class="article-tag">Programming</span>
+          <span class="article-tag">WOD Design</span>
+          <span class="article-tag">Conditioning</span>
+          <span class="article-tag">Home Gym</span>
+          <span class="article-tag">Efficiency</span>
+        </div>
+      </div>
+
+      <!-- Related posts -->
+      <div class="related-strip">
+        <h3>Keep Reading</h3>
+        <div class="related-grid">
+          <a class="rel-card" href="/blog/wod-formats-explained.html">
+            <div class="rel-body">
+              <div class="rel-tag">Programming</div>
+              <div class="rel-title">WOD Formats Explained: AMRAP, EMOM, For Time, and More</div>
+              <div class="rel-read">7 min read</div>
+            </div>
+          </a>
+          <a class="rel-card" href="/blog/weekly-training-program-home.html">
+            <div class="rel-body">
+              <div class="rel-tag">Programming</div>
+              <div class="rel-title">Building a Weekly Training Program for the Home Athlete</div>
+              <div class="rel-read">8 min read</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+    </article>
+
+    <!-- SIDEBAR -->
+    <aside class="article-sidebar">
+
+      <!-- Table of Contents -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-hdr">In This Article</div>
+        <ul class="toc-list" id="toc">
+          <li><a href="#twenty-minutes-is-not-cutting-it-short" class="active">20 Minutes Is Not Cutting It Short</a></li>
+          <li><a href="#intensity-is-the-lever">Intensity Is the Lever, Not Duration</a></li>
+          <li><a href="#what-good-short-programming-looks-like">What Good Short Programming Looks Like</a></li>
+          <li><a href="#when-short-beats-long">When Short WODs Beat Longer Ones</a></li>
+          <li><a href="#putting-it-into-practice">Putting It Into Practice</a></li>
+          <li><a href="#final-thoughts">Final Thoughts</a></li>
+        </ul>
+      </div>
+
+      <!-- Account CTA -->
+      <div class="sidebar-cta">
+        <div class="scta-eyebrow">Free Account</div>
+        <div class="scta-title">Track Your WODs</div>
+        <div class="scta-body">Log your times, track improvement across benchmark workouts, and see your training history build — free forever.</div>
+        <div class="scta-features">
+          <div class="scta-feature">Log results after every WOD</div>
+          <div class="scta-feature">Full training history</div>
+          <div class="scta-feature">Track personal bests</div>
+        </div>
+        <a href="/signup.html" class="scta-btn">Create Free Account</a>
+        <p style="font-size:.7rem;color:rgba(255,255,255,.35);margin-top:10px;text-align:center;">No credit card required</p>
+      </div>
+
+      <!-- Share card -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-hdr">Share This Article</div>
+        <div class="share-card-body">
+          <button class="share-pill share-x" onclick="window.open('https://twitter.com/intent/tweet?url='+encodeURIComponent(location.href)+'&text='+encodeURIComponent(document.title),'_blank')">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            Share on X
+          </button>
+          <button class="share-pill share-fb" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),'_blank')">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Facebook
+          </button>
+          <button class="share-pill share-wa" onclick="window.open('https://api.whatsapp.com/send?text='+encodeURIComponent(document.title+' '+location.href),'_blank')">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            WhatsApp
+          </button>
+          <button class="share-pill share-copy" id="sidebarCopyBtn" onclick="copyLink('sidebarCopyBtn')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            Copy Link
+          </button>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+</div>
+
+<!-- Back to top -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="18 15 12 9 6 15"/>
+  </svg>
+</button>
+
+<script>
+/* Copy link */
+function copyLink(btnId) {
+  navigator.clipboard.writeText(location.href).then(function() {
+    var btn = document.getElementById(btnId || 'sidebarCopyBtn');
+    if (!btn) return;
+    var orig = btn.innerHTML;
+    btn.innerHTML = btn.innerHTML.replace('Copy Link', 'Copied!');
+    btn.classList.add('copied');
+    setTimeout(function() { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+/* Mobile TOC toggle */
+function toggleMobileToc() {
+  var toc = document.getElementById('mobileToc');
+  var btn = toc.querySelector('.mobile-toc-btn');
+  var isOpen = toc.classList.toggle('open');
+  btn.setAttribute('aria-expanded', isOpen);
+}
+
+/* Back to top visibility */
+var btt = document.getElementById('backToTop');
+window.addEventListener('scroll', function() {
+  btt.classList.toggle('visible', window.scrollY > 400);
+}, { passive: true });
+
+/* Active TOC link */
+var sections = ['twenty-minutes-is-not-cutting-it-short','intensity-is-the-lever','what-good-short-programming-looks-like','when-short-beats-long','putting-it-into-practice','final-thoughts'];
+var tocLinks = document.querySelectorAll('#toc a');
+
+window.addEventListener('scroll', function() {
+  var current = sections[0];
+  sections.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top < 120) current = id;
+  });
+  tocLinks.forEach(function(link) {
+    link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+  });
+}, { passive: true });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/js/config.js"></script>
+<script src="/js/db.js"></script>
+<script src="/js/nav.js"></script>
+<script src="/js/footer.js"></script>
+</body>
+</html>
