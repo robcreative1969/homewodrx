@@ -380,7 +380,7 @@ function buildEmailHtml(wod: Move, dateStr: string, firstName: string | null, un
             You're receiving this because Daily WOD Digest is turned on in your HomeWODrx settings.
           </p>
           <p style="margin:0;font-size:11px;color:#999999;">
-            <a href="${BASE}/settings" style="color:#888888;">Manage email preferences</a> &nbsp;·&nbsp;
+            <a href="${BASE}/settings#notifications" style="color:#888888;">Manage email preferences</a> &nbsp;·&nbsp;
             <a href="${unsubUrl}" style="color:#888888;">Unsubscribe</a>
           </p>
         </td></tr>
