@@ -353,6 +353,13 @@ fetch('/blog-posts.json')
 
     // Update "All" count badge
     updateCounts(posts);
+
+    // Apply ?cat= URL param filter if present
+    var catParam = new URLSearchParams(window.location.search).get('cat');
+    if (catParam) {
+      var chip = document.querySelector('.filter-chip[data-filter="' + catParam + '"]');
+      if (chip) filterPosts(catParam, chip);
+    }
   })
   .catch(function(err) {
     console.error('Failed to load blog-posts.json:', err);
