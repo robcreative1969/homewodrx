@@ -445,7 +445,7 @@ function filteredMovements() {
   if (searchQuery) {
     const q = searchQuery;
     list = list.filter(m =>
-      strMatch(m.name + ' ' + expandItemName(m.name), q) ||
+      strMatch(m.name + ' ' + expandItemName(m.name) + ' ' + (m.cat || ''), q) ||
       strMatch(m.tip,  q)
     );
   }
