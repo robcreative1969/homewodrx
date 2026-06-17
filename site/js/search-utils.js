@@ -83,6 +83,7 @@
   // ── Expand acronym words in a user query string ──────────────────────────
   function expandQuery(q) {
     return String(q || '').trim().toLowerCase()
+      .replace(/\bmed\s*ball\b/g, 'medicine ball')  // "medball" / "med ball" → "medicine ball"
       .split(/\s+/)
       .map(w => ACRONYMS[w] || w)
       .join(' ');
