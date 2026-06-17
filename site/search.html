@@ -1265,10 +1265,19 @@ function renderPills() {
 // ─────────────────────────────────────────────
 // HELPERS
 // ─────────────────────────────────────────────
+function syncURL() {
+  const url = new URL(location.href);
+  const rawQ = document.getElementById('search-input').value;
+  if (!rawQ) url.searchParams.delete('q'); else url.searchParams.set('q', rawQ);
+  if (state.tab === 'all') url.searchParams.delete('tab'); else url.searchParams.set('tab', state.tab);
+  history.replaceState(null, '', url);
+}
+
 function switchTab(tab) {
   state.tab = tab;
   document.querySelectorAll('.type-tab').forEach(t => t.classList.toggle('active', t.dataset.tab===tab));
   render();
+  syncURL();
 }
 function setActive(groupId, attr, val) {
   document.querySelectorAll(`#${groupId} [data-${attr}]`).forEach(c =>
@@ -1297,12 +1306,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Load all data from Supabase
   [WORKOUTS, MOVEMENTS, STRETCHES] = await Promise.all([buildWorkouts(), buildMovements(), buildStretches()]);
 
-  // Pre-fill from URL ?q=
-  const qp = new URLSearchParams(location.search).get('q');
+  // Restore state from URL params
+  const initParams = new URLSearchParams(location.search);
+  const qp  = initParams.get('q');
+  const tabp = initParams.get('tab');
   if (qp) {
     document.getElementById('search-input').value = qp;
     state.query = expandQuery(qp);
     document.getElementById('search-clear').style.display = 'block';
+  }
+  const validTabs = ['all','workouts','movements','stretches','gear','blog'];
+  if (tabp && validTabs.includes(tabp) && tabp !== 'all') {
+    state.tab = tabp;
+    document.querySelectorAll('.type-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tabp));
   }
 
   // Search input
@@ -1311,13 +1327,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     state.query = expandQuery(e.target.value);
     document.getElementById('search-clear').style.display = state.query ? 'block' : 'none';
     clearTimeout(debounce);
-    debounce = setTimeout(render, 180);
+    debounce = setTimeout(() => { render(); syncURL(); }, 180);
   });
   document.getElementById('search-clear').addEventListener('click', () => {
     document.getElementById('search-input').value = '';
     state.query = '';
     document.getElementById('search-clear').style.display = 'none';
     render();
+    syncURL();
     document.getElementById('search-input').focus();
   });
 

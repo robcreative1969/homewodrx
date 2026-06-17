@@ -501,6 +501,15 @@ function render() {
 // ─────────────────────────────────────────
 // CLEAR ALL
 // ─────────────────────────────────────────
+function syncURL() {
+  const url = new URL(location.href);
+  if (currentMod   === 'all') url.searchParams.delete('mod'); else url.searchParams.set('mod', currentMod);
+  if (currentFocus === 'all') url.searchParams.delete('focus'); else url.searchParams.set('focus', currentFocus);
+  const rawQ = document.getElementById('search').value;
+  if (!rawQ) url.searchParams.delete('q'); else url.searchParams.set('q', rawQ);
+  history.replaceState(null, '', url);
+}
+
 function clearFilters() {
   currentMod = 'all'; currentFocus = 'all'; currentSearch = '';
   document.getElementById('search').value = '';
@@ -511,12 +520,33 @@ function clearFilters() {
   updateMoreFiltersBtn();
   updateActivePills();
   render();
+  syncURL();
 }
 
 // ─────────────────────────────────────────
 // EVENT LISTENERS
 // ─────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  // Restore state from URL params
+  const params     = new URLSearchParams(location.search);
+  const modParam   = params.get('mod');
+  const focusParam = params.get('focus');
+  const qParam     = params.get('q');
+  const validMods    = ['static','dynamic','pnf','yoga'];
+  const validFocuses = ['hips','hamstrings','shoulders','back','chest','calves','wrists','full'];
+  if (modParam && validMods.includes(modParam)) {
+    currentMod = modParam;
+    document.querySelectorAll('[data-mod]').forEach(p => p.classList.toggle('active', p.dataset.mod === modParam));
+  }
+  if (focusParam && validFocuses.includes(focusParam)) {
+    currentFocus = focusParam;
+    document.querySelectorAll('[data-focus]').forEach(p => p.classList.toggle('active', p.dataset.focus === focusParam));
+  }
+  if (qParam) {
+    currentSearch = qParam;
+    document.getElementById('search').value = qParam;
+  }
+
   // More Filters toggle
   document.getElementById('more-filters-btn').addEventListener('click', toggleFiltersPanel);
 
@@ -530,6 +560,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateMoreFiltersBtn();
     updateActivePills();
     render();
+    syncURL();
   });
 
   // Focus chips
@@ -542,6 +573,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateMoreFiltersBtn();
     updateActivePills();
     render();
+    syncURL();
   });
 
   // Search
@@ -552,6 +584,7 @@ document.addEventListener('DOMContentLoaded', () => {
       currentSearch = e.target.value;
       updateActivePills();
       render();
+      syncURL();
     }, 180);
   });
 });

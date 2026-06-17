@@ -429,6 +429,14 @@ function updateActivePills() {
 // ─────────────────────────────────────────
 // CLEAR ALL
 // ─────────────────────────────────────────
+function syncURL() {
+  const url = new URL(location.href);
+  if (activeFilter === 'all') url.searchParams.delete('filter'); else url.searchParams.set('filter', activeFilter);
+  const rawQ = document.getElementById('routine-search').value;
+  if (!rawQ) url.searchParams.delete('q'); else url.searchParams.set('q', rawQ);
+  history.replaceState(null, '', url);
+}
+
 function clearFilters() {
   activeFilter = 'all';
   searchQuery  = '';
@@ -436,6 +444,7 @@ function clearFilters() {
   document.querySelectorAll('[data-filter]').forEach(p => p.classList.toggle('active', p.dataset.filter === 'all'));
   updateActivePills();
   render();
+  syncURL();
 }
 
 // ─────────────────────────────────────────
@@ -470,6 +479,20 @@ async function loadRoutines() {
 // INIT
 // ─────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  // Restore state from URL params
+  const params       = new URLSearchParams(location.search);
+  const filterParam  = params.get('filter');
+  const qParam       = params.get('q');
+  const validFilters = ['daily10','All Levels','Intermediate+','Dynamic','Static','Yoga','Mixed'];
+  if (filterParam && validFilters.includes(filterParam)) {
+    activeFilter = filterParam;
+    document.querySelectorAll('[data-filter]').forEach(p => p.classList.toggle('active', p.dataset.filter === filterParam));
+  }
+  if (qParam) {
+    searchQuery = qParam;
+    document.getElementById('routine-search').value = qParam;
+  }
+
   // Filter chips
   document.getElementById('filter-chips').addEventListener('click', e => {
     const chip = e.target.closest('[data-filter]');
@@ -479,6 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
     chip.classList.add('active');
     updateActivePills();
     render();
+    syncURL();
   });
 
   // Search
@@ -489,6 +513,7 @@ document.addEventListener('DOMContentLoaded', () => {
       searchQuery = e.target.value.trim();
       updateActivePills();
       render();
+      syncURL();
     }, 180);
   });
 

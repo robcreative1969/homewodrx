@@ -583,6 +583,14 @@ function updateActivePills() {
   });
 }
 
+function syncURL() {
+  const url = new URL(location.href);
+  if (activeCategory === 'all') url.searchParams.delete('cat'); else url.searchParams.set('cat', activeCategory);
+  const rawQ = document.getElementById('search').value;
+  if (!rawQ) url.searchParams.delete('q'); else url.searchParams.set('q', rawQ);
+  history.replaceState(null, '', url);
+}
+
 function clearAllFilters() {
   activeCategory = 'all';
   searchQuery = '';
@@ -592,6 +600,7 @@ function clearAllFilters() {
   updateMoreFiltersBtn();
   updateActivePills();
   render();
+  syncURL();
 }
 
 // ─────────────────────────────────────────
@@ -600,6 +609,20 @@ function clearAllFilters() {
 document.addEventListener('DOMContentLoaded', async () => {
   ALL_MOVEMENTS = await loadMovements();
   document.getElementById('total-count').textContent = ALL_MOVEMENTS.length;
+
+  // Restore state from URL params
+  const params = new URLSearchParams(location.search);
+  const catParam = params.get('cat');
+  const qParam   = params.get('q');
+  const validCats = ['bodyweight','barbell','kettlebell','dumbbells','pullupbar','rings','jumprope','resistancebands','running','rower','assaultbike','skierg','slamball','medicineball','rope','box','ghd','dipbar'];
+  if (catParam && validCats.includes(catParam)) {
+    activeCategory = catParam;
+    document.querySelectorAll('[data-cat]').forEach(c => c.classList.toggle('active', c.dataset.cat === catParam));
+  }
+  if (qParam) {
+    searchQuery = expandQuery(qParam);
+    document.getElementById('search').value = qParam;
+  }
 
   // More filters toggle
   document.getElementById('more-filters-btn').addEventListener('click', toggleFiltersPanel);
@@ -614,6 +637,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateMoreFiltersBtn();
     updateActivePills();
     render();
+    syncURL();
   });
 
   // Search
@@ -624,6 +648,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       searchQuery = expandQuery(e.target.value);
       updateActivePills();
       render();
+      syncURL();
     }, 180);
   });
 

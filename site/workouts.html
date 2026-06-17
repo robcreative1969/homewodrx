@@ -928,6 +928,16 @@ function render() {
   }
 }
 
+function syncURL() {
+  const url = new URL(location.href);
+  if (activeCategory === 'all') url.searchParams.delete('cat'); else url.searchParams.set('cat', activeCategory);
+  if (activeEquip    === 'all') url.searchParams.delete('equip'); else url.searchParams.set('equip', activeEquip);
+  if (activeType     === 'all') url.searchParams.delete('type'); else url.searchParams.set('type', activeType);
+  const rawQ = document.getElementById('search').value;
+  if (!rawQ) url.searchParams.delete('q'); else url.searchParams.set('q', rawQ);
+  history.replaceState(null, '', url);
+}
+
 function clearAllFilters() {
   activeCategory = 'all'; activeEquip = 'all'; activeType = 'all';
   searchQuery = ''; sortBy = 'name';
@@ -989,14 +999,30 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('wod-grid').innerHTML =
     '<p style="color:var(--muted);grid-column:1/-1;padding:40px 0 20px;font-size:.95rem;">Loading workouts…</p>';
 
-  // ?cat= URL param — used by nav dropdown links e.g. /workouts.html?cat=hero
-  const params   = new URLSearchParams(location.search);
-  const catParam = params.get('cat');
+  // Restore state from URL params
+  const params    = new URLSearchParams(location.search);
+  const catParam  = params.get('cat');
+  const equipParam= params.get('equip');
+  const typeParam = params.get('type');
+  const qParam    = params.get('q');
   const validCats = [...CAT_ORDER, 'daily20'];
+  const validEquips = ['bodyweight','barbell','pullUpBar','run','dumbbell','kettlebell'];
+  const validTypes  = ['For Time','AMRAP','EMOM','Circuit','Tabata'];
   if (catParam && validCats.includes(catParam)) {
     activeCategory = catParam;
-    document.querySelectorAll('[data-cat]').forEach(t =>
-      t.classList.toggle('active', t.dataset.cat === catParam));
+    document.querySelectorAll('[data-cat]').forEach(t => t.classList.toggle('active', t.dataset.cat === catParam));
+  }
+  if (equipParam && validEquips.includes(equipParam)) {
+    activeEquip = equipParam;
+    document.querySelectorAll('[data-equip]').forEach(p => p.classList.toggle('active', p.dataset.equip === equipParam));
+  }
+  if (typeParam && validTypes.includes(typeParam)) {
+    activeType = typeParam;
+    document.querySelectorAll('[data-type]').forEach(p => p.classList.toggle('active', p.dataset.type === typeParam));
+  }
+  if (qParam) {
+    searchQuery = expandQuery(qParam);
+    document.getElementById('search').value = qParam;
   }
 
   // Category tabs
@@ -1006,12 +1032,9 @@ document.addEventListener('DOMContentLoaded', () => {
     activeCategory = tab.dataset.cat;
     document.querySelectorAll('[data-cat]').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
-    const url = new URL(location.href);
-    if (activeCategory === 'all') url.searchParams.delete('cat');
-    else url.searchParams.set('cat', activeCategory);
-    history.replaceState(null, '', url);
     updateEquipChipsForCategory(activeCategory);
     render();
+    syncURL();
   });
 
   // More Filters toggle
@@ -1027,6 +1050,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateMoreFiltersBtn();
     updateActivePills();
     render();
+    syncURL();
   });
 
   // WOD type chips
@@ -1039,6 +1063,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateMoreFiltersBtn();
     updateActivePills();
     render();
+    syncURL();
   });
 
   // Search
@@ -1049,6 +1074,7 @@ document.addEventListener('DOMContentLoaded', () => {
       searchQuery = expandQuery(e.target.value);
       updateActivePills();
       render();
+      syncURL();
     }, 180);
   });
 
