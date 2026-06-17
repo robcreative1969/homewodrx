@@ -631,11 +631,18 @@ const Companion = {
               <div class="companion-sub">HomeWodRX</div>
             </div>
           </div>
-          <button class="companion-close" onclick="Companion.toggle()" aria-label="Close">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-          </button>
+          <div style="display:flex;gap:4px;align-items:center">
+            <button class="companion-close" onclick="Companion._newConversation()" aria-label="New conversation" title="New conversation" style="opacity:0.65">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.87"/>
+              </svg>
+            </button>
+            <button class="companion-close" onclick="Companion.toggle()" aria-label="Close">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
         </div>
 
         <div class="companion-messages" id="companion-messages"></div>
@@ -710,6 +717,16 @@ const Companion = {
     });
 
     this._restoreHistory();
+
+    // Sync history across tabs — fires in OTHER tabs when localStorage changes
+    window.addEventListener('storage', (e) => {
+      if (e.key === this.STORAGE_KEY) {
+        const msgs = document.getElementById('companion-messages');
+        if (msgs) msgs.innerHTML = '';
+        this._restoreHistory();
+        if (this._open) this._scrollToBottom();
+      }
+    });
 
     // Close panel on Escape
     document.addEventListener('keydown', (e) => {
@@ -954,7 +971,7 @@ const Companion = {
     if (msgs) msgs.scrollTop = msgs.scrollHeight;
   },
 
-  // ── Session storage ────────────────────────────────────────────────
+  // ── Persistence (localStorage = cross-tab + survives browser restart) ──
   _saveHistory() {
     const msgs = document.getElementById('companion-messages');
     if (!msgs) return;
@@ -962,12 +979,12 @@ const Companion = {
       role: el.classList.contains('user') ? 'user' : 'assistant',
       text: el.textContent,
     }));
-    try { sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(history)); } catch (e) {}
+    try { localStorage.setItem(this.STORAGE_KEY, JSON.stringify(history)); } catch (e) {}
   },
 
   _restoreHistory() {
     try {
-      const raw = sessionStorage.getItem(this.STORAGE_KEY);
+      const raw = localStorage.getItem(this.STORAGE_KEY);
       if (!raw) return;
       const history = JSON.parse(raw);
       // Clear first — prevents doubling if _restoreHistory is somehow called twice
@@ -977,6 +994,15 @@ const Companion = {
     } catch (e) {}
   },
 
+  _newConversation() {
+    try { localStorage.removeItem(this.STORAGE_KEY); } catch(e) {}
+    const msgs = document.getElementById('companion-messages');
+    if (msgs) msgs.innerHTML = '';
+    this._appendMsg('assistant', "What's on your training agenda?");
+    this._saveHistory();
+    this._scrollToBottom();
+  },
+
   // Returns the last 20 stored messages formatted for the Claude API.
   // Excludes the canned opener ("What's on your training agenda?") since it's
   // not a real AI response. Caps at 20 messages (10 exchanges) to keep token
@@ -984,7 +1010,7 @@ const Companion = {
   // separately as the final entry in the Edge Function's messages array.
   _getHistoryForAPI() {
     try {
-      const raw = sessionStorage.getItem(this.STORAGE_KEY);
+      const raw = localStorage.getItem(this.STORAGE_KEY);
       if (!raw) return [];
       const stored = JSON.parse(raw); // [{role, text}, ...]
       // Drop the canned opener if it's the first message
