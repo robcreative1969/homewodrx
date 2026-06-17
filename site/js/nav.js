@@ -18,6 +18,7 @@ const Nav = {
     this.attachEventListeners();
     this.loadSearchScript();
     this.loadAnalytics();
+    this.loadBlogPosts();
 
     // Sync pre-check: if we know the user was logged in last visit, show
     // avatar placeholder instantly so there's no guest→avatar flash
@@ -113,6 +114,23 @@ const Nav = {
     }
   },
 
+  async loadBlogPosts() {
+    const container = document.getElementById('dd-blog-posts');
+    if (!container) return;
+    try {
+      const res = await fetch('/blog-posts.json');
+      if (!res.ok) throw new Error('fetch failed');
+      const posts = await res.json();
+      posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+      container.innerHTML = posts.slice(0, 3).map(p =>
+        `<a href="${p.file}" class="dd-post"><span class="dd-post-tag">${p.categoryLabel}</span><span class="dd-post-title">${p.title}</span></a>`
+      ).join('');
+    } catch (e) {
+      const container = document.getElementById('dd-blog-posts');
+      if (container) container.innerHTML = '<a href="/blog.html" class="dd-post"><span class="dd-post-title">Browse all posts →</span></a>';
+    }
+  },
+
   render(activePage) {
     const isWorkout  = ['workouts','workout','generator','wodbuilder','timer','daily-wod'].includes(activePage);
     const isMovement = ['movements','movement'].includes(activePage);
@@ -128,7 +146,8 @@ const Nav = {
     const bA  = isBlog     ? ' active' : '';
     const pA  = isProfile  ? ' active' : '';
 
-    return `<nav class="site-nav">
+    return `<style>.dd-post-skel{height:38px;border-radius:6px;margin-bottom:4px;background:linear-gradient(90deg,#f0f0f0 25%,#f8f8f8 50%,#f0f0f0 75%);background-size:200% 100%;animation:skelPulse 1.4s ease infinite}@keyframes skelPulse{0%{background-position:200% 0}100%{background-position:-200% 0}}</style>
+<nav class="site-nav">
 <div class="nav-inner">
   <a class="nav-logo" href="/">
     <img src="/HomeWODRx-logo-black-red-040626.png" alt="HomeWODrx" class="nav-logo-img">
@@ -184,10 +203,25 @@ const Nav = {
 
     <div class="nav-dd${bA}" id="dd-blog">
       <button class="nav-btn${bA}" onclick="toggleDD('dd-blog')">Blog<svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 6 8 10 12 6"/></svg></button>
-      <div class="dd-panel" style="min-width:300px">
-        <a href="/blog/hero-wod-guide.html" class="dd-post"><span class="dd-post-tag">Training</span><span class="dd-post-title">The Complete Guide to Hero WODs — History, Strategy &amp; Top 10</span></a>
-        <a href="/blog/best-home-gym-equipment.html" class="dd-post"><span class="dd-post-tag">Equipment</span><span class="dd-post-title">Best Home Gym Equipment for Functional Fitness (2026)</span></a>
-        <a href="/blog/how-to-scale-wods.html" class="dd-post"><span class="dd-post-tag">Technique</span><span class="dd-post-title">How to Scale Any WOD Without Losing the Intent</span></a>
+      <div class="dd-panel dd-panel-wide">
+        <div class="dd-cols">
+          <div class="dd-col">
+            <div class="dd-section-label">Recent Posts</div>
+            <div id="dd-blog-posts">
+              <div class="dd-post-skel"></div>
+              <div class="dd-post-skel"></div>
+              <div class="dd-post-skel"></div>
+            </div>
+          </div>
+          <div class="dd-col dd-col-right">
+            <div class="dd-section-label">Browse by Topic</div>
+            <a href="/blog.html?cat=training"><div class="dl"><strong>Training</strong><small>WODs, technique &amp; form</small></div></a>
+            <a href="/blog.html?cat=programming"><div class="dl"><strong>Programming</strong><small>Planning your training week</small></div></a>
+            <a href="/blog.html?cat=equipment"><div class="dl"><strong>Equipment</strong><small>Gear guides &amp; reviews</small></div></a>
+            <a href="/blog.html?cat=wod-guides"><div class="dl"><strong>WOD Guides</strong><small>Breakdowns &amp; strategy</small></div></a>
+            <a href="/blog.html?cat=mobility"><div class="dl"><strong>Mobility</strong><small>Recovery &amp; maintenance</small></div></a>
+          </div>
+        </div>
         <div class="dd-div"></div>
         <a href="/blog.html" class="dd-footer">All Posts →</a>
       </div>
@@ -280,6 +314,11 @@ const Nav = {
     <div class="ham-section-title">Blog</div>
     <div class="ham-links">
       <a href="/blog.html" class="ham-link">All Posts</a>
+      <a href="/blog.html?cat=training" class="ham-link">Training</a>
+      <a href="/blog.html?cat=programming" class="ham-link">Programming</a>
+      <a href="/blog.html?cat=equipment" class="ham-link">Equipment</a>
+      <a href="/blog.html?cat=wod-guides" class="ham-link">WOD Guides</a>
+      <a href="/blog.html?cat=mobility" class="ham-link">Mobility</a>
     </div>
   </div>
   <div class="ham-divider"></div>
