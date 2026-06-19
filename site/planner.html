@@ -434,7 +434,7 @@ let libSearchQ        = '';
 let libCat            = 'Popular';
 
 // Find a Workout state
-let fwType   = 'benchmarks'; // 'benchmarks' | 'mine'
+let fwType   = 'all'; // 'all' | 'benchmarks' | 'mine'
 let fwSearch = '';
 let fwBenchmarks = [];
 let fwMine       = [];
@@ -1138,6 +1138,33 @@ async function saveSmartDay() {
 // MANUAL BUILD — UI
 // ═══════════════════════════════════════════════════════════════
 const LIB_CATS = ['Popular','Bodyweight','Barbell','Kettlebell','Dumbbell','Pull-up Bar','Cardio','Core'];
+// Default loads for common weighted movements (rx'd men/women)
+const WEIGHT_DEFAULTS = {
+  'thruster':        '95/65 lb',
+  'deadlift':        '225/155 lb',
+  'clean':           '135/95 lb',
+  'hang power clean':'115/85 lb',
+  'power clean':     '135/95 lb',
+  'clean and jerk':  '135/95 lb',
+  'snatch':          '75/55 lb',
+  'power snatch':    '75/55 lb',
+  'hang power snatch':'75/55 lb',
+  'overhead squat':  '95/65 lb',
+  'back squat':      '135/95 lb',
+  'front squat':     '115/85 lb',
+  'squat clean':     '135/95 lb',
+  'push press':      '75/55 lb',
+  'push jerk':       '135/95 lb',
+  'shoulder press':  '65/45 lb',
+  'bench press':     '135/95 lb',
+  'kettlebell swing':'53/35 lb',
+  'turkish get-up':  '53/35 lb',
+  'goblet squat':    '53/35 lb',
+  'dumbbell snatch': '50/35 lb',
+  'dumbbell thruster':'35/25 lb',
+  'ground to overhead':'45/35 lb',
+  'sumo deadlift high pull':'75/55 lb',
+};
 const POPULAR_NAMES = ['Air Squat','Push-Up','Pull-Up','Burpee','Box Jump','Kettlebell Swing','Deadlift','Thruster','Dumbbell Snatch','Double Under','Sit-Up','Wall Ball','Row','Running'];
 const FORMAT_OPTS = ['AMRAP','EMOM','For Time','Circuit','Tabata'];
 const DUR_OPTS    = ['10','15','20','30','45','60'];
@@ -1151,8 +1178,16 @@ function getLibMovements() {
   if (!MOVEMENT_DB) return [];
   let pool = [];
   if (libCat === 'Popular') {
-    pool = Object.values(MOVEMENT_DB).flat().filter(m => POPULAR_NAMES.includes(m.name));
-    pool.sort((a,b) => POPULAR_NAMES.indexOf(a.name) - POPULAR_NAMES.indexOf(b.name));
+    const all = Object.values(MOVEMENT_DB).flat();
+    const popularLower = POPULAR_NAMES.map(n => n.toLowerCase());
+    pool = all.filter(m => popularLower.includes(m.name.toLowerCase()));
+    // Fallback: show first 20 bodyweight movements if names don't match
+    if (!pool.length) pool = (MOVEMENT_DB.bodyweight || all).slice(0, 20);
+    pool.sort((a, b) => {
+      const ai = popularLower.indexOf(a.name.toLowerCase());
+      const bi = popularLower.indexOf(b.name.toLowerCase());
+      return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+    });
   } else if (libCat === 'Core') {
     pool = Object.values(MOVEMENT_DB).flat().filter(m => m.tags && m.tags.includes('core'));
   } else if (libCat === 'Cardio') {
@@ -1265,7 +1300,28 @@ function setManualTabataStruct(v) { manualTabataStruct = v; renderBuilder(); }
 function addToManual(name) {
   if (manualMovs.some(m => m.name === name)) return;
   const isTabata = manualFormat === 'Tabata';
-  manualMovs.push({ name, reps: isTabata ? '8 × 20s on / 10s off' : '', weight: '' });
+
+  // Pre-fill reps from movement DB (intermediate level)
+  let defaultReps = '';
+  let defaultWeight = '';
+  if (isTabata) {
+    defaultReps = '8 × 20s on / 10s off';
+  } else if (MOVEMENT_DB) {
+    const movData = Object.values(MOVEMENT_DB).flat().find(m => m.name.toLowerCase() === name.toLowerCase());
+    if (movData) {
+      const r = movData.i || movData.b; // intermediate first, fall back to beginner
+      if (Array.isArray(r)) {
+        defaultReps = r[0] + (r[1] ? '–' + r[1] : '') + (movData.timed || typeof r[0] === 'string' ? '' : ' reps');
+      } else if (r) {
+        defaultReps = String(r) + (movData.timed ? '' : ' reps');
+      }
+    }
+    // Pre-fill weight from defaults map
+    const wKey = name.toLowerCase();
+    defaultWeight = WEIGHT_DEFAULTS[wKey] || '';
+  }
+
+  manualMovs.push({ name, reps: defaultReps, weight: defaultWeight });
   renderBuilder();
 }
 function removeManual(i) { manualMovs.splice(i,1); renderBuilder(); }
@@ -1309,15 +1365,16 @@ async function loadFindWorkouts() {
   if (!supabaseClient) { fwLoaded = true; renderBuilder(); return; }
 
   const [bRes, mRes] = await Promise.all([
-    supabaseClient.from('benchmark_workouts').select('id,name,slug,category,format,description,time_cap').order('name'),
+    // benchmark_workouts uses slug as PK (no id column); duration_estimate not time_cap
+    supabaseClient.from('benchmark_workouts').select('slug,name,category,format,duration_estimate,description').order('name'),
     supabaseClient.from('workouts').select('id,title,format,description,created_at').eq('user_id', currentUser.id).order('created_at', { ascending:false }).limit(50),
   ]);
 
-  fwBenchmarks = bRes.data || [];
-  fwMine       = mRes.data || [];
+  fwBenchmarks = (bRes.data || []).map(w => ({ ...w, _src: 'bench' }));
+  fwMine       = (mRes.data || []).map(w => ({ ...w, _src: 'mine' }));
   fwWorkoutsById = {};
-  fwBenchmarks.forEach(w => { fwWorkoutsById[w.id] = w; });
-  fwMine.forEach(w => { fwWorkoutsById[w.id] = w; });
+  fwBenchmarks.forEach(w => { fwWorkoutsById['b_' + w.slug] = w; });
+  fwMine.forEach(w => { fwWorkoutsById['m_' + w.id] = w; });
   fwLoaded = true;
   renderBuilder(); // re-render now that data is ready
 }
@@ -1325,34 +1382,40 @@ async function loadFindWorkouts() {
 function renderFindPanel() {
   if (!fwLoaded) return `<div class="fw-loading"><div class="spin" style="display:inline-block;margin:0 auto"></div></div>`;
 
-  const pool = fwType === 'benchmarks' ? fwBenchmarks : fwMine;
+  const allPool = fwType === 'all' ? [...fwBenchmarks, ...fwMine]
+                : fwType === 'benchmarks' ? fwBenchmarks
+                : fwMine;
   const q    = fwSearch.toLowerCase();
-  const filtered = q ? pool.filter(w => (w.name||w.title||'').toLowerCase().includes(q) || (w.description||'').toLowerCase().includes(q)) : pool;
+  const filtered = q ? allPool.filter(w => (w.name||w.title||'').toLowerCase().includes(q) || (w.description||'').toLowerCase().includes(q) || (w.category||'').toLowerCase().includes(q)) : allPool;
 
   const items = filtered.map(w => {
     const name = w.name || w.title || 'Workout';
-    const meta = [w.category, w.format, w.time_cap ? `${w.time_cap} min cap` : null].filter(Boolean).join(' · ');
+    const meta = [w.category, w.format, w.duration_estimate || null].filter(Boolean).join(' · ');
+    const key  = w._src === 'bench' ? 'b_' + w.slug : 'm_' + w.id;
     return `<div class="fw-item">
       <div>
         <div class="fw-item-name">${esc(name)}</div>
         ${meta ? `<div class="fw-item-meta">${esc(meta)}</div>` : ''}
       </div>
-      <button class="fw-item-select" onclick="selectFoundWod('${esc(w.id)}')">Select</button>
+      <button class="fw-item-select" onclick="selectFoundWod('${esc(key)}')">Select</button>
     </div>`;
   }).join('');
 
+  const noResults = fwType === 'mine' && !fwMine.length
+    ? `<div class="fw-empty">No saved workouts yet.<br><a href="/workouts" style="color:var(--or);font-weight:700;text-decoration:none">Browse workouts</a> to find ones to plan.</div>`
+    : `<div class="fw-empty">No workouts found.</div>`;
+
   return `
     <div class="fw-search-row">
-      <input class="fw-search" id="fw-search" placeholder="Search by name or movement…" value="${esc(fwSearch)}" autocomplete="off">
+      <input class="fw-search" id="fw-search" placeholder="Search by name, category…" value="${esc(fwSearch)}" autocomplete="off">
     </div>
     <div class="fw-type-tabs">
-      <button class="fw-tab ${fwType==='benchmarks'?'active':''}" onclick="setFwType('benchmarks')">Benchmarks (${fwBenchmarks.length})</button>
+      <button class="fw-tab ${fwType==='all'?'active':''}"        onclick="setFwType('all')">All (${fwBenchmarks.length + fwMine.length})</button>
+      <button class="fw-tab ${fwType==='benchmarks'?'active':''}" onclick="setFwType('benchmarks')">Named WODs (${fwBenchmarks.length})</button>
       <button class="fw-tab ${fwType==='mine'?'active':''}"       onclick="setFwType('mine')">My Workouts (${fwMine.length})</button>
     </div>
     <div class="fw-list">
-      ${filtered.length ? items : fwType === 'mine' && !fwMine.length
-        ? `<div class="fw-empty">No saved workouts yet.<br><a href="/workouts" style="color:var(--or);font-weight:700;text-decoration:none">Browse workouts</a> to find ones to plan.</div>`
-        : `<div class="fw-empty">No workouts found.</div>`}
+      ${filtered.length ? items : noResults}
     </div>`;
 }
 
@@ -1363,12 +1426,12 @@ function bindFindInputs() {
 
 function setFwType(t) { fwType = t; fwSearch = ''; renderBuilder(); }
 
-async function selectFoundWod(id) {
+async function selectFoundWod(key) {
   if (!selectedDay) return;
-  const w = fwWorkoutsById[id];
+  const w = fwWorkoutsById[key];
   if (!w) return;
   const name = w.name || w.title || 'Workout';
-  const meta = [w.category, w.format, w.time_cap ? `${w.time_cap} min cap` : null].filter(Boolean).join(' · ');
+  const meta = [w.category, w.format, w.duration_estimate || null].filter(Boolean).join(' · ');
   const desc = (w.description || '').substring(0, 400);
 
   const payload = { type:'named', title:name, meta, movs:[], format:null, duration:null, tabata_struct:null, rest:false, wod_desc:desc };
