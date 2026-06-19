@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Training Planner — Plan Your Week | HomeWodRX</title>
+  <meta name="description" content="Plan your training week with the HomeWodRX Training Planner. Build workouts day-by-day using Smart Build, Manual Build, or find a benchmark WOD.">
+  <link rel="canonical" href="https://homewodrx.com/planner">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+
+  <!-- Sentry -->
+  <style>sentry-feedback,#sentry-feedback{display:none!important;visibility:hidden!important}</style>
+  <script src="https://js.sentry-cdn.com/aab375d3ffbac4d168ad50d9722faebb.min.js" crossorigin="anonymous"></script>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Shared styles -->
+  <link rel="stylesheet" href="/css/style.css">
+
+  <!-- GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-HZM475VDN3');</script>
+  <script defer src="/_vercel/insights/script.js"></script>
+
+  <style>
+    /* ── HAM PANEL FIX ── */
+    .ham-panel { position: fixed !important; top: var(--nav-h); }
+
+    /* ── PAGE LAYOUT ── */
+    .planner-wrap { max-width: 1100px; margin: 0 auto; padding: 28px 20px 80px; }
+    @media(max-width:700px){ .planner-wrap { padding: 16px 12px 60px; } }
+
+    /* ── PAGE HEADER ── */
+    .page-header { background: var(--white); border-bottom: 1px solid var(--border); padding: 20px 24px 18px; }
+    .page-header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .ph-left { display: flex; flex-direction: column; gap: 2px; }
+    .ph-eyebrow { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--or); }
+    .ph-title { font-family: var(--font-head); font-size: 2.2rem; letter-spacing: .04em; line-height: 1; }
+
+    /* ── GATES (auth / premium) ── */
+    .gate-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; text-align: center; padding: 40px 24px; }
+    .gate-icon { font-size: 3rem; margin-bottom: 16px; }
+    .gate-title { font-family: var(--font-head); font-size: 2.4rem; letter-spacing: .04em; margin-bottom: 8px; }
+    .gate-sub { font-size: 1rem; color: var(--muted); max-width: 440px; line-height: 1.6; margin-bottom: 24px; }
+    .gate-btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 28px; background: var(--or); color: #fff; border: none; border-radius: var(--radius); font-size: 1rem; font-weight: 700; cursor: pointer; font-family: var(--font-body); text-decoration: none; transition: background .15s; }
+    .gate-btn:hover { background: var(--or-dark); }
+    .gate-btn.sec { background: var(--white); color: var(--text); border: 1.5px solid var(--border2); margin-left: 10px; }
+    .gate-btn.sec:hover { border-color: var(--or); color: var(--or); }
+
+    /* ── WEEK NAV ── */
+    .week-nav { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 20px; position: sticky; top: var(--nav-h,56px); z-index: 50; }
+    .week-nav-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: stretch; }
+    .week-arrow { background: none; border: none; color: var(--muted); font-size: 1.2rem; padding: 14px 12px; cursor: pointer; transition: color .15s; flex-shrink: 0; line-height: 1; }
+    .week-arrow:hover { color: var(--text); }
+    .week-days { display: flex; flex: 1; gap: 0; overflow-x: auto; scrollbar-width: none; }
+    .week-days::-webkit-scrollbar { display: none; }
+    .week-day-cell { flex: 1; min-width: 90px; display: flex; flex-direction: column; align-items: center; padding: 10px 6px; cursor: pointer; border-bottom: 3px solid transparent; transition: all .15s; position: relative; user-select: none; }
+    .week-day-cell:hover { background: var(--bg); }
+    .week-day-cell.selected { border-bottom-color: var(--or); background: var(--or-xlight,#fef2f2); }
+    .week-day-cell.today .wdc-dow { color: var(--or); font-weight: 800; }
+    .wdc-dow { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-bottom: 2px; }
+    .wdc-date { font-size: .92rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .wdc-status { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 2px 7px; border-radius: 10px; white-space: nowrap; }
+    .wdc-status.planned { background: rgba(196,18,18,.1); color: var(--or); }
+    .wdc-status.rest    { background: #f0fdf4; color: #16a34a; }
+    .wdc-status.empty   { color: var(--muted2,#9ca3af); }
+    .week-label { font-size: .72rem; font-weight: 600; color: var(--muted); padding: 0 10px; display: flex; align-items: center; white-space: nowrap; flex-shrink: 0; }
+    .rest-pill { position: absolute; top: 4px; right: 4px; background: none; border: none; cursor: pointer; padding: 2px 5px; border-radius: 6px; font-size: .6rem; font-weight: 700; color: var(--muted2); transition: all .15s; line-height: 1; }
+    .rest-pill:hover { background: #f0fdf4; color: #16a34a; }
+    .week-day-cell.is-rest .rest-pill { color: #16a34a; background: #f0fdf4; }
+
+    /* ── LOADING SPINNER ── */
+    .planner-loading { display: flex; align-items: center; justify-content: center; min-height: 200px; gap: 12px; color: var(--muted); font-size: .9rem; font-weight: 600; }
+    .spin { width: 20px; height: 20px; border: 3px solid var(--border); border-top-color: var(--or); border-radius: 50%; animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── DAY BUILDER PANEL ── */
+    .day-builder { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius-lg,12px); box-shadow: var(--shadow-md,0 4px 16px rgba(0,0,0,.1)); margin-top: 20px; overflow: hidden; }
+    .db-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); background: var(--bg); }
+    .db-title { font-family: var(--font-head); font-size: 1.5rem; letter-spacing: .04em; line-height: 1; }
+    .db-subtitle { font-size: .8rem; color: var(--muted); margin-top: 2px; }
+    .db-close { background: none; border: none; font-size: 1.4rem; color: var(--muted); cursor: pointer; padding: 4px 8px; border-radius: 6px; line-height: 1; transition: all .15s; }
+    .db-close:hover { background: var(--border); color: var(--text); }
+
+    /* ── MODE TABS ── */
+    .mode-tabs { display: flex; border-bottom: 1px solid var(--border); background: var(--white); padding: 0 20px; }
+    .mode-tab { padding: 12px 16px; font-size: .88rem; font-weight: 700; border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -1px; color: var(--muted); font-family: var(--font-body); transition: all .15s; }
+    .mode-tab:hover { color: var(--text); }
+    .mode-tab.active { color: var(--or); border-bottom-color: var(--or); }
+    .mode-panel { display: none; padding: 20px; }
+    .mode-panel.active { display: block; }
+
+    /* ── SMART BUILD ── */
+    .sb-row { margin-bottom: 18px; }
+    .sb-label { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--or); margin-bottom: 8px; }
+    .chip-group { display: flex; flex-wrap: wrap; gap: 7px; }
+    .sb-chip { padding: 7px 14px; border: 1.5px solid var(--border); border-radius: 20px; font-size: .82rem; font-weight: 600; cursor: pointer; background: var(--white); color: var(--text); font-family: var(--font-body); transition: all .15s; }
+    .sb-chip:hover { border-color: var(--or); color: var(--or); }
+    .sb-chip.active { border-color: var(--or); background: var(--or); color: #fff; }
+    .sb-chip.tabata-disabled { opacity: .35; pointer-events: none; }
+    .tabata-opts { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); display: none; }
+    .tabata-opts.show { display: block; }
+    .sb-eq-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(90px,1fr)); gap: 7px; }
+    .eq-chip { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 10px 8px; border: 1.5px solid var(--border); border-radius: var(--radius); font-size: .78rem; font-weight: 700; cursor: pointer; background: var(--white); color: var(--text); font-family: var(--font-body); transition: all .15s; text-align: center; }
+    .eq-chip:hover { border-color: var(--or); color: var(--or); }
+    .eq-chip.active { border-color: var(--or); background: rgba(196,18,18,.07); color: var(--or); }
+    .eq-chip.tabata-disabled { opacity: .35; pointer-events: none; }
+    .eq-chip-icon { font-size: 1.2rem; }
+    .gen-btn { display: block; width: 100%; margin-top: 20px; padding: 14px; background: var(--or); color: #fff; font-size: .95rem; font-weight: 800; border: none; border-radius: var(--radius); cursor: pointer; font-family: var(--font-body); transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .gen-btn:hover { background: var(--or-dark); }
+    .gen-btn:disabled { opacity: .6; cursor: not-allowed; }
+    .gen-btn .spin { border-color: rgba(255,255,255,.3); border-top-color: #fff; display: none; }
+    .gen-btn.loading .spin { display: block; }
+    .gen-btn.loading .btn-txt { display: none; }
+    .smart-result { margin-top: 16px; border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .smart-result-hdr { background: linear-gradient(135deg,var(--or) 0%,#8b0000 100%); padding: 18px 20px; }
+    .smart-result-hdr h3 { font-family: var(--font-head); font-size: 1.8rem; letter-spacing: .04em; color: #fff; margin-bottom: 4px; }
+    .smart-result-hdr p { font-size: .82rem; color: rgba(255,255,255,.8); }
+    .smart-result-body { padding: 16px 20px; background: var(--white); }
+    .smart-desc { font-size: .88rem; color: var(--muted); line-height: 1.6; margin-bottom: 14px; }
+    .smart-mov-table { width: 100%; border-collapse: collapse; font-size: .86rem; margin-bottom: 16px; }
+    .smart-mov-table th { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 6px 10px; border-bottom: 1.5px solid var(--border); text-align: left; }
+    .smart-mov-table td { padding: 9px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .smart-mov-table tr:last-child td { border-bottom: none; }
+    .smt-name { font-weight: 700; color: var(--text); }
+    .smt-tip  { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+    .smt-rep  { display: inline-block; background: rgba(196,18,18,.1); color: var(--or); border: 1px solid rgba(196,18,18,.25); font-weight: 800; font-size: .82rem; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+    .smart-save-row { display: flex; gap: 8px; }
+    .btn-save-day { flex: 1; padding: 11px; background: var(--or); color: #fff; border: none; border-radius: var(--radius); font-size: .88rem; font-weight: 700; cursor: pointer; font-family: var(--font-body); transition: background .15s; }
+    .btn-save-day:hover { background: var(--or-dark); }
+    .btn-regen { padding: 11px 16px; background: var(--white); border: 1.5px solid var(--border2); border-radius: var(--radius); font-size: .82rem; font-weight: 700; cursor: pointer; color: var(--muted); font-family: var(--font-body); transition: all .15s; }
+    .btn-regen:hover { border-color: var(--text); color: var(--text); }
+
+    /* ── MANUAL BUILD ── */
+    .manual-layout { display: grid; grid-template-columns: 240px 1fr; gap: 16px; }
+    @media(max-width:700px){ .manual-layout { grid-template-columns: 1fr; } }
+    .lib-panel { border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .lib-search-wrap { padding: 10px; border-bottom: 1px solid var(--border); }
+    .lib-search { width: 100%; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: var(--radius); font-size: .82rem; font-family: var(--font-body); outline: none; }
+    .lib-search:focus { border-color: var(--or); }
+    .lib-cats { display: flex; gap: 0; overflow-x: auto; padding: 6px 10px; border-bottom: 1px solid var(--border); scrollbar-width: none; }
+    .lib-cats::-webkit-scrollbar { display: none; }
+    .lib-cat { padding: 4px 10px; font-size: .72rem; font-weight: 700; border: 1.5px solid var(--border); border-radius: 20px; cursor: pointer; white-space: nowrap; color: var(--muted); background: var(--white); margin-right: 5px; font-family: var(--font-body); transition: all .15s; }
+    .lib-cat.active { background: var(--or); border-color: var(--or); color: #fff; }
+    .lib-list { max-height: 360px; overflow-y: auto; }
+    .lib-item { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; border-bottom: 1px solid var(--border); font-size: .82rem; cursor: pointer; transition: background .12s; }
+    .lib-item:last-child { border-bottom: none; }
+    .lib-item:hover { background: var(--bg); }
+    .lib-item:hover .lib-add { opacity: 1; }
+    .lib-item-name { font-weight: 600; color: var(--text); }
+    .lib-add { opacity: 0; background: var(--or); color: #fff; border: none; border-radius: 5px; font-size: .72rem; font-weight: 800; padding: 3px 8px; cursor: pointer; font-family: var(--font-body); transition: opacity .12s; }
+    .lib-empty { padding: 20px; text-align: center; font-size: .82rem; color: var(--muted); }
+
+    .builder-panel { display: flex; flex-direction: column; gap: 14px; }
+    .manual-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media(max-width:500px){ .manual-meta { grid-template-columns: 1fr; } }
+    .meta-group { display: flex; flex-direction: column; gap: 6px; }
+    .meta-label { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--or); }
+    .manual-movs-list { display: flex; flex-direction: column; gap: 6px; min-height: 80px; }
+    .manual-empty { color: var(--muted); font-size: .86rem; padding: 20px; text-align: center; background: var(--bg); border-radius: var(--radius); border: 1.5px dashed var(--border); }
+    .manual-mov-row { display: grid; grid-template-columns: auto 1fr 100px 90px auto; gap: 8px; align-items: center; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 10px; font-size: .82rem; }
+    @media(max-width:600px){ .manual-mov-row { grid-template-columns: auto 1fr auto auto; } .manual-mov-row .mmr-wt { display: none; } }
+    .mmr-num { font-weight: 900; color: var(--or); font-size: .75rem; min-width: 18px; text-align: center; }
+    .mmr-name { font-weight: 700; color: var(--text); }
+    .mmr-input { padding: 5px 8px; border: 1.5px solid var(--border); border-radius: 6px; font-size: .78rem; font-family: var(--font-body); width: 100%; outline: none; background: var(--white); }
+    .mmr-input:focus { border-color: var(--or); }
+    .mmr-rm { background: none; border: none; color: var(--muted2); font-size: 1rem; cursor: pointer; padding: 2px 4px; transition: color .12s; line-height: 1; }
+    .mmr-rm:hover { color: #b91c1c; }
+    .tabata-struct-row { padding: 10px 14px; background: rgba(196,18,18,.05); border: 1px solid rgba(196,18,18,.2); border-radius: var(--radius); display: none; }
+    .tabata-struct-row.show { display: block; }
+    .ts-label { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--or); margin-bottom: 8px; }
+    .ts-opts { display: flex; gap: 8px; }
+    .ts-opt { padding: 6px 14px; border: 1.5px solid var(--border); border-radius: 20px; font-size: .8rem; font-weight: 700; cursor: pointer; background: var(--white); color: var(--text); font-family: var(--font-body); transition: all .15s; }
+    .ts-opt:hover { border-color: var(--or); color: var(--or); }
+    .ts-opt.active { border-color: var(--or); background: var(--or); color: #fff; }
+    .ts-hint { font-size: .75rem; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+
+    /* ── FIND A WORKOUT ── */
+    .fw-search-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .fw-search { flex: 1; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: var(--radius); font-size: .88rem; font-family: var(--font-body); outline: none; }
+    .fw-search:focus { border-color: var(--or); }
+    .fw-type-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
+    .fw-tab { padding: 8px 14px; font-size: .82rem; font-weight: 700; border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; color: var(--muted); font-family: var(--font-body); transition: all .15s; }
+    .fw-tab:hover { color: var(--text); }
+    .fw-tab.active { color: var(--or); border-bottom-color: var(--or); }
+    .fw-list { display: flex; flex-direction: column; gap: 6px; max-height: 380px; overflow-y: auto; }
+    .fw-item { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: var(--radius); cursor: pointer; transition: all .15s; background: var(--white); }
+    .fw-item:hover { border-color: var(--or); background: rgba(196,18,18,.03); }
+    .fw-item-name { font-weight: 700; color: var(--text); font-size: .9rem; }
+    .fw-item-meta { font-size: .75rem; color: var(--muted); margin-top: 2px; }
+    .fw-item-select { background: var(--or); color: #fff; border: none; border-radius: 6px; padding: 5px 12px; font-size: .75rem; font-weight: 800; cursor: pointer; font-family: var(--font-body); white-space: nowrap; flex-shrink: 0; }
+    .fw-empty { text-align: center; padding: 32px 20px; color: var(--muted); font-size: .88rem; }
+    .fw-loading { text-align: center; padding: 24px; color: var(--muted); }
+
+    /* ── SAVED VIEW ── */
+    .saved-view { padding: 20px; }
+    .saved-type-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(196,18,18,.1); color: var(--or); border: 1px solid rgba(196,18,18,.25); border-radius: 20px; font-size: .7rem; font-weight: 700; padding: 3px 10px; margin-bottom: 12px; letter-spacing: .04em; }
+    .saved-view-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; gap: 12px; }
+    .saved-view-title { font-family: var(--font-head); font-size: 1.6rem; letter-spacing: .04em; line-height: 1.1; }
+    .saved-view-meta  { font-size: .82rem; color: var(--muted); margin-top: 3px; }
+    .saved-mgmt-actions { display: flex; gap: 7px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+    .btn-edit-day    { padding: 7px 14px; background: var(--white); color: var(--text); border: 1.5px solid var(--border2); border-radius: var(--radius); font-size: .78rem; font-weight: 700; cursor: pointer; font-family: var(--font-body); transition: all .15s; }
+    .btn-edit-day:hover { border-color: var(--or); color: var(--or); }
+    .btn-replace-day { padding: 7px 12px; background: var(--white); color: var(--muted); border: 1.5px solid var(--border); border-radius: var(--radius); font-size: .78rem; font-weight: 700; cursor: pointer; font-family: var(--font-body); transition: all .15s; }
+    .btn-replace-day:hover { border-color: var(--or); color: var(--or); }
+    .btn-clear-day   { padding: 7px 12px; background: var(--white); color: var(--muted2); border: 1.5px solid var(--border); border-radius: var(--radius); font-size: .78rem; font-weight: 700; cursor: pointer; font-family: var(--font-body); transition: all .15s; }
+    .btn-clear-day:hover { border-color: #b91c1c; color: #b91c1c; }
+    .saved-mov-list { display: flex; flex-direction: column; gap: 5px; margin-bottom: 16px; }
+    .saved-mov-row { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: var(--bg); border-radius: var(--radius); border: 1px solid var(--border); font-size: .86rem; }
+    .smr-num  { font-weight: 900; color: var(--or); min-width: 20px; text-align: center; font-size: .75rem; }
+    .smr-name { font-weight: 700; flex: 1; color: var(--text); }
+    .smr-reps { font-size: .8rem; color: var(--muted); margin-left: auto; white-space: nowrap; }
+    .smr-wt   { font-size: .78rem; font-weight: 600; color: var(--or); white-space: nowrap; }
+    .saved-named-desc { font-size: .9rem; color: var(--muted); line-height: 1.65; padding: 12px 14px; background: var(--bg); border-radius: var(--radius); margin-bottom: 16px; }
+    .saved-actions-bar { display: flex; gap: 10px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border); }
+    .btn-start-timer { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 18px; background: var(--or); color: #fff; border: none; border-radius: var(--radius); font-size: .92rem; font-weight: 700; cursor: pointer; font-family: var(--font-body); transition: background .15s; }
+    .btn-start-timer:hover { background: var(--or-dark); }
+    .btn-print-wod { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 12px 18px; background: var(--white); color: var(--muted); border: 1.5px solid var(--border2); border-radius: var(--radius); font-size: .92rem; font-weight: 700; cursor: pointer; font-family: var(--font-body); transition: all .15s; white-space: nowrap; }
+    .btn-print-wod:hover { border-color: var(--text); color: var(--text); }
+
+    /* ── EMPTY WEEK STATE ── */
+    .week-empty { text-align: center; padding: 48px 20px; }
+    .week-empty-title { font-family: var(--font-head); font-size: 2rem; letter-spacing: .04em; margin-bottom: 8px; color: var(--muted); }
+    .week-empty-sub { font-size: .9rem; color: var(--muted2); }
+
+    /* ── TOAST ── */
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1a1a1a; color: var(--white); padding: 12px 20px; border-radius: var(--radius); font-size: .88rem; font-weight: 600; box-shadow: 0 4px 20px rgba(0,0,0,.25); transition: transform .25s ease; z-index: 999; display: flex; align-items: center; gap: 14px; pointer-events: none; }
+    .toast.show { transform: translateX(-50%) translateY(0); pointer-events: auto; }
+    .toast-undo { background: none; border: 1.5px solid rgba(255,255,255,.4); border-radius: 5px; color: var(--white); font-size: .78rem; font-weight: 800; padding: 3px 10px; cursor: pointer; font-family: var(--font-body); transition: border-color .15s, background .15s; white-space: nowrap; }
+    .toast-undo:hover { border-color: white; background: rgba(255,255,255,.12); }
+    .toast-timer { width: 34px; height: 4px; background: rgba(255,255,255,.2); border-radius: 2px; overflow: hidden; flex-shrink: 0; }
+    .toast-timer-bar { height: 100%; background: rgba(255,255,255,.6); border-radius: 2px; }
+
+    /* ── AUTH MODAL ── */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--white); border: 1.5px solid var(--border); border-radius: 16px; padding: 32px; width: 100%; max-width: 440px; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.2); }
+    .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--muted); font-size: 20px; cursor: pointer; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all .15s; }
+    .modal-close:hover { background: var(--border); color: var(--text); }
+    .modal h2 { font-size: 1.4rem; font-weight: 900; margin-bottom: 4px; color: var(--text); }
+    .modal-sub { color: var(--muted); font-size: .88rem; margin-bottom: 20px; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: .72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 5px; }
+    .field input { width: 100%; background: var(--bg); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 10px 12px; color: var(--text); font-size: .9rem; outline: none; font-family: var(--font-body); transition: border-color .15s; }
+    .field input:focus { border-color: var(--or); }
+    .modal-btn { width: 100%; padding: 13px; background: var(--or); color: #fff; border: none; border-radius: var(--radius); font-size: .95rem; font-weight: 800; cursor: pointer; margin-top: 4px; transition: background .2s; font-family: var(--font-body); }
+    .modal-btn:hover { background: var(--or-dark); }
+    .modal-link { text-align: center; margin-top: 12px; font-size: .82rem; color: var(--muted); }
+    .modal-link a { color: var(--or); cursor: pointer; text-decoration: none; }
+    .modal-error { background: rgba(231,76,60,.1); border: 1px solid rgba(231,76,60,.4); color: #E74C3C; border-radius: var(--radius); padding: 9px 12px; font-size: .82rem; margin-bottom: 12px; display: none; }
+    .modal-error.vis { display: block; }
+
+    /* ── PRINT ── */
+    .print-area { display: none; }
+    @media print {
+      body > *:not(.print-area) { display: none !important; }
+      .print-area { display: block !important; font-family: system-ui, Arial, sans-serif; color: #000; background: #fff; padding: 24px; }
+      .pa-title { font-size: 24px; font-weight: 900; margin-bottom: 4px; }
+      .pa-meta  { font-size: 13px; color: #555; margin-bottom: 16px; }
+      .pa-desc  { font-size: 13px; color: #444; line-height: 1.6; margin-bottom: 16px; border: 1px solid #e5e5e5; background: #f8f8f8; padding: 10px 12px; border-radius: 6px; }
+      .pa-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+      .pa-table th { background: #222; color: #fff; padding: 7px 10px; text-align: left; font-size: 11px; text-transform: uppercase; }
+      .pa-table td { padding: 8px 10px; border-bottom: 1px solid #ddd; }
+      .pa-foot  { margin-top: 20px; font-size: 10px; color: #999; border-top: 1px solid #ddd; padding-top: 10px; text-align: center; }
+    }
+  </style>
+</head>
+<body data-nav-init="true" data-active-page="planner">
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast">
+  <span id="toast-msg"></span>
+  <button class="toast-undo" id="toast-undo" onclick="undoAction()" style="display:none">Undo</button>
+  <div class="toast-timer" id="toast-timer" style="display:none"><div class="toast-timer-bar" id="toast-timer-bar" style="width:100%"></div></div>
+</div>
+
+<!-- ── PRINT AREA ── -->
+<div class="print-area" id="print-area"></div>
+
+<!-- ── PAGE HEADER ── -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="ph-left">
+      <div class="ph-eyebrow">Premium</div>
+      <div class="ph-title">Training Planner</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<main id="planner-main" style="display:none">
+
+  <!-- Week Nav -->
+  <div class="week-nav">
+    <div class="week-nav-inner">
+      <button class="week-arrow" onclick="prevWeek()" title="Previous week">&#8249;</button>
+      <div class="week-days" id="week-days"></div>
+      <span class="week-label" id="week-label"></span>
+      <button class="week-arrow" onclick="nextWeek()" title="Next week">&#8250;</button>
+    </div>
+  </div>
+
+  <div class="planner-wrap">
+    <div id="planner-loading" class="planner-loading">
+      <div class="spin"></div> Loading your plan…
+    </div>
+    <div id="day-builder-wrap" style="display:none"></div>
+  </div>
+
+</main>
+
+<!-- ── AUTH GATE ── -->
+<div id="auth-gate" style="display:none">
+  <div class="gate-screen">
+    <div class="gate-icon">📅</div>
+    <div class="gate-title">Training Planner</div>
+    <p class="gate-sub">Sign in to plan your training week, build custom workouts, and stay on track.</p>
+    <div>
+      <button class="gate-btn" onclick="openAuthModal('login')">Sign In</button>
+      <button class="gate-btn sec" onclick="openAuthModal('signup')">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── PREMIUM GATE ── -->
+<div id="premium-gate" style="display:none">
+  <div class="gate-screen">
+    <div class="gate-icon">⚡</div>
+    <div class="gate-title">Premium Feature</div>
+    <p class="gate-sub">The Training Planner is a premium feature. Upgrade to plan your full training week with Smart Build, Manual Build, and more.</p>
+    <a href="/settings#billing" class="gate-btn">Upgrade to Premium</a>
+  </div>
+</div>
+
+<!-- ── AUTH MODAL ── -->
+<div class="modal-overlay" id="auth-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAuthModal()">✕</button>
+    <h2 id="auth-title">Sign In</h2>
+    <p class="modal-sub" id="auth-sub">Sign in to access the Training Planner.</p>
+    <div id="auth-error" class="modal-error"></div>
+    <div id="login-form">
+      <div class="field"><label>Email</label><input type="email" id="li-email" placeholder="you@email.com" autocomplete="email"></div>
+      <div class="field"><label>Password</label><input type="password" id="li-pass" placeholder="Your password" onkeydown="if(event.key==='Enter')submitLogin()"></div>
+      <button class="modal-btn" onclick="submitLogin()">Sign In →</button>
+      <p class="modal-link">No account? <a onclick="switchAuthTab('signup')">Sign up free</a></p>
+    </div>
+    <div id="signup-form" style="display:none">
+      <div class="field"><label>Username</label><input type="text" id="su-user" placeholder="e.g. firebreather_rob" maxlength="20" autocomplete="username"></div>
+      <div class="field"><label>Email</label><input type="email" id="su-email" placeholder="you@email.com" autocomplete="email"></div>
+      <div class="field"><label>Password</label><input type="password" id="su-pass" placeholder="Min 6 characters" onkeydown="if(event.key==='Enter')submitSignup()"></div>
+      <button class="modal-btn" onclick="submitSignup()">Create Account →</button>
+      <p class="modal-link">Already have one? <a onclick="switchAuthTab('login')">Sign in</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ── SCRIPTS ── -->
+<script src="/js/config.js"></script>
+<script src="/js/db.js"></script>
+<script src="/js/nav.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════════════════════
+// Set to true when Stripe / subscription_tier is wired up.
+// When false, any logged-in user can access the planner.
+const PREMIUM_GATING_ENABLED = false;
+
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+let currentUser   = null;
+let weekOffset    = 0;       // 0 = current week, -1 = last week, etc.
+let selectedDay   = null;    // 'YYYY-MM-DD'
+let builderMode   = 'view';  // 'view' | 'build'
+let activeMode    = 'smart'; // 'smart' | 'manual' | 'named'
+
+// program: keyed by 'YYYY-MM-DD'
+//   WOD entry: { label, type, title, meta, movs[], format, dur, tabataStruct, desc }
+//   Rest day:  { rest: true }
+let program = {};
+
+// Smart Build state
+let smartFocus        = 'full-body';
+let smartDur          = '20';
+let smartLevel        = 'intermediate';
+let smartFormat       = 'any';
+let smartTabataStruct = 'sequential';
+let smartEquipment    = ['bodyweight'];
+let smartResult       = null;
+
+// Manual Build state
+let manualMovs        = [];
+let manualFormat      = 'AMRAP';
+let manualDur         = '20';
+let manualTabataStruct= 'sequential';
+let libSearchQ        = '';
+let libCat            = 'Popular';
+
+// Find a Workout state
+let fwType   = 'benchmarks'; // 'benchmarks' | 'mine'
+let fwSearch = '';
+let fwBenchmarks = [];
+let fwMine       = [];
+let fwLoaded     = false;
+
+// Movement DB (from Supabase)
+let MOVEMENT_DB = null;
+
+// Undo
+let undoSnapshot = null;
+let undoTimer    = null;
+const UNDO_MS    = 5000;
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', async () => {
+  currentUser = await db.getUser();
+
+  if (!currentUser) {
+    document.getElementById('auth-gate').style.display = 'block';
+    return;
+  }
+
+  if (PREMIUM_GATING_ENABLED) {
+    const profile = await db.getProfile(currentUser.id);
+    if (profile?.subscription_tier !== 'premium') {
+      document.getElementById('premium-gate').style.display = 'block';
+      return;
+    }
+  }
+
+  // Show main UI
+  document.getElementById('planner-main').style.display = 'block';
+
+  // Load movements and week in parallel
+  await Promise.all([loadMovements(), loadWeekPlans()]);
+
+  document.getElementById('planner-loading').style.display = 'none';
+  document.getElementById('day-builder-wrap').style.display = 'block';
+
+  renderWeek();
+});
+
+// ═══════════════════════════════════════════════════════════════
+// MOVEMENT DB  (same pattern as wodbuilder.html)
+// ═══════════════════════════════════════════════════════════════
+async function loadMovements() {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/movements?daily_wod_eligible=eq.true` +
+      `&select=name,slug,equipment_category,tags,wod_tip,timed,` +
+      `beginner_reps,intermediate_reps,advanced_reps,movement_pattern,tabata_suitable`,
+      { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
+    );
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    MOVEMENT_DB = {};
+    data.forEach(m => {
+      const eq = m.equipment_category || 'bodyweight';
+      if (!MOVEMENT_DB[eq]) MOVEMENT_DB[eq] = [];
+      MOVEMENT_DB[eq].push({
+        name: m.name, slug: m.slug, tip: m.wod_tip || '',
+        b: m.beginner_reps || [8,10],
+        i: m.intermediate_reps || [12,15],
+        a: m.advanced_reps || [15,20],
+        tags: m.tags || [], timed: m.timed || false,
+        movement_pattern: m.movement_pattern || 'fullbody',
+        tabata_suitable: m.tabata_suitable || false,
+      });
+    });
+  } catch(e) {
+    console.error('loadMovements failed', e);
+    MOVEMENT_DB = {};
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SUPABASE — PLANNED_WORKOUTS
+// ═══════════════════════════════════════════════════════════════
+async function loadWeekPlans() {
+  if (!supabaseClient || !currentUser) return;
+  const days = getWeekDays(weekOffset);
+  const from = fmtKey(days[0]);
+  const to   = fmtKey(days[6]);
+
+  const { data, error } = await supabaseClient
+    .from('planned_workouts')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .gte('date', from)
+    .lte('date', to);
+
+  if (error) { console.error('loadWeekPlans', error); return; }
+
+  // Merge into program (don't wipe other-week data)
+  days.forEach(d => { const k = fmtKey(d); if (program[k] !== undefined) delete program[k]; });
+  (data || []).forEach(row => {
+    const key = row.date;
+    if (row.rest) {
+      program[key] = { rest: true };
+    } else {
+      program[key] = {
+        label: key, type: row.type,
+        title: row.title, meta: row.meta,
+        movs: row.movs || [],
+        format: row.format, dur: row.duration,
+        tabataStruct: row.tabata_struct,
+        desc: row.wod_desc,
+      };
+    }
+  });
+}
+
+async function upsertPlan(key, payload) {
+  if (!supabaseClient || !currentUser) return false;
+  const { error } = await supabaseClient
+    .from('planned_workouts')
+    .upsert({ user_id: currentUser.id, date: key, ...payload }, { onConflict: 'user_id,date' });
+  if (error) { console.error('upsertPlan', error); showToast('Save failed — try again'); return false; }
+  return true;
+}
+
+async function deletePlan(key) {
+  if (!supabaseClient || !currentUser) return false;
+  const { error } = await supabaseClient
+    .from('planned_workouts')
+    .delete()
+    .eq('user_id', currentUser.id)
+    .eq('date', key);
+  if (error) { console.error('deletePlan', error); return false; }
+  return true;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// WEEK NAV
+// ═══════════════════════════════════════════════════════════════
+function getWeekDays(offset) {
+  const today = new Date();
+  const day   = today.getDay(); // 0=Sun
+  const mon   = new Date(today);
+  mon.setDate(today.getDate() - (day === 0 ? 6 : day - 1) + offset * 7);
+  return Array.from({length:7}, (_, i) => {
+    const d = new Date(mon);
+    d.setDate(mon.getDate() + i);
+    return d;
+  });
+}
+
+function fmtKey(d) {
+  const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+function fmtLabel(d) {
+  return d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+}
+function todayKey() { return fmtKey(new Date()); }
+
+function renderWeek() {
+  const days = getWeekDays(weekOffset);
+  const today = todayKey();
+
+  const DOW = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  document.getElementById('week-days').innerHTML = days.map((d, i) => {
+    const key     = fmtKey(d);
+    const entry   = program[key];
+    const isToday = key === today;
+    const isSel   = key === selectedDay;
+    const isRest  = entry && entry.rest;
+    const hasPlan = entry && !entry.rest;
+
+    let statusHTML = '';
+    if (isRest)  statusHTML = `<span class="wdc-status rest">Rest</span>`;
+    else if (hasPlan) statusHTML = `<span class="wdc-status planned">Planned</span>`;
+    else         statusHTML = `<span class="wdc-status empty">+ Add</span>`;
+
+    return `<div class="week-day-cell ${isToday?'today':''} ${isSel?'selected':''} ${isRest?'is-rest':''}"
+               onclick="selectDay('${key}')">
+      <button class="rest-pill" onclick="toggleRest(event,'${key}')" title="${isRest?'Un-mark rest':'Mark as rest day'}">
+        ${isRest ? '✓ Rest' : 'Rest'}
+      </button>
+      <div class="wdc-dow">${DOW[i]}</div>
+      <div class="wdc-date">${d.getDate()}</div>
+      ${statusHTML}
+    </div>`;
+  }).join('');
+
+  // Week label: e.g. "Jun 16 – Jun 22"
+  const fmt = d => d.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+  document.getElementById('week-label').textContent = `${fmt(days[0])} – ${fmt(days[6])}`;
+}
+
+async function prevWeek() {
+  weekOffset--;
+  selectedDay = null;
+  builderMode = 'view';
+  document.getElementById('planner-loading').style.display = 'flex';
+  document.getElementById('day-builder-wrap').style.display = 'none';
+  await loadWeekPlans();
+  document.getElementById('planner-loading').style.display = 'none';
+  document.getElementById('day-builder-wrap').style.display = 'block';
+  renderWeek();
+  renderBuilder();
+}
+
+async function nextWeek() {
+  weekOffset++;
+  selectedDay = null;
+  builderMode = 'view';
+  document.getElementById('planner-loading').style.display = 'flex';
+  document.getElementById('day-builder-wrap').style.display = 'none';
+  await loadWeekPlans();
+  document.getElementById('planner-loading').style.display = 'none';
+  document.getElementById('day-builder-wrap').style.display = 'block';
+  renderWeek();
+  renderBuilder();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DAY SELECTION & BUILDER
+// ═══════════════════════════════════════════════════════════════
+function selectDay(key) {
+  if (selectedDay === key && builderMode === 'view') {
+    // Second click on same day: toggle closed
+    selectedDay = null; renderWeek(); renderBuilder(); return;
+  }
+  selectedDay = key;
+  const saved = program[key];
+  if (saved && !saved.rest) {
+    builderMode = 'view';
+  } else if (!saved || saved.rest) {
+    builderMode = 'build';
+    smartResult = null;
+  }
+  renderWeek();
+  renderBuilder();
+}
+
+function toggleRest(e, key) {
+  e.stopPropagation();
+  const entry = program[key];
+  if (entry && entry.rest) {
+    deletePlan(key);
+    delete program[key];
+    if (selectedDay === key) { selectedDay = null; builderMode = 'view'; }
+  } else {
+    // snapshot existing for undo
+    if (entry) saveUndo(key, entry);
+    upsertPlan(key, { type: 'rest', rest: true, title: null, meta: null, movs: [], format: null, duration: null, tabata_struct: null, wod_desc: null });
+    program[key] = { rest: true };
+    if (selectedDay === key) { selectedDay = null; builderMode = 'view'; }
+  }
+  renderWeek();
+  renderBuilder();
+}
+
+function renderBuilder() {
+  const wrap = document.getElementById('day-builder-wrap');
+  if (!selectedDay) { wrap.innerHTML = ''; return; }
+
+  const days  = getWeekDays(weekOffset);
+  const d     = days.find(dd => fmtKey(dd) === selectedDay);
+  const label = d ? fmtLabel(d) : selectedDay;
+  const saved = program[selectedDay];
+  const showSaved = saved && !saved.rest && builderMode === 'view';
+
+  wrap.innerHTML = `
+    <div class="day-builder">
+      <div class="db-header">
+        <div>
+          <div class="db-title">${label}</div>
+          <div class="db-subtitle">${showSaved ? 'Workout saved for this day' : 'Build today\'s workout'}</div>
+        </div>
+        <button class="db-close" onclick="closeBuilder()">×</button>
+      </div>
+      ${showSaved ? renderSavedView(saved) : `
+      <div class="mode-tabs">
+        <button class="mode-tab ${activeMode==='smart'?'active':''}"  onclick="setMode('smart')">Smart Build</button>
+        <button class="mode-tab ${activeMode==='manual'?'active':''}" onclick="setMode('manual')">Manual Build</button>
+        <button class="mode-tab ${activeMode==='named'?'active':''}"  onclick="setMode('named')">Find a Workout</button>
+      </div>
+      <div class="mode-panel ${activeMode==='smart'?'active':''}">${renderSmartPanel()}</div>
+      <div class="mode-panel ${activeMode==='manual'?'active':''}">${renderManualPanel()}</div>
+      <div class="mode-panel ${activeMode==='named'?'active':''}">${renderFindPanel()}</div>
+      `}
+    </div>`;
+
+  // bind dynamic inputs
+  bindSmartInputs();
+  bindManualInputs();
+  bindFindInputs();
+}
+
+function closeBuilder() { selectedDay = null; builderMode = 'view'; renderWeek(); renderBuilder(); }
+function setMode(m) { activeMode = m; if (m === 'named' && !fwLoaded) loadFindWorkouts(); renderBuilder(); }
+
+// ═══════════════════════════════════════════════════════════════
+// SAVED VIEW
+// ═══════════════════════════════════════════════════════════════
+function renderSavedView(saved) {
+  const typeLabel = { smart:'Smart Build', manual:'Manual Build', named:'Named WOD' }[saved.type] || 'Saved';
+  const canEdit = saved.type === 'manual';
+
+  let content = '';
+  if (saved.movs && saved.movs.length) {
+    content = `<div class="saved-mov-list">
+      ${saved.movs.map((m,i) => `
+        <div class="saved-mov-row">
+          <span class="smr-num">${i+1}</span>
+          <span class="smr-name">${esc(m.name)}</span>
+          <span class="smr-reps">${esc(m.reps||m.rep||'')}</span>
+          ${m.weight ? `<span class="smr-wt">@ ${esc(m.weight)}</span>` : ''}
+        </div>`).join('')}
+    </div>`;
+  } else if (saved.desc) {
+    content = `<div class="saved-named-desc">${esc(saved.desc)}</div>`;
+  }
+
+  return `<div class="saved-view">
+    <div class="saved-type-badge">✓ ${esc(typeLabel)}</div>
+    <div class="saved-view-head">
+      <div>
+        <div class="saved-view-title">${esc(saved.title||'Workout')}</div>
+        ${saved.meta ? `<div class="saved-view-meta">${esc(saved.meta)}</div>` : ''}
+      </div>
+      <div class="saved-mgmt-actions">
+        ${canEdit ? `<button class="btn-edit-day" onclick="editSavedDay()">Edit</button>` : ''}
+        <button class="btn-replace-day" onclick="replaceSavedDay()">Replace</button>
+        <button class="btn-clear-day"   onclick="clearSavedDay()">Clear Day</button>
+      </div>
+    </div>
+    ${content}
+    <div class="saved-actions-bar">
+      <button class="btn-start-timer" onclick="startTimer()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
+        Start Timer
+      </button>
+      <button class="btn-print-wod" onclick="printWod()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Print
+      </button>
+    </div>
+  </div>`;
+}
+
+function editSavedDay() {
+  const saved = program[selectedDay];
+  if (!saved || saved.type !== 'manual') return;
+  manualMovs         = (saved.movs || []).map(m => ({...m}));
+  manualFormat       = saved.format  || 'AMRAP';
+  manualDur          = saved.dur     || '20';
+  manualTabataStruct = saved.tabataStruct || 'sequential';
+  builderMode = 'build';
+  activeMode  = 'manual';
+  renderBuilder();
+}
+
+function replaceSavedDay() {
+  saveUndo(selectedDay, program[selectedDay]);
+  manualMovs = []; smartResult = null;
+  builderMode = 'build'; activeMode = 'smart';
+  renderBuilder();
+  showToast('Replaced — previous workout cleared', true);
+}
+
+function clearSavedDay() {
+  saveUndo(selectedDay, program[selectedDay]);
+  const key = selectedDay;
+  deletePlan(key);
+  delete program[key];
+  selectedDay = null; builderMode = 'view';
+  renderWeek(); renderBuilder();
+  showToast('Day cleared', true);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SMART BUILD — UI
+// ═══════════════════════════════════════════════════════════════
+const EQUIP_LIST = [
+  { val:'bodyweight',    icon:'🤸', label:'Bodyweight' },
+  { val:'pullupbar',     icon:'🏋️', label:'Pull-up Bar' },
+  { val:'kettlebell',    icon:'🔔', label:'Kettlebell' },
+  { val:'dumbbells',     icon:'💪', label:'Dumbbells' },
+  { val:'barbell',       icon:'⚖️', label:'Barbell' },
+  { val:'jumprope',      icon:'🪢', label:'Jump Rope' },
+  { val:'box',           icon:'📦', label:'Plyo Box' },
+  { val:'medicineball',  icon:'🏀', label:'Med Ball' },
+  { val:'rings',         icon:'⭕', label:'Rings' },
+  { val:'running',       icon:'🏃', label:'Running' },
+  { val:'rower',         icon:'🚣', label:'Rower' },
+  { val:'airbike',       icon:'🚴', label:'Air Bike' },
+];
+const TABATA_EXCL = ['running','rower','airbike'];
+const FOCUS_LIST  = ['Full Body','Upper Body','Lower Body','Core','Push','Pull','Cardio'];
+const FORMAT_LIST = ['Any','AMRAP','EMOM','For Time','Circuit','Tabata'];
+const DUR_LIST    = ['10','15','20','30','45','60'];
+const LEVEL_LIST  = ['Beginner','Intermediate','Advanced'];
+const FOCUS_VALS  = { 'Full Body':'full-body','Upper Body':'upper-body','Lower Body':'lower-body','Core':'core','Push':'push','Pull':'pull','Cardio':'cardio' };
+
+function renderSmartPanel() {
+  const isTab = smartFormat === 'tabata';
+  const tabHint = smartTabataStruct === 'sequential'
+    ? 'Complete all 8 rounds of one movement before moving to the next.'
+    : 'Cycle through all movements each interval for 8 complete rotations.';
+
+  return `
+  <div class="sb-row">
+    <div class="sb-label">Equipment</div>
+    <div class="sb-eq-grid" id="sb-eq">
+      ${EQUIP_LIST.map(e => {
+        const disabled = isTab && TABATA_EXCL.includes(e.val);
+        const active   = smartEquipment.includes(e.val);
+        return `<div class="eq-chip ${active?'active':''} ${disabled?'tabata-disabled':''}" data-val="${e.val}" onclick="toggleEquip('${e.val}')">
+          <span class="eq-chip-icon">${e.icon}</span>${e.label}
+        </div>`;
+      }).join('')}
+    </div>
+  </div>
+
+  <div class="sb-row">
+    <div class="sb-label">Focus</div>
+    <div class="chip-group">
+      ${FOCUS_LIST.map(f => {
+        const v = FOCUS_VALS[f];
+        return `<button class="sb-chip ${smartFocus===v?'active':''}" onclick="setSmartFocus('${v}')">${f}</button>`;
+      }).join('')}
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div class="sb-row" style="margin-bottom:0">
+      <div class="sb-label">Duration</div>
+      <div class="chip-group">
+        ${DUR_LIST.map(d => `<button class="sb-chip ${smartDur===d?'active':''}" onclick="setSmartDur('${d}')">${d} min</button>`).join('')}
+      </div>
+    </div>
+    <div class="sb-row" style="margin-bottom:0">
+      <div class="sb-label">Level</div>
+      <div class="chip-group">
+        ${LEVEL_LIST.map(l => `<button class="sb-chip ${smartLevel===l.toLowerCase()?'active':''}" onclick="setSmartLevel('${l.toLowerCase()}')">${l}</button>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <div class="sb-row" style="margin-top:14px">
+    <div class="sb-label">Format</div>
+    <div class="chip-group">
+      ${FORMAT_LIST.map(f => {
+        const v = f.toLowerCase().replace(' ','');
+        const key = f === 'Any' ? 'any' : f === 'For Time' ? 'fortime' : v;
+        return `<button class="sb-chip ${smartFormat===key?'active':''}" onclick="setSmartFormat('${key}')">${f}</button>`;
+      }).join('')}
+    </div>
+    <div class="tabata-opts ${isTab?'show':''}" id="tabata-opts">
+      <div class="sb-label" style="margin-top:0;margin-bottom:8px">Structure</div>
+      <div class="ts-opts">
+        <button class="ts-opt ${smartTabataStruct==='sequential'?'active':''}" onclick="setSmartTabataStruct('sequential')">Sequential</button>
+        <button class="ts-opt ${smartTabataStruct==='rotating'?'active':''}"   onclick="setSmartTabataStruct('rotating')">Rotating</button>
+      </div>
+      <div class="ts-hint" id="tabata-hint">${tabHint}</div>
+    </div>
+  </div>
+
+  <button class="gen-btn" id="gen-btn" onclick="generateSmart()" ${!MOVEMENT_DB?'disabled':''}>
+    <div class="spin"></div>
+    <span class="btn-txt">Generate Workout</span>
+  </button>
+
+  ${smartResult ? renderSmartResult() : ''}`;
+}
+
+function renderSmartResult() {
+  const w = smartResult;
+  return `<div class="smart-result">
+    <div class="smart-result-hdr">
+      <h3>${esc(w.title)}</h3>
+      <p>${esc(w.format)} · ${esc(w.duration)} min · ${cap(w.level)}</p>
+    </div>
+    <div class="smart-result-body">
+      <p class="smart-desc">${esc(w.description)}</p>
+      <table class="smart-mov-table">
+        <thead><tr><th>Movement</th><th>Reps / Time</th></tr></thead>
+        <tbody>
+          ${w.rows.map(r => `<tr>
+            <td><div class="smt-name">${esc(r.movement)}</div>${r.tip?`<div class="smt-tip">${esc(r.tip)}</div>`:''}</td>
+            <td><span class="smt-rep">${esc(r.reps)}</span></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+      <div class="smart-save-row">
+        <button class="btn-save-day" onclick="saveSmartDay()">Save to ${selectedDay ? fmtLabel(getWeekDays(weekOffset).find(d=>fmtKey(d)===selectedDay)||new Date()) : 'Day'}</button>
+        <button class="btn-regen" onclick="generateSmart()">Regenerate</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function bindSmartInputs() { /* all handled via onclick */ }
+
+function toggleEquip(val) {
+  if (val === 'bodyweight') return; // always on
+  const idx = smartEquipment.indexOf(val);
+  if (idx > -1) smartEquipment.splice(idx, 1);
+  else smartEquipment.push(val);
+  renderBuilder();
+}
+function setSmartFocus(v)        { smartFocus = v; renderBuilder(); }
+function setSmartDur(v)          { smartDur   = v; renderBuilder(); }
+function setSmartLevel(v)        { smartLevel = v; renderBuilder(); }
+function setSmartFormat(v)       { smartFormat = v; if (v !== 'tabata') smartResult = null; renderBuilder(); }
+function setSmartTabataStruct(v) { smartTabataStruct = v; renderBuilder(); }
+
+// ═══════════════════════════════════════════════════════════════
+// SMART BUILD — GENERATION ENGINE  (ported from wodbuilder.html)
+// ═══════════════════════════════════════════════════════════════
+const WARMUP   = ['30s jumping jacks','20 arm circles each direction','10 hip circles','10 leg swings each side','30s cat-cow','10 world\'s greatest stretch','30s high knees easy','8 inchworms'];
+const COOLDOWN = ['60s down-dog','30s figure-4 glute stretch each side','30s hip flexor stretch each side','60s chest opener','30s hamstring stretch each side','30s child\'s pose'];
+
+function generateSmart() {
+  if (!MOVEMENT_DB) { showToast('Movement library still loading…'); return; }
+  const btn = document.getElementById('gen-btn');
+  if (btn) { btn.classList.add('loading'); btn.disabled = true; }
+
+  setTimeout(() => {
+    const pool = buildPool(smartEquipment, smartLevel, [smartFocus]);
+    if (!pool.length) { showToast('Not enough movements for that combination.'); if(btn){btn.classList.remove('loading');btn.disabled=false;} return; }
+
+    const fmt = smartFormat === 'any'
+      ? ['amrap','emom','fortime','circuit'][Math.floor(Math.random()*4)]
+      : smartFormat;
+
+    let w;
+    const dur = parseInt(smartDur);
+    if (fmt === 'amrap')   w = genAMRAP(pool, smartLevel, dur);
+    else if (fmt === 'emom')    w = genEMOM(pool, smartLevel, dur);
+    else if (fmt === 'fortime') w = genForTime(pool, smartLevel);
+    else if (fmt === 'tabata')  w = genTabata(pool, smartLevel, dur, 20, 10, smartTabataStruct);
+    else                        w = genCircuit(pool, smartLevel, dur);
+
+    smartResult = { ...w, level: smartLevel, duration: smartDur, equipment: smartEquipment, focus: smartFocus };
+    if (btn) { btn.classList.remove('loading'); btn.disabled = false; }
+    renderBuilder();
+    document.querySelector('.smart-result')?.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }, 500);
+}
+
+function buildPool(equipment, level, bodyFocuses) {
+  if (!MOVEMENT_DB) return [];
+  let moves = (MOVEMENT_DB.bodyweight || []).map(m => ({...m, _eq:'bodyweight'}));
+  equipment.forEach(eq => { if (eq !== 'bodyweight' && MOVEMENT_DB[eq]) moves.push(...MOVEMENT_DB[eq].map(m=>({...m,_eq:eq}))); });
+  if (level === 'beginner')     moves = moves.filter(m => !/(muscle.up|snatch|toes.to.bar|double under|turkish)/i.test(m.name));
+  if (level === 'intermediate') moves = moves.filter(m => !/(muscle.up)/i.test(m.name));
+  const BF_TAGS = { 'full-body':null,'upper-body':['push','pull'],'lower-body':['lower','legs-glutes'],'core':['core'],'push':['push'],'pull':['pull'],'legs-glutes':['lower','legs-glutes'],'cardio':['cardio','full'] };
+  const focuses = Array.isArray(bodyFocuses) ? bodyFocuses : [bodyFocuses];
+  let tags = null;
+  if (!focuses.includes('full-body')) {
+    const tagSet = new Set();
+    focuses.forEach(bf => { const t = BF_TAGS[bf]; if (t) t.forEach(tag => tagSet.add(tag)); });
+    if (tagSet.size) tags = [...tagSet];
+  }
+  if (tags) { const f = moves.filter(m => m.tags && m.tags.some(t=>tags.includes(t))); if (f.length >= 3) moves = f; }
+  return moves;
+}
+
+function balancedPick(pool, count) {
+  const buckets = { lower:[],push:[],pull:[],core:[],full:[],other:[] };
+  const pToBucket = { squat:'lower',hinge:'lower',push:'push',pull:'pull',core:'core',fullbody:'full',gymnastics:'full',olympic:'full',carry:'full',monostructural:'full' };
+  pool.forEach(m => {
+    const b = (m.movement_pattern && pToBucket[m.movement_pattern]) || (m.tags?.includes('full')?'full':m.tags?.includes('lower')?'lower':m.tags?.includes('push')?'push':m.tags?.includes('pull')?'pull':m.tags?.includes('core')?'core':null);
+    (buckets[b] || buckets.other).push(m);
+  });
+  const order = count>=5?['lower','push','pull','core','full']:count===4?['lower','push','pull','core']:count===3?['lower','push','core']:['lower','push'];
+  const result = [];
+  order.forEach(cat => { const bk=[...buckets[cat]]; if(bk.length){const i=Math.floor(Math.random()*bk.length);result.push(bk[i]);bk.splice(i,1);buckets[cat]=bk;} });
+  while(result.length<count){const rem=Object.values(buckets).flat().filter(m=>!result.includes(m));if(!rem.length)break;result.push(rem[Math.floor(Math.random()*rem.length)]);}
+  // Guarantee equipment representation
+  const equipTypes=[...new Set(pool.filter(m=>m._eq&&m._eq!=='bodyweight').map(m=>m._eq))];
+  equipTypes.forEach(eq=>{
+    if(result.some(m=>m._eq===eq))return;
+    const cands=pool.filter(m=>m._eq===eq&&!result.includes(m));
+    if(!cands.length)return;
+    const calB=cands.filter(m=>{const r=m.b||m.i||m.a;const f=Array.isArray(r)?r[0]:r;return typeof f==='string'&&f.includes('cal');});
+    const pick=(calB.length?calB:cands)[Math.floor(Math.random()*(calB.length||cands.length))];
+    const eqTags=pick.tags||[];
+    let si=result.findIndex(m=>m._eq==='bodyweight'&&m.tags&&m.tags.some(t=>eqTags.includes(t)));
+    if(si===-1)si=result.findIndex(m=>m._eq==='bodyweight');
+    if(si===-1)si=result.length-1;
+    result[si]=pick;
+  });
+  return result;
+}
+
+function getReps(m, level) {
+  const r = m[level==='beginner'?'b':level==='intermediate'?'i':'a'];
+  if(Array.isArray(r)) return r[0]+(Math.random()>.5&&r[1]?'-'+r[1]:'');
+  return r;
+}
+function isTimedOrDistance(m) {
+  if(m.timed)return true;
+  const r=m.b||m.i||m.a;
+  if(!r)return false;
+  const f=Array.isArray(r)?r[0]:r;
+  return typeof f==='string';
+}
+function isEmomSafe(m, level) {
+  if(!isTimedOrDistance(m))return true;
+  const key=level==='beginner'?'b':level==='intermediate'?'i':'a';
+  const r=m[key]||m.b;
+  const val=String(Array.isArray(r)?r[0]:(r||''));
+  if(/mile|km/i.test(val))return false;
+  if(/\d+\s*min/.test(val))return false;
+  const mM=val.match(/^(\d+)\s*m$/);if(mM&&parseInt(mM[1])>200)return false;
+  const cM=val.match(/(\d+)\s*cal/);if(cM&&parseInt(cM[1])>20)return false;
+  return true;
+}
+
+function genAMRAP(pool, level, duration) {
+  const count = duration<=15?3:duration<=25?4:5;
+  const sel = balancedPick(pool, count);
+  return { title:`${duration}-Minute AMRAP`, format:'AMRAP', description:`Complete as many rounds as possible in ${duration} minutes. Pace yourself — consistent rounds from start to finish beat a blazing first half.`, rows:sel.map(m=>({movement:m.name,reps:String(getReps(m,level)),tip:m.tip})), scoring:`Record total rounds + reps.`, scoring_type:'rounds_reps' };
+}
+function genEMOM(pool, level, duration) {
+  const emomPool=pool.filter(m=>isEmomSafe(m,level));
+  const usePool=emomPool.length>=3?emomPool:pool;
+  const movCount=Math.min(4,Math.max(2,Math.floor(duration/4)));
+  const sel=balancedPick(usePool,movCount);
+  return { title:`${duration}-Minute EMOM`, format:'EMOM', description:`Every Minute On the Minute for ${duration} minutes. Start the prescribed work at the top of each minute; rest for whatever time remains.`, rows:sel.map((m,i)=>({movement:m.name,reps:`Min ${i+1} (repeat): ${getReps(m,level)}${isTimedOrDistance(m)?'':' reps'}`,tip:m.tip})), scoring:`Track whether you complete each minute.`, scoring_type:'rounds_reps' };
+}
+function genForTime(pool, level) {
+  const schemes={beginner:[15,12,9],intermediate:[21,15,9],advanced:[30,20,10]};
+  const scheme=schemes[level];
+  const sel=balancedPick(pool,3);
+  const allCardio=sel.every(m=>isTimedOrDistance(m));
+  if(allCardio) return { title:'Cardio Chipper', format:'For Time', description:`Complete all work as fast as possible.`, rows:sel.map(m=>({movement:m.name,reps:String(getReps(m,level)),tip:m.tip})), scoring:`Record total finish time.`, scoring_type:'time' };
+  return { title:`For Time — ${scheme.join('-')}`, format:'For Time', description:`Complete all reps as fast as possible using the ${scheme.join('-')} rep scheme.`, rows:sel.map(m=>({movement:m.name,reps:isTimedOrDistance(m)?String(getReps(m,level)):scheme.join(' – ')+' reps',tip:m.tip})), scoring:`Record total finish time.`, scoring_type:'time' };
+}
+function genCircuit(pool, level, duration) {
+  const movCount=duration<=15?4:duration<=30?5:6;
+  const rounds=duration<=15?3:duration<=30?4:5;
+  const sel=balancedPick(pool,movCount);
+  return { title:`${rounds}-Round Circuit`, format:'Circuit', description:`Complete all ${movCount} movements back-to-back. Rest 60 seconds between rounds. ${rounds} rounds total.`, rows:sel.map(m=>({movement:m.name,reps:String(getReps(m,level)),tip:m.tip})), scoring:`Record total time and round splits.`, scoring_type:'time' };
+}
+function genTabata(pool, level, duration, workSec, restSec, structure) {
+  workSec=workSec||20;restSec=restSec||10;structure=structure||'sequential';
+  const intSec=workSec+restSec;
+  const tabPool=pool.filter(m=>m.tabata_suitable);
+  const usePool=tabPool.length>=2?tabPool:pool;
+  let movCount;
+  if(structure==='sequential'){const bMin=(intSec*8/60)+1;movCount=Math.max(2,Math.min(5,Math.round(duration/bMin)));}
+  else{const cMin=intSec/60;movCount=Math.max(2,Math.min(6,Math.round(duration/(cMin*8))));}
+  const sel=balancedPick(usePool,movCount);
+  if(structure==='sequential'){
+    const bMin=Math.round(intSec*8/60*10)/10;
+    const total=Math.round(movCount*bMin+(movCount-1));
+    return { title:`${total}-Min Tabata`, format:'Tabata', description:`Complete all 8 rounds of ${workSec}s on / ${restSec}s off for each movement before moving to the next.`, rows:sel.map(m=>({movement:m.name,reps:`8 × ${workSec}s on / ${restSec}s off`,tip:m.tip})), scoring:`Tabata score = lowest round of reps per movement.`, scoring_type:'tabata' };
+  } else {
+    const total=Math.round(movCount*8*intSec/60);
+    const cMin=Math.round(movCount*intSec/60*10)/10;
+    return { title:`${total}-Min Rotating Tabata`, format:'Tabata', description:`Cycle through all ${movCount} movements for 8 complete rotations — ${workSec}s on / ${restSec}s off each. Each cycle takes ${cMin} minutes.`, rows:sel.map(m=>({movement:m.name,reps:`${workSec}s on / ${restSec}s off (rotating)`,tip:m.tip})), scoring:`Count total reps per movement across all intervals.`, scoring_type:'rounds_reps' };
+  }
+}
+
+async function saveSmartDay() {
+  if (!smartResult || !selectedDay) return;
+  const w = smartResult;
+  const movs = w.rows.map(r => ({ name:r.movement, reps:r.reps, weight:null }));
+  const meta = `${w.duration} min · ${cap(w.focus?.replace('-',' ')||'Full Body')} · ${w.format}`;
+
+  const payload = { type:'smart', title:w.title, meta, movs, format:w.format, duration:String(w.duration), tabata_struct:smartTabataStruct, rest:false, wod_desc:w.description };
+  const ok = await upsertPlan(selectedDay, payload);
+  if (!ok) return;
+
+  program[selectedDay] = { label:selectedDay, type:'smart', title:w.title, meta, movs, format:w.format, dur:String(w.duration), tabataStruct:smartTabataStruct, desc:w.description };
+  smartResult = null;
+  builderMode = 'view';
+  renderWeek();
+  renderBuilder();
+  showToast('Workout saved!');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MANUAL BUILD — UI
+// ═══════════════════════════════════════════════════════════════
+const LIB_CATS = ['Popular','Bodyweight','Barbell','Kettlebell','Dumbbell','Pull-up Bar','Cardio','Core'];
+const POPULAR_NAMES = ['Air Squat','Push-Up','Pull-Up','Burpee','Box Jump','Kettlebell Swing','Deadlift','Thruster','Dumbbell Snatch','Double Under','Sit-Up','Wall Ball','Row','Running'];
+const FORMAT_OPTS = ['AMRAP','EMOM','For Time','Circuit','Tabata'];
+const DUR_OPTS    = ['10','15','20','30','45','60'];
+
+const CAT_TO_EQ = {
+  'Bodyweight':'bodyweight','Barbell':'barbell','Kettlebell':'kettlebell',
+  'Dumbbell':'dumbbells','Pull-up Bar':'pullupbar','Cardio':'running','Core':'bodyweight',
+};
+
+function getLibMovements() {
+  if (!MOVEMENT_DB) return [];
+  let pool = [];
+  if (libCat === 'Popular') {
+    pool = Object.values(MOVEMENT_DB).flat().filter(m => POPULAR_NAMES.includes(m.name));
+    pool.sort((a,b) => POPULAR_NAMES.indexOf(a.name) - POPULAR_NAMES.indexOf(b.name));
+  } else if (libCat === 'Core') {
+    pool = Object.values(MOVEMENT_DB).flat().filter(m => m.tags && m.tags.includes('core'));
+  } else if (libCat === 'Cardio') {
+    pool = Object.values(MOVEMENT_DB).flat().filter(m => m.tags && m.tags.includes('cardio'));
+  } else {
+    const eq = CAT_TO_EQ[libCat];
+    pool = MOVEMENT_DB[eq] || [];
+  }
+  if (libSearchQ) {
+    const q = libSearchQ.toLowerCase();
+    pool = pool.filter(m => m.name.toLowerCase().includes(q));
+  }
+  return pool;
+}
+
+function renderManualPanel() {
+  const isTabata = manualFormat === 'Tabata';
+  const tabHint  = manualTabataStruct === 'sequential'
+    ? 'Complete all 8 rounds of one movement before moving to the next.'
+    : 'Cycle through all movements each interval for 8 complete rotations.';
+
+  const libMovs = getLibMovements();
+  const addedNames = manualMovs.map(m => m.name);
+
+  return `<div class="manual-layout">
+    <!-- Library -->
+    <div class="lib-panel">
+      <div class="lib-search-wrap">
+        <input class="lib-search" id="lib-search" placeholder="Search movements…" value="${esc(libSearchQ)}" autocomplete="off">
+      </div>
+      <div class="lib-cats">
+        ${LIB_CATS.map(c => `<button class="lib-cat ${libCat===c?'active':''}" onclick="setLibCat('${c}')">${c}</button>`).join('')}
+      </div>
+      <div class="lib-list">
+        ${libMovs.length ? libMovs.map(m => {
+          const alreadyAdded = addedNames.includes(m.name);
+          return `<div class="lib-item">
+            <span class="lib-item-name">${esc(m.name)}</span>
+            <button class="lib-add" ${alreadyAdded?'disabled style="opacity:.4"':''} onclick="addToManual('${esc(m.name).replace(/'/g,"\\'")}')">+ Add</button>
+          </div>`;
+        }).join('') : `<div class="lib-empty">${MOVEMENT_DB ? 'No movements found.' : 'Loading…'}</div>`}
+      </div>
+    </div>
+
+    <!-- Builder -->
+    <div class="builder-panel">
+      <div class="manual-meta">
+        <div class="meta-group">
+          <div class="meta-label">Format</div>
+          <div class="chip-group">
+            ${FORMAT_OPTS.map(f => `<button class="sb-chip ${manualFormat===f?'active':''}" onclick="setManualFormat('${f}')">${f}</button>`).join('')}
+          </div>
+        </div>
+        <div class="meta-group">
+          <div class="meta-label">Duration</div>
+          <div class="chip-group">
+            ${DUR_OPTS.map(d => `<button class="sb-chip ${manualDur===d?'active':''}" onclick="setManualDur('${d}')">${d} min</button>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      ${isTabata ? `<div class="tabata-struct-row show">
+        <div class="ts-label">Tabata Structure</div>
+        <div class="ts-opts">
+          <button class="ts-opt ${manualTabataStruct==='sequential'?'active':''}" onclick="setManualTabataStruct('sequential')">Sequential</button>
+          <button class="ts-opt ${manualTabataStruct==='rotating'?'active':''}"   onclick="setManualTabataStruct('rotating')">Rotating</button>
+        </div>
+        <div class="ts-hint">${tabHint}</div>
+      </div>` : ''}
+
+      <div>
+        <div class="sb-label">Movements</div>
+        <div class="manual-movs-list" id="manual-movs-list">
+          ${manualMovs.length ? manualMovs.map((m,i) => renderManualMovRow(m,i)).join('') : `<div class="manual-empty">Add movements from the library →</div>`}
+        </div>
+      </div>
+
+      <button class="btn-save-day" onclick="saveManualDay()" ${manualMovs.length<1?'disabled style="opacity:.5"':''}>
+        Save to ${selectedDay ? fmtLabel(getWeekDays(weekOffset).find(d=>fmtKey(d)===selectedDay)||new Date()) : 'Day'}
+      </button>
+    </div>
+  </div>`;
+}
+
+function renderManualMovRow(m, i) {
+  const isTabata = manualFormat === 'Tabata';
+  const defaultReps = isTabata ? '8 × 20s on / 10s off' : (m.reps || '');
+  return `<div class="manual-mov-row">
+    <span class="mmr-num">${i+1}</span>
+    <span class="mmr-name">${esc(m.name)}</span>
+    <input class="mmr-input" placeholder="Reps / Time" value="${esc(m.reps||defaultReps)}" oninput="updateManualReps(${i},this.value)">
+    <input class="mmr-input mmr-wt" placeholder="Load (opt)" value="${esc(m.weight||'')}" oninput="updateManualWeight(${i},this.value)">
+    <button class="mmr-rm" onclick="removeManual(${i})" title="Remove">×</button>
+  </div>`;
+}
+
+function bindManualInputs() {
+  const ls = document.getElementById('lib-search');
+  if (ls) ls.addEventListener('input', e => { libSearchQ = e.target.value; renderBuilder(); });
+}
+
+function setLibCat(c) { libCat = c; libSearchQ = ''; renderBuilder(); }
+function setManualFormat(f) { manualFormat = f; renderBuilder(); }
+function setManualDur(d) { manualDur = d; renderBuilder(); }
+function setManualTabataStruct(v) { manualTabataStruct = v; renderBuilder(); }
+
+function addToManual(name) {
+  if (manualMovs.some(m => m.name === name)) return;
+  const isTabata = manualFormat === 'Tabata';
+  manualMovs.push({ name, reps: isTabata ? '8 × 20s on / 10s off' : '', weight: '' });
+  renderBuilder();
+}
+function removeManual(i) { manualMovs.splice(i,1); renderBuilder(); }
+function updateManualReps(i, v) { if (manualMovs[i]) manualMovs[i].reps = v; }
+function updateManualWeight(i, v) { if (manualMovs[i]) manualMovs[i].weight = v; }
+
+async function saveManualDay() {
+  if (!manualMovs.length || !selectedDay) return;
+  // Snapshot current reps/weight from DOM inputs before saving
+  document.querySelectorAll('.manual-mov-row').forEach((row, i) => {
+    const inputs = row.querySelectorAll('.mmr-input');
+    if (manualMovs[i]) {
+      manualMovs[i].reps   = inputs[0]?.value || manualMovs[i].reps;
+      manualMovs[i].weight = inputs[1]?.value || manualMovs[i].weight;
+    }
+  });
+
+  const meta = `${manualDur} min · ${manualFormat}${manualFormat==='Tabata'?' · '+cap(manualTabataStruct):''}`;
+  const title = `${manualDur}-Min ${manualFormat}`;
+  const payload = {
+    type:'manual', title, meta,
+    movs: manualMovs.map(m => ({ name:m.name, reps:m.reps, weight:m.weight||null })),
+    format:manualFormat, duration:manualDur,
+    tabata_struct: manualFormat==='Tabata' ? manualTabataStruct : null,
+    rest:false, wod_desc:null,
+  };
+  const ok = await upsertPlan(selectedDay, payload);
+  if (!ok) return;
+
+  program[selectedDay] = { label:selectedDay, type:'manual', title, meta, movs:payload.movs, format:manualFormat, dur:manualDur, tabataStruct:payload.tabata_struct, desc:null };
+  manualMovs = []; builderMode = 'view';
+  renderWeek(); renderBuilder();
+  showToast('Workout saved!');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FIND A WORKOUT
+// ═══════════════════════════════════════════════════════════════
+async function loadFindWorkouts() {
+  fwLoaded = true;
+  if (!supabaseClient) return;
+
+  const [bRes, mRes] = await Promise.all([
+    supabaseClient.from('benchmark_workouts').select('id,name,slug,category,format,description,time_cap').order('name'),
+    supabaseClient.from('workouts').select('id,title,format,description,created_at').eq('user_id', currentUser.id).order('created_at', { ascending:false }).limit(50),
+  ]);
+
+  fwBenchmarks = bRes.data || [];
+  fwMine       = mRes.data || [];
+  renderBuilder();
+}
+
+function renderFindPanel() {
+  if (!fwLoaded) return `<div class="fw-loading"><div class="spin" style="display:inline-block;margin:0 auto"></div></div>`;
+
+  const pool = fwType === 'benchmarks' ? fwBenchmarks : fwMine;
+  const q    = fwSearch.toLowerCase();
+  const filtered = q ? pool.filter(w => (w.name||w.title||'').toLowerCase().includes(q) || (w.description||'').toLowerCase().includes(q)) : pool;
+
+  const items = filtered.map(w => {
+    const name = w.name || w.title || 'Workout';
+    const meta = [w.category, w.format, w.time_cap ? `${w.time_cap} min cap` : null].filter(Boolean).join(' · ');
+    return `<div class="fw-item">
+      <div>
+        <div class="fw-item-name">${esc(name)}</div>
+        ${meta ? `<div class="fw-item-meta">${esc(meta)}</div>` : ''}
+      </div>
+      <button class="fw-item-select" onclick="selectFoundWod('${esc(w.id)}','${esc(name)}','${esc(meta)}','${esc((w.description||'').substring(0,400))}')">Select</button>
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="fw-search-row">
+      <input class="fw-search" id="fw-search" placeholder="Search by name or movement…" value="${esc(fwSearch)}" autocomplete="off">
+    </div>
+    <div class="fw-type-tabs">
+      <button class="fw-tab ${fwType==='benchmarks'?'active':''}" onclick="setFwType('benchmarks')">Benchmarks (${fwBenchmarks.length})</button>
+      <button class="fw-tab ${fwType==='mine'?'active':''}"       onclick="setFwType('mine')">My Workouts (${fwMine.length})</button>
+    </div>
+    <div class="fw-list">
+      ${filtered.length ? items : `<div class="fw-empty">No workouts found.</div>`}
+    </div>`;
+}
+
+function bindFindInputs() {
+  const fws = document.getElementById('fw-search');
+  if (fws) fws.addEventListener('input', e => { fwSearch = e.target.value; renderBuilder(); });
+}
+
+function setFwType(t) { fwType = t; fwSearch = ''; renderBuilder(); }
+
+async function selectFoundWod(id, name, meta, desc) {
+  if (!selectedDay) return;
+  const payload = { type:'named', title:name, meta, movs:[], format:null, duration:null, tabata_struct:null, rest:false, wod_desc:desc };
+  const ok = await upsertPlan(selectedDay, payload);
+  if (!ok) return;
+
+  program[selectedDay] = { label:selectedDay, type:'named', title:name, meta, movs:[], format:null, dur:null, tabataStruct:null, desc };
+  builderMode = 'view';
+  renderWeek(); renderBuilder();
+  showToast('Workout saved!');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ACTIONS — TIMER / PRINT
+// ═══════════════════════════════════════════════════════════════
+function startTimer() {
+  const saved = program[selectedDay];
+  if (!saved) return;
+  const params = new URLSearchParams();
+  if (saved.format) params.set('format', saved.format.toLowerCase());
+  if (saved.dur)    params.set('duration', saved.dur);
+  if (saved.title)  params.set('wod', saved.title);
+  window.open(`/timer?${params.toString()}`, '_blank');
+}
+
+function printWod() {
+  const saved = program[selectedDay];
+  if (!saved) return;
+  const days = getWeekDays(weekOffset);
+  const d = days.find(dd => fmtKey(dd) === selectedDay);
+  const label = d ? fmtLabel(d) : selectedDay;
+
+  let rows = '';
+  if (saved.movs && saved.movs.length) {
+    rows = `<table class="pa-table">
+      <thead><tr><th>#</th><th>Movement</th><th>Reps / Time</th><th>Load</th></tr></thead>
+      <tbody>${saved.movs.map((m,i) => `<tr><td>${i+1}</td><td>${esc(m.name)}</td><td>${esc(m.reps||'')}</td><td>${esc(m.weight||'—')}</td></tr>`).join('')}</tbody>
+    </table>`;
+  } else if (saved.desc) {
+    rows = `<p class="pa-desc">${esc(saved.desc)}</p>`;
+  }
+
+  document.getElementById('print-area').innerHTML = `
+    <div class="pa-title">${esc(saved.title||'Workout')}</div>
+    <div class="pa-meta">${esc(label)}${saved.meta ? ' · ' + esc(saved.meta) : ''}</div>
+    ${saved.desc && saved.movs?.length ? `<p class="pa-desc">${esc(saved.desc)}</p>` : ''}
+    ${rows}
+    <div class="pa-foot">HomeWodRX.com · Training Planner</div>`;
+  window.print();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// UNDO
+// ═══════════════════════════════════════════════════════════════
+function saveUndo(day, entry) {
+  undoSnapshot = { day, entry: entry ? JSON.parse(JSON.stringify(entry)) : null };
+}
+
+async function undoAction() {
+  if (!undoSnapshot) return;
+  clearTimeout(undoTimer);
+  const { day, entry } = undoSnapshot;
+  undoSnapshot = null;
+
+  if (entry) {
+    // Restore
+    if (entry.rest) {
+      await upsertPlan(day, { type:'rest', rest:true, title:null, meta:null, movs:[], format:null, duration:null, tabata_struct:null, wod_desc:null });
+      program[day] = { rest: true };
+    } else {
+      const payload = { type:entry.type, title:entry.title, meta:entry.meta, movs:entry.movs||[], format:entry.format, duration:entry.dur, tabata_struct:entry.tabataStruct, rest:false, wod_desc:entry.desc };
+      await upsertPlan(day, payload);
+      program[day] = { ...entry };
+    }
+    selectedDay = day;
+    builderMode = 'view';
+  } else {
+    // Was empty — delete
+    await deletePlan(day);
+    delete program[day];
+    selectedDay = null;
+  }
+
+  renderWeek(); renderBuilder();
+  showToast('Undone');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// AUTH MODAL
+// ═══════════════════════════════════════════════════════════════
+function openAuthModal(tab) {
+  switchAuthTab(tab);
+  document.getElementById('auth-modal').classList.add('open');
+}
+function closeAuthModal() {
+  document.getElementById('auth-modal').classList.remove('open');
+}
+function switchAuthTab(tab) {
+  document.getElementById('login-form').style.display  = tab === 'login'  ? 'block' : 'none';
+  document.getElementById('signup-form').style.display = tab === 'signup' ? 'block' : 'none';
+  document.getElementById('auth-title').textContent = tab === 'login' ? 'Sign In' : 'Create Account';
+  document.getElementById('auth-sub').textContent   = tab === 'login' ? 'Sign in to access the Training Planner.' : 'Create a free account to get started.';
+  document.getElementById('auth-error').classList.remove('vis');
+}
+async function submitLogin() {
+  const email = document.getElementById('li-email').value.trim();
+  const pass  = document.getElementById('li-pass').value;
+  const errEl = document.getElementById('auth-error');
+  if (!email || !pass) { errEl.textContent = 'Please fill in all fields.'; errEl.classList.add('vis'); return; }
+  const { user, error } = await db.signIn(email, pass);
+  if (error) { errEl.textContent = error.message || 'Sign in failed.'; errEl.classList.add('vis'); return; }
+  location.reload();
+}
+async function submitSignup() {
+  const username = document.getElementById('su-user').value.trim();
+  const email    = document.getElementById('su-email').value.trim();
+  const pass     = document.getElementById('su-pass').value;
+  const errEl    = document.getElementById('auth-error');
+  if (!username || !email || !pass) { errEl.textContent = 'Please fill in all fields.'; errEl.classList.add('vis'); return; }
+  if (pass.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.classList.add('vis'); return; }
+  const { user, error } = await db.signUp(email, pass, username);
+  if (error) { errEl.textContent = error.message || 'Sign up failed.'; errEl.classList.add('vis'); return; }
+  location.reload();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════════════
+function showToast(msg, withUndo) {
+  clearTimeout(undoTimer);
+  const t      = document.getElementById('toast');
+  const msgEl  = document.getElementById('toast-msg');
+  const undoEl = document.getElementById('toast-undo');
+  const timerEl= document.getElementById('toast-timer');
+  const barEl  = document.getElementById('toast-timer-bar');
+
+  msgEl.textContent      = msg;
+  undoEl.style.display   = withUndo ? '' : 'none';
+  timerEl.style.display  = withUndo ? '' : 'none';
+
+  t.classList.add('show');
+
+  if (withUndo) {
+    barEl.style.transition = 'none';
+    barEl.style.width = '100%';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      barEl.style.transition = `width ${UNDO_MS}ms linear`;
+      barEl.style.width = '0%';
+    }));
+    undoTimer = setTimeout(() => { t.classList.remove('show'); undoSnapshot = null; }, UNDO_MS);
+  } else {
+    undoTimer = setTimeout(() => t.classList.remove('show'), 2800);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════════════
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function cap(s) { return String(s||'').replace(/(?:^|\s|-)\w/g, c=>c.toUpperCase()); }
+function shuffle(a) { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a; }
+</script>
+</body>
+</html>
