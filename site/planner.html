@@ -184,21 +184,30 @@
     .ts-hint { font-size: .75rem; color: var(--muted); margin-top: 6px; line-height: 1.5; }
 
     /* ── FIND A WORKOUT ── */
-    .fw-search-row { display: flex; gap: 8px; margin-bottom: 12px; }
-    .fw-search { flex: 1; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: var(--radius); font-size: .88rem; font-family: var(--font-body); outline: none; }
-    .fw-search:focus { border-color: var(--or); }
-    .fw-type-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
-    .fw-tab { padding: 8px 14px; font-size: .82rem; font-weight: 700; border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; color: var(--muted); font-family: var(--font-body); transition: all .15s; }
-    .fw-tab:hover { color: var(--text); }
-    .fw-tab.active { color: var(--or); border-bottom-color: var(--or); }
-    .fw-list { display: flex; flex-direction: column; gap: 6px; max-height: 380px; overflow-y: auto; }
-    .fw-item { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: var(--radius); cursor: pointer; transition: all .15s; background: var(--white); }
-    .fw-item:hover { border-color: var(--or); background: rgba(196,18,18,.03); }
-    .fw-item-name { font-weight: 700; color: var(--text); font-size: .9rem; }
-    .fw-item-meta { font-size: .75rem; color: var(--muted); margin-top: 2px; }
-    .fw-item-select { background: var(--or); color: #fff; border: none; border-radius: 6px; padding: 5px 12px; font-size: .75rem; font-weight: 800; cursor: pointer; font-family: var(--font-body); white-space: nowrap; flex-shrink: 0; }
-    .fw-empty { text-align: center; padding: 32px 20px; color: var(--muted); font-size: .88rem; }
-    .fw-loading { text-align: center; padding: 24px; color: var(--muted); }
+    .fw-search-wrap { position: relative; margin-bottom: 14px; }
+    .fw-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+    .fw-search { width: 100%; padding: 10px 12px 10px 36px; border: 1.5px solid var(--border); border-radius: var(--radius); font-size: .88rem; font-family: var(--font-body); outline: none; background: var(--bg); box-sizing: border-box; }
+    .fw-search:focus { border-color: var(--or); background: var(--white); }
+    .fw-type-pills { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 16px; }
+    .fw-pill { padding: 7px 16px; font-size: .8rem; font-weight: 700; border: 1.5px solid var(--border); border-radius: 20px; cursor: pointer; color: var(--muted); background: var(--white); font-family: var(--font-body); transition: all .15s; white-space: nowrap; }
+    .fw-pill:hover { border-color: var(--or); color: var(--or); }
+    .fw-pill.active { background: var(--or); border-color: var(--or); color: #fff; }
+    .fw-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; max-height: 480px; overflow-y: auto; padding-bottom: 4px; }
+    @media(max-width:900px){ .fw-grid { grid-template-columns: repeat(2,1fr); } }
+    @media(max-width:540px){ .fw-grid { grid-template-columns: 1fr; } }
+    .fw-card { border: 1.5px solid var(--border); border-radius: var(--radius-lg,12px); padding: 16px; background: var(--white); display: flex; flex-direction: column; gap: 0; transition: border-color .15s; }
+    .fw-card:hover { border-color: var(--or); }
+    .fw-card-badge { display: inline-flex; align-items: center; background: rgba(196,18,18,.1); color: var(--or); border: 1px solid rgba(196,18,18,.2); border-radius: 20px; font-size: .65rem; font-weight: 800; padding: 2px 8px; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 8px; align-self: flex-start; }
+    .fw-card-badge.mine { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
+    .fw-card-name { font-family: var(--font-head); font-size: 1.35rem; letter-spacing: .04em; line-height: 1; color: var(--text); margin-bottom: 4px; }
+    .fw-card-meta { font-size: .75rem; color: var(--muted); margin-bottom: 10px; }
+    .fw-card-desc { font-size: .8rem; color: var(--text); line-height: 1.55; flex: 1; margin-bottom: 14px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+    .fw-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; }
+    .fw-card-cat { font-size: .7rem; color: var(--muted2); font-weight: 600; text-transform: capitalize; }
+    .fw-card-add { background: var(--or); color: #fff; border: none; border-radius: 20px; padding: 7px 16px; font-size: .78rem; font-weight: 800; cursor: pointer; font-family: var(--font-body); transition: background .15s; white-space: nowrap; flex-shrink: 0; }
+    .fw-card-add:hover { background: var(--or-dark); }
+    .fw-empty { text-align: center; padding: 40px 20px; color: var(--muted); font-size: .88rem; }
+    .fw-loading { text-align: center; padding: 40px; color: var(--muted); display: flex; align-items: center; justify-content: center; gap: 10px; }
 
     /* ── SAVED VIEW ── */
     .saved-view { padding: 20px; }
@@ -1165,7 +1174,7 @@ const WEIGHT_DEFAULTS = {
   'ground to overhead':'45/35 lb',
   'sumo deadlift high pull':'75/55 lb',
 };
-const POPULAR_NAMES = ['Air Squat','Push-Up','Pull-Up','Burpee','Box Jump','Kettlebell Swing','Deadlift','Thruster','Dumbbell Snatch','Double Under','Sit-Up','Wall Ball','Row','Running'];
+const POPULAR_NAMES = ['Air Squats','Push-Ups','Pull-Ups','Burpees','Box Jumps','KB Swings','Deadlifts','Thrusters','DB Snatch','Double-Unders','Sit-Ups','Wall Balls','Rowing','Running'];
 const FORMAT_OPTS = ['AMRAP','EMOM','For Time','Circuit','Tabata'];
 const DUR_OPTS    = ['10','15','20','30','45','60'];
 
@@ -1380,24 +1389,34 @@ async function loadFindWorkouts() {
 }
 
 function renderFindPanel() {
-  if (!fwLoaded) return `<div class="fw-loading"><div class="spin" style="display:inline-block;margin:0 auto"></div></div>`;
+  if (!fwLoaded) return `<div class="fw-loading"><div class="spin"></div> Loading workouts…</div>`;
 
   const allPool = fwType === 'all' ? [...fwBenchmarks, ...fwMine]
                 : fwType === 'benchmarks' ? fwBenchmarks
                 : fwMine;
-  const q    = fwSearch.toLowerCase();
-  const filtered = q ? allPool.filter(w => (w.name||w.title||'').toLowerCase().includes(q) || (w.description||'').toLowerCase().includes(q) || (w.category||'').toLowerCase().includes(q)) : allPool;
+  const q = fwSearch.toLowerCase();
+  const filtered = q
+    ? allPool.filter(w => (w.name||w.title||'').toLowerCase().includes(q)
+        || (w.description||'').toLowerCase().includes(q)
+        || (w.category||'').toLowerCase().includes(q))
+    : allPool;
 
-  const items = filtered.map(w => {
-    const name = w.name || w.title || 'Workout';
-    const meta = [w.category, w.format, w.duration_estimate || null].filter(Boolean).join(' · ');
-    const key  = w._src === 'bench' ? 'b_' + w.slug : 'm_' + w.id;
-    return `<div class="fw-item">
-      <div>
-        <div class="fw-item-name">${esc(name)}</div>
-        ${meta ? `<div class="fw-item-meta">${esc(meta)}</div>` : ''}
+  const cards = filtered.map(w => {
+    const isMine = w._src === 'mine';
+    const name   = w.name || w.title || 'Workout';
+    const meta   = [w.format, w.duration_estimate].filter(Boolean).join(' · ');
+    const cat    = w.category || '';
+    const desc   = (w.description || '').substring(0, 300);
+    const key    = isMine ? 'm_' + w.id : 'b_' + w.slug;
+    return `<div class="fw-card">
+      <span class="fw-card-badge ${isMine?'mine':''}">${isMine ? 'My Workout' : 'Named WOD'}</span>
+      <div class="fw-card-name">${esc(name)}</div>
+      ${meta ? `<div class="fw-card-meta">${esc(meta)}</div>` : ''}
+      ${desc ? `<div class="fw-card-desc">${esc(desc)}</div>` : ''}
+      <div class="fw-card-footer">
+        <span class="fw-card-cat">${esc(cat)}</span>
+        <button class="fw-card-add" onclick="selectFoundWod('${esc(key)}')">Add to Day</button>
       </div>
-      <button class="fw-item-select" onclick="selectFoundWod('${esc(key)}')">Select</button>
     </div>`;
   }).join('');
 
@@ -1405,17 +1424,19 @@ function renderFindPanel() {
     ? `<div class="fw-empty">No saved workouts yet.<br><a href="/workouts" style="color:var(--or);font-weight:700;text-decoration:none">Browse workouts</a> to find ones to plan.</div>`
     : `<div class="fw-empty">No workouts found.</div>`;
 
+  const total = fwBenchmarks.length + fwMine.length;
   return `
-    <div class="fw-search-row">
-      <input class="fw-search" id="fw-search" placeholder="Search by name, category…" value="${esc(fwSearch)}" autocomplete="off">
+    <div class="fw-search-wrap">
+      <svg class="fw-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="fw-search" id="fw-search" placeholder="Search by name, movement, or category…" value="${esc(fwSearch)}" autocomplete="off">
     </div>
-    <div class="fw-type-tabs">
-      <button class="fw-tab ${fwType==='all'?'active':''}"        onclick="setFwType('all')">All (${fwBenchmarks.length + fwMine.length})</button>
-      <button class="fw-tab ${fwType==='benchmarks'?'active':''}" onclick="setFwType('benchmarks')">Named WODs (${fwBenchmarks.length})</button>
-      <button class="fw-tab ${fwType==='mine'?'active':''}"       onclick="setFwType('mine')">My Workouts (${fwMine.length})</button>
+    <div class="fw-type-pills">
+      <button class="fw-pill ${fwType==='all'?'active':''}"        onclick="setFwType('all')">All Workouts${total ? ' ('+total+')' : ''}</button>
+      <button class="fw-pill ${fwType==='benchmarks'?'active':''}" onclick="setFwType('benchmarks')">Named WODs</button>
+      <button class="fw-pill ${fwType==='mine'?'active':''}"       onclick="setFwType('mine')">My Saved</button>
     </div>
-    <div class="fw-list">
-      ${filtered.length ? items : noResults}
+    <div class="fw-grid">
+      ${filtered.length ? cards : noResults}
     </div>`;
 }
 
