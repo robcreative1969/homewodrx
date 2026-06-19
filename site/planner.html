@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Training Planner — Plan Your Week | HomeWodRX</title>
   <meta name="description" content="Plan your training week with the HomeWodRX Training Planner. Build workouts day-by-day using Smart Build, Manual Build, or find a benchmark WOD.">
+  <meta name="robots" content="noindex, nofollow">
   <link rel="canonical" href="https://homewodrx.com/planner">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -35,19 +36,19 @@
     .ham-panel { position: fixed !important; top: var(--nav-h); }
 
     /* ── PAGE LAYOUT ── */
-    .planner-wrap { max-width: 1100px; margin: 0 auto; padding: 28px 20px 80px; }
+    .planner-wrap { max-width: 1248px; margin: 0 auto; padding: 28px 24px 80px; }
     @media(max-width:700px){ .planner-wrap { padding: 16px 12px 60px; } }
 
     /* ── PAGE HEADER ── */
     .page-header { background: var(--white); border-bottom: 1px solid var(--border); padding: 20px 24px 18px; }
-    .page-header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .page-header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
     .ph-left { display: flex; flex-direction: column; gap: 2px; }
     .ph-eyebrow { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--or); }
     .ph-title { font-family: var(--font-head); font-size: 2.2rem; letter-spacing: .04em; line-height: 1; }
 
     /* ── GATES (auth / premium) ── */
     .gate-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; text-align: center; padding: 40px 24px; }
-    .gate-icon { font-size: 3rem; margin-bottom: 16px; }
+    .gate-icon { margin-bottom: 16px; }
     .gate-title { font-family: var(--font-head); font-size: 2.4rem; letter-spacing: .04em; margin-bottom: 8px; }
     .gate-sub { font-size: 1rem; color: var(--muted); max-width: 440px; line-height: 1.6; margin-bottom: 24px; }
     .gate-btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 28px; background: var(--or); color: #fff; border: none; border-radius: var(--radius); font-size: 1rem; font-weight: 700; cursor: pointer; font-family: var(--font-body); text-decoration: none; transition: background .15s; }
@@ -56,26 +57,26 @@
     .gate-btn.sec:hover { border-color: var(--or); color: var(--or); }
 
     /* ── WEEK NAV ── */
-    .week-nav { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 20px; position: sticky; top: var(--nav-h,56px); z-index: 50; }
-    .week-nav-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: stretch; }
+    .week-nav { background: var(--white); border-bottom: 1px solid var(--border); padding: 4px 20px; position: sticky; top: var(--nav-h,56px); z-index: 50; }
+    .week-nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: stretch; }
     .week-arrow { background: none; border: none; color: var(--muted); font-size: 1.2rem; padding: 14px 12px; cursor: pointer; transition: color .15s; flex-shrink: 0; line-height: 1; }
     .week-arrow:hover { color: var(--text); }
     .week-days { display: flex; flex: 1; gap: 0; overflow-x: auto; scrollbar-width: none; }
     .week-days::-webkit-scrollbar { display: none; }
-    .week-day-cell { flex: 1; min-width: 90px; display: flex; flex-direction: column; align-items: center; padding: 10px 6px; cursor: pointer; border-bottom: 3px solid transparent; transition: all .15s; position: relative; user-select: none; }
-    .week-day-cell:hover { background: var(--bg); }
-    .week-day-cell.selected { border-bottom-color: var(--or); background: var(--or-xlight,#fef2f2); }
+    .week-day-cell { flex: 1; min-width: 90px; display: flex; flex-direction: column; align-items: center; padding: 10px 6px; cursor: pointer; border: 1.5px solid var(--border); border-radius: 8px; margin: 4px 3px; transition: all .15s; position: relative; user-select: none; }
+    .week-day-cell:hover { background: var(--bg); border-color: var(--or); }
+    .week-day-cell.selected { border-color: var(--or); background: var(--or-xlight,#fef2f2); }
     .week-day-cell.today .wdc-dow { color: var(--or); font-weight: 800; }
-    .wdc-dow { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-bottom: 2px; }
-    .wdc-date { font-size: .92rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .wdc-dow { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-bottom: 2px; }
+    .wdc-date { font-size: 1.2rem; font-weight: 800; color: var(--text); margin-bottom: 4px; }
     .wdc-status { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 2px 7px; border-radius: 10px; white-space: nowrap; }
     .wdc-status.planned { background: rgba(196,18,18,.1); color: var(--or); }
     .wdc-status.rest    { background: #f0fdf4; color: #16a34a; }
     .wdc-status.empty   { color: var(--muted2,#9ca3af); }
     .week-label { font-size: .72rem; font-weight: 600; color: var(--muted); padding: 0 10px; display: flex; align-items: center; white-space: nowrap; flex-shrink: 0; }
-    .rest-pill { position: absolute; top: 4px; right: 4px; background: none; border: none; cursor: pointer; padding: 2px 5px; border-radius: 6px; font-size: .6rem; font-weight: 700; color: var(--muted2); transition: all .15s; line-height: 1; }
-    .rest-pill:hover { background: #f0fdf4; color: #16a34a; }
-    .week-day-cell.is-rest .rest-pill { color: #16a34a; background: #f0fdf4; }
+    .rest-pill { position: absolute; top: 4px; right: 4px; background: none; border: 1px solid var(--border); cursor: pointer; padding: 2px 6px; border-radius: 6px; font-size: .68rem; font-weight: 700; color: var(--muted); transition: all .15s; line-height: 1; }
+    .rest-pill:hover { background: #f0fdf4; color: #16a34a; border-color: #16a34a; }
+    .week-day-cell.is-rest .rest-pill { color: #16a34a; background: #f0fdf4; border-color: #16a34a; }
 
     /* ── LOADING SPINNER ── */
     .planner-loading { display: flex; align-items: center; justify-content: center; min-height: 200px; gap: 12px; color: var(--muted); font-size: .9rem; font-weight: 600; }
@@ -146,8 +147,7 @@
     .lib-search-wrap { padding: 10px; border-bottom: 1px solid var(--border); }
     .lib-search { width: 100%; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: var(--radius); font-size: .82rem; font-family: var(--font-body); outline: none; }
     .lib-search:focus { border-color: var(--or); }
-    .lib-cats { display: flex; gap: 0; overflow-x: auto; padding: 6px 10px; border-bottom: 1px solid var(--border); scrollbar-width: none; }
-    .lib-cats::-webkit-scrollbar { display: none; }
+    .lib-cats { display: flex; gap: 5px; flex-wrap: wrap; padding: 8px 10px; border-bottom: 1px solid var(--border); }
     .lib-cat { padding: 4px 10px; font-size: .72rem; font-weight: 700; border: 1.5px solid var(--border); border-radius: 20px; cursor: pointer; white-space: nowrap; color: var(--muted); background: var(--white); margin-right: 5px; font-family: var(--font-body); transition: all .15s; }
     .lib-cat.active { background: var(--or); border-color: var(--or); color: #fff; }
     .lib-list { max-height: 360px; overflow-y: auto; }
@@ -258,6 +258,29 @@
     .modal-error { background: rgba(231,76,60,.1); border: 1px solid rgba(231,76,60,.4); color: #E74C3C; border-radius: var(--radius); padding: 9px 12px; font-size: .82rem; margin-bottom: 12px; display: none; }
     .modal-error.vis { display: block; }
 
+    /* ── PLANNER WELCOME ── */
+    .planner-welcome { text-align: center; padding: 52px 20px 40px; }
+    .planner-welcome-icon { color: var(--muted); margin-bottom: 16px; }
+    .planner-welcome-title { font-family: var(--font-head); font-size: 2rem; letter-spacing: .04em; margin-bottom: 8px; }
+    .planner-welcome-sub { font-size: .9rem; color: var(--muted); max-width: 380px; margin: 0 auto; line-height: 1.6; }
+
+    /* ── SMART BUILD — EQUIPMENT CARDS ── */
+    .planner-eq-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; }
+    .planner-eq-card { padding: 11px 10px; border: 1.5px solid var(--border); border-radius: 9px; cursor: pointer; font-size: .82rem; font-weight: 700; text-align: center; transition: all .15s; background: var(--white); color: var(--text); font-family: var(--font-body); }
+    .planner-eq-card:hover { border-color: var(--or); color: var(--or); }
+    .planner-eq-card.active { border-color: var(--or); background: rgba(196,18,18,.07); color: var(--or); }
+    .planner-eq-card.tabata-disabled { opacity: .35; pointer-events: none; }
+
+    /* ── MANUAL BUILD — COMPACT SAVE ── */
+    .btn-save-manual { display: inline-flex; align-items: center; gap: 6px; padding: 10px 22px; background: var(--or); color: #fff; border: none; border-radius: var(--radius); font-size: .88rem; font-weight: 700; cursor: pointer; font-family: var(--font-body); transition: background .15s; }
+    .btn-save-manual:hover { background: var(--or-dark); }
+    .btn-save-manual:disabled { opacity: .5; cursor: not-allowed; }
+    .lib-panel-header { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); padding: 10px 12px 4px; }
+
+    /* ── PAST DAY ── */
+    .week-day-cell.past-empty { opacity: .55; cursor: default; }
+    .week-day-cell.past-empty:hover { border-color: var(--border); background: var(--white); }
+
     /* ── PRINT ── */
     .print-area { display: none; }
     @media print {
@@ -320,7 +343,9 @@
 <!-- ── AUTH GATE ── -->
 <div id="auth-gate" style="display:none">
   <div class="gate-screen">
-    <div class="gate-icon">📅</div>
+    <div class="gate-icon">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--or)"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    </div>
     <div class="gate-title">Training Planner</div>
     <p class="gate-sub">Sign in to plan your training week, build custom workouts, and stay on track.</p>
     <div>
@@ -333,7 +358,9 @@
 <!-- ── PREMIUM GATE ── -->
 <div id="premium-gate" style="display:none">
   <div class="gate-screen">
-    <div class="gate-icon">⚡</div>
+    <div class="gate-icon">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--or)"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    </div>
     <div class="gate-title">Premium Feature</div>
     <p class="gate-sub">The Training Planner is a premium feature. Upgrade to plan your full training week with Smart Build, Manual Build, and more.</p>
     <a href="/settings#billing" class="gate-btn">Upgrade to Premium</a>
@@ -412,6 +439,7 @@ let fwSearch = '';
 let fwBenchmarks = [];
 let fwMine       = [];
 let fwLoaded     = false;
+let fwWorkoutsById = {};
 
 // Movement DB (from Supabase)
 let MOVEMENT_DB = null;
@@ -449,7 +477,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('planner-loading').style.display = 'none';
   document.getElementById('day-builder-wrap').style.display = 'block';
 
+  // Auto-select today so users land on an actionable view
+  selectedDay = todayKey();
+  const todaySaved = program[todayKey()];
+  builderMode = (todaySaved && !todaySaved.rest) ? 'view' : 'build';
   renderWeek();
+  renderBuilder();
 });
 
 // ═══════════════════════════════════════════════════════════════
@@ -572,19 +605,20 @@ function renderWeek() {
 
   const DOW = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   document.getElementById('week-days').innerHTML = days.map((d, i) => {
-    const key     = fmtKey(d);
-    const entry   = program[key];
-    const isToday = key === today;
-    const isSel   = key === selectedDay;
-    const isRest  = entry && entry.rest;
-    const hasPlan = entry && !entry.rest;
+    const key        = fmtKey(d);
+    const entry      = program[key];
+    const isToday    = key === today;
+    const isSel      = key === selectedDay;
+    const isRest     = entry && entry.rest;
+    const hasPlan    = entry && !entry.rest;
+    const isPastEmpty = key < today && (!entry || isRest);
 
     let statusHTML = '';
     if (isRest)  statusHTML = `<span class="wdc-status rest">Rest</span>`;
     else if (hasPlan) statusHTML = `<span class="wdc-status planned">Planned</span>`;
-    else         statusHTML = `<span class="wdc-status empty">+ Add</span>`;
+    else         statusHTML = `<span class="wdc-status empty">${isPastEmpty ? '' : '+ Add'}</span>`;
 
-    return `<div class="week-day-cell ${isToday?'today':''} ${isSel?'selected':''} ${isRest?'is-rest':''}"
+    return `<div class="week-day-cell ${isToday?'today':''} ${isSel?'selected':''} ${isRest?'is-rest':''} ${isPastEmpty?'past-empty':''}"
                onclick="selectDay('${key}')">
       <button class="rest-pill" onclick="toggleRest(event,'${key}')" title="${isRest?'Un-mark rest':'Mark as rest day'}">
         ${isRest ? '✓ Rest' : 'Rest'}
@@ -634,11 +668,14 @@ function selectDay(key) {
     // Second click on same day: toggle closed
     selectedDay = null; renderWeek(); renderBuilder(); return;
   }
-  selectedDay = key;
   const saved = program[key];
+  // Block building on past empty days (view-only if they have a saved workout)
+  if (key < todayKey() && (!saved || saved.rest)) return;
+
+  selectedDay = key;
   if (saved && !saved.rest) {
     builderMode = 'view';
-  } else if (!saved || saved.rest) {
+  } else {
     builderMode = 'build';
     smartResult = null;
   }
@@ -659,6 +696,7 @@ function toggleRest(e, key) {
     upsertPlan(key, { type: 'rest', rest: true, title: null, meta: null, movs: [], format: null, duration: null, tabata_struct: null, wod_desc: null });
     program[key] = { rest: true };
     if (selectedDay === key) { selectedDay = null; builderMode = 'view'; }
+    if (entry) showToast('Marked as rest day', true);
   }
   renderWeek();
   renderBuilder();
@@ -666,7 +704,17 @@ function toggleRest(e, key) {
 
 function renderBuilder() {
   const wrap = document.getElementById('day-builder-wrap');
-  if (!selectedDay) { wrap.innerHTML = ''; return; }
+  if (!selectedDay) {
+    wrap.innerHTML = `
+      <div class="planner-welcome">
+        <div class="planner-welcome-icon">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="8" y2="14"/><line x1="12" y1="14" x2="12" y2="14"/><line x1="16" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="8" y2="18"/><line x1="12" y1="18" x2="12" y2="18"/></svg>
+        </div>
+        <div class="planner-welcome-title">Plan Your Week</div>
+        <p class="planner-welcome-sub">Select a day above to build your workout, browse named WODs, or mark it as a rest day.</p>
+      </div>`;
+    return;
+  }
 
   const days  = getWeekDays(weekOffset);
   const d     = days.find(dd => fmtKey(dd) === selectedDay);
@@ -787,18 +835,18 @@ function clearSavedDay() {
 // SMART BUILD — UI
 // ═══════════════════════════════════════════════════════════════
 const EQUIP_LIST = [
-  { val:'bodyweight',    icon:'🤸', label:'Bodyweight' },
-  { val:'pullupbar',     icon:'🏋️', label:'Pull-up Bar' },
-  { val:'kettlebell',    icon:'🔔', label:'Kettlebell' },
-  { val:'dumbbells',     icon:'💪', label:'Dumbbells' },
-  { val:'barbell',       icon:'⚖️', label:'Barbell' },
-  { val:'jumprope',      icon:'🪢', label:'Jump Rope' },
-  { val:'box',           icon:'📦', label:'Plyo Box' },
-  { val:'medicineball',  icon:'🏀', label:'Med Ball' },
-  { val:'rings',         icon:'⭕', label:'Rings' },
-  { val:'running',       icon:'🏃', label:'Running' },
-  { val:'rower',         icon:'🚣', label:'Rower' },
-  { val:'airbike',       icon:'🚴', label:'Air Bike' },
+  { val:'bodyweight',   label:'Bodyweight' },
+  { val:'pullupbar',    label:'Pull-up Bar' },
+  { val:'kettlebell',   label:'Kettlebell' },
+  { val:'dumbbells',    label:'Dumbbells' },
+  { val:'barbell',      label:'Barbell' },
+  { val:'jumprope',     label:'Jump Rope' },
+  { val:'box',          label:'Plyo Box' },
+  { val:'medicineball', label:'Med Ball' },
+  { val:'rings',        label:'Rings' },
+  { val:'running',      label:'Running' },
+  { val:'rower',        label:'Rower' },
+  { val:'airbike',      label:'Air Bike' },
 ];
 const TABATA_EXCL = ['running','rower','airbike'];
 const FOCUS_LIST  = ['Full Body','Upper Body','Lower Body','Core','Push','Pull','Cardio'];
@@ -816,13 +864,11 @@ function renderSmartPanel() {
   return `
   <div class="sb-row">
     <div class="sb-label">Equipment</div>
-    <div class="sb-eq-grid" id="sb-eq">
+    <div class="planner-eq-grid" id="sb-eq">
       ${EQUIP_LIST.map(e => {
         const disabled = isTab && TABATA_EXCL.includes(e.val);
         const active   = smartEquipment.includes(e.val);
-        return `<div class="eq-chip ${active?'active':''} ${disabled?'tabata-disabled':''}" data-val="${e.val}" onclick="toggleEquip('${e.val}')">
-          <span class="eq-chip-icon">${e.icon}</span>${e.label}
-        </div>`;
+        return `<div class="planner-eq-card ${active?'active':''} ${disabled?'tabata-disabled':''}" data-val="${e.val}" onclick="toggleEquip('${e.val}')">${e.label}</div>`;
       }).join('')}
     </div>
   </div>
@@ -1133,6 +1179,8 @@ function renderManualPanel() {
 
   return `<div class="manual-layout">
     <!-- Library -->
+    <div>
+    <div class="lib-panel-header">Movement Library</div>
     <div class="lib-panel">
       <div class="lib-search-wrap">
         <input class="lib-search" id="lib-search" placeholder="Search movements…" value="${esc(libSearchQ)}" autocomplete="off">
@@ -1149,6 +1197,7 @@ function renderManualPanel() {
           </div>`;
         }).join('') : `<div class="lib-empty">${MOVEMENT_DB ? 'No movements found.' : 'Loading…'}</div>`}
       </div>
+    </div>
     </div>
 
     <!-- Builder -->
@@ -1180,11 +1229,11 @@ function renderManualPanel() {
       <div>
         <div class="sb-label">Movements</div>
         <div class="manual-movs-list" id="manual-movs-list">
-          ${manualMovs.length ? manualMovs.map((m,i) => renderManualMovRow(m,i)).join('') : `<div class="manual-empty">Add movements from the library →</div>`}
+          ${manualMovs.length ? manualMovs.map((m,i) => renderManualMovRow(m,i)).join('') : `<div class="manual-empty">Add movements from the Movement Library</div>`}
         </div>
       </div>
 
-      <button class="btn-save-day" onclick="saveManualDay()" ${manualMovs.length<1?'disabled style="opacity:.5"':''}>
+      <button class="btn-save-manual" onclick="saveManualDay()" ${manualMovs.length<1?'disabled':''}>
         Save to ${selectedDay ? fmtLabel(getWeekDays(weekOffset).find(d=>fmtKey(d)===selectedDay)||new Date()) : 'Day'}
       </button>
     </div>
@@ -1256,8 +1305,8 @@ async function saveManualDay() {
 // FIND A WORKOUT
 // ═══════════════════════════════════════════════════════════════
 async function loadFindWorkouts() {
-  fwLoaded = true;
-  if (!supabaseClient) return;
+  // fwLoaded stays false → renderFindPanel shows spinner until data arrives
+  if (!supabaseClient) { fwLoaded = true; renderBuilder(); return; }
 
   const [bRes, mRes] = await Promise.all([
     supabaseClient.from('benchmark_workouts').select('id,name,slug,category,format,description,time_cap').order('name'),
@@ -1266,7 +1315,11 @@ async function loadFindWorkouts() {
 
   fwBenchmarks = bRes.data || [];
   fwMine       = mRes.data || [];
-  renderBuilder();
+  fwWorkoutsById = {};
+  fwBenchmarks.forEach(w => { fwWorkoutsById[w.id] = w; });
+  fwMine.forEach(w => { fwWorkoutsById[w.id] = w; });
+  fwLoaded = true;
+  renderBuilder(); // re-render now that data is ready
 }
 
 function renderFindPanel() {
@@ -1284,7 +1337,7 @@ function renderFindPanel() {
         <div class="fw-item-name">${esc(name)}</div>
         ${meta ? `<div class="fw-item-meta">${esc(meta)}</div>` : ''}
       </div>
-      <button class="fw-item-select" onclick="selectFoundWod('${esc(w.id)}','${esc(name)}','${esc(meta)}','${esc((w.description||'').substring(0,400))}')">Select</button>
+      <button class="fw-item-select" onclick="selectFoundWod('${esc(w.id)}')">Select</button>
     </div>`;
   }).join('');
 
@@ -1297,7 +1350,9 @@ function renderFindPanel() {
       <button class="fw-tab ${fwType==='mine'?'active':''}"       onclick="setFwType('mine')">My Workouts (${fwMine.length})</button>
     </div>
     <div class="fw-list">
-      ${filtered.length ? items : `<div class="fw-empty">No workouts found.</div>`}
+      ${filtered.length ? items : fwType === 'mine' && !fwMine.length
+        ? `<div class="fw-empty">No saved workouts yet.<br><a href="/workouts" style="color:var(--or);font-weight:700;text-decoration:none">Browse workouts</a> to find ones to plan.</div>`
+        : `<div class="fw-empty">No workouts found.</div>`}
     </div>`;
 }
 
@@ -1308,8 +1363,14 @@ function bindFindInputs() {
 
 function setFwType(t) { fwType = t; fwSearch = ''; renderBuilder(); }
 
-async function selectFoundWod(id, name, meta, desc) {
+async function selectFoundWod(id) {
   if (!selectedDay) return;
+  const w = fwWorkoutsById[id];
+  if (!w) return;
+  const name = w.name || w.title || 'Workout';
+  const meta = [w.category, w.format, w.time_cap ? `${w.time_cap} min cap` : null].filter(Boolean).join(' · ');
+  const desc = (w.description || '').substring(0, 400);
+
   const payload = { type:'named', title:name, meta, movs:[], format:null, duration:null, tabata_struct:null, rest:false, wod_desc:desc };
   const ok = await upsertPlan(selectedDay, payload);
   if (!ok) return;
