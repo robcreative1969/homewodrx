@@ -1320,14 +1320,14 @@ function addToManual(name) {
     if (movData) {
       const r = movData.i || movData.b; // intermediate first, fall back to beginner
       if (Array.isArray(r)) {
-        defaultReps = r[0] + (r[1] ? '–' + r[1] : '') + (movData.timed || typeof r[0] === 'string' ? '' : ' reps');
+        defaultReps = r[0] + (movData.timed || typeof r[0] === 'string' ? '' : ' reps');
       } else if (r) {
         defaultReps = String(r) + (movData.timed ? '' : ' reps');
       }
     }
-    // Pre-fill weight from defaults map
+    // Pre-fill weight from defaults map (try plural name first, then singular fallback)
     const wKey = name.toLowerCase();
-    defaultWeight = WEIGHT_DEFAULTS[wKey] || '';
+    defaultWeight = WEIGHT_DEFAULTS[wKey] || WEIGHT_DEFAULTS[wKey.replace(/s$/, '')] || '';
   }
 
   manualMovs.push({ name, reps: defaultReps, weight: defaultWeight });
