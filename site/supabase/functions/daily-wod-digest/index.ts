@@ -372,7 +372,7 @@ function buildEmailHtml(wod: Move, dateStr: string, firstName: string | null, un
               <a href="${BASE}/daily-wod" style="display:inline-block;padding:16px 44px;font-size:16px;font-weight:800;color:#ffffff;text-decoration:none;letter-spacing:0.3px;border-radius:10px;">Start Today's Workout</a>
             </td></tr>
           </table>
-          <p class="text-body" style="margin:14px 0 0;font-size:12px;color:#888888;">Pair it with <a href="${BASE}/stretchbuilder" style="color:#C41212;font-weight:600;">The Daily 10 stretch</a> when you're done.</p>
+          <p class="text-body" style="margin:14px 0 0;font-size:12px;color:#888888;">Pair it with <a href="${BASE}/daily-wod#daily-10" style="color:#C41212;font-weight:600;">The Daily 10 stretch</a> when you're done.</p>
         </td></tr>
         <tr><td style="padding:0 40px;"><div class="divider" style="border-top:1px solid #e5e5e5;"></div></td></tr>
         <tr><td align="center" style="padding:20px 40px 30px;">
