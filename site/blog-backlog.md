@@ -6,7 +6,6 @@ Format: `- [ ] Title | Category | suggested-slug`
 
 ## Queue
 
-- [ ] Dumbbells vs. Barbell: What the Home Athlete Should Buy First | Equipment | dumbbells-vs-barbell-first
 - [ ] Bodyweight Benchmark WODs You Can Do Anywhere | Training | bodyweight-benchmark-wods
 - [ ] RX vs. Scaled: How to Choose the Right Weights for You | Training | rx-vs-scaled-choosing-weights
 - [ ] Test and Retest: Tracking Progress With Benchmark Workouts | Programming | test-retest-benchmark-progress
@@ -26,6 +25,7 @@ Format: `- [ ] Title | Category | suggested-slug`
 
 ## Written (auto-updated by the weekly task)
 
+- [x] Dumbbells vs. Barbell: What the Home Athlete Should Buy First | Equipment | dumbbells-vs-barbell-first — June 29, 2026
 - [x] Hotel Room Workouts: Staying Fit While Traveling With Zero Equipment | Training | hotel-room-workouts — June 22, 2026
 - [x] The 20-Minute Workout: Why Short WODs Work So Well | Programming | why-short-wods-work — June 15, 2026
 - [x] Kettlebell-Only WODs: Complete Conditioning With One Piece of Iron | Training | kettlebell-only-wods — June 8, 2026
