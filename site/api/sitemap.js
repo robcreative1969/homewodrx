@@ -36,6 +36,7 @@ const BLOG_SLUGS = [
   'best-home-gym-equipment',
   'building-garage-gym',
   'day-by-day-fitness-mindset',
+  'dumbbells-vs-barbell-first',
   'finding-balance-in-life',
   'garage-gym-all-seasons',
   'glp1-fitness-guide',
