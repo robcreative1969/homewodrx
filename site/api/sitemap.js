@@ -34,6 +34,7 @@ const STATIC_PAGES = [
 const BLOG_SLUGS = [
   'best-gear-car-vacation',
   'best-home-gym-equipment',
+  'bodyweight-benchmark-wods',
   'building-garage-gym',
   'day-by-day-fitness-mindset',
   'dumbbells-vs-barbell-first',
@@ -46,6 +47,7 @@ const BLOG_SLUGS = [
   'kettlebell-only-wods',
   'named-benchmark-wods-guide',
   'rogue-vs-titan-home-gym',
+  'rx-vs-scaled-choosing-weights',
   'sleep-and-athletic-performance',
   'staying-connected-fitness',
   'staying-motivated-solo-training',
