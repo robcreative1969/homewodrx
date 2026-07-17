@@ -6,8 +6,6 @@ Format: `- [ ] Title | Category | suggested-slug`
 
 ## Queue
 
-- [ ] Bodyweight Benchmark WODs You Can Do Anywhere | Training | bodyweight-benchmark-wods
-- [ ] RX vs. Scaled: How to Choose the Right Weights for You | Training | rx-vs-scaled-choosing-weights
 - [ ] Test and Retest: Tracking Progress With Benchmark Workouts | Programming | test-retest-benchmark-progress
 - [ ] Building a Budget Home Gym for Under $500 | Equipment | budget-home-gym-under-500
 - [ ] Flooring, Lighting, and Layout: Setting Up a Small-Space Gym | Equipment | small-space-gym-setup
@@ -25,6 +23,8 @@ Format: `- [ ] Title | Category | suggested-slug`
 
 ## Written (auto-updated by the weekly task)
 
+- [x] RX vs. Scaled: How to Choose the Right Weights for You | Training | rx-vs-scaled-choosing-weights — July 13, 2026
+- [x] Bodyweight Benchmark WODs You Can Do Anywhere | Training | bodyweight-benchmark-wods — July 6, 2026
 - [x] Dumbbells vs. Barbell: What the Home Athlete Should Buy First | Equipment | dumbbells-vs-barbell-first — June 29, 2026
 - [x] Hotel Room Workouts: Staying Fit While Traveling With Zero Equipment | Training | hotel-room-workouts — June 22, 2026
 - [x] The 20-Minute Workout: Why Short WODs Work So Well | Programming | why-short-wods-work — June 15, 2026
