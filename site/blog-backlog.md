@@ -4,6 +4,17 @@ The weekly blog task (Mondays 9am) writes the **first unchecked topic** below, t
 
 Format: `- [ ] Title | Category | suggested-slug`
 
+## Style rules (read before drafting every post)
+
+All 23 existing posts were cleaned up on 2026-07-19 to remove AI-sounding writing. New posts must follow the same rules from the first draft:
+
+- **No em dashes (—), anywhere**: not in the title, meta description, og:description, JSON-LD description, headings, or body copy. Use a period, comma, colon, or parentheses instead, whichever reads most natural for that sentence. Never do a mechanical find/replace; rewrite the sentence.
+- **No stock AI phrases**: "elevate," "unlock," "dive into"/"let's dive in," "game-changer," "in conclusion," "it's worth noting," "when it comes to," "whether you're a beginner or a seasoned athlete," "in today's fast-paced world," "at the end of the day," "the bottom line is." Write plainer, more specific language instead.
+- **No robotic transitions**: avoid opening sentences/paragraphs with "Moreover," "Furthermore," "Additionally," "In addition," "Similarly."
+- **Avoid rigid, symmetric structure**: don't lean on perfect rule-of-three lists or make every section the same length/rhythm. Vary sentence length like a real person writing, not a template.
+- **Title/og:title separator**: use ` | HomeWodRX Blog` (title tag) and ` | HomeWodRX` (og:title) — not an em dash.
+- **Product names — use these exact names, never a synonym**: "Smart WOD Builder" linking to `/wodbuilder.html` (never "WOD Generator," "the generator," "WOD generator," or a bare `/generator` href). "Daily 20" linking to `/daily-wod.html` (never call it "Try the Daily 20" or "Get Today's Workout" while linking to `/wodbuilder.html` — that's a different product/page). "Stretch Builder" linking to `/stretchbuilder.html` (never "Stretch Generator" or "Stretch Session Generator"). Full naming reference in project memory: [[project-product-naming]].
+
 ## Queue
 
 - [ ] Test and Retest: Tracking Progress With Benchmark Workouts | Programming | test-retest-benchmark-progress
