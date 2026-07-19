@@ -464,16 +464,8 @@
 .companion-refresh:hover { color: var(--or); background: rgba(196,18,18,.06); }
   </style>
 
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-HZM475VDN3');
-  </script>
-  <!-- Vercel Analytics -->
-  <script defer src="/_vercel/insights/script.js"></script>
+  <!-- Cookie Consent (gates Google Analytics + Vercel Analytics until opt-in) -->
+  <script src="/js/consent.js"></script>
 </head>
 
 <body data-nav-init="true" data-active-page="profile">
@@ -931,6 +923,11 @@ document.addEventListener('DOMContentLoaded', async function() {
   // Determine whose profile to show
   var params   = new URLSearchParams(window.location.search);
   var urlUser  = params.get('u'); // ?u=username to view another user
+  // Support pretty URL /u/:username (vercel.json routes it here without a query param)
+  if (!urlUser) {
+    var pathMatch = window.location.pathname.match(/^\/u\/([^\/]+)/);
+    if (pathMatch) urlUser = decodeURIComponent(pathMatch[1]);
+  }
 
   var session  = null;
   var currentUser = null;
@@ -972,10 +969,24 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
   } catch(e) { /* Profile not found */ }
 
+  // ── Privacy enforcement ──
+  // privacy_visibility: 'public' (default) | 'members' | 'private'
+  // privacy_history:    'everyone' (default) | 'me'
+  if (profileData && !isOwnProfile) {
+    var vis = profileData.privacy_visibility || 'public';
+    if (vis === 'private') { showPrivateGate(); return; }
+    if (vis === 'members' && !currentUser) { showMembersGate(); return; }
+  }
+  var hideHistory = !!(profileData && !isOwnProfile && profileData.privacy_history === 'me');
+
   renderProfile(profileData, isOwnProfile);
-  loadLiftPRs(profileData, isOwnProfile);
+  if (hideHistory) {
+    hideHistorySections();
+  } else {
+    loadLiftPRs(profileData, isOwnProfile);
+    loadRecentResults(profileData);
+  }
   loadActivity(profileData, isOwnProfile);
-  loadRecentResults(profileData);
 
   // Auto-open log activity modal if arriving from companion action button
   if (isOwnProfile && params.get('log') === 'activity') {
@@ -1617,6 +1628,37 @@ function showAuthGate() {
   document.getElementById('auth-gate').classList.remove('hidden');
   document.querySelector('.prof-header').style.display = 'none';
   document.querySelector('.page-wrap').style.display   = 'none';
+}
+
+/* ── Privacy enforcement helpers ── */
+function showMembersGate() {
+  showAuthGate();
+  var t = document.querySelector('.auth-gate-title');
+  var s = document.querySelector('.auth-gate-sub');
+  if (t) t.textContent = 'Members Only';
+  if (s) s.textContent = "This athlete's profile is visible to signed-in HomeWodRX members. Log in to view it.";
+}
+
+function showPrivateGate() {
+  document.querySelector('.prof-header').style.display = 'none';
+  document.querySelector('.page-wrap').style.display   = 'none';
+  var gate = document.getElementById('auth-gate');
+  gate.innerHTML =
+    '<div class="auth-gate-wrap"><div class="auth-gate-card">' +
+      '<h1 class="auth-gate-title">This Profile Is Private</h1>' +
+      '<p class="auth-gate-sub">This athlete has chosen to keep their profile private.</p>' +
+      '<a href="/workouts.html" class="btn-gate-submit" style="display:inline-block;text-decoration:none;text-align:center;">Browse Workouts</a>' +
+    '</div></div>';
+  gate.classList.remove('hidden');
+}
+
+function hideHistorySections() {
+  ['lifts-section', 'training-log-section'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  var rv = document.getElementById('val-results');
+  if (rv) { var card = rv.closest('.stat-card'); if (card) card.style.display = 'none'; }
 }
 
 document.getElementById('gate-form').addEventListener('submit', async function(e) {

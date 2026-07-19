@@ -104,16 +104,8 @@
 .legal-contact-box a:hover { color: var(--or-dark); }
   </style>
 
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-HZM475VDN3');
-  </script>
-  <!-- Vercel Analytics -->
-  <script defer src="/_vercel/insights/script.js"></script>
+  <!-- Cookie Consent (gates Google Analytics + Vercel Analytics until opt-in) -->
+  <script src="/js/consent.js"></script>
 </head>
 
 <body data-nav-init="true" data-active-page="">
@@ -123,7 +115,7 @@
   <div class="page-header-inner">
     <div class="page-eyebrow">Legal</div>
     <h1 class="page-title">Privacy Policy</h1>
-    <p class="page-meta">Last updated: April 27, 2026</p>
+    <p class="page-meta">Last updated: July 19, 2026</p>
   </div>
 </div>
 
@@ -137,7 +129,10 @@
       <a class="toc-link" href="#overview">Overview</a>
       <a class="toc-link" href="#collect">Information We Collect</a>
       <a class="toc-link" href="#use">How We Use Your Information</a>
+      <a class="toc-link" href="#basis">Legal Basis for Processing</a>
       <a class="toc-link" href="#sharing">Information Sharing</a>
+      <a class="toc-link" href="#transfers">International Transfers</a>
+      <a class="toc-link" href="#retention">Data Retention</a>
       <a class="toc-link" href="#cookies">Cookies</a>
       <a class="toc-link" href="#rights">Your Rights</a>
       <a class="toc-link" href="#contact-us">Contact Us</a>
@@ -164,9 +159,10 @@
       <ul>
         <li>Account information — your email address and display name when you create an account</li>
         <li>Workout data — results, scores, and notes you log on the site</li>
-        <li>Messages — feedback or support requests you send via the Contact page</li>
+        <li>Messages — feedback or support requests you send via the Contact page, processed through our form provider, Web3Forms</li>
       </ul>
-      <p>We also collect certain information automatically when you use the site, including your IP address, browser type, pages visited, and the date and time of your visit. This is standard web analytics data collected via Google Analytics and Vercel Analytics.</p>
+      <p>If you've accepted analytics cookies via our cookie banner, we also collect certain information automatically when you use the site, including your IP address, browser type, pages visited, and the date and time of your visit. This is standard web analytics data collected via Google Analytics and Vercel Analytics — see <a href="#cookies" style="color:var(--or)">Cookies</a> below.</p>
+      <p>We also use Sentry for error monitoring, which may automatically capture technical diagnostic data (such as your IP address, browser type, and the page you were on) when something breaks, so we can fix it. This runs regardless of your cookie choice, since it's necessary to keep the site working reliably — see <a href="#basis" style="color:var(--or)">Legal Basis for Processing</a> below. On the sign-up page, Cloudflare Turnstile collects limited device and browser signals to confirm you're not a bot before creating an account.</p>
     </div>
 
     <div class="legal-section" id="use">
@@ -176,29 +172,69 @@
         <li>Provide, maintain, and improve the site and its features</li>
         <li>Populate your training log and display your results on the leaderboard (if you opt in)</li>
         <li>Respond to your feedback and support requests</li>
-        <li>Understand how the site is used so we can make it better</li>
+        <li>Understand how the site is used so we can make it better (only if you've accepted analytics cookies)</li>
+        <li>Detect and prevent bot signups and abuse</li>
+        <li>Diagnose and fix technical errors</li>
+      </ul>
+    </div>
+
+    <div class="legal-section" id="basis">
+      <h2>Legal Basis for Processing</h2>
+      <p>If you're located in the EEA, UK, or another jurisdiction with similar requirements, we process your personal data on the following legal bases under the GDPR:</p>
+      <ul>
+        <li><strong>Contract</strong> — processing your account information, workout data, and login session is necessary to provide the service you signed up for.</li>
+        <li><strong>Consent</strong> — Google Analytics and Vercel Analytics cookies only run after you accept them via our cookie banner. You can withdraw this consent at any time (see <a href="#cookies" style="color:var(--or)">Cookies</a>).</li>
+        <li><strong>Legitimate interests</strong> — error monitoring (Sentry) and bot protection (Cloudflare Turnstile) run on this basis, to keep the site secure and functioning correctly. We've weighed this against your privacy interests and limited the data collected to what's needed for those purposes.</li>
+        <li><strong>Legal obligation</strong> — where we're required to disclose information to comply with the law.</li>
       </ul>
     </div>
 
     <div class="legal-section" id="sharing">
       <h2>Information Sharing</h2>
-      <p>We do not sell, trade, or rent your personal information. We may share information only in the following limited circumstances:</p>
+      <p>We do not sell, trade, or rent your personal information. We share information only with the service providers who help us run the site, each acting as a data processor under their own privacy policy and terms:</p>
       <ul>
-        <li><strong>Service providers</strong> — we use Supabase for our database and authentication, Resend for transactional email, and Vercel for hosting. Each operates under their own privacy policy.</li>
-        <li><strong>Legal requirements</strong> — if required by law or to protect the rights and safety of our users.</li>
+        <li><strong>Supabase</strong> — database, authentication, and login sessions</li>
+        <li><strong>Resend</strong> — transactional email (account confirmations, password resets, digests)</li>
+        <li><strong>Vercel</strong> — website hosting, plus Vercel Analytics if you've accepted analytics cookies</li>
+        <li><strong>Google Analytics</strong> — usage analytics, only if you've accepted analytics cookies</li>
+        <li><strong>Sentry</strong> — error monitoring and diagnostics</li>
+        <li><strong>Web3Forms</strong> — processes Contact page submissions and relays them to us by email</li>
+        <li><strong>Cloudflare</strong> — Turnstile bot protection on sign-up</li>
       </ul>
+      <p>We may also disclose information if required by law or to protect the rights and safety of our users.</p>
       <p>Your publicly visible leaderboard entries (username and score) are visible to all site visitors. You control whether your results appear on the leaderboard.</p>
+    </div>
+
+    <div class="legal-section" id="transfers">
+      <h2>International Transfers</h2>
+      <p>HomeWodRX and the service providers listed above are based in or operate infrastructure in the United States. If you're accessing the site from the EEA, UK, or elsewhere outside the US, your information will be transferred to and processed in the US. Our service providers maintain appropriate safeguards for these transfers, such as Standard Contractual Clauses, as required under their respective privacy and data processing terms.</p>
+    </div>
+
+    <div class="legal-section" id="retention">
+      <h2>Data Retention</h2>
+      <p>We keep your account information and workout data for as long as your account is active. If you delete your account from Profile settings, we delete your personal data from our systems, other than records we're required to keep for legal, security, or fraud-prevention purposes (kept only as long as necessary for those purposes).</p>
+      <p>Contact form messages are retained as long as needed to respond to and resolve your inquiry. Analytics data collected via Google Analytics and Vercel Analytics is retained according to those providers' standard retention settings.</p>
     </div>
 
     <div class="legal-section" id="cookies">
       <h2>Cookies</h2>
-      <p>We use cookies and similar technologies to keep you logged in, remember your preferences, and collect analytics data. You can control cookies through your browser settings. See our <a href="/cookies.html" style="color:var(--or)">Cookie Policy</a> for full details.</p>
+      <p>We use essential cookies to keep you logged in, and — only with your consent — analytics cookies to understand how the site is used. On your first visit, a banner lets you accept or reject analytics cookies; nothing beyond essential cookies runs until you accept. See our <a href="/cookies.html" style="color:var(--or)">Cookie Policy</a> for full details and how to change your choice at any time.</p>
     </div>
 
     <div class="legal-section" id="rights">
       <h2>Your Rights</h2>
-      <p>You may request access to, correction of, or deletion of your personal data at any time. To do so, contact us via the <a href="/contact.html" style="color:var(--or)">Contact page</a> and we will respond within 30 days.</p>
-      <p>You may also delete your account at any time from your Profile settings, which will remove your personal data from our systems.</p>
+      <p>If you're located in the EEA, UK, or another jurisdiction with similar data protection laws, you have the right to:</p>
+      <ul>
+        <li><strong>Access</strong> the personal data we hold about you</li>
+        <li><strong>Correct</strong> inaccurate or incomplete data</li>
+        <li><strong>Erase</strong> your personal data ("right to be forgotten")</li>
+        <li><strong>Restrict</strong> how we process your data</li>
+        <li><strong>Object</strong> to processing based on legitimate interests</li>
+        <li><strong>Port</strong> your data to another service in a structured, machine-readable format</li>
+        <li><strong>Withdraw consent</strong> at any time for anything we process based on consent (e.g. analytics cookies), without affecting the lawfulness of processing before withdrawal</li>
+        <li><strong>Lodge a complaint</strong> with your local data protection supervisory authority if you believe we haven't handled your data properly</li>
+      </ul>
+      <p>To exercise any of these rights, contact us via the <a href="/contact.html" style="color:var(--or)">Contact page</a> and we will respond within 30 days. You can also delete your account at any time from your Profile settings, or manage your cookie consent from the <a href="/cookies.html" style="color:var(--or)">Cookie Policy</a> page.</p>
     </div>
 
     <div class="legal-section" id="contact-us">

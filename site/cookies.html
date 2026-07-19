@@ -104,16 +104,8 @@
 .legal-contact-box a:hover { color: var(--or-dark); }
   </style>
 
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HZM475VDN3"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-HZM475VDN3');
-  </script>
-  <!-- Vercel Analytics -->
-  <script defer src="/_vercel/insights/script.js"></script>
+  <!-- Cookie Consent (gates Google Analytics + Vercel Analytics until opt-in) -->
+  <script src="/js/consent.js"></script>
 </head>
 
 <body data-nav-init="true" data-active-page="">
@@ -123,7 +115,7 @@
   <div class="page-header-inner">
     <div class="page-eyebrow">Legal</div>
     <h1 class="page-title">Cookie Policy</h1>
-    <p class="page-meta">Last updated: April 27, 2026</p>
+    <p class="page-meta">Last updated: July 19, 2026</p>
   </div>
 </div>
 
@@ -158,15 +150,17 @@
       <h2>Cookies We Use</h2>
       <p>HomeWodRX uses the following categories of cookies:</p>
       <ul>
-        <li><strong>Essential cookies</strong> — required for the site to function. These handle your login session via Supabase. Without these, you cannot stay logged in.</li>
-        <li><strong>Analytics cookies</strong> — Google Analytics and Vercel Analytics use cookies to collect anonymous data about how visitors use the site (pages visited, time on page, referral source). This helps us improve the site. No personally identifiable information is collected.</li>
+        <li><strong>Essential cookies</strong> — required for the site to function. These handle your login session via Supabase. Without these, you cannot stay logged in. Essential cookies are never gated behind the consent banner below, since the site cannot work without them.</li>
+        <li><strong>Analytics cookies</strong> — Google Analytics and Vercel Analytics use cookies to collect data about how visitors use the site (pages visited, time on page, referral source). This helps us improve the site. These only load if you click "Accept" on the cookie banner shown on your first visit — see below.</li>
       </ul>
       <div class="legal-highlight">We do not use advertising cookies or sell data to ad networks.</div>
     </div>
 
     <div class="legal-section" id="control">
       <h2>Controlling Cookies</h2>
-      <p>You can control and delete cookies through your browser settings. Note that disabling essential cookies will prevent you from staying logged in to your account.</p>
+      <p>On your first visit, a banner asks whether you're OK with analytics cookies. Choosing "Reject" means Google Analytics and Vercel Analytics never load in your browser. You can change your mind at any time:</p>
+      <button type="button" onclick="if(window.CookieConsent){CookieConsent.openPreferences();}" style="background:var(--or);color:#fff;border:none;border-radius:var(--radius);padding:11px 20px;font-size:.875rem;font-weight:700;font-family:var(--font-body);cursor:pointer;margin:4px 0 4px;">Manage Cookie Preferences</button>
+      <p>You can also control and delete cookies through your browser settings. Note that disabling essential cookies will prevent you from staying logged in to your account.</p>
       <p>To opt out of Google Analytics tracking across all websites, you can install the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener" style="color:var(--or)">Google Analytics Opt-out Browser Add-on</a>.</p>
     </div>
 
