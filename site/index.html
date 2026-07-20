@@ -284,6 +284,51 @@
     }
     .btn-white:hover { opacity: .92; }
     .cta-banner small { display: block; margin-top: 14px; font-size: .78rem; opacity: .7; }
+
+    /* ── STATS BAR ─────────────────────────────────────────────── */
+    .stats-bar { background: var(--white); border-bottom: 1px solid var(--border); padding: 30px 24px; }
+    .stats-bar-inner {
+      display: flex; justify-content: center; gap: 56px; flex-wrap: wrap; text-align: center;
+    }
+    .stat-item { min-width: 110px; }
+    .stat-num {
+      font-family: var(--font-head); font-size: clamp(28px, 4vw, 40px);
+      color: var(--or); letter-spacing: .03em; line-height: 1;
+    }
+    .stat-label {
+      font-size: .74rem; color: var(--muted); margin-top: 6px;
+      text-transform: uppercase; letter-spacing: .07em; font-weight: 700;
+    }
+    @media (max-width: 600px) { .stats-bar-inner { gap: 30px; } .stats-bar { padding: 24px 20px; } }
+
+    /* ── DAILY WOD EMAIL DIGEST STRIP ────────────────────────────── */
+    .digest-strip {
+      background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius-lg);
+      padding: 30px 32px; display: flex; align-items: center; justify-content: space-between;
+      gap: 24px; flex-wrap: wrap; box-shadow: var(--shadow);
+    }
+    .digest-copy h3 { font-size: 1.15rem; font-weight: 800; margin-bottom: 4px; color: var(--text); }
+    .digest-copy p { font-size: .875rem; color: var(--muted); }
+    .digest-form-wrap { min-width: 280px; }
+    .digest-form { display: flex; gap: 8px; flex-wrap: wrap; }
+    .digest-form input[type=email] {
+      flex: 1; min-width: 220px; padding: 12px 16px; border: 1.5px solid var(--border2);
+      border-radius: var(--radius); font-size: .9rem; font-family: var(--font-body); color: var(--text);
+    }
+    .digest-form input[type=email]:focus { outline: none; border-color: var(--or); }
+    .digest-form button {
+      padding: 12px 22px; background: var(--or); color: #fff; border: none; border-radius: var(--radius);
+      font-weight: 700; font-size: .9rem; cursor: pointer; transition: background .15s; white-space: nowrap;
+    }
+    .digest-form button:hover { background: var(--or-dark); }
+    .digest-form button:disabled { opacity: .6; cursor: default; }
+    .digest-msg { font-size: .8rem; margin-top: 8px; min-height: 1em; }
+    .digest-msg.ok  { color: #16a34a; }
+    .digest-msg.err { color: var(--or); }
+    @media (max-width: 640px) { .digest-strip { padding: 24px 22px; } }
+
+    /* ── MEMBER (LOGGED-IN) BANNER ───────────────────────────────── */
+    #cta-member { display: none; }
   </style>
 
   <!-- Cookie Consent (gates Google Analytics + Vercel Analytics until opt-in) -->
@@ -300,6 +345,28 @@
     <a href="/workouts.html" class="btn-sec">Browse Workouts →</a>
   </div>
 </header>
+
+<!-- ── STATS BAR ── -->
+<section class="stats-bar">
+  <div class="wrap stats-bar-inner">
+    <div class="stat-item">
+      <div class="stat-num" id="stat-workouts">200+</div>
+      <div class="stat-label">Benchmark WODs</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="stat-movements">200+</div>
+      <div class="stat-label">Movement Guides</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="stat-stretches">50+</div>
+      <div class="stat-label">Stretches &amp; Mobility Drills</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">Daily</div>
+      <div class="stat-label">New WOD &amp; Stretch, Every Day</div>
+    </div>
+  </div>
+</section>
 
 <main>
 
@@ -366,6 +433,15 @@
         <h3>Training Blog</h3>
         <p>In-depth articles on programming, technique, equipment, and the science behind functional fitness training — written for athletes who want to train smarter.</p>
         <a class="feat-link" href="/blog.html">Read the blog →</a>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C41212" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <h3>Movement Library</h3>
+        <p>Every movement in every workout, explained — 200+ guides with coached video demos, filterable by equipment and muscle group. The foundation everything else on this site links back to.</p>
+        <a class="feat-link" href="/movements.html">Browse movements →</a>
       </div>
 
     </div>
@@ -450,6 +526,25 @@
   </div>
 </section>
 
+<!-- ── DAILY WOD EMAIL DIGEST ── -->
+<section class="module" id="digest-section">
+  <div class="wrap">
+    <div class="digest-strip">
+      <div class="digest-copy">
+        <h3>Never Miss a Workout</h3>
+        <p>Get the Daily 20 and Daily 10 Stretch in your inbox every morning — free, unsubscribe anytime.</p>
+      </div>
+      <div class="digest-form-wrap">
+        <form class="digest-form" id="digest-form">
+          <input type="email" id="digest-email" placeholder="you@email.com" required autocomplete="email">
+          <button type="submit">Get the Daily WOD →</button>
+        </form>
+        <div class="digest-msg" id="digest-msg"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ── BENCHMARK WOD LIBRARY ── -->
 <section class="module">
   <div class="wrap">
@@ -465,35 +560,35 @@
         <div class="cat-info">
           <h4>Classic Benchmarks</h4>
           <p>Fran, Grace, Helen — the original named workouts that define your fitness level.</p>
-          <div class="cat-count">Browse workouts</div>
+          <div class="cat-count" id="cat-count-classic_benchmark">Browse workouts</div>
         </div>
       </a>
       <a class="cat-card" href="/workouts.html?cat=hero">
         <div class="cat-info">
           <h4>Hero WODs</h4>
           <p>Murph, DT, Manion — named for fallen servicemen and women. Hard by design.</p>
-          <div class="cat-count">Browse workouts</div>
+          <div class="cat-count" id="cat-count-hero">Browse workouts</div>
         </div>
       </a>
       <a class="cat-card" href="/workouts.html?cat=competition">
         <div class="cat-info">
           <h4>Competition WODs</h4>
           <p>Open, Games, and Qualifier workouts. The same programming that competed globally.</p>
-          <div class="cat-count">Browse workouts</div>
+          <div class="cat-count" id="cat-count-competition">Browse workouts</div>
         </div>
       </a>
       <a class="cat-card" href="/workouts.html?cat=community">
         <div class="cat-info">
           <h4>Community WODs</h4>
           <p>Partner and community workouts built for accountability and shared suffering.</p>
-          <div class="cat-count">Browse workouts</div>
+          <div class="cat-count" id="cat-count-community">Browse workouts</div>
         </div>
       </a>
       <a class="cat-card" href="/workouts.html?cat=memorial">
         <div class="cat-info">
           <h4>Memorials &amp; Tributes</h4>
           <p>WODs created to honor and remember — meaningful workouts with a story behind them.</p>
-          <div class="cat-count">Browse workouts</div>
+          <div class="cat-count" id="cat-count-memorial">Browse workouts</div>
         </div>
       </a>
     </div>
@@ -549,12 +644,19 @@
 
 </main>
 
-<!-- ── CTA BANNER ── -->
+<!-- ── CTA BANNER (guest) ── -->
 <div class="cta-banner" id="cta-guest">
-  <h2>Your Whole Training Life. One Platform.</h2>
-  <p>Create an account to save your workouts, log your results, and track your PRs.</p>
+  <h2>Log It. Track It. Watch Yourself Improve.</h2>
+  <p>Save every workout, log your results against Rx and Scaled, and watch your PRs stack up over time.</p>
   <a href="/signup.html" class="btn-white">Create Your Account →</a>
   <small>Always free to get started — no credit card required</small>
+</div>
+
+<!-- ── CTA BANNER (logged-in member) ── -->
+<div class="cta-banner" id="cta-member">
+  <h2 id="member-greeting">Welcome Back.</h2>
+  <p id="member-substat">Jump back into your training log or find today's workout.</p>
+  <a href="/myworkouts.html" class="btn-white">View My Training Log →</a>
 </div>
 
 <!-- ── FOOTER ── -->
@@ -618,10 +720,123 @@
 async function initAuth() {
   try {
     const user = await db.getUser();
-    if (user) {
-      document.getElementById('cta-guest').style.display = 'none';
+    if (!user) return;
+
+    // Logged in: hide the guest signup ask, show a personalized member banner,
+    // and hide the email-digest strip (they can manage that in Settings).
+    const guestBanner  = document.getElementById('cta-guest');
+    const memberBanner = document.getElementById('cta-member');
+    const digestSection = document.getElementById('digest-section');
+    if (guestBanner) guestBanner.style.display = 'none';
+    if (digestSection) digestSection.style.display = 'none';
+
+    let firstName = 'Athlete';
+    try {
+      const profile = await db.getProfile(user.id);
+      if (profile && profile.username) firstName = profile.username;
+    } catch (e) { /* fall back to generic greeting */ }
+
+    const greetingEl = document.getElementById('member-greeting');
+    if (greetingEl) greetingEl.textContent = `Welcome Back, ${firstName}.`;
+
+    const substatEl = document.getElementById('member-substat');
+    if (substatEl) {
+      try {
+        const stats = await db.getUserStats();
+        if (stats && stats.totalResults > 0) {
+          substatEl.textContent = `You've logged ${stats.totalResults} result${stats.totalResults === 1 ? '' : 's'} so far — keep the streak going.`;
+        } else {
+          substatEl.textContent = `Ready to log your first result? Find today's workout below.`;
+        }
+      } catch (e) { /* keep default substat copy */ }
     }
+
+    if (memberBanner) memberBanner.style.display = 'block';
   } catch(e) { console.warn('Auth check failed:', e); }
+}
+
+// ─────────────────────────────────────────
+// STATS BAR — live counts from Supabase
+// ─────────────────────────────────────────
+async function renderStatsBar() {
+  if (!supabaseClient) return;
+  const workoutsEl  = document.getElementById('stat-workouts');
+  const movementsEl = document.getElementById('stat-movements');
+  const stretchesEl = document.getElementById('stat-stretches');
+  try {
+    const [wodRes, movRes, strRes] = await Promise.all([
+      supabaseClient.from('benchmark_workouts').select('id', { count: 'exact', head: true }),
+      supabaseClient.from('movements').select('id', { count: 'exact', head: true }),
+      supabaseClient.from('stretches').select('id', { count: 'exact', head: true })
+    ]);
+    if (workoutsEl  && typeof wodRes.count === 'number') workoutsEl.textContent  = wodRes.count;
+    if (movementsEl && typeof movRes.count === 'number') movementsEl.textContent = movRes.count;
+    if (stretchesEl && typeof strRes.count === 'number') stretchesEl.textContent = strRes.count;
+  } catch (e) {
+    console.warn('Stats bar counts unavailable, showing fallback:', e);
+  }
+}
+
+// ─────────────────────────────────────────
+// CATEGORY CARD COUNTS — live counts from Supabase
+// ─────────────────────────────────────────
+async function renderCategoryCounts() {
+  if (!supabaseClient) return;
+  const cats = ['classic_benchmark', 'hero', 'competition', 'community', 'memorial'];
+  try {
+    const results = await Promise.all(cats.map(c =>
+      supabaseClient.from('benchmark_workouts').select('id', { count: 'exact', head: true }).eq('category', c)
+    ));
+    results.forEach((res, i) => {
+      const el = document.getElementById('cat-count-' + cats[i]);
+      // Leave the "Browse workouts" fallback in place for any category with
+      // zero results yet — a live "0 workouts" reads as broken.
+      if (el && typeof res.count === 'number' && res.count > 0) {
+        el.textContent = res.count + (res.count === 1 ? ' workout' : ' workouts');
+      }
+    });
+  } catch (e) {
+    console.warn('Category counts unavailable, keeping fallback text:', e);
+  }
+}
+
+// ─────────────────────────────────────────
+// DAILY WOD EMAIL DIGEST SIGNUP
+// ─────────────────────────────────────────
+function initDigestForm() {
+  const form = document.getElementById('digest-form');
+  if (!form) return;
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const input = document.getElementById('digest-email');
+    const msg   = document.getElementById('digest-msg');
+    const btn   = form.querySelector('button');
+    const email = (input.value || '').trim();
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      msg.textContent = 'Enter a valid email address.';
+      msg.className = 'digest-msg err';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Joining…';
+    try {
+      if (!supabaseClient) throw new Error('Supabase unavailable');
+      const { error } = await supabaseClient.from('email_subscribers').insert({ email: email, source: 'homepage_digest' });
+      if (error && error.code !== '23505') throw error; // 23505 = already subscribed, treat as success
+      msg.textContent = "You're in — check your inbox tomorrow morning.";
+      msg.className = 'digest-msg ok';
+      form.reset();
+    } catch (err) {
+      console.warn('Digest signup failed:', err);
+      msg.textContent = 'Something went wrong — please try again.';
+      msg.className = 'digest-msg err';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Get the Daily WOD →';
+    }
+  });
 }
 
 
@@ -808,6 +1023,9 @@ document.addEventListener('DOMContentLoaded', function() {
   initAuth();
   renderDailyWOD();
   renderDailyStretch();
+  renderStatsBar();
+  renderCategoryCounts();
+  initDigestForm();
 });
 </script>
 <script src="/js/footer.js"></script>
