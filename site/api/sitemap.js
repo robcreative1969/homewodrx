@@ -51,6 +51,7 @@ const BLOG_SLUGS = [
   'sleep-and-athletic-performance',
   'staying-connected-fitness',
   'staying-motivated-solo-training',
+  'test-retest-benchmark-progress',
   'weekly-training-program-home',
   'why-short-wods-work',
   'why-stretching-matters',
