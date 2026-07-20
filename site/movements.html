@@ -78,6 +78,7 @@
     }
     .filters-panel.open { display: block; }
     .filter-group { display: flex; flex-direction: column; gap: 8px; }
+    .filter-group + .filter-group { margin-top: 16px; }
     .filter-label {
       font-size: .72rem; font-weight: 700; text-transform: uppercase;
       letter-spacing: .07em; color: var(--muted);
@@ -242,12 +243,12 @@
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
         </svg>
-        Filter by category
+        Filters
       </button>
     </div>
 
     <!-- Collapsible filters panel -->
-    <div class="filters-panel" id="filters-panel" role="region" aria-label="Category filter">
+    <div class="filters-panel" id="filters-panel" role="region" aria-label="Filter movements">
       <div class="filter-group">
         <span class="filter-label">Equipment Category</span>
         <div class="chip-row" id="cat-chips">
@@ -270,6 +271,20 @@
           <button class="chip" data-cat="box">Box</button>
           <button class="chip" data-cat="ghd">GHD</button>
           <button class="chip" data-cat="dipbar">Dip Bar</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Muscle Focus</span>
+        <div class="chip-row" id="muscle-chips">
+          <button class="chip active" data-muscle="all">All</button>
+          <button class="chip" data-muscle="glutes">Glutes</button>
+          <button class="chip" data-muscle="hamstrings">Hamstrings</button>
+          <button class="chip" data-muscle="calves">Calves</button>
+          <button class="chip" data-muscle="core">Core</button>
+          <button class="chip" data-muscle="back">Back</button>
+          <button class="chip" data-muscle="chest">Chest</button>
+          <button class="chip" data-muscle="shoulders">Shoulders</button>
+          <button class="chip" data-muscle="full">Full Body</button>
         </div>
       </div>
     </div>
@@ -397,7 +412,7 @@ async function loadMovements() {
 
   const { data, error } = await supabaseClient
     .from('movements')
-    .select('name, slug, equipment_category, wod_tip')
+    .select('name, slug, equipment_category, wod_tip, muscle_groups')
     .order('name');
 
   if (error || !data) {
@@ -406,11 +421,12 @@ async function loadMovements() {
   }
 
   return data.map(m => ({
-    name:  m.name,
-    slug:  m.slug,
-    cat:   m.equipment_category || 'bodyweight',
-    tip:   m.wod_tip || '',
-    count: benchmarkCounts[(m.name || '').toLowerCase().trim()] || 0,
+    name:    m.name,
+    slug:    m.slug,
+    cat:     m.equipment_category || 'bodyweight',
+    tip:     m.wod_tip || '',
+    muscles: m.muscle_groups || [],
+    count:   benchmarkCounts[(m.name || '').toLowerCase().trim()] || 0,
   }));
 }
 
@@ -428,12 +444,14 @@ function strMatch(text, q) {
 // FILTER STATE
 // ─────────────────────────────────────────
 let activeCategory = 'all';
+let activeMuscle   = 'all';
 let searchQuery    = '';
 let ALL_MOVEMENTS  = [];
 
 function filteredMovements() {
   let list = [...ALL_MOVEMENTS];
   if (activeCategory !== 'all') list = list.filter(m => m.cat === activeCategory);
+  if (activeMuscle !== 'all') list = list.filter(m => (m.muscles || []).includes(activeMuscle));
   if (searchQuery) {
     const q = searchQuery;
     list = list.filter(m =>
@@ -526,16 +544,21 @@ const CAT_DISPLAY = {
   box: 'Box', ghd: 'GHD',
 };
 
+const MUSCLE_DISPLAY = {
+  glutes: 'Glutes', hamstrings: 'Hamstrings', calves: 'Calves', core: 'Core',
+  back: 'Back', chest: 'Chest', shoulders: 'Shoulders', full: 'Full Body',
+};
+
 function updateMoreFiltersBtn() {
   const btn   = document.getElementById('more-filters-btn');
-  const count = activeCategory !== 'all' ? 1 : 0;
+  const count = (activeCategory !== 'all' ? 1 : 0) + (activeMuscle !== 'all' ? 1 : 0);
   const filterSVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>`;
   if (count > 0) {
     btn.classList.add('has-filters');
-    btn.innerHTML = `${filterSVG} Filter by category <span class="filter-count-badge">${count}</span>`;
+    btn.innerHTML = `${filterSVG} Filters <span class="filter-count-badge">${count}</span>`;
   } else {
     btn.classList.remove('has-filters');
-    btn.innerHTML = `${filterSVG} Filter by category`;
+    btn.innerHTML = `${filterSVG} Filters`;
   }
 }
 
@@ -545,6 +568,10 @@ function updateActivePills() {
   if (activeCategory !== 'all') {
     const label = CAT_DISPLAY[activeCategory] || activeCategory;
     pills.push(`<span class="active-pill">${label} <span class="pill-x" data-clear="cat" role="button" aria-label="Remove ${label} filter">✕</span></span>`);
+  }
+  if (activeMuscle !== 'all') {
+    const label = MUSCLE_DISPLAY[activeMuscle] || activeMuscle;
+    pills.push(`<span class="active-pill">${label} <span class="pill-x" data-clear="muscle" role="button" aria-label="Remove ${label} filter">✕</span></span>`);
   }
   if (searchQuery) {
     const raw = document.getElementById('search').value;
@@ -564,6 +591,9 @@ function updateActivePills() {
       if (t === 'cat') {
         activeCategory = 'all';
         document.querySelectorAll('[data-cat]').forEach(c => c.classList.toggle('active', c.dataset.cat === 'all'));
+      } else if (t === 'muscle') {
+        activeMuscle = 'all';
+        document.querySelectorAll('[data-muscle]').forEach(c => c.classList.toggle('active', c.dataset.muscle === 'all'));
       } else if (t === 'search') {
         searchQuery = '';
         document.getElementById('search').value = '';
@@ -578,6 +608,7 @@ function updateActivePills() {
 function syncURL() {
   const url = new URL(location.href);
   if (activeCategory === 'all') url.searchParams.delete('cat'); else url.searchParams.set('cat', activeCategory);
+  if (activeMuscle === 'all') url.searchParams.delete('muscle'); else url.searchParams.set('muscle', activeMuscle);
   const rawQ = document.getElementById('search').value;
   if (!rawQ) url.searchParams.delete('q'); else url.searchParams.set('q', rawQ);
   history.replaceState(null, '', url);
@@ -585,10 +616,13 @@ function syncURL() {
 
 function clearAllFilters() {
   activeCategory = 'all';
+  activeMuscle = 'all';
   searchQuery = '';
   document.getElementById('search').value = '';
   document.querySelectorAll('[data-cat]').forEach(c =>
     c.classList.toggle('active', c.dataset.cat === 'all'));
+  document.querySelectorAll('[data-muscle]').forEach(c =>
+    c.classList.toggle('active', c.dataset.muscle === 'all'));
   updateMoreFiltersBtn();
   updateActivePills();
   render();
@@ -604,12 +638,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Restore state from URL params
   const params = new URLSearchParams(location.search);
-  const catParam = params.get('cat');
-  const qParam   = params.get('q');
+  const catParam    = params.get('cat');
+  const muscleParam = params.get('muscle');
+  const qParam      = params.get('q');
   const validCats = ['bodyweight','barbell','kettlebell','dumbbells','pullupbar','rings','jumprope','resistancebands','running','rower','assaultbike','skierg','slamball','medicineball','rope','box','ghd','dipbar'];
+  const validMuscles = ['glutes','hamstrings','calves','core','back','chest','shoulders','full'];
   if (catParam && validCats.includes(catParam)) {
     activeCategory = catParam;
     document.querySelectorAll('[data-cat]').forEach(c => c.classList.toggle('active', c.dataset.cat === catParam));
+  }
+  if (muscleParam && validMuscles.includes(muscleParam)) {
+    activeMuscle = muscleParam;
+    document.querySelectorAll('[data-muscle]').forEach(c => c.classList.toggle('active', c.dataset.muscle === muscleParam));
   }
   if (qParam) {
     searchQuery = expandQuery(qParam);
@@ -632,6 +672,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     syncURL();
   });
 
+  // Muscle focus chips
+  document.getElementById('muscle-chips').addEventListener('click', e => {
+    const chip = e.target.closest('[data-muscle]');
+    if (!chip) return;
+    activeMuscle = chip.dataset.muscle;
+    document.querySelectorAll('[data-muscle]').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    updateMoreFiltersBtn();
+    updateActivePills();
+    render();
+    syncURL();
+  });
+
   // Search
   let searchTimer;
   document.getElementById('search').addEventListener('input', e => {
@@ -644,6 +697,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }, 180);
   });
 
+  updateMoreFiltersBtn();
+  updateActivePills();
   render();
 });
 </script>
