@@ -47,7 +47,7 @@ ul, ol { list-style: none; }
   /* Neutrals */
   --text:      #1a1a1a;
   --muted:     #666;
-  --muted2:    #999;
+  --muted2:    #6b6b6b;  /* darkened from #999 2026-07-20 — #999 failed WCAG AA text contrast (2.85:1 on white); #6b6b6b passes 4.5:1+ */
   --border:    #e5e5e5;
   --border2:   #d0d0d0;
   --white:     #fff;
@@ -204,8 +204,11 @@ section.module {
   white-space: nowrap; font-family: var(--font-body); text-decoration: none;
 }
 .nav-btn:hover,
-.nav-btn:focus-visible,
-.nav-dd.open > .nav-btn { background: var(--or-xlight); color: var(--or); outline: none; }
+.nav-dd.open > .nav-btn { background: var(--or-xlight); color: var(--or); }
+.nav-btn:focus-visible {
+  background: var(--or-xlight); color: var(--or);
+  outline: 2px solid var(--or); outline-offset: 2px;
+}
 .nav-btn.active { color: var(--or); }
 
 /* Chevron inside nav-btn */
