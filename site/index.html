@@ -718,28 +718,49 @@
 // AUTH
 // ─────────────────────────────────────────
 async function initAuth() {
+  const guestBanner    = document.getElementById('cta-guest');
+  const memberBanner   = document.getElementById('cta-member');
+  const digestSection  = document.getElementById('digest-section');
+  const greetingEl     = document.getElementById('member-greeting');
+  const substatEl      = document.getElementById('member-substat');
+
+  function showMember(name) {
+    if (guestBanner)   guestBanner.style.display   = 'none';
+    if (digestSection) digestSection.style.display = 'none';
+    if (greetingEl)    greetingEl.textContent       = `Welcome Back, ${name}.`;
+    if (memberBanner)  memberBanner.style.display   = 'block';
+  }
+  function showGuest() {
+    if (memberBanner)  memberBanner.style.display   = 'none';
+    if (guestBanner)   guestBanner.style.display    = '';
+    if (digestSection) digestSection.style.display  = '';
+  }
+
+  // Instant, synchronous pre-check using the same auth cache nav.js already
+  // maintains (hwrx_authed / hwrx_name from the last page's Nav.updateAuth
+  // call) — paints the right banner on first render instead of always
+  // starting from "guest" and flashing to "member" once Supabase responds.
+  const cachedAuthed = localStorage.getItem('hwrx_authed') === '1';
+  const cachedName   = localStorage.getItem('hwrx_name') || 'Athlete';
+  if (cachedAuthed) showMember(cachedName);
+
   try {
     const user = await db.getUser();
-    if (!user) return;
 
-    // Logged in: hide the guest signup ask, show a personalized member banner,
-    // and hide the email-digest strip (they can manage that in Settings).
-    const guestBanner  = document.getElementById('cta-guest');
-    const memberBanner = document.getElementById('cta-member');
-    const digestSection = document.getElementById('digest-section');
-    if (guestBanner) guestBanner.style.display = 'none';
-    if (digestSection) digestSection.style.display = 'none';
+    if (!user) {
+      if (cachedAuthed) showGuest(); // cache was stale (e.g. logged out elsewhere)
+      return;
+    }
 
-    let firstName = 'Athlete';
+    // Confirmed logged in — covers the rare case the cache was empty too
+    // (e.g. the very first homepage load right after signing in elsewhere).
+    let firstName = cachedName;
     try {
       const profile = await db.getProfile(user.id);
       if (profile && profile.username) firstName = profile.username;
-    } catch (e) { /* fall back to generic greeting */ }
+    } catch (e) { /* fall back to cached/generic name */ }
+    showMember(firstName);
 
-    const greetingEl = document.getElementById('member-greeting');
-    if (greetingEl) greetingEl.textContent = `Welcome Back, ${firstName}.`;
-
-    const substatEl = document.getElementById('member-substat');
     if (substatEl) {
       try {
         const stats = await db.getUserStats();
@@ -750,9 +771,7 @@ async function initAuth() {
         }
       } catch (e) { /* keep default substat copy */ }
     }
-
-    if (memberBanner) memberBanner.style.display = 'block';
-  } catch(e) { console.warn('Auth check failed:', e); }
+  } catch (e) { console.warn('Auth check failed:', e); }
 }
 
 // ─────────────────────────────────────────
