@@ -226,6 +226,9 @@
       <button class="filter-chip" data-filter="equipment" onclick="filterPosts('equipment', this)">Equipment</button>
       <button class="filter-chip" data-filter="mobility" onclick="filterPosts('mobility', this)">Mobility</button>
       <button class="filter-chip" data-filter="programming" onclick="filterPosts('programming', this)">Programming</button>
+      <button class="filter-chip" data-filter="mindset" onclick="filterPosts('mindset', this)">Mindset</button>
+      <button class="filter-chip" data-filter="recovery" onclick="filterPosts('recovery', this)">Recovery</button>
+      <button class="filter-chip" data-filter="health" onclick="filterPosts('health', this)">Health &amp; Performance</button>
     </div>
   </div>
 </div>
@@ -345,6 +348,21 @@ fetch('/blog-posts.json')
 
     // Update "All" count badge
     updateCounts(posts);
+
+    // Warn in console if any post uses a category with no matching filter chip
+    var knownFilters = Array.prototype.map.call(
+      document.querySelectorAll('.filter-chip[data-filter]'),
+      function(c) { return c.dataset.filter; }
+    );
+    var missingCats = [];
+    posts.forEach(function(post) {
+      if (post.category && knownFilters.indexOf(post.category) === -1 && missingCats.indexOf(post.category) === -1) {
+        missingCats.push(post.category);
+      }
+    });
+    if (missingCats.length) {
+      console.warn('[blog] Post categor' + (missingCats.length === 1 ? 'y has' : 'ies have') + ' no matching filter chip: ' + missingCats.join(', ') + ' — add a .filter-chip button with a matching data-filter in blog.html.');
+    }
 
     // Apply ?cat= URL param filter if present
     var catParam = new URLSearchParams(window.location.search).get('cat');
