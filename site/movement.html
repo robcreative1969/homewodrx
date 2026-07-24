@@ -101,6 +101,7 @@
 .cat-badge.resistancebands { background: #f0fdf4; border-color: #22c55e; color: #15803d; }
 .cat-badge.slamball      { background: #fff7ed; border-color: #f97316; color: #c2410c; }
 .cat-badge.default       { background: #f3f4f6; border-color: #d1d5db; color: #374151; }
+.cat-badge.latpulldown   { background: #e0f2f1; border-color: #00897b; color: #00695c; }
 
 .difficulty-dots { display: flex; align-items: center; gap: 4px; }
 .diff-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
@@ -519,6 +520,17 @@
         </div>
       </div>
 
+      <!-- Performed On (machine hub link — hidden unless this movement has a machine_id) -->
+      <div class="side-card" id="machine-card" style="display:none">
+        <div class="side-card-head">Performed On</div>
+        <div class="side-card-body">
+          <a href="#" id="machine-link" class="equip-chip" style="width:100%;justify-content:space-between">
+            <span id="machine-link-text"></span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;opacity:.6"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </div>
+      </div>
+
       <!-- Related Movements (hidden until data loaded) -->
       <div class="side-card" id="related-card" style="display:none">
         <div class="side-card-head">Related Movements</div>
@@ -745,14 +757,14 @@ const CAT_CLASS = {
   bodyweight: 'bodyweight', lower: 'lower', push: 'push',
   cardio: 'cardio', kettlebell: 'kettlebell', dumbbell: 'dumbbell',
   core: 'core', fullbody: 'fullbody', resistancebands: 'resistancebands',
-  slamball: 'slamball',
+  slamball: 'slamball', latpulldown: 'latpulldown',
 };
 const CAT_LABEL = {
   barbell: 'Barbell', olympic: 'Olympic', gymnastics: 'Gymnastics',
   bodyweight: 'Bodyweight', lower: 'Lower Body', push: 'Push',
   cardio: 'Cardio', kettlebell: 'Kettlebell', dumbbell: 'Dumbbell',
   core: 'Core', fullbody: 'Full Body', resistancebands: 'Resistance Bands',
-  slamball: 'Slam Ball',
+  slamball: 'Slam Ball', latpulldown: 'Lat Pulldown Machine',
 };
 function catBadgeClass(cat) {
   if (!cat) return 'default';
@@ -881,7 +893,7 @@ async function loadMovementPage() {
   try {
     const { data, error } = await supabaseClient
       .from('movements')
-      .select('name, slug, muscles, description, tips, daily_wod_eligible, category, youtube_url, equipment, scaling_options, common_faults')
+      .select('name, slug, muscles, description, tips, daily_wod_eligible, category, youtube_url, equipment, scaling_options, common_faults, machine_id')
       .eq('slug', slug)
       .maybeSingle();
     if (!error && data) info = data;
@@ -1223,6 +1235,22 @@ async function loadMovementPage() {
 
   /* ── 12. Equipment sidebar ── */
   renderEquipment(equipment);
+
+  /* ── 13. Machine hub link (only if this movement is performed on a machine) ── */
+  if (info?.machine_id) {
+    try {
+      const { data: machine } = await supabaseClient
+        .from('machines')
+        .select('name, slug')
+        .eq('id', info.machine_id)
+        .maybeSingle();
+      if (machine) {
+        document.getElementById('machine-link-text').textContent = machine.name;
+        document.getElementById('machine-link').href = `/machines/${machine.slug}`;
+        document.getElementById('machine-card').style.display = '';
+      }
+    } catch (e) { /* silent fail */ }
+  }
 }
 
 /* ══════════════════════════════════════════
