@@ -845,10 +845,7 @@ function summarizeMovements(b) {
 // ADMIN
 // ─────────────────────────────────────────────────────────────────────────────
 function isAdmin() {
-  return !!(currentUser && (
-    currentUser.email === 'rob@carlbloom.com' ||
-    (currentUser.user_metadata && currentUser.user_metadata.role === 'admin')
-  ));
+  return !!(currentUser && currentUser.user_metadata && currentUser.user_metadata.role === 'admin');
 }
 function canManageWorkout(w) {
   if (!currentUser || !w) return false;

@@ -307,7 +307,7 @@ document.getElementById('contact-form').addEventListener('submit', async functio
       throw new Error(json.message || 'Submission failed');
     }
   } catch (err) {
-    errEl.textContent = 'Something went wrong — please try again or email rob@carlbloom.com directly.';
+    errEl.textContent = 'Something went wrong — please try again in a moment.';
     errEl.style.display = 'block';
     btn.disabled = false;
     btn.textContent = 'Send Message';
