@@ -967,7 +967,7 @@ async function loadMovementPage() {
   if (category) {
     const bcCatLink = document.getElementById('bc-cat-link');
     const bcCatWrap = document.getElementById('bc-cat-wrap');
-    bcCatLink.textContent = category;
+    bcCatLink.textContent = CAT_LABEL[category.toLowerCase()] || category;
     bcCatLink.href = `/movements.html?cat=${slugify(category)}`;
     bcCatWrap.style.display = '';
   }
