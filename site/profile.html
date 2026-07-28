@@ -1713,6 +1713,40 @@ document.getElementById('gate-form').addEventListener('submit', async function(e
 });
 
 /* ── Avatar upload ── */
+// Resize + re-encode client-side before upload so what actually lands in
+// storage (and gets served on every nav/profile view) is a small, consistent
+// file regardless of how large the source photo was. Center-crops to a
+// square (matches the circular display) and caps it at AVATAR_MAX_DIM px.
+var AVATAR_MAX_DIM = 400;        // matches the "400×400 px recommended" hint
+var AVATAR_JPEG_QUALITY = 0.85;
+
+function resizeAvatarFile(file, maxDim, quality) {
+  return new Promise(function(resolve, reject) {
+    var objectUrl = URL.createObjectURL(file);
+    var img = new Image();
+    img.onload = function() {
+      URL.revokeObjectURL(objectUrl);
+      var side = Math.min(img.width, img.height);
+      var sx = (img.width  - side) / 2;
+      var sy = (img.height - side) / 2;
+      var outSide = Math.min(maxDim, side); // never upscale a smaller source image
+      var canvas = document.createElement('canvas');
+      canvas.width = outSide;
+      canvas.height = outSide;
+      canvas.getContext('2d').drawImage(img, sx, sy, side, side, 0, 0, outSide, outSide);
+      canvas.toBlob(function(blob) {
+        if (!blob) { reject(new Error('Could not process image')); return; }
+        resolve(blob);
+      }, 'image/jpeg', quality);
+    };
+    img.onerror = function() {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error('Could not read image'));
+    };
+    img.src = objectUrl;
+  });
+}
+
 document.getElementById('avatar-file-input').addEventListener('change', async function(e) {
   var file = e.target.files[0];
   if (!file) return;
@@ -1730,11 +1764,14 @@ document.getElementById('avatar-file-input').addEventListener('change', async fu
     var { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) throw new Error('Not logged in');
 
-    var ext = file.name.split('.').pop().toLowerCase() || 'jpg';
-    var path = user.id + '/avatar.' + ext;
+    var blob = await resizeAvatarFile(file, AVATAR_MAX_DIM, AVATAR_JPEG_QUALITY);
+
+    // Output is always normalized to JPEG, so the storage path is fixed too —
+    // no more accumulating separate .png/.webp objects per user over time.
+    var path = user.id + '/avatar.jpg';
     var { error: upErr } = await supabaseClient.storage
       .from('avatars')
-      .upload(path, file, { upsert: true, contentType: file.type });
+      .upload(path, blob, { upsert: true, contentType: 'image/jpeg', cacheControl: '31536000' });
     if (upErr) throw upErr;
 
     var { data: { publicUrl } } = supabaseClient.storage.from('avatars').getPublicUrl(path);
