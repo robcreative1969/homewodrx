@@ -220,6 +220,9 @@ const Nav = {
             <a href="/blog.html?cat=equipment"><div class="dl"><strong>Equipment</strong><small>Gear guides &amp; reviews</small></div></a>
             <a href="/blog.html?cat=wod-guides"><div class="dl"><strong>WOD Guides</strong><small>Breakdowns &amp; strategy</small></div></a>
             <a href="/blog.html?cat=mobility"><div class="dl"><strong>Mobility</strong><small>Recovery &amp; maintenance</small></div></a>
+            <a href="/blog.html?cat=mindset"><div class="dl"><strong>Mindset</strong><small>Motivation &amp; consistency</small></div></a>
+            <a href="/blog.html?cat=recovery"><div class="dl"><strong>Recovery</strong><small>Rest, balance &amp; sleep</small></div></a>
+            <a href="/blog.html?cat=health"><div class="dl"><strong>Health &amp; Performance</strong><small>Nutrition &amp; wellness</small></div></a>
           </div>
         </div>
         <div class="dd-div"></div>
@@ -319,6 +322,9 @@ const Nav = {
       <a href="/blog.html?cat=equipment" class="ham-link">Equipment</a>
       <a href="/blog.html?cat=wod-guides" class="ham-link">WOD Guides</a>
       <a href="/blog.html?cat=mobility" class="ham-link">Mobility</a>
+      <a href="/blog.html?cat=mindset" class="ham-link">Mindset</a>
+      <a href="/blog.html?cat=recovery" class="ham-link">Recovery</a>
+      <a href="/blog.html?cat=health" class="ham-link">Health &amp; Performance</a>
     </div>
   </div>
   <div class="ham-divider"></div>
