@@ -17,8 +17,6 @@ All 23 existing posts were cleaned up on 2026-07-19 to remove AI-sounding writin
 
 ## Queue
 
-- [ ] Test and Retest: Tracking Progress With Benchmark Workouts | Programming | test-retest-benchmark-progress
-- [ ] Building a Budget Home Gym for Under $500 | Equipment | budget-home-gym-under-500
 - [ ] Flooring, Lighting, and Layout: Setting Up a Small-Space Gym | Equipment | small-space-gym-setup
 - [ ] Murph: History, Strategy, and Ways to Scale It | Training | murph-history-strategy-scaling
 - [ ] Rest Days for the Garage Athlete: What to Do When You're Not Training | Training | rest-days-garage-athlete
@@ -34,6 +32,8 @@ All 23 existing posts were cleaned up on 2026-07-19 to remove AI-sounding writin
 
 ## Written (auto-updated by the weekly task)
 
+- [x] Building a Budget Home Gym for Under $500 | Equipment | budget-home-gym-under-500 — July 27, 2026
+- [x] Test and Retest: Tracking Progress With Benchmark Workouts | Programming | test-retest-benchmark-progress — July 20, 2026
 - [x] RX vs. Scaled: How to Choose the Right Weights for You | Training | rx-vs-scaled-choosing-weights — July 13, 2026
 - [x] Bodyweight Benchmark WODs You Can Do Anywhere | Training | bodyweight-benchmark-wods — July 6, 2026
 - [x] Dumbbells vs. Barbell: What the Home Athlete Should Buy First | Equipment | dumbbells-vs-barbell-first — June 29, 2026
