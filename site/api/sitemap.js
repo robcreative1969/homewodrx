@@ -35,6 +35,7 @@ const BLOG_SLUGS = [
   'best-gear-car-vacation',
   'best-home-gym-equipment',
   'bodyweight-benchmark-wods',
+  'budget-home-gym-under-500',
   'building-garage-gym',
   'day-by-day-fitness-mindset',
   'dumbbells-vs-barbell-first',
