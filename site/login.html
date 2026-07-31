@@ -199,7 +199,7 @@
         </div>
 
         <hr class="auth-divider">
-        <p class="auth-footer">Don't have an account? <a href="/signup.html">Sign up free</a></p>
+        <p class="auth-footer">Don't have an account? <a href="/signup">Sign up free</a></p>
       </div>
 
       <!-- ── FORGOT PASSWORD VIEW ── -->
@@ -336,7 +336,7 @@
         setAlert('reset-error', 'error', 'Please enter your email address.');
         return;
       }
-      const { error } = await db.resetPassword(email, '/login.html');
+      const { error } = await db.resetPassword(email, '/login');
       if (error) {
         setAlert('reset-error', 'error', 'Something went wrong. Please try again.');
       } else {

@@ -981,7 +981,7 @@ async function sendPasswordReset(){
     return;
   }
 
-  const {error}=await db.resetPassword(email, '/admin.html');
+  const {error}=await db.resetPassword(email, '/admin');
   if(error){
     errEl.textContent='Something went wrong. Please try again.';
     errEl.style.display='block';
@@ -1335,7 +1335,7 @@ async function loadFeaturedSchedule(){
   const{data}=await supabaseClient.from('featured').select('*').gte('feature_date',today).lte('feature_date',future.toISOString().split('T')[0]).order('feature_date');
   const wrap=document.getElementById('featured-schedule');
   if(!data?.length){wrap.innerHTML='<p style="color:var(--mu);font-size:14px">No featured workouts scheduled yet.</p>';return;}
-  wrap.innerHTML=`<table class="table"><thead><tr><th>Date</th><th>Workout</th><th>Type</th><th>Notes</th></tr></thead><tbody>${data.map(f=>`<tr><td style="font-weight:700">${f.feature_date}</td><td>${f.benchmark_slug?`<a href="/workout.html?slug=${f.benchmark_slug}" style="color:var(--orl)">${f.benchmark_slug}</a>`:f.workout_id||'—'}</td><td><span class="pill ${f.featured_type==='manual'?'pill-pu':'pill-bl'}">${f.featured_type}</span></td><td style="color:var(--mu);font-size:12px">${escHtml(f.notes||'')}</td></tr>`).join('')}</tbody></table>`;
+  wrap.innerHTML=`<table class="table"><thead><tr><th>Date</th><th>Workout</th><th>Type</th><th>Notes</th></tr></thead><tbody>${data.map(f=>`<tr><td style="font-weight:700">${f.feature_date}</td><td>${f.benchmark_slug?`<a href="/workout?slug=${f.benchmark_slug}" style="color:var(--orl)">${f.benchmark_slug}</a>`:f.workout_id||'—'}</td><td><span class="pill ${f.featured_type==='manual'?'pill-pu':'pill-bl'}">${f.featured_type}</span></td><td style="color:var(--mu);font-size:12px">${escHtml(f.notes||'')}</td></tr>`).join('')}</tbody></table>`;
 }
 
 async function loadNominations(){
@@ -1367,7 +1367,7 @@ async function loadResults(){
   const{data}=await query;
   const wrap=document.getElementById('results-table-wrap');
   if(!data?.length){wrap.innerHTML='<p style="color:var(--mu);font-size:14px">No results found.</p>';return;}
-  wrap.innerHTML=`<table class="table"><thead><tr><th>Athlete</th><th>Workout</th><th>Score</th><th>Rx</th><th>Date</th></tr></thead><tbody>${data.map(r=>`<tr><td><a href="/u/${encodeURIComponent(r.username||'')}" style="color:var(--tx);font-weight:700;text-decoration:none">${escHtml(r.username||'')}</a></td><td style="color:var(--mu)">${r.benchmark_slug?`<a href="/workout.html?slug=${r.benchmark_slug}" style="color:var(--orl)">${r.benchmark_slug}</a>`:`<span style="font-size:11px">${r.workout_id?.slice(0,8)||'user'}</span>`}</td><td style="font-weight:700;color:var(--orl)">${escHtml(r.score_display||'')}</td><td>${r.is_rx?'<span class="pill pill-gr">Rx</span>':'<span class="pill pill-mu">Scaled</span>'}</td><td style="color:var(--mu);font-size:12px">${r.date||''}</td></tr>`).join('')}</tbody></table>`;
+  wrap.innerHTML=`<table class="table"><thead><tr><th>Athlete</th><th>Workout</th><th>Score</th><th>Rx</th><th>Date</th></tr></thead><tbody>${data.map(r=>`<tr><td><a href="/u/${encodeURIComponent(r.username||'')}" style="color:var(--tx);font-weight:700;text-decoration:none">${escHtml(r.username||'')}</a></td><td style="color:var(--mu)">${r.benchmark_slug?`<a href="/workout?slug=${r.benchmark_slug}" style="color:var(--orl)">${r.benchmark_slug}</a>`:`<span style="font-size:11px">${r.workout_id?.slice(0,8)||'user'}</span>`}</td><td style="font-weight:700;color:var(--orl)">${escHtml(r.score_display||'')}</td><td>${r.is_rx?'<span class="pill pill-gr">Rx</span>':'<span class="pill pill-mu">Scaled</span>'}</td><td style="color:var(--mu);font-size:12px">${r.date||''}</td></tr>`).join('')}</tbody></table>`;
 }
 
 async function loadConfig(){
@@ -1630,7 +1630,7 @@ async function sendAthleteReset(id,username,email){
   if(!confirm(`Send password reset email to ${email} for "${username}"?`))return;
   try{
     const{error}=await supabaseClient.auth.resetPasswordForEmail(email,{
-      redirectTo:window.location.origin+'/login.html'
+      redirectTo:window.location.origin+'/login'
     });
     if(error) showAlert('athletes-alert','Error sending reset: '+error.message,'err');
     else showAlert('athletes-alert','Password reset email sent to '+email+'!','ok');
@@ -2017,7 +2017,7 @@ function renderBenchmarksTable(){
   filtered.forEach(b=>{
     const movCount=Array.isArray(b.movements)?b.movements.length:0;
     html+=`<tr>
-      <td style="font-weight:700"><a href="/workout.html?slug=${escHtml(b.slug)}" target="_blank" style="color:var(--orl);text-decoration:none">${escHtml(b.name)}</a></td>
+      <td style="font-weight:700"><a href="/workout?slug=${escHtml(b.slug)}" target="_blank" style="color:var(--orl);text-decoration:none">${escHtml(b.name)}</a></td>
       <td><span class="pill ${b.category==='classic_benchmark'?'pill-or':b.category==='hero'?'pill-pu':'pill-bl'}">${catLabel[b.category]||b.category}</span></td>
       <td style="font-size:12px">${escHtml(b.format||'')}</td>
       <td><span class="pill pill-mu">${cap(b.difficulty||'')}</span></td>

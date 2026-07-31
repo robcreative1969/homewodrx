@@ -17,7 +17,7 @@
   <meta property="og:site_name" content="HomeWodRX">
   <meta property="og:title" content="My Workouts — HomeWodRX">
   <meta property="og:description" content="Your personal training log on HomeWodRX.">
-  <meta property="og:url" content="https://homewodrx.com/myworkouts.html">
+  <meta property="og:url" content="https://homewodrx.com/myworkouts">
   <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
 
   <!-- Favicons -->
@@ -390,8 +390,8 @@ textarea.form-input { resize:vertical; min-height:80px; line-height:1.5; }
         </div>
       </div>
       <div class="auth-btns">
-        <a href="/login.html" class="btn-signin">Sign In</a>
-        <a href="/signup.html" class="btn-signup-ghost">Create Account</a>
+        <a href="/login" class="btn-signin">Sign In</a>
+        <a href="/signup" class="btn-signup-ghost">Create Account</a>
       </div>
     </div>
   </div>
@@ -411,7 +411,7 @@ textarea.form-input { resize:vertical; min-height:80px; line-height:1.5; }
       </div>
       <h2>No Workouts Yet</h2>
       <p>Your training log is empty. Complete a workout and log your result to start tracking your progress.</p>
-      <a href="/wodbuilder.html" class="btn-generate">Generate a WOD</a>
+      <a href="/wodbuilder" class="btn-generate">Generate a WOD</a>
     </div>
   </div>
 
@@ -455,7 +455,7 @@ textarea.form-input { resize:vertical; min-height:80px; line-height:1.5; }
       <button class="filter-tab" data-type="cardio" onclick="filterCards('cardio', this)">
         Activity <span class="tab-count" id="count-cardio">0</span>
       </button>
-      <a href="/wodbuilder.html" class="filter-tab" style="margin-left:auto;text-decoration:none;border-color:var(--or);color:var(--or);">
+      <a href="/wodbuilder" class="filter-tab" style="margin-left:auto;text-decoration:none;border-color:var(--or);color:var(--or);">
         + Build a WOD
       </a>
     </div>
@@ -829,7 +829,7 @@ function buildCard(w) {
   var d       = new Date(w.created_at);
   var dateStr = d.toLocaleDateString('en-US',{ month:'short', day:'numeric', year:'numeric' });
 
-  var wodUrl   = w.slug ? '/workouts/' + w.slug : (w.workout_id ? '/workout.html?id=' + w.workout_id : null);
+  var wodUrl   = w.slug ? '/workouts/' + w.slug : (w.workout_id ? '/workout?id=' + w.workout_id : null);
   var nameHtml = wodUrl
     ? '<a href="' + wodUrl + '" class="wod-name-link">' + esc(w.wod_name) + '</a>'
     : '<span class="wod-name-plain">' + esc(w.wod_name) + '</span>';

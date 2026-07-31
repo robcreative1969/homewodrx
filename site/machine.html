@@ -201,7 +201,7 @@
     <nav class="breadcrumb" id="breadcrumb" aria-label="Breadcrumb">
       <a href="/">Home</a>
       <span>›</span>
-      <a href="/movements.html">Movement Library</a>
+      <a href="/movements">Movement Library</a>
       <span>›</span>
       <span id="bc-current">Loading…</span>
     </nav>
@@ -307,7 +307,7 @@
       <div class="cta-card">
         <h3>Build Your Training History</h3>
         <p>Log your results, track progress over time, and see your performance improve — all in one place.</p>
-        <a href="/signup.html" class="cta-btn">Join Free →</a>
+        <a href="/signup" class="cta-btn">Join Free →</a>
         <div class="cta-sub">No credit card required</div>
       </div>
 
@@ -414,7 +414,7 @@ async function loadMachinePage() {
     h1.textContent = 'Machine not found';
     h1.style.display = '';
     document.getElementById('machine-description').innerHTML =
-      '<p>No machine was specified. <a href="/movements.html" style="color:var(--or)">Browse the movement library →</a></p>';
+      '<p>No machine was specified. <a href="/movements" style="color:var(--or)">Browse the movement library →</a></p>';
     return;
   }
 

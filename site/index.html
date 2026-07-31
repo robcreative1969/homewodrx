@@ -27,7 +27,7 @@
     "publisher": { "@type": "Organization", "name": "HomeWODrx", "url": "https://homewodrx.com" },
     "potentialAction": {
       "@type": "SearchAction",
-      "target": { "@type": "EntryPoint", "urlTemplate": "https://homewodrx.com/search.html?q={search_term_string}" },
+      "target": { "@type": "EntryPoint", "urlTemplate": "https://homewodrx.com/search?q={search_term_string}" },
       "query-input": "required name=search_term_string"
     }
   }
@@ -341,8 +341,8 @@
   <h1>The Platform Built for<br><span id="hero-rotate">Functional Fitness Athletes.</span></h1>
   <p class="hero-sub">Hundreds of benchmark WODs and movement guides, daily workouts, smart workout and stretch builders, gear recommendations, and training articles — everything in one place.</p>
   <div class="hero-ctas">
-    <a href="/wodbuilder.html" class="btn-pri">Build My Workout →</a>
-    <a href="/workouts.html" class="btn-sec">Browse Workouts →</a>
+    <a href="/wodbuilder" class="btn-pri">Build My Workout →</a>
+    <a href="/workouts" class="btn-sec">Browse Workouts →</a>
   </div>
 </header>
 
@@ -387,7 +387,7 @@
         </div>
         <h3>Workout Library</h3>
         <p>Hundreds of named WODs across every major category — Classic Benchmarks, Hero, Competition, Community, and more. Every workout includes movement guides, scaling options, and coaching notes.</p>
-        <a class="feat-link" href="/workouts.html">Browse workouts →</a>
+        <a class="feat-link" href="/workouts">Browse workouts →</a>
       </div>
 
       <div class="feat-card">
@@ -396,7 +396,7 @@
         </div>
         <h3>Daily Training</h3>
         <p>A fresh workout and a paired mobility session every single day — The Daily 20 and The Daily 10 Stretch. Auto-generated, free for everyone, no sign-up required. Includes a built-in WOD Timer with AMRAP, for time, EMOM, and Tabata modes.</p>
-        <a class="feat-link" href="/daily-wod.html">Today's WOD →</a>
+        <a class="feat-link" href="/daily-wod">Today's WOD →</a>
       </div>
 
       <div class="feat-card">
@@ -405,7 +405,7 @@
         </div>
         <h3>Workout Builders</h3>
         <p>Tell us your equipment, time, and goals — get a custom WOD in seconds. Built for athletes who want a smart, purposeful workout without the guesswork.</p>
-        <a class="feat-link" href="/wodbuilder.html">Build a workout →</a>
+        <a class="feat-link" href="/wodbuilder">Build a workout →</a>
       </div>
 
       <div class="feat-card">
@@ -414,7 +414,7 @@
         </div>
         <h3>Stretch &amp; Mobility</h3>
         <p>The Daily 10 Stretch pairs with every workout. Go deeper with the Stretch Generator or browse 54 individual mobility movements — each with hold cues and coaching notes.</p>
-        <a class="feat-link" href="/stretchbuilder.html">Build a stretch routine →</a>
+        <a class="feat-link" href="/stretchbuilder">Build a stretch routine →</a>
       </div>
 
       <div class="feat-card">
@@ -423,7 +423,7 @@
         </div>
         <h3>Gear Shop</h3>
         <p>Curated equipment picks at every price point — from a starter kettlebell to a full garage rig. Hand-picked for functional fitness athletes training at home or on the road.</p>
-        <a class="feat-link" href="/shop.html">Shop gear →</a>
+        <a class="feat-link" href="/shop">Shop gear →</a>
       </div>
 
       <div class="feat-card">
@@ -432,7 +432,7 @@
         </div>
         <h3>Training Blog</h3>
         <p>In-depth articles on programming, technique, equipment, and the science behind functional fitness training — written for athletes who want to train smarter.</p>
-        <a class="feat-link" href="/blog.html">Read the blog →</a>
+        <a class="feat-link" href="/blog">Read the blog →</a>
       </div>
 
       <div class="feat-card">
@@ -441,7 +441,7 @@
         </div>
         <h3>Movement Library</h3>
         <p>Every movement in every workout, explained — 200+ guides with coached video demos, filterable by equipment and muscle group. The foundation everything else on this site links back to.</p>
-        <a class="feat-link" href="/movements.html">Browse movements →</a>
+        <a class="feat-link" href="/movements">Browse movements →</a>
       </div>
 
     </div>
@@ -456,7 +456,7 @@
         <h2>Today's Training</h2>
         <p id="today-date-label">Live daily workouts for every level</p>
       </div>
-      <a class="view-all" href="/daily-wod.html">Full workout →</a>
+      <a class="view-all" href="/daily-wod">Full workout →</a>
     </div>
     <div class="training-today-grid">
 
@@ -485,8 +485,8 @@
           <div class="d20-scoring" id="wod-scoring"></div>
         </div>
         <div class="d20-foot">
-          <a class="d20-btn d20-btn-pri" href="/daily-wod.html">Start Workout</a>
-          <a class="d20-btn d20-btn-sec" href="/timer.html">WOD Timer →</a>
+          <a class="d20-btn d20-btn-pri" href="/daily-wod">Start Workout</a>
+          <a class="d20-btn d20-btn-sec" href="/timer">WOD Timer →</a>
         </div>
         <div class="d20-note">Auto-regenerates daily · same for all visitors</div>
       </div>
@@ -516,8 +516,8 @@
           <div class="d20-scoring d20-scoring-green" id="stretch-scoring"></div>
         </div>
         <div class="d20-foot">
-          <a class="d20-btn d20-btn-sec d20-btn-green" href="/daily-wod.html#daily-10">Full Routine →</a>
-          <a class="d20-btn d20-btn-sec" href="/stretches.html">Browse Stretches →</a>
+          <a class="d20-btn d20-btn-sec d20-btn-green" href="/daily-wod#daily-10">Full Routine →</a>
+          <a class="d20-btn d20-btn-sec" href="/stretches">Browse Stretches →</a>
         </div>
         <div class="d20-note">Auto-generates daily · pairs with The Daily 20</div>
       </div>
@@ -553,38 +553,38 @@
         <h2>The Benchmark WOD Library</h2>
         <p>The classic workouts that define your fitness level — Classic Benchmarks, Hero WODs, Competition, and more.</p>
       </div>
-      <a class="view-all" href="/workouts.html">Browse the library →</a>
+      <a class="view-all" href="/workouts">Browse the library →</a>
     </div>
     <div class="cat-grid">
-      <a class="cat-card" href="/workouts.html?cat=classic_benchmark">
+      <a class="cat-card" href="/workouts?cat=classic_benchmark">
         <div class="cat-info">
           <h4>Classic Benchmarks</h4>
           <p>Fran, Grace, Helen — the original named workouts that define your fitness level.</p>
           <div class="cat-count" id="cat-count-classic_benchmark">Browse workouts</div>
         </div>
       </a>
-      <a class="cat-card" href="/workouts.html?cat=hero">
+      <a class="cat-card" href="/workouts?cat=hero">
         <div class="cat-info">
           <h4>Hero WODs</h4>
           <p>Murph, DT, Manion — named for fallen servicemen and women. Hard by design.</p>
           <div class="cat-count" id="cat-count-hero">Browse workouts</div>
         </div>
       </a>
-      <a class="cat-card" href="/workouts.html?cat=competition">
+      <a class="cat-card" href="/workouts?cat=competition">
         <div class="cat-info">
           <h4>Competition WODs</h4>
           <p>Open, Games, and Qualifier workouts. The same programming that competed globally.</p>
           <div class="cat-count" id="cat-count-competition">Browse workouts</div>
         </div>
       </a>
-      <a class="cat-card" href="/workouts.html?cat=community">
+      <a class="cat-card" href="/workouts?cat=community">
         <div class="cat-info">
           <h4>Community WODs</h4>
           <p>Partner and community workouts built for accountability and shared suffering.</p>
           <div class="cat-count" id="cat-count-community">Browse workouts</div>
         </div>
       </a>
-      <a class="cat-card" href="/workouts.html?cat=memorial">
+      <a class="cat-card" href="/workouts?cat=memorial">
         <div class="cat-info">
           <h4>Memorials &amp; Tributes</h4>
           <p>WODs created to honor and remember — meaningful workouts with a story behind them.</p>
@@ -603,7 +603,7 @@
         <h2>From the Blog</h2>
         <p>Training tips, programming guides, and gear breakdowns.</p>
       </div>
-      <a class="view-all" href="/blog.html">All posts →</a>
+      <a class="view-all" href="/blog">All posts →</a>
     </div>
     <div class="blog-grid" id="homeBlogGrid">
       <!-- Populated dynamically from /blog-posts.json -->
@@ -648,7 +648,7 @@
 <div class="cta-banner" id="cta-guest">
   <h2>Log It. Track It. Watch Yourself Improve.</h2>
   <p>Save every workout, log your results against Rx and Scaled, and watch your PRs stack up over time.</p>
-  <a href="/signup.html" class="btn-white">Create Your Account →</a>
+  <a href="/signup" class="btn-white">Create Your Account →</a>
   <small>Always free to get started — no credit card required</small>
 </div>
 
@@ -656,7 +656,7 @@
 <div class="cta-banner" id="cta-member">
   <h2 id="member-greeting">Welcome Back.</h2>
   <p id="member-substat">Jump back into your training log or find today's workout.</p>
-  <a href="/myworkouts.html" class="btn-white">View My Training Log →</a>
+  <a href="/myworkouts" class="btn-white">View My Training Log →</a>
 </div>
 
 <!-- ── FOOTER ── -->
@@ -665,41 +665,41 @@
     <div class="footer-grid">
       <div class="footer-col">
         <h4>Workouts</h4>
-        <a href="/workouts.html?cat=classic_benchmark">Classic Benchmarks</a>
-        <a href="/workouts.html?cat=hero">Hero WODs</a>
-        <a href="/workouts.html?cat=competition">Competition WODs</a>
-        <a href="/workouts.html?cat=community">Community WODs</a>
-        <a href="/workouts.html">All Workouts</a>
+        <a href="/workouts?cat=classic_benchmark">Classic Benchmarks</a>
+        <a href="/workouts?cat=hero">Hero WODs</a>
+        <a href="/workouts?cat=competition">Competition WODs</a>
+        <a href="/workouts?cat=community">Community WODs</a>
+        <a href="/workouts">All Workouts</a>
       </div>
       <div class="footer-col">
         <h4>Train</h4>
-        <a href="/daily-wod.html">The Daily 20</a>
-        <a href="/wodbuilder.html">Smart WOD Builder</a>
-        <a href="/timer.html">WOD Timer</a>
-        <a href="/movements.html">Movement Library</a>
+        <a href="/daily-wod">The Daily 20</a>
+        <a href="/wodbuilder">Smart WOD Builder</a>
+        <a href="/timer">WOD Timer</a>
+        <a href="/movements">Movement Library</a>
       </div>
       <div class="footer-col">
         <h4>Stretch &amp; Mobility</h4>
-        <a href="/stretchbuilder.html">The Daily 10</a>
-        <a href="/stretches.html">Browse Stretches</a>
-        <a href="/stretch-routines.html">Stretch Routines</a>
+        <a href="/stretchbuilder">The Daily 10</a>
+        <a href="/stretches">Browse Stretches</a>
+        <a href="/stretch-routines">Stretch Routines</a>
       </div>
       <div class="footer-col">
         <h4>More</h4>
-        <a href="/shop.html">Gear Shop</a>
-        <a href="/blog.html">Blog &amp; Articles</a>
-        <a href="/search.html">Search</a>
-        <a href="/contact.html">Contact</a>
-        <a href="/privacy.html">Privacy Policy</a>
+        <a href="/shop">Gear Shop</a>
+        <a href="/blog">Blog &amp; Articles</a>
+        <a href="/search">Search</a>
+        <a href="/contact">Contact</a>
+        <a href="/privacy">Privacy Policy</a>
       </div>
     </div>
     <div class="footer-bottom">
       <div class="footer-logo">Home<span>WOD</span>rx</div>
       <p>© 2026 HomeWodRX. All rights reserved.</p>
       <div style="display:flex;gap:16px;font-size:.75rem;">
-        <a href="/privacy.html" style="color:#666;text-decoration:none;">Privacy</a>
-        <a href="/terms.html" style="color:#666;text-decoration:none;">Terms</a>
-        <a href="/disclaimer.html" style="color:#666;text-decoration:none;">Disclaimer</a>
+        <a href="/privacy" style="color:#666;text-decoration:none;">Privacy</a>
+        <a href="/terms" style="color:#666;text-decoration:none;">Terms</a>
+        <a href="/disclaimer" style="color:#666;text-decoration:none;">Disclaimer</a>
       </div>
     </div>
   </div>

@@ -16,7 +16,7 @@
   <meta property="og:site_name" content="HomeWodRX">
   <meta property="og:title" content="Athlete Profile — HomeWodRX">
   <meta property="og:description" content="View your HomeWodRX athlete profile — training history, lift PRs, and workout activity.">
-  <meta property="og:url" content="https://homewodrx.com/profile.html">
+  <meta property="og:url" content="https://homewodrx.com/profile">
   <meta property="og:image" content="https://homewodrx.com/images/og-default.png">
 
   <!-- Favicons -->
@@ -521,8 +521,8 @@
         <button type="submit" class="btn-gate-submit" id="gate-submit-btn">Log In</button>
       </form>
       <hr class="auth-gate-divider">
-      <p class="auth-gate-footer">Don't have an account? <a href="/signup.html">Sign up free</a></p>
-      <p class="auth-gate-footer" style="margin-top:.5rem"><a href="/login.html">Forgot password?</a></p>
+      <p class="auth-gate-footer">Don't have an account? <a href="/signup">Sign up free</a></p>
+      <p class="auth-gate-footer" style="margin-top:.5rem"><a href="/login">Forgot password?</a></p>
     </div>
   </div>
 </div>
@@ -774,16 +774,16 @@
   <div class="mb-28" id="activity-section">
     <div class="activity-hdr">
       <span class="activity-title">Recent Activity</span>
-      <a href="/myworkouts.html" class="see-all-link" id="see-all-link">See full history →</a>
+      <a href="/myworkouts" class="see-all-link" id="see-all-link">See full history →</a>
     </div>
 
     <div class="stats-strip mb-20">
-      <a href="/myworkouts.html" class="stat-card">
+      <a href="/myworkouts" class="stat-card">
         <div class="stat-val" id="val-workouts">0</div>
         <div class="stat-lbl">WODs Built</div>
         <div class="stat-sub">Workouts you've created</div>
       </a>
-      <a href="/myworkouts.html" class="stat-card">
+      <a href="/myworkouts" class="stat-card">
         <div class="stat-val" id="val-results">0</div>
         <div class="stat-lbl">Results Logged</div>
         <div class="stat-sub">Completed & tracked</div>
@@ -1287,7 +1287,7 @@ function loadActivity(profileData, isOwn) {
     actHdr.appendChild(logBtn);
 
     var genBtn = document.createElement('a');
-    genBtn.href = '/wodbuilder.html';
+    genBtn.href = '/wodbuilder';
     genBtn.className = 'btn-gen-wod';
     genBtn.innerHTML = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Generate WOD';
     actHdr.appendChild(genBtn);
@@ -1647,7 +1647,7 @@ function showPrivateGate() {
     '<div class="auth-gate-wrap"><div class="auth-gate-card">' +
       '<h1 class="auth-gate-title">This Profile Is Private</h1>' +
       '<p class="auth-gate-sub">This athlete has chosen to keep their profile private.</p>' +
-      '<a href="/workouts.html" class="btn-gate-submit" style="display:inline-block;text-decoration:none;text-align:center;">Browse Workouts</a>' +
+      '<a href="/workouts" class="btn-gate-submit" style="display:inline-block;text-decoration:none;text-align:center;">Browse Workouts</a>' +
     '</div></div>';
   gate.classList.remove('hidden');
 }

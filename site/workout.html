@@ -541,40 +541,40 @@
     <div class="footer-grid">
       <div class="footer-col">
         <h4>Workouts</h4>
-        <a href="/workouts.html?cat=classic_benchmark">Classic Benchmarks</a>
-        <a href="/workouts.html?cat=hero">Hero WODs</a>
-        <a href="/workouts.html?cat=competition">Competition WODs</a>
-        <a href="/workouts.html?cat=community">Community WODs</a>
-        <a href="/workouts.html">All Workouts</a>
+        <a href="/workouts?cat=classic_benchmark">Classic Benchmarks</a>
+        <a href="/workouts?cat=hero">Hero WODs</a>
+        <a href="/workouts?cat=competition">Competition WODs</a>
+        <a href="/workouts?cat=community">Community WODs</a>
+        <a href="/workouts">All Workouts</a>
       </div>
       <div class="footer-col">
         <h4>Train</h4>
-        <a href="/daily-wod.html">The Daily 20</a>
-        <a href="/wodbuilder.html">Smart WOD Builder</a>
-        <a href="/timer.html">WOD Timer</a>
-        <a href="/movements.html">Movement Library</a>
+        <a href="/daily-wod">The Daily 20</a>
+        <a href="/wodbuilder">Smart WOD Builder</a>
+        <a href="/timer">WOD Timer</a>
+        <a href="/movements">Movement Library</a>
       </div>
       <div class="footer-col">
         <h4>Stretch &amp; Mobility</h4>
-        <a href="/stretchbuilder.html">The Daily 10</a>
-        <a href="/stretches.html">Browse Stretches</a>
-        <a href="/stretch-routines.html">Stretch Routines</a>
+        <a href="/stretchbuilder">The Daily 10</a>
+        <a href="/stretches">Browse Stretches</a>
+        <a href="/stretch-routines">Stretch Routines</a>
       </div>
       <div class="footer-col">
         <h4>More</h4>
-        <a href="/shop.html">Gear Shop</a>
-        <a href="/blog.html">Blog</a>
-        <a href="/search.html">Search</a>
-        <a href="/contact.html">Contact</a>
+        <a href="/shop">Gear Shop</a>
+        <a href="/blog">Blog</a>
+        <a href="/search">Search</a>
+        <a href="/contact">Contact</a>
       </div>
     </div>
     <div class="footer-bottom">
       <a href="/"><img src="/images/HomeWODRx-logo-white-red-black-strip-040626.png" alt="HomeWODrx" style="height:28px;display:block;"></a>
       <p>© 2026 HomeWodRX. All rights reserved.</p>
       <div style="display:flex;gap:16px;font-size:.75rem;">
-        <a href="/privacy.html" style="color:#666;text-decoration:none;">Privacy</a>
-        <a href="/terms.html" style="color:#666;text-decoration:none;">Terms</a>
-        <a href="/disclaimer.html" style="color:#666;text-decoration:none;">Disclaimer</a>
+        <a href="/privacy" style="color:#666;text-decoration:none;">Privacy</a>
+        <a href="/terms" style="color:#666;text-decoration:none;">Terms</a>
+        <a href="/disclaimer" style="color:#666;text-decoration:none;">Disclaimer</a>
       </div>
     </div>
   </div>
@@ -686,8 +686,8 @@
       <button class="wambtn" onclick="submitWorkoutLogin()">Sign In &#x2192;</button>
       <p class="wamlink">No account? <a onclick="switchWorkoutAuthTab('signup')">Sign up free</a></p>
       <div class="wam-recovery">
-        <a href="/login.html">Forgot password?</a>
-        <a href="/login.html">Forgot email?</a>
+        <a href="/login">Forgot password?</a>
+        <a href="/login">Forgot email?</a>
       </div>
     </div>
     <div id="workout-signup-form" style="display:none">
@@ -803,7 +803,7 @@ function buildTimerUrl(w) {
   });
   const movesStr = movePairs.length ? '&moves=' + encodeURIComponent(movePairs.join(',')) : '';
   const slug = encodeURIComponent(w.slug || '');
-  const base = '/timer.html?wod=' + name + '&format=' + fmtLabel + '&time=' + mins + (slug ? '&slug=' + slug : '') + movesStr;
+  const base = '/timer?wod=' + name + '&format=' + fmtLabel + '&time=' + mins + (slug ? '&slug=' + slug : '') + movesStr;
   if (fmt.includes('amrap'))   return base + '&mode=amrap';
   if (fmt.includes('emom'))    return base + '&mode=emom';
   if (fmt.includes('tabata'))  return base + '&mode=tabata';
@@ -935,7 +935,7 @@ async function deleteCurrentWorkout() {
     var res = await supabaseClient.from('workouts').delete().eq('id', w.id);
     if (res.error) throw res.error;
     showWorkoutToast('Workout deleted.', 'success');
-    setTimeout(function() { window.location.href = '/workouts.html'; }, 1500);
+    setTimeout(function() { window.location.href = '/workouts'; }, 1500);
   } catch(e) {
     showWorkoutToast('Error deleting workout.', 'error');
   }
@@ -1089,7 +1089,7 @@ function buildMetaStackHTML(w, isBm) {
         '</div>' +
       '</div>' +
       (isBm
-        ? '<a href="/workouts.html" class="action-btn">' +
+        ? '<a href="/workouts" class="action-btn">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>' +
           ' Browse WODs</a>'
         : '') +
@@ -1221,14 +1221,14 @@ function renderBenchmarkLayout(w) {
     (w.difficulty ? '<span class="wod-ph-meta-item">' + escHtml(cap(w.difficulty)) + '</span>' : '');
 
   var subCatLabel = catLabel ? catLabel + ' WODs' : 'WODs';
-  var subCatHref  = catLabel ? '/workouts.html?category=' + encodeURIComponent(category) : '/workouts.html';
+  var subCatHref  = catLabel ? '/workouts?category=' + encodeURIComponent(category) : '/workouts';
 
   var pageHeaderHtml =
     '<div class="page-header">' +
       '<div class="page-header-inner">' +
         '<nav class="breadcrumb" aria-label="Breadcrumb">' +
           '<a href="/">Home</a><span>›</span>' +
-          '<a href="/workouts.html">Workouts</a><span>›</span>' +
+          '<a href="/workouts">Workouts</a><span>›</span>' +
           '<a href="' + subCatHref + '">' + escHtml(subCatLabel) + '</a><span>›</span>' +
           escHtml(name) +
         '</nav>' +
@@ -1396,7 +1396,7 @@ function renderUserWodLayout(w) {
       '<div class="page-header-inner">' +
         '<nav class="breadcrumb" aria-label="Breadcrumb">' +
           '<a href="/">Home</a><span>›</span>' +
-          '<a href="/myworkouts.html">My Workouts</a><span>›</span>' +
+          '<a href="/myworkouts">My Workouts</a><span>›</span>' +
           escHtml(cap(name)) +
         '</nav>' +
         '<div class="wod-ph-title">' + escHtml(name) + '</div>' +
@@ -1647,7 +1647,7 @@ async function saveAiWorkout() {
     try { sessionStorage.removeItem('hwrx_ai_workout'); } catch(e) {}
 
     // Redirect to the saved workout (canonical URL with ?id=)
-    window.location.href = '/workout.html?id=' + newId;
+    window.location.href = '/workout?id=' + newId;
 
   } catch(e) {
     console.error('saveAiWorkout error:', e);
@@ -2391,7 +2391,7 @@ function updateSeoMeta(w, isBm) {
   var desc   = w.description ? w.description.slice(0, 160) : (name + ' — ' + formatWodMeta(w) + ' on HomeWODrx');
   var canon  = isBm
     ? 'https://homewodrx.com/workouts/' + (w.slug || '')
-    : 'https://homewodrx.com/workout.html?id=' + (w.id || '');
+    : 'https://homewodrx.com/workout?id=' + (w.id || '');
 
   document.title = name + ' — WOD | HomeWODrx';
 
@@ -2457,7 +2457,7 @@ async function loadWorkout() {
       '<div class="error-wrap">' +
         '<h2>WOD Not Found</h2>' +
         '<p>No workout specified.</p>' +
-        '<a href="/workouts.html" style="color:var(--or);font-weight:700">Browse all WODs &rarr;</a>' +
+        '<a href="/workouts" style="color:var(--or);font-weight:700">Browse all WODs &rarr;</a>' +
       '</div>';
     return;
   }
@@ -2482,7 +2482,7 @@ async function loadWorkout() {
           '<div class="error-wrap">' +
             '<h2>WOD Not Found</h2>' +
             '<p>This benchmark WOD doesn\'t exist or has been removed.</p>' +
-            '<a href="/workouts.html" style="color:var(--or);font-weight:700">Browse all WODs &rarr;</a>' +
+            '<a href="/workouts" style="color:var(--or);font-weight:700">Browse all WODs &rarr;</a>' +
           '</div>';
       }
     } else {
@@ -2496,7 +2496,7 @@ async function loadWorkout() {
           '<div class="error-wrap">' +
             '<h2>WOD Not Found</h2>' +
             '<p>This workout doesn\'t exist or has been deleted.</p>' +
-            '<a href="/workouts.html" style="color:var(--or);font-weight:700">Browse all WODs &rarr;</a>' +
+            '<a href="/workouts" style="color:var(--or);font-weight:700">Browse all WODs &rarr;</a>' +
           '</div>';
       }
     }

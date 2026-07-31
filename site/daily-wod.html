@@ -745,7 +745,7 @@
     const movesStr = movePairs.length
       ? '&moves=' + encodeURIComponent(movePairs.join(','))
       : '';
-    return '/timer.html?wod=' + name + '&format=' + fmtEnc + '&time=' + duration + movesStr + '&mode=' + mode;
+    return '/timer?wod=' + name + '&format=' + fmtEnc + '&time=' + duration + movesStr + '&mode=' + mode;
   }
 
   function launchDailyTimer() {
@@ -1040,8 +1040,8 @@
       <button class="wambtn" onclick="submitWorkoutLogin()">Sign In &#x2192;</button>
       <p class="wamlink">No account? <a onclick="switchWorkoutAuthTab('signup')">Sign up free</a></p>
       <div class="wam-recovery">
-        <a href="/login.html">Forgot password?</a>
-        <a href="/login.html">Forgot email?</a>
+        <a href="/login">Forgot password?</a>
+        <a href="/login">Forgot email?</a>
       </div>
     </div>
     <div id="workout-signup-form" style="display:none">

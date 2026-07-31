@@ -370,7 +370,7 @@
     <nav class="breadcrumb" id="breadcrumb" aria-label="Breadcrumb">
       <a href="/">Home</a>
       <span>›</span>
-      <a href="/movements.html">Movements</a>
+      <a href="/movements">Movements</a>
       <span>›</span>
       <span id="bc-cat-wrap" style="display:none"><a href="#" id="bc-cat-link"></a><span>›</span></span>
       <span id="bc-current">Loading…</span>
@@ -504,7 +504,7 @@
       <div class="cta-card">
         <h3 id="cta-title">Build Your Training History</h3>
         <p id="cta-text">Log your results, track progress over time, and see your performance improve — all in one place.</p>
-        <a href="/signup.html" class="cta-btn">Join Free →</a>
+        <a href="/signup" class="cta-btn">Join Free →</a>
         <div class="cta-sub">No credit card required</div>
       </div>
 
@@ -882,7 +882,7 @@ async function loadMovementPage() {
     h1.textContent = 'Movement not found';
     h1.style.display = '';
     document.getElementById('movement-description').innerHTML =
-      '<p>No movement was specified. <a href="/movements.html" style="color:var(--or)">Browse the movement library →</a></p>';
+      '<p>No movement was specified. <a href="/movements" style="color:var(--or)">Browse the movement library →</a></p>';
     return;
   }
 
@@ -1114,7 +1114,7 @@ async function loadMovementPage() {
       `<div style="grid-column:1/-1" class="tab-empty">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         <p>No workouts found that include <strong>${displayName}</strong>.<br>
-        <a href="/workouts.html" style="color:var(--or)">Browse all workouts →</a></p>
+        <a href="/workouts" style="color:var(--or)">Browse all workouts →</a></p>
       </div>`;
   } else {
     const benchmarkCards = matchingBenchmarks.map(w => {
@@ -1142,7 +1142,7 @@ async function loadMovementPage() {
 
     const userCards = matchingUserWorkouts.map(w => {
       const fmt = w.format || 'Custom';
-      return `<a href="/workout.html?id=${w.id}" class="wod-card">
+      return `<a href="/workout?id=${w.id}" class="wod-card">
         <div class="card-head">
           <h2 class="card-name">${w.title || w.name || 'Community WOD'}</h2>
           <div class="card-badges">
