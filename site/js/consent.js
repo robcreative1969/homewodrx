@@ -85,7 +85,7 @@
     el.setAttribute('aria-label', 'Cookie preferences');
     el.innerHTML =
       '<div class="cookie-banner-inner">' +
-      '<p class="cookie-banner-text">We use essential cookies to run the site, and — with your permission — analytics cookies to help us improve it. See our <a href="/cookies.html">Cookie Policy</a>.</p>' +
+      '<p class="cookie-banner-text">We use essential cookies to run the site, and — with your permission — analytics cookies to help us improve it. See our <a href="/cookies">Cookie Policy</a>.</p>' +
       '<div class="cookie-banner-actions">' +
       '<button type="button" class="cookie-btn cookie-btn-reject" id="cookie-reject">Reject</button>' +
       '<button type="button" class="cookie-btn cookie-btn-accept" id="cookie-accept">Accept</button>' +

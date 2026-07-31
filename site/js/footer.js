@@ -117,11 +117,11 @@
           <div class="hwrx-footer-col">
             <h4>Workouts</h4>
             <ul>
-              <li><a href="/workouts.html?cat=classic_benchmark">Classic Benchmarks</a></li>
-              <li><a href="/workouts.html?cat=hero">Hero WODs</a></li>
-              <li><a href="/workouts.html?cat=competition">Competition WODs</a></li>
-              <li><a href="/workouts.html?cat=community">Community WODs</a></li>
-              <li><a href="/workouts.html">All Workouts</a></li>
+              <li><a href="/workouts?cat=classic_benchmark">Classic Benchmarks</a></li>
+              <li><a href="/workouts?cat=hero">Hero WODs</a></li>
+              <li><a href="/workouts?cat=competition">Competition WODs</a></li>
+              <li><a href="/workouts?cat=community">Community WODs</a></li>
+              <li><a href="/workouts">All Workouts</a></li>
             </ul>
           </div>
 
@@ -129,10 +129,10 @@
           <div class="hwrx-footer-col">
             <h4>Train</h4>
             <ul>
-              <li><a href="/daily-wod.html">The Daily 20</a></li>
-              <li><a href="/wodbuilder.html">Smart WOD Builder</a></li>
-              <li><a href="/timer.html">WOD Timer</a></li>
-              <li><a href="/movements.html">Movement Library</a></li>
+              <li><a href="/daily-wod">The Daily 20</a></li>
+              <li><a href="/wodbuilder">Smart WOD Builder</a></li>
+              <li><a href="/timer">WOD Timer</a></li>
+              <li><a href="/movements">Movement Library</a></li>
             </ul>
           </div>
 
@@ -140,11 +140,11 @@
           <div class="hwrx-footer-col">
             <h4>Stretch &amp; Mobility</h4>
             <ul>
-              <li><a href="/stretchbuilder.html">The Daily 10</a></li>
-              <li><a href="/stretchbuilder.html">Smart Stretch Builder</a></li>
-              <li><a href="/stretch-routines.html">Hip &amp; Lower Body</a></li>
-              <li><a href="/stretch-routines.html">Shoulders &amp; Thoracic</a></li>
-              <li><a href="/stretch-routines.html">Recovery Routines</a></li>
+              <li><a href="/stretchbuilder">The Daily 10</a></li>
+              <li><a href="/stretchbuilder">Smart Stretch Builder</a></li>
+              <li><a href="/stretch-routines">Hip &amp; Lower Body</a></li>
+              <li><a href="/stretch-routines">Shoulders &amp; Thoracic</a></li>
+              <li><a href="/stretch-routines">Recovery Routines</a></li>
             </ul>
           </div>
 
@@ -152,11 +152,11 @@
           <div class="hwrx-footer-col">
             <h4>More</h4>
             <ul>
-              <li><a href="/blog.html">Blog &amp; Articles</a></li>
-              <li><a href="/shop.html">Gear Shop</a></li>
-              <li><a href="/profile.html">My Profile</a></li>
-              <li><a href="/contact.html">Contact</a></li>
-              <li><a href="/privacy.html">Privacy Policy</a></li>
+              <li><a href="/blog">Blog &amp; Articles</a></li>
+              <li><a href="/shop">Gear Shop</a></li>
+              <li><a href="/profile">My Profile</a></li>
+              <li><a href="/contact">Contact</a></li>
+              <li><a href="/privacy">Privacy Policy</a></li>
             </ul>
           </div>
 
@@ -171,9 +171,9 @@
         <div class="hwrx-footer-bottom">
           <p>&copy; 2026 HomeWODrx &middot; Built for athletes, by athletes.</p>
           <p>
-            <a href="/privacy.html">Privacy</a> &middot;
-            <a href="/terms.html">Terms</a> &middot;
-            <a href="/cookies.html">Cookies</a>
+            <a href="/privacy">Privacy</a> &middot;
+            <a href="/terms">Terms</a> &middot;
+            <a href="/cookies">Cookies</a>
           </p>
         </div>
       </div>
@@ -187,7 +187,7 @@
   // ============================================================================
   function injectFeedbackWidget() {
     // Don't inject on the contact page itself
-    if (window.location.pathname === '/contact' || window.location.pathname === '/contact.html') return;
+    if (window.location.pathname === '/contact' || window.location.pathname === '/contact') return;
 
     var WEB3FORMS_KEY = '0c5922a1-0b41-4297-b766-ebdba008bf15'; // Web3Forms — notifies robcreative@gmail.com
 

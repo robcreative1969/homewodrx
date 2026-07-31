@@ -127,7 +127,7 @@ const Nav = {
       ).join('');
     } catch (e) {
       const container = document.getElementById('dd-blog-posts');
-      if (container) container.innerHTML = '<a href="/blog.html" class="dd-post"><span class="dd-post-title">Browse all posts →</span></a>';
+      if (container) container.innerHTML = '<a href="/blog" class="dd-post"><span class="dd-post-title">Browse all posts →</span></a>';
     }
   },
 
@@ -160,44 +160,44 @@ const Nav = {
         <div class="dd-cols">
           <div class="dd-col">
             <div class="dd-section-label">Get a Workout</div>
-            <a href="/daily-wod.html" style="background:rgba(196,18,18,.06);border-radius:8px;"><div class="dl"><strong>The Daily 20</strong><small>Today's 20-min WOD — free &amp; ready</small></div></a>
-            <a href="/wodbuilder.html"><div class="dl"><strong>Smart WOD Builder</strong><small>Customize to your goals</small></div></a>
+            <a href="/daily-wod" style="background:rgba(196,18,18,.06);border-radius:8px;"><div class="dl"><strong>The Daily 20</strong><small>Today's 20-min WOD — free &amp; ready</small></div></a>
+            <a href="/wodbuilder"><div class="dl"><strong>Smart WOD Builder</strong><small>Customize to your goals</small></div></a>
             <div class="dd-div"></div>
-            <a href="/timer.html"><div class="dl"><strong>WOD Timer</strong><small>AMRAP, EMOM, For Time &amp; more</small></div></a>
-            <a href="/movements.html"><div class="dl"><strong>Movement Library</strong><small>200+ movements with demos</small></div></a>
+            <a href="/timer"><div class="dl"><strong>WOD Timer</strong><small>AMRAP, EMOM, For Time &amp; more</small></div></a>
+            <a href="/movements"><div class="dl"><strong>Movement Library</strong><small>200+ movements with demos</small></div></a>
           </div>
           <div class="dd-col dd-col-right">
             <div class="dd-section-label">Named Workouts</div>
-            <a href="/workouts.html?cat=classic_benchmark"><div class="dl"><strong>Classic Benchmarks</strong><small>Fran, Grace, Helen &amp; more</small></div></a>
-            <a href="/workouts.html?cat=hero"><div class="dl"><strong>Hero WODs</strong><small>Murph, DT, Manion &amp; more</small></div></a>
-            <a href="/workouts.html?cat=competition"><div class="dl"><strong>Competition WODs</strong><small>Open, Games &amp; Qualifier</small></div></a>
-            <a href="/workouts.html?cat=community"><div class="dl"><strong>Community WODs</strong><small>Partner &amp; community workouts</small></div></a>
+            <a href="/workouts?cat=classic_benchmark"><div class="dl"><strong>Classic Benchmarks</strong><small>Fran, Grace, Helen &amp; more</small></div></a>
+            <a href="/workouts?cat=hero"><div class="dl"><strong>Hero WODs</strong><small>Murph, DT, Manion &amp; more</small></div></a>
+            <a href="/workouts?cat=competition"><div class="dl"><strong>Competition WODs</strong><small>Open, Games &amp; Qualifier</small></div></a>
+            <a href="/workouts?cat=community"><div class="dl"><strong>Community WODs</strong><small>Partner &amp; community workouts</small></div></a>
           </div>
         </div>
         <div class="dd-div"></div>
-        <a href="/workouts.html" class="dd-footer">Browse all workouts →</a>
+        <a href="/workouts" class="dd-footer">Browse all workouts →</a>
       </div>
     </div>
 
     <div class="nav-dd${sA}" id="dd-stretch">
       <button class="nav-btn${sA}" onclick="toggleDD('dd-stretch')">Stretch<svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 6 8 10 12 6"/></svg></button>
       <div class="dd-panel">
-        <a href="/stretchbuilder.html"><div class="dl"><strong>Smart Stretch Builder</strong><small>Auto-build a recovery routine</small></div></a>
-        <a href="/stretches.html"><div class="dl"><strong>Browse Stretches</strong><small>Full stretch movement library</small></div></a>
-        <a href="/stretch-routines.html"><div class="dl"><strong>Stretch Routines</strong><small>Curated mobility programs</small></div></a>
+        <a href="/stretchbuilder"><div class="dl"><strong>Smart Stretch Builder</strong><small>Auto-build a recovery routine</small></div></a>
+        <a href="/stretches"><div class="dl"><strong>Browse Stretches</strong><small>Full stretch movement library</small></div></a>
+        <a href="/stretch-routines"><div class="dl"><strong>Stretch Routines</strong><small>Curated mobility programs</small></div></a>
       </div>
     </div>
 
     <div class="nav-dd${shA}" id="dd-shop">
       <button class="nav-btn${shA}" onclick="toggleDD('dd-shop')">Shop<svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 6 8 10 12 6"/></svg></button>
       <div class="dd-panel">
-        <a href="/shop.html#barbells"><div class="dl"><strong>Barbells &amp; Weights</strong></div></a>
-        <a href="/shop.html#pullup"><div class="dl"><strong>Pull-up &amp; Gymnastics</strong></div></a>
-        <a href="/shop.html#cardio"><div class="dl"><strong>Cardio &amp; Conditioning</strong></div></a>
-        <a href="/shop.html#plyo"><div class="dl"><strong>Plyo &amp; Boxes</strong></div></a>
-        <a href="/shop.html#accessories"><div class="dl"><strong>Accessories</strong></div></a>
+        <a href="/shop#barbells"><div class="dl"><strong>Barbells &amp; Weights</strong></div></a>
+        <a href="/shop#pullup"><div class="dl"><strong>Pull-up &amp; Gymnastics</strong></div></a>
+        <a href="/shop#cardio"><div class="dl"><strong>Cardio &amp; Conditioning</strong></div></a>
+        <a href="/shop#plyo"><div class="dl"><strong>Plyo &amp; Boxes</strong></div></a>
+        <a href="/shop#accessories"><div class="dl"><strong>Accessories</strong></div></a>
         <div class="dd-div"></div>
-        <a href="/shop.html" class="dd-footer">See All Gear →</a>
+        <a href="/shop" class="dd-footer">See All Gear →</a>
       </div>
     </div>
 
@@ -215,18 +215,18 @@ const Nav = {
           </div>
           <div class="dd-col dd-col-right">
             <div class="dd-section-label">Browse by Topic</div>
-            <a href="/blog.html?cat=training"><div class="dl"><strong>Training</strong><small>WODs, technique &amp; form</small></div></a>
-            <a href="/blog.html?cat=programming"><div class="dl"><strong>Programming</strong><small>Planning your training week</small></div></a>
-            <a href="/blog.html?cat=equipment"><div class="dl"><strong>Equipment</strong><small>Gear guides &amp; reviews</small></div></a>
-            <a href="/blog.html?cat=wod-guides"><div class="dl"><strong>WOD Guides</strong><small>Breakdowns &amp; strategy</small></div></a>
-            <a href="/blog.html?cat=mobility"><div class="dl"><strong>Mobility</strong><small>Recovery &amp; maintenance</small></div></a>
-            <a href="/blog.html?cat=mindset"><div class="dl"><strong>Mindset</strong><small>Motivation &amp; consistency</small></div></a>
-            <a href="/blog.html?cat=recovery"><div class="dl"><strong>Recovery</strong><small>Rest, balance &amp; sleep</small></div></a>
-            <a href="/blog.html?cat=health"><div class="dl"><strong>Health &amp; Performance</strong><small>Nutrition &amp; wellness</small></div></a>
+            <a href="/blog?cat=training"><div class="dl"><strong>Training</strong><small>WODs, technique &amp; form</small></div></a>
+            <a href="/blog?cat=programming"><div class="dl"><strong>Programming</strong><small>Planning your training week</small></div></a>
+            <a href="/blog?cat=equipment"><div class="dl"><strong>Equipment</strong><small>Gear guides &amp; reviews</small></div></a>
+            <a href="/blog?cat=wod-guides"><div class="dl"><strong>WOD Guides</strong><small>Breakdowns &amp; strategy</small></div></a>
+            <a href="/blog?cat=mobility"><div class="dl"><strong>Mobility</strong><small>Recovery &amp; maintenance</small></div></a>
+            <a href="/blog?cat=mindset"><div class="dl"><strong>Mindset</strong><small>Motivation &amp; consistency</small></div></a>
+            <a href="/blog?cat=recovery"><div class="dl"><strong>Recovery</strong><small>Rest, balance &amp; sleep</small></div></a>
+            <a href="/blog?cat=health"><div class="dl"><strong>Health &amp; Performance</strong><small>Nutrition &amp; wellness</small></div></a>
           </div>
         </div>
         <div class="dd-div"></div>
-        <a href="/blog.html" class="dd-footer">All Posts →</a>
+        <a href="/blog" class="dd-footer">All Posts →</a>
       </div>
     </div>
   </div>
@@ -237,13 +237,13 @@ const Nav = {
   </button>
 
   <div class="nav-end">
-    <a href="/search.html" class="nav-search-btn" title="Search">
+    <a href="/search" class="nav-search-btn" title="Search">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </a>
     <!-- Guest state (hidden until auth check resolves) -->
     <div id="nav-guest" style="display:none;align-items:center;gap:8px;">
-      <a href="/login.html" class="nav-btn" style="padding:8px 12px;">Log In</a>
-      <a href="/signup.html" class="nav-cta" style="text-decoration:none;display:flex;align-items:center;">Sign Up Free</a>
+      <a href="/login" class="nav-btn" style="padding:8px 12px;">Log In</a>
+      <a href="/signup" class="nav-cta" style="text-decoration:none;display:flex;align-items:center;">Sign Up Free</a>
     </div>
     <!-- Auth state (populated by Nav.updateAuth) -->
     <div id="nav-auth" style="display:none;align-items:center;gap:10px;">
@@ -258,15 +258,15 @@ const Nav = {
             </div>
           </div>
           <div class="dd-div"></div>
-          <a href="/myworkouts.html">
+          <a href="/myworkouts">
             <div class="di"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
             <div class="dl"><strong>My Workouts</strong><small>Training log &amp; history</small></div>
           </a>
-          <a href="/profile.html">
+          <a href="/profile">
             <div class="di"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
             <div class="dl"><strong>My Profile</strong><small>Stats, PRs &amp; activity</small></div>
           </a>
-          <a href="/settings.html">
+          <a href="/settings">
             <div class="di"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
             <div class="dl"><strong>Settings</strong><small>Account &amp; notifications</small></div>
           </a>
@@ -285,53 +285,53 @@ const Nav = {
   <div class="ham-section">
     <div class="ham-section-title">Train</div>
     <div class="ham-links">
-      <a href="/daily-wod.html" class="ham-link">The Daily 20</a>
-      <a href="/wodbuilder.html" class="ham-link">Smart WOD Builder</a>
-      <a href="/timer.html" class="ham-link">WOD Timer</a>
-      <a href="/movements.html" class="ham-link">Movement Library</a>
-      <a href="/workouts.html?cat=classic_benchmark" class="ham-link">Classic Benchmarks</a>
-      <a href="/workouts.html?cat=hero" class="ham-link">Hero WODs</a>
-      <a href="/workouts.html?cat=competition" class="ham-link">Competition WODs</a>
-      <a href="/workouts.html?cat=community" class="ham-link">Community WODs</a>
-      <a href="/workouts.html" class="ham-link">Browse All Workouts</a>
+      <a href="/daily-wod" class="ham-link">The Daily 20</a>
+      <a href="/wodbuilder" class="ham-link">Smart WOD Builder</a>
+      <a href="/timer" class="ham-link">WOD Timer</a>
+      <a href="/movements" class="ham-link">Movement Library</a>
+      <a href="/workouts?cat=classic_benchmark" class="ham-link">Classic Benchmarks</a>
+      <a href="/workouts?cat=hero" class="ham-link">Hero WODs</a>
+      <a href="/workouts?cat=competition" class="ham-link">Competition WODs</a>
+      <a href="/workouts?cat=community" class="ham-link">Community WODs</a>
+      <a href="/workouts" class="ham-link">Browse All Workouts</a>
     </div>
   </div>
   <div class="ham-divider"></div>
   <div class="ham-section">
     <div class="ham-section-title">Stretch</div>
     <div class="ham-links">
-      <a href="/stretchbuilder.html" class="ham-link">Smart Stretch Builder</a>
-      <a href="/stretches.html" class="ham-link">Browse Stretches</a>
-      <a href="/stretch-routines.html" class="ham-link">Stretch Routines</a>
+      <a href="/stretchbuilder" class="ham-link">Smart Stretch Builder</a>
+      <a href="/stretches" class="ham-link">Browse Stretches</a>
+      <a href="/stretch-routines" class="ham-link">Stretch Routines</a>
     </div>
   </div>
   <div class="ham-divider"></div>
   <div class="ham-section">
     <div class="ham-section-title">Shop</div>
     <div class="ham-links">
-      <a href="/shop.html" class="ham-link">All Gear</a>
+      <a href="/shop" class="ham-link">All Gear</a>
     </div>
   </div>
   <div class="ham-divider"></div>
   <div class="ham-section">
     <div class="ham-section-title">Blog</div>
     <div class="ham-links">
-      <a href="/blog.html" class="ham-link">All Posts</a>
-      <a href="/blog.html?cat=training" class="ham-link">Training</a>
-      <a href="/blog.html?cat=programming" class="ham-link">Programming</a>
-      <a href="/blog.html?cat=equipment" class="ham-link">Equipment</a>
-      <a href="/blog.html?cat=wod-guides" class="ham-link">WOD Guides</a>
-      <a href="/blog.html?cat=mobility" class="ham-link">Mobility</a>
-      <a href="/blog.html?cat=mindset" class="ham-link">Mindset</a>
-      <a href="/blog.html?cat=recovery" class="ham-link">Recovery</a>
-      <a href="/blog.html?cat=health" class="ham-link">Health &amp; Performance</a>
+      <a href="/blog" class="ham-link">All Posts</a>
+      <a href="/blog?cat=training" class="ham-link">Training</a>
+      <a href="/blog?cat=programming" class="ham-link">Programming</a>
+      <a href="/blog?cat=equipment" class="ham-link">Equipment</a>
+      <a href="/blog?cat=wod-guides" class="ham-link">WOD Guides</a>
+      <a href="/blog?cat=mobility" class="ham-link">Mobility</a>
+      <a href="/blog?cat=mindset" class="ham-link">Mindset</a>
+      <a href="/blog?cat=recovery" class="ham-link">Recovery</a>
+      <a href="/blog?cat=health" class="ham-link">Health &amp; Performance</a>
     </div>
   </div>
   <div class="ham-divider"></div>
   <div class="ham-section">
     <div class="ham-links">
-      <a href="/login.html" class="ham-link">Log In</a>
-      <a href="/signup.html" class="ham-link" style="color:var(--or);font-weight:700;">Sign Up Free</a>
+      <a href="/login" class="ham-link">Log In</a>
+      <a href="/signup" class="ham-link" style="color:var(--or);font-weight:700;">Sign Up Free</a>
     </div>
   </div>
 </div>
@@ -341,7 +341,7 @@ const Nav = {
     <img src="/HomeWODRx-logo-black-red-040626.png" alt="HomeWODrx" class="nav-logo-img" style="height:28px;">
   </a>
   <div style="display:flex;align-items:center;gap:4px;">
-    <a href="/search.html" class="mob-top-btn" title="Search" aria-label="Search">
+    <a href="/search" class="mob-top-btn" title="Search" aria-label="Search">
       <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </a>
     <button class="mob-top-btn" id="mobile-hamburger-btn" onclick="togHam()" aria-label="Open menu">
@@ -354,7 +354,7 @@ const Nav = {
 <nav class="mobile-tab-bar" role="navigation" aria-label="Mobile navigation">
   <div class="tab-items">
 
-    <a href="/workouts.html" class="tab-item${wA}" aria-label="Train">
+    <a href="/workouts" class="tab-item${wA}" aria-label="Train">
       <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
         <circle cx="12" cy="15.5" r="7"/>
         <path d="M9.2 11.5C8.8 8.2 9.6 3.5 12 3.5C14.4 3.5 15.2 8.2 14.8 11.5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
@@ -362,7 +362,7 @@ const Nav = {
       Train
     </a>
 
-    <a href="/movements.html" class="tab-item${mA}" aria-label="Movements">
+    <a href="/movements" class="tab-item${mA}" aria-label="Movements">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <circle cx="12" cy="5" r="3"/>
         <path d="M6.5 8.5C4.5 10 3 12.5 3 15c0 2 1 3.5 3 4"/>
@@ -373,7 +373,7 @@ const Nav = {
       Movements
     </a>
 
-    <a href="/stretches.html" class="tab-item${sA}" aria-label="Stretch">
+    <a href="/stretches" class="tab-item${sA}" aria-label="Stretch">
       <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
         <circle cx="12" cy="3.5" r="2.5"/>
         <line x1="12" y1="6" x2="12" y2="16" stroke="currentColor" stroke-width="4" stroke-linecap="round" fill="none"/>
@@ -385,7 +385,7 @@ const Nav = {
       Stretch
     </a>
 
-    <a href="/profile.html" class="tab-item${pA}" aria-label="Profile">
+    <a href="/profile" class="tab-item${pA}" aria-label="Profile">
       <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
         <circle cx="12" cy="7" r="4.5"/>
         <path d="M3 21c0-5 4-8.5 9-8.5S21 16 21 21H3z"/>
@@ -396,13 +396,13 @@ const Nav = {
   </div>
 </nav>
 
-<a href="/contact.html" class="mob-feedback-btn" aria-label="Send feedback" title="Send feedback">
+<a href="/contact" class="mob-feedback-btn" aria-label="Send feedback" title="Send feedback">
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
   </svg>
 </a>
 
-<a href="/contact.html" class="desk-feedback-btn" aria-label="Send feedback">
+<a href="/contact" class="desk-feedback-btn" aria-label="Send feedback">
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
   </svg>
@@ -434,10 +434,10 @@ const Nav = {
       if ($('nav-guest')) {
         $('nav-guest').style.display = 'flex';
         // Point login link back to the current page so user returns after auth
-        const loginLinks = $('nav-guest').querySelectorAll('a[href="/login.html"]');
+        const loginLinks = $('nav-guest').querySelectorAll('a[href="/login"]');
         const dest = window.location.pathname + window.location.search + window.location.hash;
-        if (dest !== '/' && dest !== '/index.html') {
-          loginLinks.forEach(a => a.href = '/login.html?redirect=' + encodeURIComponent(dest));
+        if (dest !== '/' && dest !== '/index') {
+          loginLinks.forEach(a => a.href = '/login?redirect=' + encodeURIComponent(dest));
         }
       }
       return;
@@ -896,7 +896,7 @@ const Companion = {
     try {
       sessionStorage.setItem('hwrx_ai_workout', JSON.stringify(this._pendingWorkout));
     } catch(e) {}
-    window.location.href = '/workout.html?source=ai';
+    window.location.href = '/workout?source=ai';
   },
 
   // ── Log Activity modal (global — works on any page) ───────────────
