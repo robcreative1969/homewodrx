@@ -17,7 +17,6 @@ All 23 existing posts were cleaned up on 2026-07-19 to remove AI-sounding writin
 
 ## Queue
 
-- [ ] Flooring, Lighting, and Layout: Setting Up a Small-Space Gym | Equipment | small-space-gym-setup
 - [ ] Murph: History, Strategy, and Ways to Scale It | Training | murph-history-strategy-scaling
 - [ ] Rest Days for the Garage Athlete: What to Do When You're Not Training | Training | rest-days-garage-athlete
 - [ ] Training With Your Family: Making Fitness a Household Habit | Mindset | training-with-family
@@ -32,6 +31,7 @@ All 23 existing posts were cleaned up on 2026-07-19 to remove AI-sounding writin
 
 ## Written (auto-updated by the weekly task)
 
+- [x] Flooring, Lighting, and Layout: Setting Up a Small-Space Gym | Equipment | small-space-gym-setup — August 3, 2026
 - [x] Building a Budget Home Gym for Under $500 | Equipment | budget-home-gym-under-500 — July 27, 2026
 - [x] Test and Retest: Tracking Progress With Benchmark Workouts | Programming | test-retest-benchmark-progress — July 20, 2026
 - [x] RX vs. Scaled: How to Choose the Right Weights for You | Training | rx-vs-scaled-choosing-weights — July 13, 2026

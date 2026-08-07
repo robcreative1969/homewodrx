@@ -1155,15 +1155,36 @@ function toggleMute() {
 }
 
 // ── Fullscreen ───────────────────────────────────────────────────────────
-document.getElementById('btn-fullscreen').addEventListener('click', () => {
-  if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
-  else document.exitFullscreen();
-});
-document.addEventListener('fullscreenchange', () => {
-  document.getElementById('fs-icon').innerHTML = document.fullscreenElement
-    ? `<path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>`
-    : `<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>`;
-});
+// Fullscreen API (and its vendor-prefixed variants) is not supported on
+// iPhone Safari (unlike iPad Safari), which calling it unguarded throws:
+// "document.documentElement.requestFullscreen is not a function" (Sentry JAVASCRIPT-15).
+(() => {
+  const fsBtn = document.getElementById('btn-fullscreen');
+  const root = document.documentElement;
+  const requestFS = root.requestFullscreen || root.webkitRequestFullscreen || root.msRequestFullscreen;
+  const exitFS = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+  const getFsElement = () => document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
+
+  if (!requestFS) {
+    // No fullscreen support on this browser (e.g. iPhone Safari) — hide the control.
+    fsBtn.style.display = 'none';
+    return;
+  }
+
+  fsBtn.addEventListener('click', () => {
+    if (!getFsElement()) requestFS.call(root).catch(() => {});
+    else if (exitFS) exitFS.call(document);
+  });
+
+  const updateFsIcon = () => {
+    document.getElementById('fs-icon').innerHTML = getFsElement()
+      ? `<path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>`
+      : `<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>`;
+  };
+  document.addEventListener('fullscreenchange', updateFsIcon);
+  document.addEventListener('webkitfullscreenchange', updateFsIcon);
+  document.addEventListener('msfullscreenchange', updateFsIcon);
+})();
 
 // ── URL param parsing (launched from workout.html or generator.html) ─────
 // ?mode=fortime&wod=Fran&format=For+Time&time=20&moves=21:Thrusters,21:Pull-ups
