@@ -50,6 +50,7 @@ const BLOG_SLUGS = [
   'rogue-vs-titan-home-gym',
   'rx-vs-scaled-choosing-weights',
   'sleep-and-athletic-performance',
+  'small-space-gym-setup',
   'staying-connected-fitness',
   'staying-motivated-solo-training',
   'test-retest-benchmark-progress',
