@@ -388,7 +388,7 @@
 
     <!-- Meta row -->
     <div class="hero-meta-row" id="hero-meta" style="display:none">
-      <span class="hero-meta-item" id="meta-wods">
+      <span class="hero-meta-item" id="meta-wods" style="display:none">
         <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
         <span id="meta-wods-text">Loading…</span>
       </span>
@@ -433,9 +433,9 @@
           <button class="tab-btn active" onclick="switchTab('overview',this)">Overview</button>
           <button class="tab-btn" id="tab-btn-cues" onclick="switchTab('cues',this)">Coaching Cues</button>
           <button class="tab-btn" id="tab-btn-scaling" onclick="switchTab('scaling',this)">Scaling</button>
-          <button class="tab-btn" onclick="switchTab('workouts',this)">
+          <button class="tab-btn" id="tab-btn-workouts" onclick="switchTab('workouts',this)">
             Workouts
-            <span class="tab-count" id="wod-count">…</span>
+            <span class="tab-count" id="wod-count" style="display:none"></span>
           </button>
           <button class="tab-btn" id="tab-btn-faults" onclick="switchTab('faults',this)">Common Faults</button>
         </div>
@@ -988,7 +988,6 @@ async function loadMovementPage() {
   titleEl.style.display = '';
 
   // Meta row
-  document.getElementById('meta-wods-text').textContent = 'Loading workout count…';
   document.getElementById('meta-cat-text').textContent = catBadgeLabel(category);
   if (muscles) {
     const muscleStr = Array.isArray(muscles) ? muscles.join(', ') : muscles;
@@ -1098,8 +1097,33 @@ async function loadMovementPage() {
   } catch (e) { /* silent fail */ }
 
   const totalCount = matchingBenchmarks.length + matchingUserWorkouts.length + matchingDailyWods.length;
-  document.getElementById('wod-count').textContent = totalCount;
-  document.getElementById('meta-wods-text').textContent = `Found in ${totalCount} workout${totalCount !== 1 ? 's' : ''}`;
+  // Only surface the workout count once the movement actually appears in workouts.
+  // Showing "0 workouts" is noise, so both the hero meta item and the tab badge stay hidden.
+  const wodCountEl = document.getElementById('wod-count');
+  const metaWodsEl = document.getElementById('meta-wods');
+  const tabBtnWorkouts = document.getElementById('tab-btn-workouts');
+  if (totalCount > 0) {
+    wodCountEl.textContent = totalCount;
+    wodCountEl.style.display = '';
+    document.getElementById('meta-wods-text').textContent = `Found in ${totalCount} workout${totalCount !== 1 ? 's' : ''}`;
+    metaWodsEl.style.display = '';
+    tabBtnWorkouts.style.display = '';
+  } else {
+    wodCountEl.textContent = '';
+    wodCountEl.style.display = 'none';
+    metaWodsEl.style.display = 'none';
+    tabBtnWorkouts.style.display = 'none';
+    // If the user had already clicked into the (now-hidden) Workouts tab before
+    // this async count resolved, fall back to Overview so no tab is left stranded.
+    if (tabBtnWorkouts.classList.contains('active')) {
+      tabBtnWorkouts.classList.remove('active');
+      document.getElementById('tab-workouts').classList.remove('active');
+      const overviewBtn = document.querySelector(".tab-btn[onclick=\"switchTab('overview',this)\"]");
+      if (overviewBtn) overviewBtn.classList.add('active');
+      const overviewPane = document.getElementById('tab-overview');
+      if (overviewPane) overviewPane.classList.add('active');
+    }
+  }
 
   const CATEGORY_LABELS = {
     hero:              'hero',
