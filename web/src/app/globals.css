@@ -216,3 +216,19 @@ body:has([data-bottom-bar]) footer {
   max-width: 24px;
   max-height: 24px;
 }
+
+/* Workout mode is always dark, whatever the site theme (STYLE-GUIDE.md §5). */
+.workout-mode {
+  --ground: #0e0f12;
+  --surface: #1b1d22;
+  --surface-muted: #24272e;
+  --line: #2a2d34;
+  --divider: #2a2d34;
+  --ink: #f3f3f1;
+  --ink-2: #c8cad0;
+  --ink-3: #a7aab3;
+  --accent: #e5352b;
+  --accent-ink: #ffffff;
+  --accent-text: #ff6b5e;
+  color-scheme: dark;
+}

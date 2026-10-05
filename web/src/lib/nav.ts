@@ -4,7 +4,7 @@ export const MAIN_NAV = [
   { href: "/workouts", label: "Workouts" },
   { href: "/movements", label: "Movements" },
   { href: "/stretches", label: "Stretches" },
-  { href: "https://homewodrx.com/daily-wod", label: "The Daily 20" },
+  { href: "/daily-wod", label: "The Daily 20" },
   { href: "https://homewodrx.com/wodbuilder", label: "WOD Builder" },
   { href: "/blog", label: "Blog" },
   { href: "/search", label: "Search" },

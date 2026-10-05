@@ -12,7 +12,6 @@ import {
   relatedWorkouts,
   scoreInstruction,
   scoreTiers,
-  timerUrl,
 } from "@/lib/workouts";
 import { youtubeId } from "@/lib/youtube";
 
@@ -209,13 +208,13 @@ export default async function WorkoutPage({ params }: PageProps<"/workouts/[slug
       ) : null}
 
       <BottomBar>
-        <a href={timerUrl(w)} className={primaryAction}>
+        <Link href={`/workouts/${w.slug}/go`} className={primaryAction}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <circle cx="12" cy="13" r="8" />
             <path d="M12 9v4l2.5 2.5M9 2h6" />
           </svg>
           Start Timer
-        </a>
+        </Link>
       </BottomBar>
     </div>
   );

@@ -109,22 +109,3 @@ export function relatedWorkouts(
   ];
   return ranked.slice(0, 4);
 }
-
-/** Link to today's timer page with the workout preloaded (same format as the old site). */
-export function timerUrl(w: BenchmarkWorkout) {
-  const fmt = (w.format ?? "").toLowerCase();
-  const mins = parseInt(String(w.duration_estimate ?? "20").match(/\d+/)?.[0] ?? "20", 10);
-  const moves = (w.movements ?? [])
-    .map((m) => `${String(m.reps ?? "").match(/\d+/)?.[0] ?? ""}:${m.name}`)
-    .join(",");
-  const mode = fmt.includes("amrap") ? "amrap" : fmt.includes("emom") ? "emom" : fmt.includes("tabata") ? "tabata" : "fortime";
-  const params = new URLSearchParams({
-    wod: w.name,
-    format: w.format ?? "",
-    time: String(mins),
-    slug: w.slug,
-    moves,
-    mode,
-  });
-  return `https://homewodrx.com/timer?${params.toString()}`;
-}
