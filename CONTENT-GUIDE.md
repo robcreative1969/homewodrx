@@ -4,8 +4,9 @@
 the site has changed yet.
 
 **What the site is for:** a trove of training information, plus an advanced builder that
-programs workouts from four sources: CrossFit named workouts, builder-generated WODs,
-DIY workouts users build, and (maybe) AI-generated workouts. The named workouts are
+programs workouts from five sources: CrossFit named workouts, builder-generated WODs,
+DIY workouts users build for themselves, user-built workouts shared publicly, and (maybe)
+AI-generated workouts. The named workouts are
 there mainly for search traffic. They must be consistent and accurate, but the builder
 and planner are the product.
 
