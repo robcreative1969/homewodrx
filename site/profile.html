@@ -952,14 +952,19 @@ document.addEventListener('DOMContentLoaded', async function() {
   // Load profile data
   var profileData = null;
   try {
-    var query = supabaseClient.from('profiles').select('*');
     if (targetUsername) {
-      query = query.eq('username', targetUsername);
+      // Other athletes' profiles come through get_public_profile, which only
+      // returns public fields and applies the owner's privacy setting.
+      var { data: pub } = await supabaseClient.rpc('get_public_profile', { p_username: targetUsername });
+      profileData = pub;
+      if (currentUser && pub && pub.id === currentUser.id) {
+        var { data: own } = await supabaseClient.from('profiles').select('*').eq('id', currentUser.id).single();
+        profileData = own;
+      }
     } else {
-      query = query.eq('id', currentUser.id);
+      var { data: rows } = await supabaseClient.from('profiles').select('*').eq('id', currentUser.id).single();
+      profileData = rows;
     }
-    var { data: rows } = await query.single();
-    profileData = rows;
 
     // Check if viewing own profile by comparing IDs
     if (currentUser && profileData && profileData.id === currentUser.id) {
@@ -1041,8 +1046,10 @@ function renderProfile(data, isOwn) {
   var units = (data && data.preferred_units) || 'imperial';
   if (data) {
     if (data.gender)              chips.push(capitalise(data.gender));
-    if (data.birthday) {
-      var ageYrs = Math.floor((new Date() - new Date(data.birthday)) / (365.25 * 24 * 3600 * 1000));
+    if (data.birthday || data.age_years) {
+      var ageYrs = data.birthday
+        ? Math.floor((new Date() - new Date(data.birthday)) / (365.25 * 24 * 3600 * 1000))
+        : data.age_years;
       if (ageYrs > 0 && ageYrs < 120) chips.push(ageYrs + ' yrs');
     }
     if (data.height_cm) {
