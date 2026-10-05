@@ -16,7 +16,7 @@ const ABBREVIATIONS: Record<string, string> = {
 // Words that describe how to do a movement rather than which movement it is.
 const QUALIFIERS = new Set([
   "strict", "alternating", "heavy", "light", "synchronized", "together", "partner",
-  "unbroken", "max", "weighted", "the",
+  "unbroken", "max", "weighted", "the", "1rm",
 ]);
 
 // Generic names that mean a general page rather than a set distance.
@@ -27,10 +27,17 @@ const ALIASES: Record<string, string> = {
   "row calorie": "row for calorie",
   "wall ball shot": "wall ball",
   "clean jerk": "clean and jerk",
-  "squat clean jerk": "clean and jerk",
-  "ground overhead": "clean and jerk",
+  "squat clean and jerk": "clean and jerk",
+  "ground to overhead": "clean and jerk",
   pistol: "pistol squat",
   "single leg squat": "pistol squat",
+  swim: "swimming",
+  "ring muscle up": "muscle up",
+  "turkish get up": "kettlebell turkish get up",
+  "box step up": "step up",
+  "dumbbell box step up": "dumbbell step up",
+  "kettlebell lunge step": "walking lunge",
+  jerk: "push jerk",
 };
 
 function singular(word: string) {
@@ -71,7 +78,7 @@ export function movementResolver(movements: { name: string; slug: string }[]) {
     const key = movementKey(m.name);
     if (!byKey.has(key)) byKey.set(key, m.slug);
   }
-  return (name: string): string | null => {
+  const resolve = (name: string): string | null => {
     const direct = exact.get(name.toLowerCase());
     if (direct) return direct;
     let key = movementKey(name);
@@ -81,6 +88,14 @@ export function movementResolver(movements: { name: string; slug: string }[]) {
     // "Barbell Thrusters" → "Thrusters", "DB Walking Lunges" → "Walking Lunges"
     const withoutEquipment = key.replace(/^(barbell|dumbbell|kettlebell) /, "");
     if (byKey.has(withoutEquipment)) return byKey.get(withoutEquipment)!;
+    // "Wall Sit Hold + Pull-Ups", "Deadlift + Clean + Hang Clean + Jerk": link the first one with a page.
+    if (name.includes(" + ")) {
+      for (const part of name.split(" + ")) {
+        const slug = resolve(part);
+        if (slug) return slug;
+      }
+    }
     return null;
   };
+  return resolve;
 }
