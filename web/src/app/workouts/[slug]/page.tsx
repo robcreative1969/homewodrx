@@ -8,7 +8,7 @@ import { categoryLabel, categoryParam, equipmentLabels, levelLabel } from "@/lib
 import {
   getWorkout,
   listWorkouts,
-  movementSlugs,
+  movementLinker,
   relatedWorkouts,
   scoreInstruction,
   scoreTiers,
@@ -42,7 +42,7 @@ const SCORE_TALK = /\b(sub-\d|elite|under \d+\s*min|minutes? is)/i;
 
 export default async function WorkoutPage({ params }: PageProps<"/workouts/[slug]">) {
   const { slug } = await params;
-  const [w, all, slugs] = await Promise.all([getWorkout(slug), listWorkouts(), movementSlugs()]);
+  const [w, all, linkFor] = await Promise.all([getWorkout(slug), listWorkouts(), movementLinker()]);
   if (!w) notFound();
 
   const video = youtubeId(w.youtube_url);
@@ -91,7 +91,7 @@ export default async function WorkoutPage({ params }: PageProps<"/workouts/[slug
         ) : null}
         <ul className="m-0 flex list-none flex-col p-0">
           {(w.movements ?? []).map((m, i) => {
-            const mSlug = m.slug ?? slugs.get(m.name.toLowerCase());
+            const mSlug = m.slug ?? linkFor(m.name);
             const load = [m.rx_men, m.rx_women].filter(Boolean).join(" / ");
             return (
               <li key={`${m.name}-${i}`} className="flex items-center justify-between gap-3 border-t border-divider py-3">

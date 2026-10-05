@@ -40,7 +40,7 @@ export default async function MovementPage({ params }: PageProps<"/movements/[sl
   if (!m) notFound();
 
   const video = youtubeId(m.youtube_url);
-  const workouts = await workoutsWithMovement(m.name);
+  const workouts = await workoutsWithMovement(m.slug);
   const category = movementCategoryLabel(m.category);
 
   return (

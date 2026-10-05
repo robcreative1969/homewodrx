@@ -1,5 +1,6 @@
 import "server-only";
 import { cache } from "react";
+import { movementResolver } from "@/lib/movementMatch";
 import { publicClient } from "@/lib/supabase/public";
 
 export type WorkoutMovement = {
@@ -62,11 +63,11 @@ export const getWorkout = cache(async (slug: string) => {
   return data as BenchmarkWorkout | null;
 });
 
-/** Movement name → slug, so each movement in a workout links to its page. */
-export const movementSlugs = cache(async () => {
+/** Finds the movement page for a name as written in a workout ("KB Swings" → kettlebell-swings). */
+export const movementLinker = cache(async () => {
   const { data, error } = await publicClient().from("movements").select("name,slug");
   if (error) throw new Error(`Could not load movements: ${error.message}`);
-  return new Map((data ?? []).map((m) => [m.name.toLowerCase(), m.slug as string]));
+  return movementResolver((data ?? []) as { name: string; slug: string }[]);
 });
 
 export type ScoreTier = { label: string; minutes: number };

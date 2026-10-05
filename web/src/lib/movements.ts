@@ -1,7 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { publicClient } from "@/lib/supabase/public";
-import { listWorkouts } from "@/lib/workouts";
+import { listWorkouts, movementLinker } from "@/lib/workouts";
 
 export type ScalingOption = { level: string; movement: string; notes?: string };
 export type Fault = { mistake: string; fix: string };
@@ -76,11 +76,10 @@ export const getMovement = cache(async (slug: string): Promise<Movement | null> 
   } as Movement;
 });
 
-/** Benchmark workouts that include this movement, by name. */
-export async function workoutsWithMovement(name: string) {
-  const all = await listWorkouts();
-  const key = name.toLowerCase();
-  return all.filter((w) => (w.movements ?? []).some((m) => m.name.toLowerCase() === key));
+/** Benchmark workouts that include this movement, under any of its spellings. */
+export async function workoutsWithMovement(slug: string) {
+  const [all, linkFor] = await Promise.all([listWorkouts(), movementLinker()]);
+  return all.filter((w) => (w.movements ?? []).some((m) => (m.slug ?? linkFor(m.name)) === slug));
 }
 
 const LEVEL_LABEL: Record<string, string> = {

@@ -4,6 +4,7 @@ import { BottomBar, primaryAction } from "@/components/BottomBar";
 import { Card } from "@/components/Card";
 import { levelLabel } from "@/lib/labels";
 import { bodyFocusLabel, formatLongDate, getDaily10, getDaily20, isDateString, todayEastern } from "@/lib/daily";
+import { movementLinker } from "@/lib/workouts";
 
 export const metadata: Metadata = {
   title: "The Daily 20 and The Daily 10",
@@ -23,7 +24,7 @@ export default async function DailyPage({ searchParams }: PageProps<"/daily-wod"
   // Past days only; the future stays a surprise.
   const date = isDateString(asked) && asked <= today ? asked : today;
   const isToday = date === today;
-  const [wod, stretch] = await Promise.all([getDaily20(date), getDaily10(date)]);
+  const [wod, stretch, linkFor] = await Promise.all([getDaily20(date), getDaily10(date), movementLinker()]);
   const goHref = isToday ? "/daily-wod/go" : `/daily-wod/go?date=${date}`;
 
   return (
@@ -60,7 +61,11 @@ export default async function DailyPage({ searchParams }: PageProps<"/daily-wod"
             {wod.rows.map((r) => (
               <li key={r.movement} className="flex flex-col border-t border-divider py-3">
                 <span className="flex items-baseline justify-between gap-3">
-                  <span className="text-lg font-bold">{r.movement}</span>
+                  {linkFor(r.movement) ? (
+                    <Link href={`/movements/${linkFor(r.movement)}`} className="text-lg font-bold text-ink">{r.movement}</Link>
+                  ) : (
+                    <span className="text-lg font-bold">{r.movement}</span>
+                  )}
                   <span className="shrink-0 font-mono text-sm text-ink-2">{r.reps}</span>
                 </span>
                 {r.tip ? <span className="text-sm text-ink-2">{r.tip}</span> : null}
