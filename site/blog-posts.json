@@ -1,5 +1,85 @@
 [
   {
+    "slug": "first-pull-up-progression",
+    "file": "/blog/first-pull-up-progression.html",
+    "title": "Your First Pull-Up: A Realistic Progression",
+    "excerpt": "Getting your first strict pull-up takes weeks, not days. How to test where you are, the progressions that build it at home, and a simple three-day weekly plan.",
+    "category": "training",
+    "categoryLabel": "Training",
+    "date": "September 28, 2026",
+    "readTime": "7 min read"
+  },
+  {
+    "slug": "helen-grace-karen",
+    "file": "/blog/helen-grace-karen.html",
+    "title": "Helen, Grace, and Karen: Three Benchmarks, Three Lessons",
+    "excerpt": "Helen, Grace, and Karen each punish a different mistake. What each benchmark teaches about pacing, barbell cycling, and breaking up big sets, plus how to run all three in a home gym.",
+    "category": "training",
+    "categoryLabel": "Training",
+    "date": "September 21, 2026",
+    "readTime": "7 min read"
+  },
+  {
+    "slug": "learning-double-unders",
+    "file": "/blog/learning-double-unders.html",
+    "title": "Double-Unders: How to Stop Whipping Yourself",
+    "excerpt": "The rope is faster than your timing, not your fitness. Rope length, the four faults behind almost every miss, drills that transfer, and how to use double-unders in a workout before they are clean.",
+    "category": "training",
+    "categoryLabel": "Training",
+    "date": "September 14, 2026",
+    "readTime": "6 min read"
+  },
+  {
+    "slug": "cindy-strategy-scaling",
+    "file": "/blog/cindy-strategy-scaling.html",
+    "title": "Cindy: How to Pace 20 Minutes of Bodyweight Work",
+    "excerpt": "Five pull-ups, ten push-ups, fifteen air squats, twenty minutes. How to pick a round pace you can hold, where rounds actually get lost, and how to scale Cindy honestly.",
+    "category": "training",
+    "categoryLabel": "Training",
+    "date": "September 7, 2026",
+    "readTime": "6 min read"
+  },
+  {
+    "slug": "fran-strategy-scaling",
+    "file": "/blog/fran-strategy-scaling.html",
+    "title": "Fran: The Benchmark That Humbles Everyone",
+    "excerpt": "Twenty-one, fifteen, nine. Thrusters and pull-ups. How to break the sets, pace the pull-ups, and scale Fran without losing the intensity that makes it worth doing.",
+    "category": "training",
+    "categoryLabel": "Training",
+    "date": "August 31, 2026",
+    "readTime": "6 min read"
+  },
+  {
+    "slug": "training-with-family",
+    "file": "/blog/training-with-family.html",
+    "title": "Training With Your Family: Making Fitness a Household Habit",
+    "excerpt": "A home gym is the whole household's gym whether you planned it that way or not. How to train with a partner, kids, or roommates without wrecking your own programming.",
+    "category": "mindset",
+    "categoryLabel": "Mindset",
+    "date": "August 24, 2026",
+    "readTime": "6 min read"
+  },
+  {
+    "slug": "rest-days-garage-athlete",
+    "file": "/blog/rest-days-garage-athlete.html",
+    "title": "Rest Days for the Garage Athlete: What to Do When You're Not Training",
+    "excerpt": "Rest days are easy to skip and easy to waste when the gym is twenty feet away. How to plan them, what to do with the time, and how to come back sharper.",
+    "category": "training",
+    "categoryLabel": "Training",
+    "date": "August 17, 2026",
+    "readTime": "6 min read"
+  },
+  {
+    "slug": "murph-history-strategy-scaling",
+    "file": "/blog/murph-history-strategy-scaling.html",
+    "title": "Murph: History, Strategy, and Ways to Scale It",
+    "excerpt": "Who Michael Murphy was, how to pace and partition 100 pull-ups, 200 push-ups, and 300 squats, and honest ways to scale Murph without cutting corners.",
+    "category": "training",
+    "categoryLabel": "Training",
+    "date": "August 10, 2026",
+    "readTime": "5 min read"
+  },
+  {
     "slug": "small-space-gym-setup",
     "file": "/blog/small-space-gym-setup.html",
     "title": "Flooring, Lighting, and Layout: Setting Up a Small-Space Gym",

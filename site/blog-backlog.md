@@ -17,20 +17,46 @@ All 23 existing posts were cleaned up on 2026-07-19 to remove AI-sounding writin
 
 ## Queue
 
-- [ ] Murph: History, Strategy, and Ways to Scale It | Training | murph-history-strategy-scaling
-- [ ] Rest Days for the Garage Athlete: What to Do When You're Not Training | Training | rest-days-garage-athlete
-- [ ] Training With Your Family: Making Fitness a Household Habit | Mindset | training-with-family
-- [ ] Morning vs. Evening Training: Finding the Slot You'll Actually Keep | Mindset | morning-vs-evening-training
-- [ ] From the Box to the Garage: Transitioning to Training at Home | Mindset | box-to-garage-transition
-- [ ] The Case for Logging Every Workout | Training | case-for-logging-workouts
-- [ ] Stretching Routines for Desk Workers Who Train Hard | Training | stretching-for-desk-workers
+Ordered to front-load the strongest organic plays (named benchmark WODs and movement how-tos), then alternate categories so the blog does not run four Mindset posts in a row. Two entries are date-sensitive and are positioned to publish in the right week: the holidays post (#15, lands early December) and the first-30-days post (#19, lands early January). If you insert topics ahead of them, push those two down to keep the timing.
+
+- [ ] Using EMOMs to Build Skill, Not Just Sweat | Programming | emom-skill-work
+- [ ] DT: Cycling a Barbell Without Burning Out | Training | dt-strategy-scaling
 - [ ] What to Look for in a Pull-Up Bar: Doorway, Wall, or Rack | Equipment | choosing-a-pull-up-bar
+- [ ] Wall Balls: The Movement Everyone Underestimates | Training | wall-ball-technique
+- [ ] The Case for Logging Every Workout | Training | case-for-logging-workouts
 - [ ] Programming a Lighter Week: When and How to Back Off | Programming | programming-a-lighter-week
+- [ ] Box Jumps vs. Step-Ups: When to Choose Which | Training | box-jumps-vs-step-ups
+- [ ] Choosing Your First Kettlebell Weight | Equipment | choosing-kettlebell-weight
+- [ ] Morning vs. Evening Training: Finding the Slot You'll Actually Keep | Mindset | morning-vs-evening-training
+- [ ] Training Through the Holidays Without Starting Over | Mindset | training-through-holidays
+- [ ] Balancing Strength and Conditioning in a 4-Day Week | Programming | strength-conditioning-balance
+- [ ] Rower, Bike, or Ski: Picking One Cardio Machine | Equipment | rower-bike-or-ski
+- [ ] From the Box to the Garage: Transitioning to Training at Home | Mindset | box-to-garage-transition
+- [ ] Your First 30 Days of Functional Fitness at Home | Training | first-30-days
+- [ ] How to Build a 6-Week Cycle for Yourself | Programming | building-a-training-cycle
 - [ ] Jump Ropes, Plyo Boxes, and Sandbags: Underrated Home Gym Gear | Equipment | underrated-home-gym-gear
+- [ ] Stretching Routines for Desk Workers Who Train Hard | Training | stretching-for-desk-workers
+- [ ] Why Your Workouts Should Not All Be Hard | Programming | intensity-distribution
+- [ ] Barbell Maintenance for Garage Gyms | Equipment | barbell-maintenance
 - [ ] One Year of Training at Home: What Actually Matters | Mindset | one-year-training-at-home
+
+### Notes on the organic plays
+
+- **Named WOD posts** (Fran, Cindy, Helen/Grace/Karen, DT) should each link to the matching `/workouts/:slug` page and pull real movement/weight data from the workout record. Use `murph-history-strategy-scaling` as the structural model: history or origin, strategy and pacing, then honest scaling options.
+- **Movement how-tos** (double-unders, first pull-up, wall balls, box jumps) should link to the matching `/movements/:slug` pages so the posts feed the existing cross-linking. Keep these practical and technique-focused, no clinical or injury-treatment claims.
+- **Equipment posts** carry affiliate potential. Add `<!-- AFFILIATE: update with [BrandName] product link when approved -->` comments where a product link would naturally sit.
+- **`emom-skill-work` deliberately does not re-explain what an EMOM is.** `wod-formats-explained` already owns that query with a dedicated section. This post covers using the format for skill work under fatigue and should link back to `wod-formats-explained` rather than compete with it.
 
 ## Written (auto-updated by the weekly task)
 
+- [x] Your First Pull-Up: A Realistic Progression | Training | first-pull-up-progression — September 28, 2026
+- [x] Helen, Grace, and Karen: Three Benchmarks, Three Lessons | Training | helen-grace-karen — September 21, 2026
+- [x] Double-Unders: How to Stop Whipping Yourself | Training | learning-double-unders — September 14, 2026
+- [x] Cindy: How to Pace 20 Minutes of Bodyweight Work | Training | cindy-strategy-scaling — September 7, 2026
+- [x] Fran: The Benchmark That Humbles Everyone | Training | fran-strategy-scaling — August 31, 2026
+- [x] Training With Your Family: Making Fitness a Household Habit | Mindset | training-with-family — August 24, 2026
+- [x] Rest Days for the Garage Athlete: What to Do When You're Not Training | Training | rest-days-garage-athlete — August 17, 2026
+- [x] Murph: History, Strategy, and Ways to Scale It | Training | murph-history-strategy-scaling — August 10, 2026
 - [x] Flooring, Lighting, and Layout: Setting Up a Small-Space Gym | Equipment | small-space-gym-setup — August 3, 2026
 - [x] Building a Budget Home Gym for Under $500 | Equipment | budget-home-gym-under-500 — July 27, 2026
 - [x] Test and Retest: Tracking Progress With Benchmark Workouts | Programming | test-retest-benchmark-progress — July 20, 2026

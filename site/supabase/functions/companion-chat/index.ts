@@ -12,7 +12,7 @@ const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
 const DAILY_CAP = 20
-const MODEL = 'claude-haiku-4-5-20251001'  // Upgrade to claude-sonnet-4-6 for production
+const MODEL = 'claude-sonnet-4-6'  // TODO(hybrid): swap to haiku for plain chat, sonnet only for generate_workout
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -237,7 +237,24 @@ When the user has just described completing a cardio activity they haven't logge
 {"reply":"your message here","action":{"type":"log_activity","activity_type":"run"}}
 
 Use these exact activity_type values: "run", "bike", "row", "swim", "hike", "ski", "other"
-Only trigger the action when the user is describing something they just did, not when discussing future plans or asking general questions. In all other cases action must be null.`
+Only trigger the action when the user is describing something they just did, not when discussing future plans or asking general questions.
+
+When the user asks you to generate, build, or create a workout — or when you are ready to propose one based on their needs — return:
+{"reply":"...","action":{"type":"generate_workout","workout":{"title":"string","format":"For Time","duration_estimate":20,"scoring_type":"time","scheme":"3 Rounds For Time","description":"1-2 sentences","level":"intermediate","movements":[{"name":"string","reps":"string","rx_men":"optional string","rx_women":"optional string"}],"equipment":["string"],"muscle_groups":["string"],"coaching_tips":["optional string"]}}}
+
+Valid format values: "For Time", "AMRAP", "EMOM", "Tabata", "Chipper", "Strength", "Intervals"
+Valid scoring_type values: "time", "rounds_reps", "reps", "load"
+Valid level values: "beginner", "intermediate", "advanced" — use the user's experience_level to inform this
+Valid muscle_groups tags: quads, hamstrings, glutes, posterior_chain, core, shoulders, chest, back, arms, full, cardio
+
+Workout generation rules:
+- Build the full workout on the first request. Do not ask clarifying questions before showing something.
+- If available time is unknown, default to 20 minutes. If equipment is unknown, use the profile or default to bodyweight.
+- Use the user profile (equipment, injuries, archetype) to shape the workout.
+- The reply text should be a short 1-2 sentence framing of the workout. Do not narrate the full movement list in the reply — the workout card will display it.
+- When the user requests changes, return a revised workout with the same action type. The previous card will be replaced.
+- Running movements must always include a specific distance — use "400m Run", "800m Run", or "1 Mile Run". Never use just "Run".
+- In all other cases, action must be null.`
 }
 
 // ─── MAIN HANDLER ─────────────────────────────────────────────────────────────
@@ -379,7 +396,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: 500,
+        max_tokens: 2000,
         system: systemPrompt,
         messages: [
           ...history,
@@ -397,12 +414,11 @@ serve(async (req) => {
     const rawText = data.content[0].text
 
     // Parse Claude's JSON response — it should always return {reply, action}
-    // Haiku sometimes prepends text before the JSON object, so we try:
     // 1. Direct parse of the full text
-    // 2. Regex extraction of the first {...} block containing "reply"
+    // 2. Greedy regex extraction of the outermost {...} block (handles nested workout JSON)
     // 3. Fallback: treat the whole text as the reply with no action
     let reply: string = rawText
-    let action: { type: string; activity_type?: string } | null = null
+    let action: { type: string; activity_type?: string; workout?: Record<string, unknown> } | null = null
 
     const tryParse = (s: string): boolean => {
       try {
@@ -417,11 +433,14 @@ serve(async (req) => {
     }
 
     if (!tryParse(rawText)) {
-      // Try to extract a JSON object from the raw text
-      const match = rawText.match(/\{[\s\S]*?"reply"[\s\S]*?\}(?=\s*$)/m)
-        ?? rawText.match(/\{[\s\S]*?"reply"[\s\S]*?\}/)
+      // Greedy match: find from first '{' to last '}' — captures full nested objects
+      const match = rawText.match(/\{[\s\S]*\}/)
       if (match) tryParse(match[0])
     }
+
+    console.log(
+      `companion-chat | rawText_preview: ${rawText.slice(0, 120).replace(/\n/g, ' ')} | stop_reason: ${data.stop_reason}`
+    )
 
     console.log(
       `companion-chat | user: ${userId.slice(0, 8)} | ` +
