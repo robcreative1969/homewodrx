@@ -20,7 +20,9 @@ export function SiteHeader() {
             ))}
           </ul>
           <ThemeToggle />
-          <MobileMenu />
+          <span className="header-menu">
+            <MobileMenu />
+          </span>
         </nav>
       </div>
     </header>
