@@ -20,7 +20,8 @@ export default async function MovementsPage({ searchParams }: PageProps<"/moveme
   const movements = active ? all.filter((m) => m.category === active) : all;
   const counts = new Map<string, number>();
   for (const m of all) counts.set(m.category, (counts.get(m.category) ?? 0) + 1);
-  const tabs = Object.keys(MOVEMENT_CATEGORIES).filter((c) => counts.get(c));
+  // Machine movements stay in the list (Rob, Q1) but the Machines section replaces their filter.
+  const tabs = Object.keys(MOVEMENT_CATEGORIES).filter((c) => counts.get(c) && c !== "latpulldown");
   const chip = (on: boolean) =>
     `flex min-h-11 items-center rounded-full border-[1.5px] px-3.5 text-sm font-semibold no-underline ${on ? "border-ink bg-ink text-ground" : "border-chip-line bg-surface text-ink"}`;
 

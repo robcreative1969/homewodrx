@@ -34,7 +34,7 @@ export const MOVEMENT_CATEGORIES: Record<string, string> = {
   cardio: "Cardio",
   slamball: "Slam Ball",
   resistancebands: "Resistance Bands",
-  latpulldown: "Machines",
+  latpulldown: "Machine",
 };
 
 export function movementCategoryLabel(code: string) {
