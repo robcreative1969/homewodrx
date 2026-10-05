@@ -1249,18 +1249,6 @@ async function nominateFromDetail(workoutId) {
   }
 }
 
-// ── DEMO DATA ─────────────────────────────────────────────────
-function getDemoWorkouts() {
-  return [
-    {id:"sw1",username:"firebreather_k",title:"The Inferno",format:"AMRAP",duration:20,level:"advanced",body_focus:"full-body",equipment:["kettlebell","pullupbar"],is_public:true,created_at:"2026-03-18",description:"A relentless 20-min grind combining kettlebell power with gymnastics.",movements:[{movement:"Kettlebell Swings",reps:"15",tip:"Hip snap"},{movement:"Pull-Ups",reps:"7",tip:"Strict or kipping"},{movement:"Goblet Squats",reps:"10",tip:"Elbows in"},{movement:"Mountain Climbers",reps:"20",tip:"Hips level"}],scoring:"Count total rounds + reps.",scoring_type:"rounds_reps",result_count:4},
-    {id:"sw2",username:"rxrunner",title:"Morning Grind",format:"Circuit",duration:30,level:"intermediate",body_focus:"full-body",equipment:["dumbbells"],is_public:true,created_at:"2026-03-19",description:"4 rounds of functional dumbbell work for a solid 30-min morning session.",movements:[{movement:"DB Thrusters",reps:"12",tip:"One fluid motion"},{movement:"DB Bent-Over Rows",reps:"12",tip:"Row to lower ribs"},{movement:"DB Romanian DL",reps:"15",tip:"Load the hamstrings"},{movement:"Burpees",reps:"8",tip:"Step out if needed"}],scoring:"4 rounds for time. Rest 60s between rounds.",scoring_type:"time",result_count:3},
-    {id:"sw3",username:"no_excuses_jen",title:"No Excuses",format:"AMRAP",duration:15,level:"beginner",body_focus:"full-body",equipment:["bodyweight"],is_public:true,created_at:"2026-03-20",description:"Zero equipment. Zero excuses. Perfect for travel.",movements:[{movement:"Air Squats",reps:"15"},{movement:"Push-Ups",reps:"10"},{movement:"Sit-Ups",reps:"12"},{movement:"Jump Squats",reps:"8"}],scoring:"Total rounds + reps in 15 min.",scoring_type:"rounds_reps",result_count:3},
-    {id:"sw4",username:"coach_dmac",title:"KB Destroyer",format:"EMOM",duration:24,level:"intermediate",body_focus:"full-body",equipment:["kettlebell"],is_public:true,created_at:"2026-03-21",description:"6 exercises, 4 rounds EMOM. Earn your rest.",movements:[{movement:"Kettlebell Swings",reps:"Min 1: 15 reps"},{movement:"Goblet Squats",reps:"Min 2: 12 reps"},{movement:"KB Press",reps:"Min 3: 10 each"},{movement:"Mountain Climbers",reps:"Min 4: 30 reps"}],scoring:"Track each minute — finish or fail.",scoring_type:"rounds_reps",result_count:0},
-    {id:"sw5",username:"wod_wombat",title:"The 21-15-9",format:"For Time",duration:12,level:"intermediate",body_focus:"full-body",equipment:["barbell","pullupbar"],is_public:true,created_at:"2026-03-22",description:"A classic rep scheme. Simple structure, brutal execution.",movements:[{movement:"Barbell Thruster",reps:"21 – 15 – 9"},{movement:"Pull-Ups",reps:"21 – 15 – 9"}],scoring:"Time to complete all rounds.",scoring_type:"time",result_count:3},
-    {id:"sw6",username:"strongmom_pdx",title:"Legs & Lungs",format:"Circuit",duration:25,level:"intermediate",body_focus:"lower-body",equipment:["bodyweight","jumprope"],is_public:true,created_at:"2026-03-23",description:"Posterior chain meets cardio. 5 rounds, keep moving.",movements:[{movement:"Single Unders",reps:"50"},{movement:"Lunges",reps:"20"},{movement:"Glute Bridges",reps:"20"},{movement:"Jump Squats",reps:"12"}],scoring:"5 rounds for time.",scoring_type:"time",result_count:0},
-  ];
-}
-
 // ── UTILITIES ─────────────────────────────────────────────────
 function showToast(msg, type = 'info') {
   const t = document.getElementById('toast');
