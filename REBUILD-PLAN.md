@@ -100,10 +100,14 @@ Roughly in this order, each its own decision:
 7. Coach workouts and coach profiles.
 8. Social media content (Higgsfield for visuals, real screen recordings of the builder).
 
-## 7. Questions for Rob (none block Phase 0)
+## 7. Rob's decisions (October 4, 2026)
 
-1. WOD Builder time choices: are 10 / 20 / 30 / 45 minutes right?
-2. Keep the AI companion and AI-generated workouts in the rebuild, or park them?
-3. Dark theme: offer it site-wide from the start, or workout mode only for now?
-4. Fine to drop the old `generator.html` and `stretch.html` (their URLs already redirect
-   to the builders) and the leaderboard page (its URL would redirect to the homepage)?
+1. **WOD Builder time choices:** 10, 20, 30, 45 and 60 minutes.
+2. **AI companion and AI-generated workouts:** kept in the rebuild, but hidden from the
+   public until the premium offer launches (behind the premium switch; Rob and testers keep
+   access).
+3. **Dark theme:** site-wide. It follows the phone's light or dark setting, with a switch to
+   override it. Built in from Phase 0 so every screen is designed and checked in both.
+4. **Old pages:** drop the leaderboard (its URL redirects to the homepage). Also drop
+   `generator.html` and `stretch.html`: they are the April versions of the builders, replaced
+   by `/wodbuilder` and `/stretchbuilder`, and their URLs already redirect there.
