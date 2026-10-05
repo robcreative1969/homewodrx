@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { LibrarySwitch } from "@/components/LibrarySwitch";
 import { STRETCH_FOCUS_FILTERS, focusLabels, listRoutines, listStretches, modalityLabel } from "@/lib/stretches";
 
 export const metadata: Metadata = {
@@ -18,6 +19,7 @@ export default async function StretchesPage({ searchParams }: PageProps<"/stretc
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-5">
+      <LibrarySwitch current="stretches" />
       <div className="flex flex-col gap-1">
         <h1 className="m-0 text-[32px] font-extrabold tracking-tight">Stretches</h1>
         <p className="m-0 text-ink-2">

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { LibrarySwitch } from "@/components/LibrarySwitch";
 import { listRoutines, modalityLabel } from "@/lib/stretches";
 
 export const revalidate = 3600;
@@ -14,6 +15,7 @@ export default async function RoutinesPage() {
   const routines = await listRoutines();
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-5">
+      <LibrarySwitch current="stretches" />
       <div className="flex flex-col gap-1">
         <nav aria-label="Breadcrumb" className="text-[13px] text-ink-3">
           <Link href="/stretches" className="text-ink-2">Stretches</Link>

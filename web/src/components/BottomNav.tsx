@@ -25,7 +25,7 @@ const TABS: Tab[] = [
     icon: icon(<><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></>),
   },
   {
-    label: "Workouts",
+    label: "Library",
     href: "/workouts",
     match: ["/workouts", "/movements", "/stretches", "/stretch-routines", "/machines"],
     icon: icon(<><path d="M6 8v8M18 8v8M3 10v4M21 10v4M6 12h12" /></>),

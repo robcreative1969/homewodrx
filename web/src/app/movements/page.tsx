@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { LibrarySwitch } from "@/components/LibrarySwitch";
 import { MOVEMENT_CATEGORIES, listMovements, movementCategoryLabel } from "@/lib/movements";
 
 export async function generateMetadata({ searchParams }: PageProps<"/movements">): Promise<Metadata> {
@@ -25,6 +26,7 @@ export default async function MovementsPage({ searchParams }: PageProps<"/moveme
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-5">
+      <LibrarySwitch current="movements" />
       <div className="flex flex-col gap-1">
         <h1 className="m-0 text-[32px] font-extrabold tracking-tight">
           {active ? `${movementCategoryLabel(active)} movements` : "Movements"}

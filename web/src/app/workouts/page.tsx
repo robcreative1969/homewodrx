@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { LibrarySwitch } from "@/components/LibrarySwitch";
 import { CATEGORIES, categoryLabel } from "@/lib/labels";
 import { listWorkouts } from "@/lib/workouts";
 
@@ -27,6 +28,7 @@ export default async function WorkoutsPage({ searchParams }: PageProps<"/workout
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-5">
+      <LibrarySwitch current="workouts" />
       <div className="flex flex-col gap-1">
         <h1 className="m-0 text-[32px] font-extrabold tracking-tight">{active ? active.label : "Workouts"}</h1>
         <p className="m-0 text-ink-2">
