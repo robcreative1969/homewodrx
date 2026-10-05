@@ -1,0 +1,7 @@
+# Internal files: kept in GitHub, never published on homewodrx.com
+supabase
+migrations
+email-templates
+*.md
+*.sql
+netlify.toml
