@@ -88,6 +88,11 @@ body {
   color: var(--ink);
 }
 
+/* Keep the footer clear of the fixed bottom action bar on pages that have one. */
+body:has([data-bottom-bar]) footer {
+  padding-bottom: 96px;
+}
+
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
