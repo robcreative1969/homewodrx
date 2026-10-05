@@ -145,3 +145,10 @@ create policy "Results visible per owner privacy" on public.results
 drop policy if exists lift_prs_select on public.lift_prs;
 create policy lift_prs_select on public.lift_prs
   for select using (public.profile_history_visible(user_id) or public.is_admin());
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- PART 3 (added after Part 2): the new read rules call is_admin(), which
+-- logged-out visitors could not execute, so their reads errored instead of
+-- returning nothing. is_admin() only reports on the caller (false for anon).
+-- ═══════════════════════════════════════════════════════════════════════════
+grant execute on function public.is_admin() to anon;
