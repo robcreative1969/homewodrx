@@ -1459,11 +1459,12 @@ async function savePassword() {
 
   try {
     // Re-authenticate then update
+    const captchaToken = await getCaptchaToken();
     const { error: signInErr } = await supabaseClient.auth.signInWithPassword({
-      email: _user.email, password: current
+      email: _user.email, password: current, options: { captchaToken }
     });
     if (signInErr) { showToast('Current password is incorrect', true); return; }
-    const { error } = await supabaseClient.auth.updateUser({ password: next });
+    const { error } = await supabaseClient.auth.updateUser({ password: next, current_password: current });
     if (error) throw error;
     showToast('Password updated');
     cancelPwForm();

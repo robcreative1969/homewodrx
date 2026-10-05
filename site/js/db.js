@@ -31,10 +31,55 @@ async function initSupabase() {
 // Call this on page load
 initSupabase();
 
+// ============================================================================
+// HUMAN CHECK (Cloudflare Turnstile)
+// ============================================================================
+// Supabase Auth's CAPTCHA protection rejects sign-up, log-in and password
+// reset requests that do not carry a fresh Turnstile token. Each token works
+// once, so a new one is fetched for every request. The widget only shows when
+// Cloudflare needs the visitor to click.
+const TURNSTILE_SITE_KEY = '0x4AAAAAADLyVvXnAx5cEnfY';
+
+function loadTurnstile() {
+  if (window.turnstile) return Promise.resolve(window.turnstile);
+  if (!loadTurnstile.promise) {
+    loadTurnstile.promise = new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+      s.async = true;
+      s.onload = () => resolve(window.turnstile);
+      s.onerror = () => { loadTurnstile.promise = null; reject(new Error('The security check could not load. Please refresh and try again.')); };
+      document.head.appendChild(s);
+    });
+  }
+  return loadTurnstile.promise;
+}
+
+async function getCaptchaToken() {
+  const ts = await loadTurnstile();
+  return new Promise((resolve, reject) => {
+    let box = document.getElementById('hwrx-captcha');
+    if (!box) {
+      box = document.createElement('div');
+      box.id = 'hwrx-captcha';
+      box.style.cssText = 'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:10000;';
+      document.body.appendChild(box);
+    }
+    const id = ts.render(box, {
+      sitekey: TURNSTILE_SITE_KEY,
+      appearance: 'interaction-only',
+      callback: (token) => { resolve(token); setTimeout(() => ts.remove(id), 0); },
+      'error-callback': () => { ts.remove(id); reject(new Error('The security check failed. Please refresh and try again.')); },
+    });
+  });
+}
+
 const db = {
   // ===== AUTH =====
 
-  async signUp(email, password, username) {
+  // captchaToken: pass one from a visible Turnstile widget (signup page),
+  // otherwise a fresh token is fetched here.
+  async signUp(email, password, username, captchaToken) {
     if (!supabaseClient) {
       const user = {
         id: 'user_' + Math.random().toString(36).substr(2, 9),
@@ -46,16 +91,20 @@ const db = {
       return { user, error: null };
     }
 
+    let token;
+    try { token = captchaToken || await getCaptchaToken(); }
+    catch (e) { return { user: null, error: e }; }
+
+    // The username travels in the sign-up metadata; the handle_new_user
+    // database trigger creates the profile with it.
+    if (username && typeof username === 'object') username = username.username;
     const { data, error } = await supabaseClient.auth.signUp({
       email,
-      password
+      password,
+      options: { captchaToken: token, data: username ? { username } : {} }
     });
 
     if (!error && data?.user) {
-      await supabaseClient.from('profiles').insert({
-        id: data.user.id,
-        username
-      });
       if (typeof Analytics !== 'undefined') Analytics.signup();
     }
 
@@ -72,9 +121,14 @@ const db = {
       return { user: null, error: new Error('Invalid credentials') };
     }
 
+    let token;
+    try { token = await getCaptchaToken(); }
+    catch (e) { return { user: null, error: e }; }
+
     const { data, error } = await supabaseClient.auth.signInWithPassword({
       email,
-      password
+      password,
+      options: { captchaToken: token }
     });
 
     // Update last_seen timestamp on successful login
@@ -148,9 +202,14 @@ const db = {
       return { error: new Error('Not available in demo mode') };
     }
 
+    let token;
+    try { token = await getCaptchaToken(); }
+    catch (e) { return { data: null, error: e }; }
+
     const redirect = redirectPath || window.location.pathname;
     const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + redirect
+      redirectTo: window.location.origin + redirect,
+      captchaToken: token
     });
 
     return { data, error };

@@ -1629,8 +1629,9 @@ async function sendAthleteReset(id,username,email){
   if(!email){showAlert('athletes-alert','No email on file for this athlete.','err');return;}
   if(!confirm(`Send password reset email to ${email} for "${username}"?`))return;
   try{
+    const captchaToken=await getCaptchaToken();
     const{error}=await supabaseClient.auth.resetPasswordForEmail(email,{
-      redirectTo:window.location.origin+'/login'
+      redirectTo:window.location.origin+'/login',captchaToken
     });
     if(error) showAlert('athletes-alert','Error sending reset: '+error.message,'err');
     else showAlert('athletes-alert','Password reset email sent to '+email+'!','ok');
