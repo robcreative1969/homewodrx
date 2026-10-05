@@ -6,7 +6,7 @@ export const MAIN_NAV = [
   { href: "/stretches", label: "Stretches" },
   { href: "/machines", label: "Machines" },
   { href: "/daily-wod", label: "The Daily 20" },
-  { href: "https://homewodrx.com/wodbuilder", label: "WOD Builder" },
+  { href: "/wodbuilder", label: "WOD Builder" },
   { href: "/blog", label: "Blog" },
   { href: "/search", label: "Search" },
 ] as const;

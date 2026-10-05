@@ -32,7 +32,7 @@ const TABS: Tab[] = [
   },
   {
     label: "Build",
-    href: "https://homewodrx.com/wodbuilder",
+    href: "/wodbuilder",
     match: ["/wodbuilder"],
     icon: icon(<><path d="M12 3v4M12 17v4M3 12h4M17 12h4" /><circle cx="12" cy="12" r="3" /></>),
   },

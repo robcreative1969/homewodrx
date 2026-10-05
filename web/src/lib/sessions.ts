@@ -1,5 +1,6 @@
 import "server-only";
 import type { Daily20 } from "@/lib/daily";
+import type { GeneratedWorkout } from "@/lib/generator";
 import { firstNumber, modeFromFormat, repLadder, type Session } from "@/lib/session";
 import type { BenchmarkWorkout } from "@/lib/workouts";
 
@@ -32,7 +33,20 @@ export function sessionFromDaily20(d: Daily20, today: boolean): Session {
     mode: d.format,
     minutes: d.format === "circuit" ? null : 20,
     rounds: d.rounds ?? null,
-    rows: d.rows.map((r) => ({ name: r.movement, reps: [r.reps.replace(/^Minute \d+:\s*/, "")] })),
+    rows: d.rows.map((r) => ({ name: r.movement, reps: repLadder(r.reps.replace(/^Minute \d+:\s*/, "").replace(/\s*reps$/, "")) })),
     backHref: today ? "/daily-wod" : `/daily-wod?date=${d.date}`,
+  };
+}
+
+/** A WOD Builder workout in workout mode. */
+export function sessionFromGenerated(w: GeneratedWorkout, backHref: string): Session {
+  return {
+    name: w.title,
+    subtitle: `${w.formatLabel} · ${w.minutes} min`,
+    mode: w.format,
+    minutes: w.format === "circuit" || w.format === "fortime" ? null : w.minutes,
+    rounds: w.rounds ?? null,
+    rows: w.rows.map((r) => ({ name: r.movement, reps: repLadder(r.reps.replace(/\s*reps$/, "")) })),
+    backHref,
   };
 }

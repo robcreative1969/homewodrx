@@ -66,7 +66,9 @@ export default async function DailyPage({ searchParams }: PageProps<"/daily-wod"
                   ) : (
                     <span className="text-lg font-bold">{r.movement}</span>
                   )}
-                  <span className="shrink-0 font-mono text-sm text-ink-2">{r.reps}</span>
+                  {r.reps && !r.movement.toLowerCase().includes(r.reps.toLowerCase()) ? (
+                    <span className="shrink-0 font-mono text-sm text-ink-2">{r.reps}</span>
+                  ) : null}
                 </span>
                 {r.tip ? <span className="text-sm text-ink-2">{r.tip}</span> : null}
               </li>

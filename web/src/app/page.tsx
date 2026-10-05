@@ -33,9 +33,9 @@ export default async function Home() {
           Benchmark workouts, a WOD Builder and a weekly Planner, for training at the box, the health club, or at home.
         </p>
         <div className="flex flex-col gap-2 sm:flex-row">
-          <a href="https://homewodrx.com/wodbuilder" className="flex h-14 items-center justify-center rounded-[14px] bg-accent px-6 text-[17px] font-bold text-accent-ink no-underline">
+          <Link href="/wodbuilder" className="flex h-14 items-center justify-center rounded-[14px] bg-accent px-6 text-[17px] font-bold text-accent-ink no-underline">
             Build a workout
-          </a>
+          </Link>
           <Link href="/daily-wod" className="flex h-[50px] items-center justify-center rounded-[14px] border-[1.5px] border-ink bg-surface px-6 font-bold text-ink no-underline">
             See today&apos;s Daily 20
           </Link>

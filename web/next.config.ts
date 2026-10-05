@@ -4,7 +4,6 @@ import type { NextConfig } from "next";
 // visitors to the same page on the live site. Delete each line when its phase lands;
 // the list must be empty before the switch (the guard below stops a redirect loop).
 const NOT_REBUILT_YET = [
-  "/wodbuilder",
   "/stretchbuilder",
   "/timer",
   "/planner",
