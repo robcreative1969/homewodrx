@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Archivo, JetBrains_Mono } from "next/font/google";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { isIndexable } from "@/lib/site";
+import { isIndexable, OG_IMAGE } from "@/lib/site";
 import "./globals.css";
 
 const archivo = Archivo({
@@ -22,6 +22,8 @@ export const metadata: Metadata = {
   },
   description:
     "The training platform for functional fitness athletes, at the box, the health club, or at home.",
+  metadataBase: new URL("https://homewodrx.com"),
+  openGraph: { images: [OG_IMAGE] },
   // The rebuild stays out of search results until it replaces the live site.
   robots: isIndexable() ? undefined : { index: false, follow: false },
 };

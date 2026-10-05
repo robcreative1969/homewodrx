@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { OG_IMAGE } from "@/lib/site";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { formatDate, getPost, listPosts, relatedPosts } from "@/lib/blog";
@@ -17,7 +18,7 @@ export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): P
     title: post.title,
     description: post.description,
     alternates: { canonical: `https://homewodrx.com/blog/${post.slug}` },
-    openGraph: { title: post.title, description: post.description, type: "article", publishedTime: post.date },
+    openGraph: { title: post.title, description: post.description, type: "article", publishedTime: post.date, images: [OG_IMAGE] },
   };
 }
 

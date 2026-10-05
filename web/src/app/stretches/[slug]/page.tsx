@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { OG_IMAGE } from "@/lib/site";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card } from "@/components/Card";
@@ -22,7 +23,7 @@ export async function generateMetadata({ params }: PageProps<"/stretches/[slug]"
     title,
     description,
     alternates: { canonical: `https://homewodrx.com/stretches/${s.slug}` },
-    openGraph: { title, description, type: "article" },
+    openGraph: { title, description, type: "article", images: [OG_IMAGE] },
   };
 }
 

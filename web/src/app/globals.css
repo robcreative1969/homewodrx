@@ -88,6 +88,25 @@ body {
   color: var(--ink);
 }
 
+/* Logo: black-and-red on light, white on dark (components/Wordmark.tsx). */
+.logo-for-dark {
+  display: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .logo-for-light {
+    display: none;
+  }
+  :root:not([data-theme="light"]) .logo-for-dark {
+    display: block;
+  }
+}
+:root[data-theme="dark"] .logo-for-light {
+  display: none;
+}
+:root[data-theme="dark"] .logo-for-dark {
+  display: block;
+}
+
 /* Keep the footer clear of the fixed bottom action bar on pages that have one. */
 body:has([data-bottom-bar]) footer {
   padding-bottom: 96px;
