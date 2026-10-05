@@ -61,6 +61,3 @@ export function VideoPlayer({
     </button>
   );
 }
-
-export const VIDEO_PRIVACY_NOTE =
-  "Plays from YouTube when you tap it. Nothing loads from YouTube until then.";

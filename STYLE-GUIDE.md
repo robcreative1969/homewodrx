@@ -82,7 +82,7 @@ Rules:
 | Fact grid | Two columns of label (`ink-3`) over value (600 weight or mono) |
 | Score bar | Horizontal bar split at the benchmark times, greys from dark (elite) to light; labels in mono under it; a "Your best" row below when the athlete has logged a result |
 | Day card (Planner) | Day and date column (mono date), source label with swatch, workout name (800), format and time (mono). Today gets a 2 px `ink` border and a Start button. Rest days use `surface-muted` |
-| Video | Click-to-play thumbnail (16:9, radius 12 px in cards, full-bleed at the top of movement pages) with a red round play button. Loads YouTube's privacy-enhanced player only when tapped, with the line "Plays from YouTube when you tap it. Nothing loads or tracks you until then." |
+| Video | Click-to-play thumbnail (16:9, radius 12 px in cards, full-bleed at the top of movement pages) with a red round play button. Loads YouTube's privacy-enhanced player only when tapped. No caption explaining this; the cookie policy covers it |
 | Movement row | Name (700) left, load in mono right, small play button for the demo video |
 | Footer | `ink` background, wordmark with `accent-on-dark` "Rx", the tagline, links |
 

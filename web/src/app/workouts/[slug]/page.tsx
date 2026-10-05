@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BottomBar, primaryAction } from "@/components/BottomBar";
 import { Card } from "@/components/Card";
-import { VIDEO_PRIVACY_NOTE, VideoPlayer } from "@/components/VideoPlayer";
+import { VideoPlayer } from "@/components/VideoPlayer";
 import { categoryLabel, categoryParam, equipmentLabels, levelLabel } from "@/lib/labels";
 import {
   getWorkout,
@@ -11,7 +11,7 @@ import {
   movementLinker,
   relatedWorkouts,
   scoreInstruction,
-  scoreTiers,
+  scoreTargets,
 } from "@/lib/workouts";
 import { youtubeId } from "@/lib/youtube";
 
@@ -46,12 +46,13 @@ export default async function WorkoutPage({ params }: PageProps<"/workouts/[slug
   if (!w) notFound();
 
   const video = youtubeId(w.youtube_url);
-  const tiers = scoreTiers(w.scoring_notes);
+  const targets = scoreTargets(w.scoring_notes);
+  const tiers = targets?.kind === "time" ? targets.tiers : [];
   const instruction = scoreInstruction(w.scoring_notes);
   const cues = (w.coaching_tips ?? []).filter((c) => !SCORE_TALK.test(c));
   const related = relatedWorkouts(w, all);
   const catParam = categoryParam(w.category);
-  const maxMinutes = tiers.length ? tiers[tiers.length - 1].minutes : 0;
+  const maxMinutes = tiers.length ? tiers[tiers.length - 1].value : 0;
   // Reps that just repeat the scheme ("21 – 15 – 9" under "21-15-9 For Time") are shown once.
   const digits = (s: string | null | undefined) => (s ?? "").match(/\d+/g)?.join("-") ?? "";
   const schemeDigits = digits(w.scheme);
@@ -113,7 +114,6 @@ export default async function WorkoutPage({ params }: PageProps<"/workouts/[slug
       {video ? (
         <Card title="Watch it first" labelledBy="watch-it-first">
           <VideoPlayer videoId={video} title={`${w.name} workout video`} />
-          <p className="m-0 text-[13px] text-ink-2">{VIDEO_PRIVACY_NOTE}</p>
         </Card>
       ) : null}
 
@@ -127,15 +127,15 @@ export default async function WorkoutPage({ params }: PageProps<"/workouts/[slug
                   {tiers.map((t, i) => (
                     <div
                       key={t.label}
-                      style={{ flex: t.minutes - (tiers[i - 1]?.minutes ?? 0) }}
+                      style={{ flex: t.value - (tiers[i - 1]?.value ?? 0) }}
                       className={["bg-ink", "bg-ink-3", "bg-chip-line", "bg-line"][i] ?? "bg-line"}
                     />
                   ))}
                 </div>
                 <div className="flex font-mono text-xs text-ink-2">
-                  <span style={{ flex: tiers[0].minutes }}>0:00</span>
+                  <span style={{ flex: tiers[0].value }}>0:00</span>
                   {tiers.slice(0, -1).map((t, i) => (
-                    <span key={t.label} style={{ flex: tiers[i + 1].minutes - t.minutes }}>{t.minutes}:00</span>
+                    <span key={t.label} style={{ flex: tiers[i + 1].value - t.value }}>{t.value}:00</span>
                   ))}
                   <span>{maxMinutes}:00</span>
                 </div>
@@ -144,11 +144,21 @@ export default async function WorkoutPage({ params }: PageProps<"/workouts/[slug
                 {tiers.map((t) => (
                   <div key={t.label} className="flex flex-col">
                     <dt className="font-bold">{t.label}</dt>
-                    <dd className="m-0 font-mono">under {t.minutes}:00</dd>
+                    <dd className="m-0 font-mono">under {t.value}:00</dd>
                   </div>
                 ))}
               </dl>
             </>
+          ) : null}
+          {targets?.kind === "count" ? (
+            <dl className="m-0 flex flex-col text-sm">
+              {targets.tiers.map((t) => (
+                <div key={t.label} className="flex items-baseline justify-between border-t border-divider py-2">
+                  <dt className="font-bold">{t.label}</dt>
+                  <dd className="m-0 font-mono">{t.value}+{targets.unit ? ` ${targets.unit}` : ""}</dd>
+                </div>
+              ))}
+            </dl>
           ) : null}
         </Card>
       ) : null}

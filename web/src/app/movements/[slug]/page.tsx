@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card } from "@/components/Card";
-import { VIDEO_PRIVACY_NOTE, VideoPlayer } from "@/components/VideoPlayer";
+import { VideoPlayer } from "@/components/VideoPlayer";
 import { categoryLabel } from "@/lib/labels";
 import {
   getMovement,
@@ -59,7 +59,6 @@ export default async function MovementPage({ params }: PageProps<"/movements/[sl
             <Link href={`/movements?category=${m.category}`} className="text-ink-2">{category}</Link>
           </nav>
           <h1 className="m-0 text-[40px] leading-none font-extrabold tracking-tight">{m.name}</h1>
-          {video ? <p className="m-0 text-[13px] text-ink-2">{VIDEO_PRIVACY_NOTE}</p> : null}
           {m.description ? <p className="m-0 text-ink-2">{m.description}</p> : null}
           {m.muscles ? (
             <dl className="m-0 rounded-2xl border border-line bg-surface px-4 py-3.5 text-sm">

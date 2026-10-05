@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card } from "@/components/Card";
-import { VIDEO_PRIVACY_NOTE, VideoPlayer } from "@/components/VideoPlayer";
+import { VideoPlayer } from "@/components/VideoPlayer";
 import { getMachine, listMachines, machineMovements, muscleGroupLabels } from "@/lib/machines";
 import { youtubeId } from "@/lib/youtube";
 
@@ -49,7 +49,6 @@ export default async function MachinePage({ params }: PageProps<"/machines/[slug
             <Link href="/movements?category=latpulldown" className="text-ink-2">Machines</Link>
           </nav>
           <h1 className="m-0 text-[40px] leading-none font-extrabold tracking-tight">{m.name}</h1>
-          {video ? <p className="m-0 text-[13px] text-ink-2">{VIDEO_PRIVACY_NOTE}</p> : null}
           {muscles.length ? (
             <dl className="m-0 rounded-2xl border border-line bg-surface px-4 py-3.5 text-sm">
               <dt className="text-ink-3">Muscles</dt>
