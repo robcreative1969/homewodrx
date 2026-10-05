@@ -97,3 +97,122 @@ body:has([data-bottom-bar]) footer {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+/* ── Blog article bodies (HTML imported from the old site) ─────────────────── */
+.article-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-size: 17px;
+  line-height: 1.65;
+}
+.article-body h2 {
+  margin: 18px 0 0;
+  font-size: 24px;
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  scroll-margin-top: 80px;
+}
+.article-body h3 {
+  margin: 10px 0 0;
+  font-size: 19px;
+  font-weight: 700;
+}
+.article-body p,
+.article-body ul,
+.article-body ol {
+  margin: 0;
+}
+.article-body ul,
+.article-body ol {
+  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.article-body a {
+  color: var(--accent-text);
+  text-underline-offset: 2px;
+}
+.article-body .pull-quote {
+  font-size: 21px;
+  line-height: 1.4;
+  font-weight: 700;
+  padding: 6px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.article-body .tip-box,
+.article-body .callout,
+.article-body .disclaimer,
+.article-body .affiliate-note {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--surface-muted);
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 15px;
+}
+.article-body .tip-icon svg {
+  width: 22px;
+  height: 22px;
+  color: var(--accent-text);
+}
+.article-body .cta-block,
+.article-body .wod-card,
+.article-body .wod-box,
+.article-body .tier-card,
+.article-body .gear-item,
+.article-body .stretch-type-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.article-body .cta-block h3,
+.article-body .wod-card-title,
+.article-body .wod-box-name,
+.article-body .tier-header {
+  margin: 0;
+  font-weight: 800;
+}
+.article-body .wod-box-label,
+.article-body .tier-badge,
+.article-body .fmt-name {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.article-body .stretch-types {
+  display: grid;
+  gap: 10px;
+}
+.article-body table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  display: block;
+  overflow-x: auto;
+}
+.article-body th,
+.article-body td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--divider);
+  vertical-align: top;
+}
+.article-body th {
+  font-weight: 700;
+  border-bottom-color: var(--line);
+}
+.article-body svg {
+  max-width: 24px;
+  max-height: 24px;
+}

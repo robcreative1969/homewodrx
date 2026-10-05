@@ -1,0 +1,43 @@
+{
+  "slug": "test-retest-benchmark-progress",
+  "title": "Test and Retest: Tracking Progress With Benchmark Workouts",
+  "excerpt": "Fran today isn't just today's workout, it's a data point. How to use benchmark WODs on purpose: which ones to repeat, how often, and what the numbers actually mean.",
+  "description": "Fran today isn't just today's workout, it's a data point. Here's how to use benchmark WODs on purpose: which ones to repeat, how often, and what the numbers actually mean.",
+  "category": "programming",
+  "categoryLabel": "Programming",
+  "date": "2026-07-20",
+  "readTime": "7 min read",
+  "tags": [
+    "Programming",
+    "Benchmark WODs",
+    "Tracking Progress",
+    "Training Log"
+  ],
+  "toc": [
+    {
+      "id": "why-retest",
+      "title": "Why Retesting Beats Guessing"
+    },
+    {
+      "id": "choosing-your-tests",
+      "title": "Choosing Your Test List"
+    },
+    {
+      "id": "how-often",
+      "title": "How Often to Retest"
+    },
+    {
+      "id": "reading-the-numbers",
+      "title": "Reading the Numbers Honestly"
+    },
+    {
+      "id": "what-progress-looks-like",
+      "title": "What Progress Actually Looks Like"
+    },
+    {
+      "id": "final-thoughts",
+      "title": "Final Thoughts"
+    }
+  ],
+  "bodyHtml": "<h2 id=\"why-retest\">Why Retesting Beats Guessing</h2>\n      <p>Most athletes who train at home can tell you they're \"getting fitter.\" Fewer can tell you what that actually means in numbers. It's an easy trap: the workouts feel harder, the sweat still shows up, so progress must be happening somewhere. Maybe it is. But feeling like you're improving and having proof are two different things, and only one of them holds up when the plateau hits and you're trying to figure out what to change.</p>\n      <p>Benchmark workouts solve this because they're a controlled experiment you already know how to run. Fran, Cindy, a 1-mile run, a max-rep set of pull-ups: the movements, the loads, and the format stay fixed. The only thing that changes between attempts is you. Run the same test twice with a few weeks between, and the difference in the clock or the rep count is close to the cleanest data a home athlete can generate without a lab.</p>\n      <p>The catch is that this only works if you treat the repeat as a real test, not just another workout that happens to share a name with an old one.</p>\n      <h2 id=\"choosing-your-tests\">Choosing Your Test List</h2>\n      <p>You don't need to retest everything, and honestly you shouldn't. Pick a small handful of workouts, four or five, that together cover the ground you actually care about: a short and brutal sprint effort, a longer grinder that tests pacing, a heavy day that mixes load and gymnastics, and one pure bodyweight test that needs no equipment at all.</p>\n      <p>The <a href=\"/workouts\">named benchmark WODs</a> are built for exactly this job. Pick from the classics, or if you'd rather build a repeatable test around the specific movements and equipment you have on hand, the <a href=\"/wodbuilder\">WOD Builder</a> can generate one and you simply save the exact prescription (reps, loads, time cap) so you can run it again unchanged later.</p>\n      <p>Whatever you choose, write the test list down somewhere permanent. If you're rebuilding it from memory every few months, you'll drift, and drift is what ruins a comparison.</p>\n      <h2 id=\"how-often\">How Often to Retest</h2>\n      <p>Weekly retesting is one of the more common mistakes. A benchmark workout is demanding by design, and running it every seven days doesn't just add noise to your data, it adds fatigue that competes with the training you're supposed to be doing between tests. Give your body enough time to actually adapt to what you've been training before you ask it to prove that adaptation.</p>\n      <p>Somewhere between eight and twelve weeks per test is a reasonable default for most home athletes. That's long enough for real strength and conditioning changes to show up, and short enough that you're not waiting a year to find out if your programming is working.</p>\n      <div class=\"tip-box\">\n        <div class=\"tip-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\"></path><path d=\"M9 18h6\"></path><path d=\"M10 22h4\"></path></svg></div>\n        <p><strong>Practical habit:</strong> Stagger your tests instead of running them all in the same week. One benchmark every couple of weeks gives you a steady stream of data without turning an entire training block into a test week.</p>\n      </div>\n      <h2 id=\"reading-the-numbers\">Reading the Numbers Honestly</h2>\n      <p>A retest only means something if the conditions match closely enough to isolate fitness as the variable. Same warm-up, similar sleep the night before, roughly the same time of day, and no sneaky changes to the workout itself. Scaling up a movement, dropping a rest interval, or doing it fresh instead of after a hard week will all move the clock, and none of that tells you anything true about your fitness.</p>\n      <div class=\"pull-quote\">\n        \"A faster time only proves you got fitter if everything else about the test stayed exactly the same.\"\n      </div>\n      <p>Log the conditions along with the result: how you felt, what you scaled if anything, how much sleep you got. A number without context is hard to trust six months later when you're trying to explain why one attempt was slower than the last. This is where a training log earns its place. A free account lets you record the details next to the time, so a future comparison is actually apples to apples.</p>\n      <h2 id=\"what-progress-looks-like\">What Progress Actually Looks Like</h2>\n      <p>A faster clock is the most obvious win, but it's not the only one, and treating it as the only one will make you miss real progress that's sitting right in front of you. Finishing Fran in the same time as three months ago, but Rx'd this time instead of scaled, is a bigger win than the clock shows. So is finishing at the same pace with a noticeably lower heart rate afterward, or with rounds that stayed even instead of falling apart in the back half.</p>\n      <p>Watch pacing patterns too. An athlete who used to blow up in round two and crawl through round three, but now holds a steady pace start to finish, has built real work capacity even if the total time barely moved. The stopwatch is one signal among several. Read all of them before deciding whether a block worked.</p>\n      <h2 id=\"final-thoughts\">Final Thoughts</h2>\n      <p>Testing and retesting turns training from a feeling into something you can actually measure, and that changes how you program. When a benchmark stalls or slips, you have real evidence pointing at what to adjust, instead of a vague sense that something isn't working. When it improves, you know which weeks earned that result.</p>\n      <p>Pick a short list of benchmarks, space them out, keep the conditions consistent, and write everything down. Do that for a year and you'll have a training history that tells you more about your fitness than any single workout ever could.</p>"
+}
