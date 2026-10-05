@@ -161,3 +161,19 @@ Recorded here so they are not lost. These are fixed in the code, not the wording
 - Workout page titles change three times as the page loads, with two brand spellings.
 - /planner, /login and /signup have no footer.
 - Old `generator.html` and `stretch.html` still exist with their own copy (they redirect).
+
+## 10. Machine pages (Rob's decisions, October 5, 2026)
+
+- **Muscle names** (Q2). One list for movements and machines: Glutes, Hamstrings, Quads,
+  Calves, Inner Thighs, Core, Back, Chest, Shoulders, Arms. Stored lowercase with hyphens
+  (`quads`, `inner-thighs`, `arms`).
+- **Variations** (Q3). Variations are options on the main movement page (for example grip
+  width on the T-bar row, single-arm chest press), not separate movement pages.
+- **Injury line** (Q4). Every machine page's Safety section ends with: "If you have a
+  knee, back, shoulder or other injury, check with a doctor or physical therapist before
+  using this machine." (Name the body parts that matter for that machine.)
+- **Videos** (Q5). Prefer the machine maker's video, as long as it shows someone actually
+  using the machine. A product video that only describes features doesn't count; use the
+  best teaching video instead.
+- **Movements** (Q1). Movements done on a machine stay in the movement library, linked to
+  their machine and back.
