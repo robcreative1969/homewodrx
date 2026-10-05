@@ -44,11 +44,19 @@ export function WorkoutMode({ session }: { session: Session }) {
       const ctx = audio.current;
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
+      // A triangle wave cuts through gym noise better than a pure tone; the short fade
+      // in and out stops it clicking.
+      osc.type = "triangle";
       osc.frequency.value = freq;
-      gain.gain.value = 0.15;
+      const t = ctx.currentTime;
+      const end = t + ms / 1000;
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.6, t + 0.01);
+      gain.gain.setValueAtTime(0.6, end - 0.02);
+      gain.gain.linearRampToValueAtTime(0, end);
       osc.connect(gain).connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + ms / 1000);
+      osc.start(t);
+      osc.stop(end);
     },
     [sound],
   );
@@ -120,6 +128,14 @@ export function WorkoutMode({ session }: { session: Session }) {
 
   async function start() {
     // Audio and wake lock need a tap to begin on phones.
+    try {
+      // iPhones mute website sounds when the silent switch is on unless the page asks to
+      // play like a media app.
+      const nav = navigator as Navigator & { audioSession?: { type: string } };
+      if (nav.audioSession) nav.audioSession.type = "playback";
+    } catch {
+      // Older browsers: sound follows the silent switch.
+    }
     try {
       audio.current ??= new AudioContext();
       await audio.current.resume();
