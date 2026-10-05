@@ -1559,16 +1559,18 @@ async function confirmDelete() {
   closeDeleteModal();
   showToast('Deleting account…', false, true);
   try {
-    // Delete profile row first (cascades handled by DB), then delete auth user
-    await supabaseClient.from('profiles').delete().eq('id', _user.id);
-    await supabaseClient.auth.admin?.deleteUser(_user.id);  // only works with service key
-    // Fallback: sign out and show message
-    await supabaseClient.auth.signOut();
-    setTimeout(() => { window.location.href = '/'; }, 1500);
-  } catch(e) {
-    // Supabase user deletion may require server-side; redirect to support
+    // Remove the profile photo first (storage files are not deleted by the database cascade)
+    const { data: files } = await supabaseClient.storage.from('avatars').list(_user.id);
+    if (files && files.length) {
+      await supabaseClient.storage.from('avatars').remove(files.map(f => _user.id + '/' + f.name));
+    }
+    // Deletes the account; the database removes the profile, workouts, results and plans with it
+    const { error } = await supabaseClient.rpc('delete_my_account');
+    if (error) throw error;
     await supabaseClient.auth.signOut();
     window.location.href = '/?deleted=1';
+  } catch(e) {
+    showToast('Your account could not be deleted. Please try again or contact us.', true);
   }
 }
 
