@@ -18,6 +18,7 @@ export type Movement = {
   common_faults: Fault[];
   youtube_url: string | null;
   equipment: string[] | null;
+  machine: { name: string; slug: string } | null;
 };
 
 export const MOVEMENT_CATEGORIES: Record<string, string> = {
@@ -64,13 +65,15 @@ export const listMovements = cache(async () => {
 export const getMovement = cache(async (slug: string): Promise<Movement | null> => {
   const { data, error } = await publicClient()
     .from("movements")
-    .select("id,name,slug,category,muscles,description,tips,scaling_options,common_faults,youtube_url,equipment")
+    .select("id,name,slug,category,muscles,description,tips,scaling_options,common_faults,youtube_url,equipment,machine:machines(name,slug)")
     .eq("slug", slug)
     .maybeSingle();
   if (error) throw new Error(`Could not load movement ${slug}: ${error.message}`);
   if (!data) return null;
+  const machine = Array.isArray(data.machine) ? (data.machine[0] ?? null) : (data.machine ?? null);
   return {
     ...data,
+    machine,
     scaling_options: parseList<ScalingOption>(data.scaling_options),
     common_faults: parseList<Fault>(data.common_faults),
   } as Movement;

@@ -61,10 +61,17 @@ export default async function MovementPage({ params }: PageProps<"/movements/[sl
           </nav>
           <h1 className="m-0 text-[40px] leading-none font-extrabold tracking-tight">{m.name}</h1>
           {m.description ? <p className="m-0 text-ink-2">{m.description}</p> : null}
-          {m.muscles ? (
-            <dl className="m-0 rounded-2xl border border-line bg-surface px-4 py-3.5 text-sm">
-              <dt className="text-ink-3">Muscles</dt>
-              <dd className="m-0 font-semibold">{m.muscles}</dd>
+          {m.muscles || m.machine ? (
+            <dl className="m-0 grid grid-cols-1 gap-2.5 rounded-2xl border border-line bg-surface px-4 py-3.5 text-sm">
+              {m.muscles ? (
+                <div className="flex flex-col"><dt className="text-ink-3">Muscles</dt><dd className="m-0 font-semibold">{m.muscles}</dd></div>
+              ) : null}
+              {m.machine ? (
+                <div className="flex flex-col">
+                  <dt className="text-ink-3">Done on</dt>
+                  <dd className="m-0 font-semibold"><Link href={`/machines/${m.machine.slug}`} className="text-ink">{m.machine.name}</Link></dd>
+                </div>
+              ) : null}
             </dl>
           ) : null}
         </section>

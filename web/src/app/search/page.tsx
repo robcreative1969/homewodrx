@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { listPosts } from "@/lib/blog";
 import { categoryLabel } from "@/lib/labels";
+import { listMachines } from "@/lib/machines";
 import { listMovements, movementCategoryLabel } from "@/lib/movements";
 import { listRoutines, listStretches } from "@/lib/stretches";
 import { listWorkouts } from "@/lib/workouts";
@@ -28,11 +29,12 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
 
   let groups: { label: string; hits: Hit[] }[] = [];
   if (terms.length) {
-    const [workouts, movements, stretches, routines] = await Promise.all([
+    const [workouts, movements, stretches, routines, machines] = await Promise.all([
       listWorkouts(),
       listMovements(),
       listStretches(),
       listRoutines(),
+      listMachines(),
     ]);
     groups = [
       {
@@ -46,6 +48,12 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
         hits: movements
           .filter((m) => matches(m.name, m.muscles))
           .map((m) => ({ href: `/movements/${m.slug}`, title: m.name, detail: movementCategoryLabel(m.category) })),
+      },
+      {
+        label: "Machines",
+        hits: machines
+          .filter((m) => matches(m.name, ...(m.muscle_groups ?? [])))
+          .map((m) => ({ href: `/machines/${m.slug}`, title: m.name, detail: "Machine" })),
       },
       {
         label: "Stretches",

@@ -45,9 +45,7 @@ export default async function MachinePage({ params }: PageProps<"/machines/[slug
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 px-4 pt-4 pb-8">
         <section className="flex flex-col gap-2.5">
           <nav aria-label="Breadcrumb" className="text-[13px] text-ink-3">
-            <Link href="/movements" className="text-ink-2">Movements</Link>
-            {" › "}
-            <Link href="/movements?category=latpulldown" className="text-ink-2">Machines</Link>
+            <Link href="/machines" className="text-ink-2">Machines</Link>
           </nav>
           <h1 className="m-0 text-[40px] leading-none font-extrabold tracking-tight">{m.name}</h1>
           {muscles.length ? (
