@@ -1,8 +1,13 @@
 # HomeWODRx content guide
 
-**Status: draft for Rob's review (October 4, 2026).** Nothing on the site has changed yet.
-Items marked **Rob decides** need your answer before the rebuild uses them. Everything
-else is a proposal; change anything you disagree with.
+**Status: draft, decisions in section 1 answered by Rob (October 4, 2026).** Nothing on
+the site has changed yet.
+
+**What the site is for:** a trove of training information, plus an advanced builder that
+programs workouts from four sources: CrossFit named workouts, builder-generated WODs,
+DIY workouts users build, and (maybe) AI-generated workouts. The named workouts are
+there mainly for search traffic. They must be consistent and accurate, but the builder
+and planner are the product.
 
 The goal is simple: **one name for each thing, one place for each fact, and copy a
 beginner can follow.**
@@ -13,10 +18,10 @@ beginner can follow.**
 
 | # | Question | Options seen on the site | Proposal |
 |---|---|---|---|
-| 1 | Tagline | "at the box, the health club, or at home" (footer) / "The Platform Built for Box Athletes" (home) / "athletes who train outside the box" (blog) | Footer version everywhere: it includes everyone |
-| 2 | Is the Planner free or premium? | Planner badged "PREMIUM", signup says "Free forever" | Rob decides |
-| 3 | Fran targets | Elite: "sub-3" vs "under 2". Finish: "under 8", "under 10", "under 15" | Rob decides (one set, see section 4) |
-| 4 | Murph targets | Elite "under 35" vs "under 40"; typical "40–60" vs "60–80"; cap "30–60" vs "45" | Rob decides |
+| 1 | Tagline | "at the box, the health club, or at home" (footer) / "The Platform Built for Box Athletes" (home) / "athletes who train outside the box" (blog) | **Decided:** "at the box, the health club, or at home", everywhere |
+| 2 | Is the Planner free or premium? | Planner badged "PREMIUM", signup says "Free forever" | **Decided:** saving weeks of workouts in the Planner is premium. Signup copy must stop saying everything is free forever |
+| 3 | Named workout targets (Fran, Murph, Open 12.1) | Several different targets on one page | **Decided:** not worth Rob's time. Keep the figure already in the Score line, delete the others. No new figures added |
+| 4 | Pull-up standard | "chin clears the bar" vs "pull the bar to your chest" | **Decided:** a Pull-Up counts when the chin clears the bar. Chest-to-bar (C2B) is a separate, harder movement where the chest touches the bar |
 | 5 | Community WODs | In the nav and footer, but the category has 0 workouts | Hide it until it has workouts |
 | 6 | Memorials & Tributes | On the home page, missing from nav and footer | Add it to nav and footer |
 
@@ -126,21 +131,22 @@ to "Perform on each side".
 ## 8. Content errors found so far
 
 These come from a sample of pages. The data cleanup will check every workout, movement
-and stretch the same way. Facts marked **Rob decides** will not be changed without your answer.
+and stretch the same way, fixing contradictions by keeping one existing figure, never by
+adding new ones.
 
 | Page | Problem | Fix |
 |---|---|---|
-| Fran | Four different targets on one page | **Rob decides** (decision 3) |
+| Fran | Four different targets on one page | Keep the Score line figure, delete the rest |
 | Murph | About says "Corporal Murphy"; elsewhere Navy Lieutenant Michael Murphy | Navy Lieutenant Michael Murphy, everywhere |
-| Murph | Targets and time cap disagree | **Rob decides** (decision 4) |
+| Murph | Targets and time cap disagree | Keep the Score line figure, delete the rest; use "Typical time", no cap |
 | Open 12.1 | Equipment lists barbell, pull-up bar, kettlebell and jump rope, but the workout is burpees only | Equipment: none |
-| Open 12.1 | Score says "100+ is excellent", FAQ says "100+ is solid, 120+ is strong"; says it can't be scaled, then scales it | **Rob decides** targets; keep the scaled version, drop "cannot be scaled" |
+| Open 12.1 | Score says "100+ is excellent", FAQ says "100+ is solid, 120+ is strong"; says it can't be scaled, then scales it | Keep the Score line figure; keep the scaled version, drop "cannot be scaled" |
 | Coe | Labelled "21-15-9" but the reps go 1 to 10 | Correct the label |
 | Kalsu | Listed as "Classic AMRAP" | Correct the format |
 | Nasty Girls | Filed under Competition | Move to Classic Benchmarks |
 | Standing Quad Stretch | Description says quadriceps, focus says Hamstrings | Focus: Quadriceps |
 | Cat-Cow / Deep Squat Hold | Cat-Cow tagged static with a hold time; Deep Squat Hold tagged dynamic | Swap the tags |
-| Pull-Ups | One cue says "chin clears the bar", another says "pull the bar to your chest" | **Rob decides** which standard to teach |
+| Pull-Ups | One cue says "chin clears the bar", another says "pull the bar to your chest" | Chin clears the bar. Move the chest tip to the Chest-to-Bar page |
 | WOD Timer | AMRAP described as counting up, For Time as counting down (may be reversed) | Check the timer, then fix the text |
 | The Daily 20 | "Scaling Options" shows the same values for Rx and Scaled | Show real scaled options or hide the section |
 
