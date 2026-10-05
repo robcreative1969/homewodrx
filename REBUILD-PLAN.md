@@ -85,7 +85,7 @@ traffic, so they come first.
 | 4. Accounts | Sign up, log in, profile, settings, My Workouts, logging results, delete account, the human check | Test sign-up with a throwaway account |
 | 5. Planner | Weekly planner on the new workouts model, all sources, print and calendar export | Review |
 | 6. Admin | Workout and movement editing, The Daily 20 overrides, athletes, broadcasts | Review |
-| 7. Switch | URL check, final review, move the domain, watch for errors for a week | Approve the switch |
+| 7. Switch | URL check, final review, move the domain, watch for errors for a week. At the same time: rename the Assault Bike movements to Air Bike with redirects (Q9; the old site builds links from movement names, so this can't run earlier), and point the Daily 20 email at /api/daily-20 | Approve the switch |
 
 ## 6. After the switch (only once traffic arrives)
 
