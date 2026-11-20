@@ -13,7 +13,7 @@ begin
   select string_agg(c.table_name || '.' || c.column_name || ' is ' || c.data_type, '; ') into bad
   from information_schema.columns c
   join (values
-    ('benchmark_workouts','tips','ARRAY'), ('benchmark_workouts','coaching_tips','ARRAY'),
+    ('benchmark_workouts','tips','jsonb'), ('benchmark_workouts','coaching_tips','jsonb'),
     ('benchmark_workouts','faqs','jsonb'), ('benchmark_workouts','movements','jsonb'),
     ('movements','beginner_reps','jsonb'), ('movements','intermediate_reps','jsonb'), ('movements','advanced_reps','jsonb'),
     ('movements','common_faults','text'), ('movements','daily_wod_eligible','boolean'),
@@ -31,12 +31,12 @@ $guard$;
 
 -- Item 1: Fran
 update public.benchmark_workouts set
-  coaching_tips = array[
+  coaching_tips = to_jsonb(array[
     $$Break thrusters early — sets of 7-7-7 or 8-7-6 beat going unbroken and blowing up.$$,
     $$Cycle the barbell directly from the front squat bottom position into the push press — no pause at the rack.$$,
     $$On the pull-up bar, butterfly or kipping is fastest. If you only have strict, reduce reps.$$,
     $$Breathe out on the press. The thruster is a full exhale at the top.$$
-  ]::text[],
+  ]::text[]),
   faqs = $$[
     {
       "answer": "Fran is a classic benchmark workout consisting of 21-15-9 reps of thrusters (95/65 lb) and pull-ups, done as fast as possible. It is one of the most widely used fitness tests in the world and a staple of functional fitness programs.",
@@ -175,11 +175,11 @@ update public.benchmark_workouts set
     }
   ]$$::jsonb,
   scoring_notes = $$Your score is your finish time. Sub-20 min is elite. 25–35 min is solid.$$,
-  tips = array[
+  tips = to_jsonb(array[
     $$Do the 5 burpees at the top of every minute, then get straight back to the bar$$,
     $$Pace the thrusters early — the burpees cost more as you tire$$,
     $$The workout ends at 100 thrusters$$
-  ]::text[],
+  ]::text[]),
   updated_at = now()
 where slug = 'kalsu';
 
@@ -191,10 +191,10 @@ where slug = 'kalsu';
 update public.benchmark_workouts set
   category = $$classic_benchmark$$,
   scoring_notes = $$Your score is your finish time. Sub-10 min is elite. Sub-15 min is strong.$$,
-  tips = array[
+  tips = to_jsonb(array[
     $$The muscle-ups are the limiting factor — break them from round 1 rather than failing$$,
     $$50 air squats before muscle-ups will hollow out your legs quickly$$
-  ]::text[],
+  ]::text[]),
   faqs = $$[
   {
     "answer": "Sub-10 min is elite. Sub-15 min is strong. The muscle-up volume is the primary time driver.",
@@ -561,12 +561,12 @@ update public.benchmark_workouts set
       "question": "Can I do Grace with dumbbells?"
     }
   ]$$::jsonb,
-  coaching_tips = array[
+  coaching_tips = to_jsonb(array[
     $$Grace is all about cycling speed. The clean & jerk should be smooth and continuous — no long pauses at the rack.$$,
     $$A squat clean is slower than a power clean for most athletes. Stick to power clean + push jerk for speed.$$,
     $$Big unbroken sets early (15+ reps) followed by smaller sets is the dominant strategy for competitive athletes.$$,
     $$Chalk your hands and use a hook grip to protect your pull.$$
-  ]::text[],
+  ]::text[]),
   updated_at = now()
 where slug = 'grace';
 
@@ -613,10 +613,10 @@ update public.benchmark_workouts set
       "question": "What equipment do you need for Cindy?"
     }
   ]$$::jsonb,
-  tips = array[
+  tips = to_jsonb(array[
     $$Pace to start—you'll want to sprint at the end$$,
     $$Stay consistent in your pull-up sets$$
-  ]::text[],
+  ]::text[]),
   scaling_notes = $$Beginners: Start with jumping pull-ups or ring rows instead of kipping pull-ups, and do knee push-ups as needed. Focus on maintaining movement through all 20 minutes — even if rounds are slow.$$,
   updated_at = now()
 where slug = 'cindy';
@@ -645,13 +645,13 @@ update public.benchmark_workouts set
       "question": "What muscles does Helen work?"
     }
   ]$$::jsonb,
-  coaching_tips = array[
+  coaching_tips = to_jsonb(array[
     $$Control the run pace — it is tempting to sprint the 400m but you pay for it on the pull-ups.$$,
     $$On kettlebell swings, drive with your hips. Keep the bell close on the downswing and pop your hips at the top.$$,
     $$The pull-ups follow a demanding hip-hinge movement. Break them early into 2 sets rather than going to failure.$$,
     $$Each round should take roughly 3.5–4 minutes.$$,
     $$Chalk up for the pull-ups — your grip will be taxed from the kettlebell swings.$$
-  ]::text[],
+  ]::text[]),
   scaling_notes = $$Beginners: Reduce the run to 200m, swap kettlebell swings to a lighter weight (35 lb men / 26 lb women), and substitute ring rows or jumping pull-ups for pull-ups.$$,
   updated_at = now()
 where slug = 'helen';
@@ -680,12 +680,12 @@ update public.benchmark_workouts set
       "question": "What equipment do I need for Annie?"
     }
   ]$$::jsonb,
-  coaching_tips = array[
+  coaching_tips = to_jsonb(array[
     $$Do not rush the double-unders — a missed rep breaks rhythm and spikes your heart rate. Stay calm and controlled.$$,
     $$The sit-up sets are your recovery. Use them to control your breathing before the next jump rope set.$$,
     $$Big sets on double-unders are possible in early rounds. Break them at 25+ if needed in later rounds.$$,
     $$Jump rope grip matters: hold handles lightly with wrists, not arms, doing the spinning.$$
-  ]::text[],
+  ]::text[]),
   updated_at = now()
 where slug = 'annie';
 
