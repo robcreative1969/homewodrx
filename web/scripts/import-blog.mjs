@@ -4,11 +4,14 @@
 // sign-up promos, tags strip, related links, scripts) and applies CONTENT-GUIDE.md
 // naming. Re-running overwrites the JSON files.
 
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { parse } from "node-html-parser";
 
-const SITE = join(import.meta.dirname, "..", "..", "site");
+// Optional: a folder holding blog-posts.json and blog/*.html (e.g. the weekly drafts
+// folder). With a folder given, only posts not already in content/blog are added.
+const FROM = process.argv[2];
+const SITE = FROM ?? join(import.meta.dirname, "..", "..", "site");
 const OUT = join(import.meta.dirname, "..", "content", "blog");
 mkdirSync(OUT, { recursive: true });
 
@@ -34,6 +37,11 @@ const RENAME = [
   [/Smart Stretch Builder|Stretch Generator/g, "Stretch Builder"],
   // Broken on the old site: there was never a /daily20 page.
   [/href="\/daily20"/g, 'href="/daily-wod"'],
+  // Internal links keep the new site's clean addresses (the old ones redirect anyway).
+  [/href="(\/[^"#?]*?)\.html/g, 'href="$1'],
+  [/href="\/movements\/(deadlift|hang-power-clean|push-jerk)"/g, 'href="/movements/$1s"'],
+  // Accounts are paused (Rob, 2026-11-20): drop "A free account …" closing sentences.
+  [/\s*A <a href="\/signup">free [^<]*account<\/a>[^.]*\./g, ""],
 ];
 
 function clean(html) {
@@ -53,6 +61,7 @@ function isoDate(text) {
 
 let count = 0;
 for (const post of posts) {
+  if (FROM && existsSync(join(OUT, `${post.slug}.json`))) continue;
   const file = join(SITE, post.file);
   const root = parse(readFileSync(file, "utf8"), { comment: false });
   const article = root.querySelector("article.article-content");
