@@ -6,6 +6,7 @@ import { listMachines } from "@/lib/machines";
 import { listMovements, movementCategoryLabel } from "@/lib/movements";
 import { listRoutines, listStretches } from "@/lib/stretches";
 import { listWorkouts } from "@/lib/workouts";
+import { LogSearch } from "@/components/SiteMetrics";
 
 export const metadata: Metadata = {
   title: "Search",
@@ -88,6 +89,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
         <button type="submit" className="h-12 rounded-xl bg-accent px-5 font-bold text-accent-ink">Search</button>
       </form>
 
+      {terms.length ? <LogSearch query={query} results={total} /> : null}
       {terms.length ? (
         <p className="m-0 text-ink-2">
           <span className="font-mono font-bold text-ink">{total}</span> {total === 1 ? "result" : "results"} for &ldquo;{query}&rdquo;
