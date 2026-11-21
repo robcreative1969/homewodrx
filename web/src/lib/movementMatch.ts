@@ -38,6 +38,8 @@ const ALIASES: Record<string, string> = {
   "dumbbell box step up": "dumbbell step up",
   "kettlebell lunge step": "walking lunge",
   jerk: "push jerk",
+  "dumbbell hang clean to overhead": "dumbbell hang clean and jerk",
+  "dumbbell squat": "dumbbell front squat",
 };
 
 function singular(word: string) {
