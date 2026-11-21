@@ -70,23 +70,24 @@ export type Daily20 = {
   isManual: boolean;
 };
 
-type Config = {
+export type DailyConfig = {
   equipment: string[];
   difficultyByDay: Record<number, Level>;
   bodyFocusByDay: Record<number, Focus>;
   formatByDay: Record<number, Format>;
 };
 
-const DEFAULT_CONFIG: Config = {
+export const DEFAULT_DAILY_CONFIG: DailyConfig = {
   equipment: ["bodyweight", "kettlebell", "dumbbell", "pullupbar", "jumprope", "resistancebands"],
   difficultyByDay: { 0: "beginner", 1: "intermediate", 2: "advanced", 3: "intermediate", 4: "advanced", 5: "advanced", 6: "intermediate" },
   bodyFocusByDay: { 0: "core", 1: "full-body", 2: "lower-body", 3: "upper-body", 4: "cardio", 5: "full-body", 6: "legs-glutes" },
   formatByDay: { 0: "circuit", 1: "amrap", 2: "fortime", 3: "emom", 4: "amrap", 5: "fortime", 6: "circuit" },
 };
 
-const loadConfig = cache(async (): Promise<Config> => {
+/** The admin's Daily 20 settings (daily_wod_config, row id 1), over the defaults. */
+export const loadConfig = cache(async (): Promise<DailyConfig> => {
   const { data } = await publicClient().from("daily_wod_config").select("config").maybeSingle();
-  return { ...DEFAULT_CONFIG, ...((data?.config as Partial<Config>) ?? {}) };
+  return { ...DEFAULT_DAILY_CONFIG, ...((data?.config as Partial<DailyConfig>) ?? {}) };
 });
 
 export const getDaily20 = cache(async (date: string): Promise<Daily20 | null> => {

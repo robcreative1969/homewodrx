@@ -6,7 +6,7 @@ import { signOut } from "@/app/admin/actions";
 const SECTIONS: { href: string; label: string; ready: boolean }[] = [
   { href: "/admin", label: "Dashboard", ready: true },
   { href: "/admin/content", label: "Content", ready: true },
-  { href: "/admin/daily", label: "Daily 20", ready: false },
+  { href: "/admin/daily", label: "Daily 20", ready: true },
   { href: "/admin/email", label: "Email", ready: false },
   { href: "/admin/members", label: "Members", ready: false },
   { href: "/admin/feedback", label: "Feedback", ready: false },
