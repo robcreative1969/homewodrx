@@ -841,15 +841,13 @@ function initDigestForm() {
     btn.disabled = true;
     btn.textContent = 'Joining…';
     try {
-      if (!supabaseClient) throw new Error('Supabase unavailable');
-      const { error } = await supabaseClient.from('email_subscribers').insert({ email: email, source: 'homepage_digest' });
-      if (error && error.code !== '23505') throw error; // 23505 = already subscribed, treat as success
+      await subscribeEmail(email, 'homepage_digest');
       msg.textContent = "You're in — check your inbox tomorrow morning.";
       msg.className = 'digest-msg ok';
       form.reset();
     } catch (err) {
       console.warn('Digest signup failed:', err);
-      msg.textContent = 'Something went wrong — please try again.';
+      msg.textContent = (err && err.message) || 'Something went wrong — please try again.';
       msg.className = 'digest-msg err';
     } finally {
       btn.disabled = false;

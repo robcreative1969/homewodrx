@@ -385,28 +385,17 @@ async function nlSubmit(e) {
   btn.textContent = 'Subscribing…';
 
   try {
-    if (!supabaseClient) await initSupabase();
-    const { error } = await supabaseClient
-      .from('email_subscribers')
-      .insert({ email, source: 'blog' });
+    await subscribeEmail(email, 'blog');
 
     msg.style.display = 'block';
-    if (error && error.code === '23505') {
-      msg.style.color = 'rgba(255,255,255,.6)';
-      msg.textContent = 'You\'re already on the list!';
-      btn.textContent = 'Subscribed';
-    } else if (error) {
-      throw error;
-    } else {
-      msg.style.color = '#4ade80';
-      msg.textContent = '✓ You\'re in! We\'ll be in touch.';
-      btn.textContent = 'Subscribed ✓';
-      document.getElementById('nl-email').value = '';
-    }
+    msg.style.color = '#4ade80';
+    msg.textContent = '✓ You\'re in! We\'ll be in touch.';
+    btn.textContent = 'Subscribed ✓';
+    document.getElementById('nl-email').value = '';
   } catch (err) {
     msg.style.display = 'block';
     msg.style.color = '#f87171';
-    msg.textContent = 'Something went wrong — please try again.';
+    msg.textContent = (err && err.message) || 'Something went wrong — please try again.';
     btn.disabled = false;
     btn.textContent = 'Subscribe Free';
     console.error('Subscribe error:', err);

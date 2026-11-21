@@ -55,6 +55,23 @@ function loadTurnstile() {
   return loadTurnstile.promise;
 }
 
+/**
+ * Adds an email to the Daily 20 / blog email list through the "subscribe" Edge Function,
+ * which checks the human-check token first. Resolves on success; throws with a message
+ * fit to show the visitor otherwise.
+ */
+async function subscribeEmail(email, source) {
+  const captchaToken = await getCaptchaToken();
+  const res = await fetch(CONFIG.SUPABASE_URL + '/functions/v1/subscribe', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', apikey: CONFIG.SUPABASE_ANON_KEY, Authorization: 'Bearer ' + CONFIG.SUPABASE_ANON_KEY },
+    body: JSON.stringify({ email: email, source: source, captchaToken: captchaToken }),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || 'Something went wrong. Please try again.');
+  return true;
+}
+
 async function getCaptchaToken() {
   const ts = await loadTurnstile();
   return new Promise((resolve, reject) => {
