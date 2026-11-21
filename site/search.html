@@ -1167,6 +1167,7 @@ function render() {
 
 function renderAll(area, wods, mvs, stretches, blog, gear, q) {
   const hasResults = wods.length + mvs.length + stretches.length + blog.length + gear.length > 0;
+  if (q && window.hwrxLogSearch) window.hwrxLogSearch(q, wods.length + mvs.length + stretches.length + blog.length + gear.length);
 
   if (!q && !hasActiveFilters()) {
     area.innerHTML = `

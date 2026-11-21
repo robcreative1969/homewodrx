@@ -136,3 +136,44 @@
     init();
   }
 })();
+
+// ============================================================================
+// SITE METRICS — cookie-free page views and site searches (no consent needed)
+// ============================================================================
+// Sends one tiny event per page view to Supabase (log_site_event). Stores no
+// cookies, no IP and no personal data: the database counts visitors with a
+// one-day hash it throws away after two days. Read in the new site's admin.
+(function () {
+  var URL = 'https://irtppmztpcakanhefljs.supabase.co/rest/v1/rpc/log_site_event';
+  var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlydHBwbXp0cGNha2FuaGVmbGpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1NDcxMTcsImV4cCI6MjA5MDEyMzExN30.MmuqyE12kFNJN62JElt6vYMzDJ0z-_SMgMwZRLB0rwg';
+  function device() {
+    var w = Math.min(screen.width || 0, window.innerWidth || 9999);
+    return w < 700 ? 'mobile' : w < 1100 ? 'tablet' : 'desktop';
+  }
+  function send(body) {
+    try {
+      fetch(URL, {
+        method: 'POST', keepalive: true,
+        headers: { 'Content-Type': 'application/json', apikey: KEY, Authorization: 'Bearer ' + KEY },
+        body: JSON.stringify(body)
+      }).catch(function () {});
+    } catch (e) { /* metrics must never break the page */ }
+  }
+  if (location.hostname === 'localhost') return;
+  send({ p_kind: 'view', p_host: location.hostname, p_path: location.pathname,
+         p_referrer: document.referrer || null, p_device: device() });
+
+  // Site search: log the final query once the visitor stops typing.
+  var timer = null, last = '';
+  window.hwrxLogSearch = function (q, results) {
+    q = (q || '').trim();
+    clearTimeout(timer);
+    if (q.length < 2) return;
+    timer = setTimeout(function () {
+      if (q.toLowerCase() === last) return;
+      last = q.toLowerCase();
+      send({ p_kind: 'search', p_host: location.hostname, p_path: location.pathname,
+             p_device: device(), p_query: q, p_results: results });
+    }, 1500);
+  };
+})();
