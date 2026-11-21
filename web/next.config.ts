@@ -24,6 +24,10 @@ const RETIRED: { source: string; destination: string }[] = [
   { source: "/movements/db-lateral-raise", destination: "/movements/db-lateral-raises" },
   { source: "/movements/db-dumbbell-thrusters", destination: "/movements/db-thrusters" },
   { source: "/movements/dumbbell-thruster", destination: "/movements/db-thrusters" },
+  // Q9: brand names became the general name at the switch (2026-11-21).
+  { source: "/movements/assault-bike", destination: "/movements/air-bike" },
+  { source: "/movements/assault-bike-calories", destination: "/movements/air-bike-calories" },
+  { source: "/movements/assault-bike-intervals", destination: "/movements/air-bike-intervals" },
 ];
 
 // The old site's page files (workout.html?slug=fran, movement.html?slug=…), which some
