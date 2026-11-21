@@ -5,7 +5,7 @@ import { signOut } from "@/app/admin/actions";
 // but only built ones link anywhere.
 const SECTIONS: { href: string; label: string; ready: boolean }[] = [
   { href: "/admin", label: "Dashboard", ready: true },
-  { href: "/admin/content", label: "Content", ready: false },
+  { href: "/admin/content", label: "Content", ready: true },
   { href: "/admin/daily", label: "Daily 20", ready: false },
   { href: "/admin/email", label: "Email", ready: false },
   { href: "/admin/members", label: "Members", ready: false },

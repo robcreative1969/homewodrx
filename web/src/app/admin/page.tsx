@@ -98,15 +98,18 @@ export default async function AdminDashboard({ searchParams }: PageProps<"/admin
   const { supabase } = await requireAdmin();
   const { range } = await searchParams;
   const days = RANGES.find((r) => String(r) === range) ?? 30;
-  const [stats, workouts, movements, machines, stretches] = await Promise.all([
+  const [stats, workouts, movements, machines, stretches, names] = await Promise.all([
     loadSiteStats(supabase, days),
     supabase.from("benchmark_workouts").select("id", { count: "exact", head: true }),
     supabase.from("movements").select("id", { count: "exact", head: true }),
     supabase.from("machines").select("id", { count: "exact", head: true }),
     supabase.from("stretches").select("id", { count: "exact", head: true }),
+    supabase.from("benchmark_workouts").select("slug,name"),
   ]);
+  const workoutName = new Map((names.data ?? []).map((w) => [w.slug, w.name]));
+  const topWorkouts = stats.workouts.map((w) => ({ label: workoutName.get(w.label) ?? w.label, count: w.count, slug: w.label }));
   const totalDevices = stats.devices.reduce((a, d) => a + d.count, 0) || 1;
-  const since = stats.since ? new Date(stats.since).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : null;
+  const since = stats.since ? new Date(stats.since).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "America/New_York" }) : null;
 
   return (
     <>
@@ -146,7 +149,7 @@ export default async function AdminDashboard({ searchParams }: PageProps<"/admin
 
       <div className="grid gap-3 md:grid-cols-2">
         <List title="Top pages" rows={stats.pages} empty="No page views yet." href={(p) => p} />
-        <List title="Top workouts" rows={stats.workouts} empty="No workout pages viewed yet." href={(s) => `/workouts/${s}`} />
+        <List title="Top workouts" rows={topWorkouts} empty="No workout pages viewed yet." href={(name) => `/workouts/${topWorkouts.find((w) => w.label === name)?.slug ?? ""}`} />
         <List title="Where visitors come from" rows={stats.referrers} empty="No visitors yet." />
         <section className="flex min-w-0 flex-col gap-3 rounded-2xl border border-line bg-surface p-4">
           <h2 className="m-0 text-base font-bold">Devices</h2>
