@@ -8,8 +8,8 @@ const SECTIONS: { href: string; label: string; ready: boolean }[] = [
   { href: "/admin/content", label: "Content", ready: true },
   { href: "/admin/daily", label: "Daily 20", ready: true },
   { href: "/admin/email", label: "Email", ready: false },
-  { href: "/admin/members", label: "Members", ready: false },
-  { href: "/admin/feedback", label: "Feedback", ready: false },
+  { href: "/admin/members", label: "Members", ready: true },
+  { href: "/admin/feedback", label: "Feedback", ready: true },
 ];
 
 export function AdminNav({ current }: { current: string }) {
