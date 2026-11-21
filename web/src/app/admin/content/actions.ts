@@ -1,6 +1,7 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import { LIBRARY_TAG } from "@/lib/supabase/public";
 import { requireAdmin } from "@/lib/admin";
 import { CONTENT_TYPES, fromFormValue } from "@/lib/contentTypes";
 
@@ -27,6 +28,7 @@ export async function saveContent(_prev: SaveState, form: FormData): Promise<Sav
   if (!data?.length) return { ok: false, message: "Not saved: the database didn't accept the change (check you're logged in as an admin)." };
 
   // Refresh the public page and lists on the new site right away instead of within the hour.
+  updateTag(LIBRARY_TAG);
   revalidatePath(ct.publicPath(slug));
   revalidatePath(`/${ct.type}`);
   revalidatePath(`/admin/content/${ct.type}/${slug}`);

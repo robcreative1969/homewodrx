@@ -1,6 +1,7 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import { LIBRARY_TAG } from "@/lib/supabase/public";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/admin";
 import { isDateString } from "@/lib/daily";
@@ -12,6 +13,7 @@ const LEVELS = ["beginner", "intermediate", "advanced"];
 const FOCUSES = ["full-body", "upper-body", "lower-body", "core", "cardio", "legs-glutes", "push", "pull"];
 
 function refreshDaily() {
+  updateTag(LIBRARY_TAG);
   revalidatePath("/");
   revalidatePath("/daily-wod");
   revalidatePath("/api/daily-20");
