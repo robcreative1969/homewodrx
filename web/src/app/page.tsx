@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EmailSignup } from "@/components/EmailSignup";
 import { formatDate, listPosts } from "@/lib/blog";
 import { getDaily10, getDaily20, todayEastern } from "@/lib/daily";
 import { CATEGORIES } from "@/lib/labels";
@@ -97,6 +98,8 @@ export default async function Home() {
           ))}
         </ul>
       </section>
+
+      <EmailSignup source="homepage_digest" title="Get the Daily 20 by email" text="Today's workout and stretch in your inbox every morning. Free; unsubscribe anytime." />
 
       <section aria-labelledby="plan" className="flex flex-col gap-2.5 rounded-2xl bg-footer p-5 text-footer-ink">
         <h2 id="plan" className="m-0 text-[22px] font-extrabold tracking-tight text-white">Plan your week</h2>

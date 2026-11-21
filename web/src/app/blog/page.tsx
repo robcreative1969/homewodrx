@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { EmailSignup } from "@/components/EmailSignup";
 import { formatDate, listPosts } from "@/lib/blog";
 
 export const metadata: Metadata = {
@@ -56,6 +57,8 @@ export default async function BlogPage({ searchParams }: PageProps<"/blog">) {
           </li>
         ))}
       </ul>
+
+      <EmailSignup source="blog" title="New posts by email" text="Get new guides and training advice when they're published. Free; unsubscribe anytime." />
     </div>
   );
 }
