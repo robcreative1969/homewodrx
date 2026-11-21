@@ -66,7 +66,11 @@ Deno.serve(async (req: Request) => {
   const check = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", body: form })
     .then((r) => r.json())
     .catch(() => ({ success: false }));
-  if (!check.success) return reply(req, { error: "The human check didn't pass. Please try again." }, 400);
+  if (!check.success) {
+    // e.g. "invalid-input-secret" means the TURNSTILE_SECRET_KEY secret is wrong.
+    console.log("turnstile rejected", JSON.stringify(check["error-codes"] ?? []));
+    return reply(req, { error: "The human check didn't pass. Please try again." }, 400);
+  }
 
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return reply(req, { error: "Enter a valid email address." }, 400);
   // Fake-looking addresses get the same "you're in" answer, so bots learn nothing; nothing is saved.
