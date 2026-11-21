@@ -42,7 +42,7 @@ export function EditForm({ type, slug, fields, values }: { type: string; slug: s
                 className={input}
               />
             ) : (
-              <input id={id} name={f.key} type={f.kind === "url" ? "url" : "text"} defaultValue={values[f.key]} className={`${input} h-12`} />
+              <input id={id} name={f.key} type={f.kind === "url" ? "url" : f.kind === "number" ? "number" : "text"} defaultValue={values[f.key]} className={`${input} h-12`} />
             )}
             {f.help ? <span className="text-[13px] text-ink-3">{f.help}</span> : null}
           </div>

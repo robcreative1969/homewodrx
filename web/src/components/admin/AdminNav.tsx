@@ -7,7 +7,7 @@ const SECTIONS: { href: string; label: string; ready: boolean }[] = [
   { href: "/admin", label: "Dashboard", ready: true },
   { href: "/admin/content", label: "Content", ready: true },
   { href: "/admin/daily", label: "Daily 20", ready: true },
-  { href: "/admin/email", label: "Email", ready: false },
+  { href: "/admin/email", label: "Email", ready: true },
   { href: "/admin/members", label: "Members", ready: true },
   { href: "/admin/feedback", label: "Feedback", ready: true },
 ];

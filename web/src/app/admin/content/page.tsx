@@ -41,7 +41,7 @@ export default async function ContentPage({ searchParams }: PageProps<"/admin/co
     ...(w?.data ?? []).map((r) => ({ type: "workouts", typeLabel: "Workout", slug: r.slug, name: r.name, detail: r.scheme ?? "", href: `/admin/content/workouts/${r.slug}`, publicHref: `/workouts/${r.slug}`, updated: r.updated_at })),
     ...(m?.data ?? []).map((r) => ({ type: "movements", typeLabel: "Movement", slug: r.slug, name: r.name, detail: r.equipment_category ?? r.category ?? "", href: `/admin/content/movements/${r.slug}`, publicHref: `/movements/${r.slug}`, updated: r.updated_at })),
     ...(mc?.data ?? []).map((r) => ({ type: "machines", typeLabel: "Machine", slug: r.slug, name: r.name, detail: "", href: `/admin/content/machines/${r.slug}`, publicHref: `/machines/${r.slug}`, updated: r.updated_at })),
-    ...(st?.data ?? []).map((r) => ({ type: "stretches", typeLabel: "Stretch", slug: r.slug, name: r.name, detail: r.modality ?? "", href: null, publicHref: `/stretches/${r.slug}`, updated: r.updated_at })),
+    ...(st?.data ?? []).map((r) => ({ type: "stretches", typeLabel: "Stretch", slug: r.slug, name: r.name, detail: r.modality ?? "", href: `/admin/content/stretches/${r.slug}`, publicHref: `/stretches/${r.slug}`, updated: r.updated_at })),
     ...(want("blog") ? listPosts().map((p) => ({ type: "blog", typeLabel: "Blog post", slug: p.slug, name: p.title, detail: p.categoryLabel, href: null, publicHref: `/blog/${p.slug}`, updated: p.date })) : []),
   ];
   if (terms.length) items = items.filter((i) => { const t = norm(`${i.name} ${i.slug} ${i.detail}`); return terms.every((x) => t.includes(x)); });
@@ -69,7 +69,7 @@ export default async function ContentPage({ searchParams }: PageProps<"/admin/co
       </form>
       <p className="m-0 text-sm text-ink-2">
         {terms.length ? `${items.length} ${items.length === 1 ? "match" : "matches"}` : "Recently changed"}
-        {type !== "all" ? ` in ${TYPES.find((t) => t.value === type)?.label}` : ""}. Workouts, movements and machines can be edited here; stretches and blog posts open on the site.
+        {type !== "all" ? ` in ${TYPES.find((t) => t.value === type)?.label}` : ""}. Blog posts open on the site; everything else can be edited here.
       </p>
       <ul className="m-0 flex list-none flex-col gap-2 p-0">
         {shown.map((i) => (

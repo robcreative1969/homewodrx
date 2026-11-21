@@ -8,7 +8,7 @@
 //   reps                    a rep range typed as "6-8", "10" or "500m"; stored as a jsonb list
 //   bool                    a checkbox
 
-export type FieldKind = "text" | "textarea" | "url" | "select" | "lines" | "rows" | "reps" | "bool";
+export type FieldKind = "text" | "textarea" | "url" | "number" | "select" | "lines" | "rows" | "reps" | "bool";
 export type ItemField = { key: string; label: string; kind: "text" | "textarea" | "select"; options?: { value: string; label: string }[]; width?: "s" | "m" | "l" };
 export type Field = {
   key: string;
@@ -28,7 +28,7 @@ const MISTAKE: ItemField[] = [
 ];
 
 export type ContentType = {
-  type: "workouts" | "movements" | "machines";
+  type: "workouts" | "movements" | "machines" | "stretches";
   table: string;
   label: string;
   singular: string;
@@ -124,6 +124,26 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
       { key: "youtube_url", label: "Video", kind: "url" },
     ],
   },
+  stretches: {
+    type: "stretches",
+    table: "stretches",
+    label: "Stretches",
+    singular: "stretch",
+    publicPath: (s) => `/stretches/${s}`,
+    fields: [
+      { key: "name", label: "Name", kind: "text" },
+      { key: "modality", label: "Type", kind: "select", options: [{ value: "static", label: "Static (hold)" }, { value: "dynamic", label: "Dynamic (moving)" }, { value: "pnf", label: "PNF" }, { value: "yoga", label: "Yoga" }] },
+      { key: "focus", label: "Focus areas", kind: "lines", store: "text[]", help: "One per line: hips, hamstrings, quads, shoulders, back, chest, calves, wrists, full" },
+      { key: "description", label: "Description", kind: "textarea", rows: 5 },
+      { key: "cues", label: "How to do it", kind: "lines", store: "text[]", help: "One step per line" },
+      { key: "tip", label: "Tip", kind: "text" },
+      { key: "sides", label: "Do each side", kind: "bool" },
+      { key: "hold_beginner", label: "Hold, beginner (seconds)", kind: "number", help: "Leave the holds empty for moving stretches; they show reps instead" },
+      { key: "hold_intermediate", label: "Hold, intermediate (seconds)", kind: "number" },
+      { key: "hold_advanced", label: "Hold, advanced (seconds)", kind: "number" },
+      { key: "youtube_url", label: "Video", kind: "url" },
+    ],
+  },
 };
 
 /** The value as the form shows it. */
@@ -184,6 +204,11 @@ export function fromFormValue(field: Field, raw: FormDataEntryValue | null): { v
     if (range) return { value: [Number(range[1]), Number(range[2])] };
     if (/^\d+$/.test(t)) return { value: [Number(t)] };
     return { value: t.split(",").map((x) => x.trim()).filter(Boolean).map((x) => (/^\d+$/.test(x) ? Number(x) : x)) };
+  }
+  if (field.kind === "number") {
+    if (!s.trim()) return { value: null };
+    const n = Number(s);
+    return Number.isFinite(n) && n >= 0 ? { value: Math.round(n) } : { error: `${field.label}: enter a number.` };
   }
   if (field.kind === "url" && s.trim() && !/^https:\/\//.test(s.trim())) return { error: `${field.label}: use a full https:// link.` };
   if (field.kind === "select" && s && !field.options?.some((o) => o.value === s)) return { error: `${field.label}: pick one of the options.` };

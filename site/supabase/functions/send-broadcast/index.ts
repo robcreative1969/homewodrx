@@ -8,7 +8,7 @@
 //   BROADCAST_UNSUB_SECRET  — HMAC secret for unsubscribe tokens (same as DIGEST_UNSUB_SECRET is fine)
 //
 // Endpoints:
-//   POST /  (header x-broadcast-secret: <BROADCAST_ADMIN_SECRET>)
+//   POST /  (header x-broadcast-secret: <BROADCAST_ADMIN_SECRET>, or Authorization: Bearer <an admin's session token>)
 //   Body: { type: "blog" | "announcement", test_email?: string, ...fields }
 //
 //   Blog fields:    post_title, post_url, post_excerpt, post_category, reading_time
@@ -50,7 +50,7 @@ async function unsubUrl(uid: string): Promise<string> {
 const CORS = {
   "Access-Control-Allow-Origin":  "*",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, x-broadcast-secret",
+  "Access-Control-Allow-Headers": "Content-Type, x-broadcast-secret, authorization, apikey",
 };
 
 function json(body: unknown, status = 200) {
@@ -261,6 +261,21 @@ async function sendEmail(to: string, subject: string, emailHtml: string): Promis
   return res.ok;
 }
 
+// ── Who may send ─────────────────────────────────────────────────────────────
+// Either the shared secret (the old admin page) or a signed-in admin's session (the new
+// admin sends its user token; the profile must have is_admin = true).
+
+async function isAdminRequest(req: Request): Promise<boolean> {
+  const secret = req.headers.get("x-broadcast-secret") ?? "";
+  if (ADMIN_SECRET && secret === ADMIN_SECRET) return true;
+  const jwt = (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
+  if (!jwt) return false;
+  const { data: { user } } = await sb.auth.getUser(jwt);
+  if (!user) return false;
+  const { data } = await sb.from("profiles").select("is_admin").eq("id", user.id).single();
+  return data?.is_admin === true;
+}
+
 // ── Main handler ──────────────────────────────────────────────────────────────
 
 Deno.serve(async (req: Request) => {
@@ -281,8 +296,7 @@ Deno.serve(async (req: Request) => {
   // ── POST broadcast ────────────────────────────────────────────────────────
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
 
-  const secret = req.headers.get("x-broadcast-secret") ?? "";
-  if (!ADMIN_SECRET || secret !== ADMIN_SECRET) {
+  if (!(await isAdminRequest(req))) {
     return json({ error: "Unauthorized" }, 401);
   }
 
