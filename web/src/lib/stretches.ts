@@ -55,6 +55,7 @@ const FOCUS: Record<string, string> = {
   shoulders: "Shoulders",
   back: "Back",
   hamstrings: "Hamstrings",
+  quads: "Quads",
   chest: "Chest",
   calves: "Calves",
   wrists: "Wrists",

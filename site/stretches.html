@@ -280,6 +280,7 @@
           <button class="chip active" data-focus="all">All</button>
           <button class="chip" data-focus="hips">Hips</button>
           <button class="chip" data-focus="hamstrings">Hamstrings</button>
+          <button class="chip" data-focus="quads">Quads</button>
           <button class="chip" data-focus="shoulders">Shoulders</button>
           <button class="chip" data-focus="back">Back</button>
           <button class="chip" data-focus="chest">Chest</button>
@@ -336,7 +337,7 @@ const MODALITY_CONFIG = [
 ];
 
 const FOCUS_LABELS = {
-  hips: 'Hips', hamstrings: 'Hamstrings', shoulders: 'Shoulders',
+  hips: 'Hips', hamstrings: 'Hamstrings', quads: 'Quads', shoulders: 'Shoulders',
   back: 'Back', chest: 'Chest', calves: 'Calves', wrists: 'Wrists', full: 'Full Body',
 };
 
@@ -525,7 +526,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const focusParam = params.get('focus');
   const qParam     = params.get('q');
   const validMods    = ['static','dynamic','pnf','yoga'];
-  const validFocuses = ['hips','hamstrings','shoulders','back','chest','calves','wrists','full'];
+  const validFocuses = ['hips','hamstrings','quads','shoulders','back','chest','calves','wrists','full'];
   if (modParam && validMods.includes(modParam)) {
     currentMod = modParam;
     document.querySelectorAll('[data-mod]').forEach(p => p.classList.toggle('active', p.dataset.mod === modParam));
