@@ -35,7 +35,7 @@ begin
     ('movements','tabata_suitable','boolean'),
     ('movements','machine_id','uuid'),
     ('benchmark_workouts','movements','jsonb'),
-    ('benchmark_workouts','coaching_tips','ARRAY'),
+    ('benchmark_workouts','coaching_tips','jsonb'),
     ('benchmark_workouts','description','text')
   ) as want(t, col, typ)
   left join information_schema.columns c
@@ -305,9 +305,9 @@ where not exists (select 1 from public.movements where slug = $$dumbbell-front-s
 update public.benchmark_workouts set
   movements = replace(movements::text, $$Lateral burpee over the box; step or jump down on the other side$$,
                       $$Burpee facing the box, then a two-foot jump onto or over it; step or jump down on the other side$$)::jsonb,
-  coaching_tips = array_replace(coaching_tips,
+  coaching_tips = replace(coaching_tips::text,
     $$For burpee box jump-overs, stay lateral and use a consistent step-or-jump pattern. Pick one and do not switch mid-workout.$$,
-    $$For burpee box jump-overs, face the box and use a consistent pattern: jump over, or jump on and step down. Pick one and do not switch mid-workout.$$),
+    $$For burpee box jump-overs, face the box and use a consistent pattern: jump over, or jump on and step down. Pick one and do not switch mid-workout.$$)::jsonb,
   description = replace(description, $$the lateral movement and box clearance add up over five rounds$$,
                         $$the jump and box clearance add up over five rounds$$),
   updated_at = now()
@@ -322,21 +322,21 @@ where slug = 'open-21-2';
 -- ═══ Workout wording: Floor Wipers count one touch on each side as one rep (matches Nutts) ═══
 update public.benchmark_workouts set
   movements = replace(movements::text, $$touch plates to each side alternately$$, $$touch plates to each side = 1 rep$$)::jsonb,
-  coaching_tips = array_replace(coaching_tips,
+  coaching_tips = replace(coaching_tips::text,
     $$The floor wiper leg swing should alternate sides each rep (left to right, right to left) — do not do all 50 to one side$$,
-    $$The floor wiper leg swing alternates sides — one touch on the left and one on the right is 1 rep; do not do all 50 to one side$$),
+    $$The floor wiper leg swing alternates sides — one touch on the left and one on the right is 1 rep; do not do all 50 to one side$$)::jsonb,
   updated_at = now()
 where slug = 'midline-march';
 
 do $check$
 begin
   if exists (select 1 from public.benchmark_workouts where slug in ('open-17-1','open-21-2')
-             and (movements::text ilike '%lateral burpee%' or array_to_string(coaching_tips, ' ') ilike '%stay lateral%'
+             and (movements::text ilike '%lateral burpee%' or coaching_tips::text ilike '%stay lateral%'
                   or description ilike '%lateral movement%')) then
     raise exception 'A "lateral" phrase is still in Open 17.1 or 21.2';
   end if;
   if exists (select 1 from public.benchmark_workouts where slug = 'midline-march'
-             and (movements::text ilike '%each side alternately%' or array_to_string(coaching_tips, ' ') ilike '%alternate sides each rep%')) then
+             and (movements::text ilike '%each side alternately%' or coaching_tips::text ilike '%alternate sides each rep%')) then
     raise exception 'Old floor wiper wording still in Midline March';
   end if;
   if (select count(*) from public.movements where slug in ($$burpee-box-jump-over$$, $$box-jump-over$$, $$floor-wipers$$, $$handstand-walk$$, $$hang-power-snatch$$, $$dumbbell-hang-clean-and-jerk$$, $$lateral-burpee-over-dumbbell$$, $$shoulder-to-overhead$$, $$dumbbell-front-squat$$)) <> 9 then
