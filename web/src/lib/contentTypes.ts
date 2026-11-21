@@ -3,10 +3,13 @@
 //   text, textarea, url     plain strings
 //   select                  one of a fixed list
 //   lines                   a list edited one item per line; stored as `store` (text[] or jsonb)
-//   json                    JSON edited as text and checked before saving; stored as `store`
+//   rows                    a list of small records (movements, FAQs…), edited as a row of boxes
+//                           each; stored as `store` (jsonb or JSON text)
+//   reps                    a rep range typed as "6-8", "10" or "500m"; stored as a jsonb list
 //   bool                    a checkbox
 
-export type FieldKind = "text" | "textarea" | "url" | "select" | "lines" | "json" | "bool";
+export type FieldKind = "text" | "textarea" | "url" | "select" | "lines" | "rows" | "reps" | "bool";
+export type ItemField = { key: string; label: string; kind: "text" | "textarea" | "select"; options?: { value: string; label: string }[]; width?: "s" | "m" | "l" };
 export type Field = {
   key: string;
   label: string;
@@ -15,7 +18,14 @@ export type Field = {
   options?: { value: string; label: string }[];
   store?: "text[]" | "jsonb" | "jsontext";
   rows?: number;
+  item?: ItemField[]; // for kind "rows"
+  itemName?: string; // "movement", "question"… for the Add button
 };
+
+const MISTAKE: ItemField[] = [
+  { key: "mistake", label: "Mistake", kind: "text", width: "l" },
+  { key: "fix", label: "Fix", kind: "textarea", width: "l" },
+];
 
 export type ContentType = {
   type: "workouts" | "movements" | "machines";
@@ -48,12 +58,21 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
       { key: "duration_estimate", label: "Typical time", kind: "text", help: "e.g. 2–8 min" },
       { key: "difficulty", label: "Difficulty", kind: "select", options: [{ value: "beginner", label: "Beginner" }, { value: "intermediate", label: "Intermediate" }, { value: "advanced", label: "Advanced" }] },
       { key: "description", label: "About", kind: "textarea", rows: 6 },
-      { key: "movements", label: "Movements", kind: "json", store: "jsonb", rows: 10, help: 'A list like [{"name":"Thrusters","reps":"21-15-9","rx_men":"95 lb","rx_women":"65 lb","tip":"…"}]' },
+      { key: "movements", label: "Movements", kind: "rows", store: "jsonb", itemName: "movement", help: "In workout order. Rx weights are optional.", item: [
+        { key: "name", label: "Movement", kind: "text", width: "m" },
+        { key: "reps", label: "Reps", kind: "text", width: "s" },
+        { key: "rx_men", label: "Rx men", kind: "text", width: "s" },
+        { key: "rx_women", label: "Rx women", kind: "text", width: "s" },
+        { key: "tip", label: "Tip", kind: "text", width: "l" },
+      ] },
       { key: "scoring_notes", label: "Score line", kind: "textarea", rows: 2, help: 'Format: "Your score is your finish time. Sub-3 min is elite. Sub-5 min is strong."' },
       { key: "scaling_notes", label: "Scaling", kind: "textarea", rows: 4 },
       { key: "tips", label: "Tips", kind: "lines", store: "jsonb", help: "One tip per line" },
       { key: "coaching_tips", label: "Coaching tips", kind: "lines", store: "jsonb", help: "One tip per line" },
-      { key: "faqs", label: "FAQs", kind: "json", store: "jsonb", rows: 10, help: 'A list like [{"question":"…","answer":"…"}]' },
+      { key: "faqs", label: "FAQs", kind: "rows", store: "jsonb", itemName: "question", item: [
+        { key: "question", label: "Question", kind: "text", width: "l" },
+        { key: "answer", label: "Answer", kind: "textarea", width: "l" },
+      ] },
       { key: "equipment", label: "Equipment", kind: "lines", store: "text[]", help: "One per line, e.g. barbell" },
       { key: "youtube_url", label: "Video", kind: "url", help: "YouTube link" },
     ],
@@ -73,16 +92,20 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
       { key: "muscle_groups", label: "Muscle groups", kind: "lines", store: "text[]", help: "One per line: glutes, hamstrings, quads, calves, inner-thighs, core, back, chest, shoulders, arms" },
       { key: "tips", label: "Coaching cues", kind: "lines", store: "jsonb", help: "One full sentence per line" },
       { key: "wod_tip", label: "WOD tip", kind: "text", help: "The one-line tip shown in built workouts" },
-      { key: "scaling_options", label: "Scaling options", kind: "json", store: "jsontext", rows: 8, help: '[{"level":"beginner","movement":"…","notes":"…"}]' },
-      { key: "common_faults", label: "Common mistakes", kind: "json", store: "jsontext", rows: 8, help: '[{"mistake":"…","fix":"…"}]' },
+      { key: "scaling_options", label: "Scaling options", kind: "rows", store: "jsontext", itemName: "option", item: [
+        { key: "level", label: "Level", kind: "select", width: "s", options: [{ value: "beginner", label: "Beginner" }, { value: "scaled", label: "Scaled" }, { value: "rx", label: "Rx" }] },
+        { key: "movement", label: "Movement", kind: "text", width: "m" },
+        { key: "notes", label: "Notes", kind: "text", width: "l" },
+      ] },
+      { key: "common_faults", label: "Common mistakes", kind: "rows", store: "jsontext", itemName: "mistake", item: MISTAKE },
       { key: "youtube_url", label: "Video", kind: "url" },
       { key: "daily_wod_eligible", label: "Use in the WOD Builder and Daily 20", kind: "bool" },
       { key: "tabata_suitable", label: "Suits Tabata", kind: "bool" },
       { key: "timed", label: "Timed (seconds, not reps)", kind: "bool" },
       { key: "warmup_eligible", label: "Use in warm-ups", kind: "bool" },
-      { key: "beginner_reps", label: "Beginner reps", kind: "json", store: "jsonb", rows: 1, help: "e.g. [6,8] or [\"500m\"]" },
-      { key: "intermediate_reps", label: "Intermediate reps", kind: "json", store: "jsonb", rows: 1 },
-      { key: "advanced_reps", label: "Advanced reps", kind: "json", store: "jsonb", rows: 1 },
+      { key: "beginner_reps", label: "Beginner reps", kind: "reps", help: 'A range like 6-8, one number like 10, or a distance or time like 500m or 30s' },
+      { key: "intermediate_reps", label: "Intermediate reps", kind: "reps" },
+      { key: "advanced_reps", label: "Advanced reps", kind: "reps" },
     ],
   },
   machines: {
@@ -95,7 +118,7 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
       { key: "name", label: "Name", kind: "text" },
       { key: "overview", label: "Overview", kind: "textarea", rows: 6 },
       { key: "setup_notes", label: "Set it up", kind: "textarea", rows: 5 },
-      { key: "common_mistakes", label: "Common mistakes", kind: "json", store: "jsonb", rows: 8, help: '[{"mistake":"…","fix":"…"}]' },
+      { key: "common_mistakes", label: "Common mistakes", kind: "rows", store: "jsonb", itemName: "mistake", item: MISTAKE },
       { key: "safety_notes", label: "Safety", kind: "textarea", rows: 5, help: "Ends with the injury line" },
       { key: "muscle_groups", label: "Muscle groups", kind: "lines", store: "text[]", help: "One per line" },
       { key: "youtube_url", label: "Video", kind: "url" },
@@ -110,9 +133,14 @@ export function toFormValue(field: Field, value: unknown): string {
     const arr = typeof value === "string" ? safeParse(value) : value;
     return Array.isArray(arr) ? arr.map(String).join("\n") : String(value);
   }
-  if (field.kind === "json") {
+  if (field.kind === "rows") {
+    const v = typeof value === "string" ? safeParse(value) : value;
+    return JSON.stringify(Array.isArray(v) ? v : []);
+  }
+  if (field.kind === "reps") {
     const v = typeof value === "string" ? safeParse(value) ?? value : value;
-    return typeof v === "string" ? v : JSON.stringify(v, null, 2);
+    if (Array.isArray(v)) return v.length === 2 && v.every((x) => typeof x === "number") ? `${v[0]}-${v[1]}` : v.map(String).join(", ");
+    return String(v ?? "");
   }
   return String(value);
 }
@@ -133,14 +161,29 @@ export function fromFormValue(field: Field, raw: FormDataEntryValue | null): { v
     const items = s.split("\n").map((l) => l.trim()).filter(Boolean);
     return { value: items };
   }
-  if (field.kind === "json") {
-    if (!s.trim()) return { value: null };
+  if (field.kind === "rows") {
+    let parsed: unknown;
     try {
-      const parsed = JSON.parse(s);
-      return { value: field.store === "jsontext" ? JSON.stringify(parsed) : parsed };
-    } catch (e) {
-      return { error: `${field.label}: that isn't valid JSON (${(e as Error).message}).` };
+      parsed = JSON.parse(s || "[]");
+    } catch {
+      return { error: `${field.label}: couldn't read the rows. Reload the page and try again.` };
     }
+    if (!Array.isArray(parsed)) return { error: `${field.label}: couldn't read the rows.` };
+    // Drop rows left completely empty; keep every other key as it was.
+    const keys = (field.item ?? []).map((i) => i.key);
+    const rows = parsed
+      .filter((r): r is Record<string, unknown> => !!r && typeof r === "object")
+      .map((r) => Object.fromEntries(Object.entries(r).filter(([k, v]) => !(keys.includes(k) && (v === "" || v === null)))))
+      .filter((r) => keys.some((k) => typeof r[k] === "string" && String(r[k]).trim()));
+    return { value: field.store === "jsontext" ? JSON.stringify(rows) : rows };
+  }
+  if (field.kind === "reps") {
+    const t = s.trim();
+    if (!t) return { value: null };
+    const range = t.match(/^(\d+)\s*[-–]\s*(\d+)$/);
+    if (range) return { value: [Number(range[1]), Number(range[2])] };
+    if (/^\d+$/.test(t)) return { value: [Number(t)] };
+    return { value: t.split(",").map((x) => x.trim()).filter(Boolean).map((x) => (/^\d+$/.test(x) ? Number(x) : x)) };
   }
   if (field.kind === "url" && s.trim() && !/^https:\/\//.test(s.trim())) return { error: `${field.label}: use a full https:// link.` };
   if (field.kind === "select" && s && !field.options?.some((o) => o.value === s)) return { error: `${field.label}: pick one of the options.` };

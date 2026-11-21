@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { saveContent, type SaveState } from "../../actions";
 import type { Field } from "@/lib/contentTypes";
+import { RowsEditor } from "./RowsEditor";
 
 const input = "w-full rounded-xl border-[1.5px] border-chip-line bg-surface px-3.5 py-2.5 text-base text-ink";
 
@@ -24,20 +25,21 @@ export function EditForm({ type, slug, fields, values }: { type: string; slug: s
         }
         return (
           <div key={f.key} className="flex flex-col gap-1.5">
-            <label htmlFor={id} className="text-sm font-bold">{f.label}</label>
-            {f.kind === "select" ? (
+            {f.kind === "rows" ? <span className="text-sm font-bold">{f.label}</span> : <label htmlFor={id} className="text-sm font-bold">{f.label}</label>}
+            {f.kind === "rows" ? (
+              <RowsEditor name={f.key} label={f.label} items={f.item ?? []} initial={values[f.key]} itemName={f.itemName} />
+            ) : f.kind === "select" ? (
               <select id={id} name={f.key} defaultValue={values[f.key]} className={`${input} h-12`}>
                 <option value="">—</option>
                 {f.options?.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
-            ) : f.kind === "textarea" || f.kind === "lines" || f.kind === "json" ? (
+            ) : f.kind === "textarea" || f.kind === "lines" ? (
               <textarea
                 id={id}
                 name={f.key}
                 defaultValue={values[f.key]}
                 rows={f.rows ?? (f.kind === "lines" ? Math.max(3, values[f.key].split("\n").length + 1) : 4)}
-                spellCheck={f.kind !== "json"}
-                className={`${input} ${f.kind === "json" ? "font-mono text-[13px]" : ""}`}
+                className={input}
               />
             ) : (
               <input id={id} name={f.key} type={f.kind === "url" ? "url" : "text"} defaultValue={values[f.key]} className={`${input} h-12`} />
