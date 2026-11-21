@@ -8,6 +8,15 @@ export const dynamic = "force-dynamic";
 type Member = { id: string; username: string | null; first_name: string | null; last_name: string | null; created_at: string; last_seen: string | null; total_results: number | null; is_admin: boolean | null };
 type Result = { id: string; username: string | null; benchmark_slug: string | null; workout_type: string | null; score_display: string | null; is_rx: boolean | null; date: string | null; created_at: string };
 
+/** Counts of members active and new in the last 30 days. */
+function recentCounts(list: Member[]) {
+  const since = Date.now() - 30 * 86400000;
+  return {
+    active: list.filter((m) => m.last_seen && Date.parse(m.last_seen) > since).length,
+    newer: list.filter((m) => Date.parse(m.created_at) > since).length,
+  };
+}
+
 function when(iso: string | null) {
   return iso ? new Date(iso).toLocaleDateString("en-US", { timeZone: "America/New_York", month: "short", day: "numeric", year: "numeric" }) : "—";
 }
@@ -21,9 +30,7 @@ export default async function MembersPage() {
   ]);
   const list = (members ?? []) as Member[];
   const recent = (results ?? []) as Result[];
-  const thirty = Date.now() - 30 * 86400000;
-  const active = list.filter((m) => m.last_seen && Date.parse(m.last_seen) > thirty).length;
-  const newer = list.filter((m) => Date.parse(m.created_at) > thirty).length;
+  const { active, newer } = recentCounts(list);
 
   return (
     <>
