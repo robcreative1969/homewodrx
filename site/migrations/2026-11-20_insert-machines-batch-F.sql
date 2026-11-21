@@ -26,7 +26,7 @@ begin
     ('movements','tags','ARRAY'),
     ('movements','muscles','text'),
     ('movements','description','text'),
-    ('movements','tips','ARRAY'),
+    ('movements','tips','jsonb'),
     ('movements','scaling_options','text'),
     ('movements','common_faults','text'),
     ('movements','youtube_url','text'),
@@ -79,7 +79,7 @@ select
   $$A curved treadmill run is running on a non-motorized curved treadmill. You power the belt yourself: step forward up the curve to speed up and drift back toward the middle to slow down. It is often used for sprint intervals and as an indoor swap for runs in workouts.
 
 Options: walk, jog or sprint, for time, for distance or in intervals.$$ as description,
-  array[$$Start at a walk while holding the side rails.$$, $$Move forward up the curve to speed up.$$, $$Drift back toward the middle to slow down.$$, $$Let go of the rails once you feel steady.$$]::text[] as tips,
+  to_jsonb(array[$$Start at a walk while holding the side rails.$$, $$Move forward up the curve to speed up.$$, $$Drift back toward the middle to slow down.$$, $$Let go of the rails once you feel steady.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Curved treadmill walk","notes":"Learn to speed up and slow down at a walk."},{"level":"rx","label":"Standard","movement":"Curved Treadmill Run","notes":"Steady run for time or distance."},{"level":"advanced","label":"Advanced","movement":"Curved treadmill sprint intervals","notes":"Short sprints with full slow-down between them."}]$$ as scaling_options,
   $$[{"mistake":"Running too far up the front","fix":"Stay near the middle of the curve unless you are sprinting."},{"mistake":"Stopping suddenly","fix":"Drift back and slow down before you step off."}]$$ as common_faults,
   null as youtube_url,
@@ -124,7 +124,7 @@ select
   $$A stair climb is climbing on a stair climber, the moving staircase also called a stepmill. You set a speed and climb to stay in place. In workouts it usually appears as time or floors, often as a warm-up or a steady cardio piece.
 
 Options: climb steady or in intervals, hold the rails lightly or climb hands-free, and, once you are steady, take every other step (advanced).$$ as description,
-  array[$$Find the emergency stop before you start.$$, $$Start at a low speed and hold the rails lightly.$$, $$Place your whole foot on each step.$$, $$Stand tall rather than leaning on the rails.$$]::text[] as tips,
+  to_jsonb(array[$$Find the emergency stop before you start.$$, $$Start at a low speed and hold the rails lightly.$$, $$Place your whole foot on each step.$$, $$Stand tall rather than leaning on the rails.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Stair climb at a low speed","notes":"Build up time at an easy pace."},{"level":"rx","label":"Standard","movement":"Stair Climb","notes":"Steady pace for time or floors, upright posture."},{"level":"advanced","label":"Advanced","movement":"Stair climb intervals","notes":"Alternate faster and easier periods."}]$$ as scaling_options,
   $$[{"mistake":"Leaning on the rails","fix":"Hold them lightly and stand tall. Lower the speed if you need to lean."},{"mistake":"Climbing on your toes","fix":"Put your whole foot on each step."}]$$ as common_faults,
   null as youtube_url,
@@ -169,7 +169,7 @@ select
   $$A vertical climb is climbing on a vertical climber. As one foot pushes down, the opposite hand pulls down, and you keep a steady rhythm. You control the effort with how fast you climb and how long each stroke is.
 
 Options: climb steady or in intervals, with long strokes or short fast ones, for time or feet climbed.$$ as description,
-  array[$$Start with short, easy strokes to find the rhythm.$$, $$Move your opposite hand and foot together.$$, $$Stay upright with your hips close to the machine.$$, $$Lengthen the strokes once the rhythm feels smooth.$$]::text[] as tips,
+  to_jsonb(array[$$Start with short, easy strokes to find the rhythm.$$, $$Move your opposite hand and foot together.$$, $$Stay upright with your hips close to the machine.$$, $$Lengthen the strokes once the rhythm feels smooth.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Vertical climb with short, slow strokes","notes":"Build the rhythm first."},{"level":"rx","label":"Standard","movement":"Vertical Climb","notes":"Steady rhythm for time or feet climbed."},{"level":"advanced","label":"Advanced","movement":"Vertical climb intervals","notes":"Alternate fast and easy periods."}]$$ as scaling_options,
   $$[{"mistake":"Using only the arms","fix":"Push with your legs as much as you pull with your arms."},{"mistake":"Leaning back from the machine","fix":"Keep your hips close and your torso upright."}]$$ as common_faults,
   null as youtube_url,
@@ -214,7 +214,7 @@ select
   $$A ladder climb is climbing on a ladder climber, an angled ladder whose rungs move down as you climb. You climb hand over hand and foot over foot. On many models the machine speeds up when you climb higher and slows when you drop back. Efforts tend to be short because it is hard from the first minute.
 
 Options: climb steady or in intervals, for time or feet climbed.$$ as description,
-  array[$$Start slowly and learn how your model speeds up and slows down.$$, $$Climb hand over hand and foot over foot.$$, $$Keep your body close to the ladder.$$, $$Drop back a little to slow down.$$]::text[] as tips,
+  to_jsonb(array[$$Start slowly and learn how your model speeds up and slows down.$$, $$Climb hand over hand and foot over foot.$$, $$Keep your body close to the ladder.$$, $$Drop back a little to slow down.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Slow ladder climb","notes":"Climb easy for a minute to learn the speed control."},{"level":"rx","label":"Standard","movement":"Ladder Climb","notes":"Steady climb for time or feet climbed."},{"level":"advanced","label":"Advanced","movement":"Ladder climb intervals","notes":"Short hard efforts with easy climbing between."}]$$ as scaling_options,
   $$[{"mistake":"Climbing too high too fast","fix":"Stay in the middle of the ladder until you know the speed control."},{"mistake":"Reaching too far","fix":"Take short steps and short reaches."}]$$ as common_faults,
   null as youtube_url,
@@ -259,7 +259,7 @@ select
   $$A sled drag is pulling a loaded sled along the floor with a rope, strap or harness. You walk forward with the sled behind you, or walk backward facing it, taking steady steps and keeping the line tight.
 
 Options: drag forward with a harness or strap, or walk backward holding the handles of a strap, which works your quads hard.$$ as description,
-  array[$$Clip the strap or rope to the sled's hook and check it's closed.$$, $$Lean slightly away from the sled and keep the line tight.$$, $$Take short, steady steps.$$, $$Drag in the lane your gym sets aside for sleds.$$]::text[] as tips,
+  to_jsonb(array[$$Clip the strap or rope to the sled's hook and check it's closed.$$, $$Lean slightly away from the sled and keep the line tight.$$, $$Take short, steady steps.$$, $$Drag in the lane your gym sets aside for sleds.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Sled drag with the empty sled","notes":"Learn how it moves on your floor first."},{"level":"rx","label":"Standard","movement":"Sled Drag","notes":"Steady steps, tight line, set distance."},{"level":"advanced","label":"Advanced","movement":"Backward sled drag","notes":"Walk backward facing the sled, short steps."}]$$ as scaling_options,
   $$[{"mistake":"Jerking the sled","fix":"Take up the slack before each step so the pull is smooth."},{"mistake":"Long, reaching steps","fix":"Keep steps short so your feet stay under you."}]$$ as common_faults,
   null as youtube_url,

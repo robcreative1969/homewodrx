@@ -26,7 +26,7 @@ begin
     ('movements','tags','ARRAY'),
     ('movements','muscles','text'),
     ('movements','description','text'),
-    ('movements','tips','ARRAY'),
+    ('movements','tips','jsonb'),
     ('movements','scaling_options','text'),
     ('movements','common_faults','text'),
     ('movements','youtube_url','text'),
@@ -79,7 +79,7 @@ select
   $$The GHD hip and back extension is done face down on the GHD with your hips just off the front of the pad and your ankles under the rollers. You lower your upper body toward the floor, then rise to a straight line: first your hips open, then your back extends. It trains your glutes, hamstrings and lower back together.
 
 Options: for a hip extension only, keep your back flat and move just at the hips; for the full hip and back extension, let your back round slightly at the bottom and roll back up to straight.$$ as description,
-  array[$$Set the foot plates so your hips sit just off the front of the pad.$$, $$Hook your ankles snugly under the rollers.$$, $$Lower with control until your hamstrings are stretched.$$, $$Rise until your body is in a straight line, then stop.$$]::text[] as tips,
+  to_jsonb(array[$$Set the foot plates so your hips sit just off the front of the pad.$$, $$Hook your ankles snugly under the rollers.$$, $$Lower with control until your hamstrings are stretched.$$, $$Rise until your body is in a straight line, then stop.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Short-range extensions","notes":"Move through half the range on your first sessions."},{"level":"rx","label":"Standard","movement":"GHD Hip and Back Extension","notes":"Full range, rise to straight, no swinging."},{"level":"advanced","label":"Advanced","movement":"Extension holding a plate at your chest","notes":"Add load only once the bodyweight version is smooth."}]$$ as scaling_options,
   $$[{"mistake":"Swinging up past straight","fix":"Stop when your body is in a straight line."},{"mistake":"Hips on the pad","fix":"Move the foot plates so your hips are just off the pad."}]$$ as common_faults,
   null as youtube_url,
@@ -107,7 +107,7 @@ select
   array[$$machine$$, $$lower$$]::text[] as tags,
   $$Hamstrings, glutes, calves (secondary)$$ as muscles,
   $$The glute-ham raise is a hard hamstring exercise on the GHD. With the pad on your lower thighs, just above the knees, and your feet pressed into the foot plate, you start upright on your knees and lower your body forward until it is level with the floor, keeping a straight line from knees to head. Then you curl yourself back up with your hamstrings.$$ as description,
-  array[$$Set the foot plates so the pad sits just above your knees.$$, $$Keep a straight line from knees to head and squeeze your glutes.$$, $$Lower only as far as you can control.$$, $$Push your toes into the foot plate to curl back up.$$]::text[] as tips,
+  to_jsonb(array[$$Set the foot plates so the pad sits just above your knees.$$, $$Keep a straight line from knees to head and squeeze your glutes.$$, $$Lower only as far as you can control.$$, $$Push your toes into the foot plate to curl back up.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Partial range with hands on the floor","notes":"Lower part way and push off the floor to come up."},{"level":"rx","label":"Standard","movement":"Glute-Ham Raise","notes":"Straight line from knees to head, full controlled range."},{"level":"advanced","label":"Advanced","movement":"Glute-ham raise with a slow lowering","notes":"Take 3 to 5 seconds on the way down."}]$$ as scaling_options,
   $$[{"mistake":"Bending at the hips","fix":"Squeeze your glutes to keep your hips straight."},{"mistake":"Dropping too fast","fix":"Lower only as far as you can control, and use your hands when you need to."}]$$ as common_faults,
   null as youtube_url,
@@ -175,7 +175,7 @@ select
   $$The seated leg curl is done on a seated leg curl machine. With your knees lined up with the pivot, the thigh pad locking your legs down and the roller just above your heels, you bend your knees to pull the roller down and back, then return under control.
 
 Options: work one leg at a time with a lighter weight to even out a weaker side.$$ as description,
-  array[$$Line up your knees with the machine's pivot.$$, $$Lock the thigh pad snug above your knees.$$, $$Curl the roller down and back as far as you can.$$, $$Return slowly without letting the stack slam.$$]::text[] as tips,
+  to_jsonb(array[$$Line up your knees with the machine's pivot.$$, $$Lock the thigh pad snug above your knees.$$, $$Curl the roller down and back as far as you can.$$, $$Return slowly without letting the stack slam.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Seated leg curl with the lightest weight","notes":"Learn the range first."},{"level":"rx","label":"Standard","movement":"Seated Leg Curl","notes":"Full range, slow return."},{"level":"advanced","label":"Advanced","movement":"Single-leg seated leg curl","notes":"One leg at a time, same reps each side."}]$$ as scaling_options,
   $$[{"mistake":"Knees not lined up with the pivot","fix":"Adjust the back pad until they match."},{"mistake":"Letting the weight drop","fix":"Control the return on every rep."}]$$ as common_faults,
   null as youtube_url,
@@ -205,7 +205,7 @@ select
   $$The lying leg curl is done face down on a lying leg curl machine. With your knees just off the edge of the pad and the roller just above your heels, you curl the roller toward your glutes, then lower it under control.
 
 Options: work one leg at a time with a lighter weight to even out a weaker side.$$ as description,
-  array[$$Lie with your knees just past the edge of the pad.$$, $$Set the roller just above your heels.$$, $$Keep your hips pressed into the pad.$$, $$Curl up, then lower slowly.$$]::text[] as tips,
+  to_jsonb(array[$$Lie with your knees just past the edge of the pad.$$, $$Set the roller just above your heels.$$, $$Keep your hips pressed into the pad.$$, $$Curl up, then lower slowly.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Lying leg curl with the lightest weight","notes":"Learn the range first."},{"level":"rx","label":"Standard","movement":"Lying Leg Curl","notes":"Hips down, full range, slow lowering."},{"level":"advanced","label":"Advanced","movement":"Single-leg lying leg curl","notes":"One leg at a time, same reps each side."}]$$ as scaling_options,
   $$[{"mistake":"Hips lifting off the pad","fix":"Keep your hips down. Lighten the weight if they rise."},{"mistake":"Short reps","fix":"Curl through the full range you can control."}]$$ as common_faults,
   null as youtube_url,
@@ -250,7 +250,7 @@ select
   $$The leg extension is done on a leg extension machine. Seated with your knees lined up with the pivot and the roller on the front of your lower shins, you straighten your legs to lift the roller, then lower it under control. It works your quads on their own.
 
 Options: work one leg at a time with a lighter weight to even out a weaker side.$$ as description,
-  array[$$Line up your knees with the machine's pivot.$$, $$Set the roller on your lower shins, just above your ankles.$$, $$Lift smoothly to straight legs, then lower slowly.$$, $$Use only a range that feels good on your knees.$$]::text[] as tips,
+  to_jsonb(array[$$Line up your knees with the machine's pivot.$$, $$Set the roller on your lower shins, just above your ankles.$$, $$Lift smoothly to straight legs, then lower slowly.$$, $$Use only a range that feels good on your knees.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Leg extension with the lightest weight","notes":"Build up slowly over several sessions."},{"level":"rx","label":"Standard","movement":"Leg Extension","notes":"Smooth lift to straight legs, slow lowering."},{"level":"advanced","label":"Advanced","movement":"Single-leg leg extension","notes":"One leg at a time, same reps each side."}]$$ as scaling_options,
   $$[{"mistake":"Kicking the weight up","fix":"Lift smoothly. Kicking uses momentum instead of your quads."},{"mistake":"Knees not lined up with the pivot","fix":"Adjust the back pad until they match."}]$$ as common_faults,
   null as youtube_url,
@@ -295,7 +295,7 @@ select
   $$Hip abduction is done on the hip abductor setting of the machine. Seated with the pads on the outside of your knees, you push your legs apart, then bring them back together under control. It trains the muscles on the outside of your hips.
 
 Options: some people lean the torso slightly forward from the hips during the set; keep your back flat if you do.$$ as description,
-  array[$$Set the pads on the outside of your knees.$$, $$Sit tall with your back against the pad.$$, $$Push out smoothly, pause, then return slowly.$$, $$Keep the weight from touching down between reps.$$]::text[] as tips,
+  to_jsonb(array[$$Set the pads on the outside of your knees.$$, $$Sit tall with your back against the pad.$$, $$Push out smoothly, pause, then return slowly.$$, $$Keep the weight from touching down between reps.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Hip abduction with the lightest weight","notes":"Learn the range first."},{"level":"rx","label":"Standard","movement":"Hip Abduction","notes":"Smooth reps, short pause at the widest point."},{"level":"advanced","label":"Advanced","movement":"Hip abduction with a 2-second hold","notes":"Hold the widest point for 2 seconds."}]$$ as scaling_options,
   $$[{"mistake":"Using momentum","fix":"Push out smoothly and return slowly."},{"mistake":"Rocking the torso","fix":"Stay still against the back pad. Lighten the weight if you rock."}]$$ as common_faults,
   null as youtube_url,
@@ -323,7 +323,7 @@ select
   array[$$machine$$, $$lower$$]::text[] as tags,
   $$Adductors (inner thighs)$$ as muscles,
   $$Hip adduction is done on the hip adductor setting of the machine. Seated with the pads on the inside of your knees, you squeeze your legs together, then let them open back out under control. It trains your inner thighs.$$ as description,
-  array[$$Set the pads on the inside of your knees.$$, $$Choose a starting width that feels comfortable, not a deep stretch.$$, $$Squeeze your legs together smoothly.$$, $$Open back out slowly.$$]::text[] as tips,
+  to_jsonb(array[$$Set the pads on the inside of your knees.$$, $$Choose a starting width that feels comfortable, not a deep stretch.$$, $$Squeeze your legs together smoothly.$$, $$Open back out slowly.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Hip adduction with the lightest weight","notes":"Start with a narrow width and a light load."},{"level":"rx","label":"Standard","movement":"Hip Adduction","notes":"Smooth squeeze, slow return."},{"level":"advanced","label":"Advanced","movement":"Hip adduction with a 2-second squeeze","notes":"Hold the closed position for 2 seconds."}]$$ as scaling_options,
   $$[{"mistake":"Starting too wide","fix":"Set a comfortable starting width. The inner thighs strain easily."},{"mistake":"Letting the legs snap open","fix":"Control the way out on every rep."}]$$ as common_faults,
   null as youtube_url,

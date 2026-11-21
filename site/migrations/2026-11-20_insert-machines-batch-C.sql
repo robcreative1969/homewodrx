@@ -26,7 +26,7 @@ begin
     ('movements','tags','ARRAY'),
     ('movements','muscles','text'),
     ('movements','description','text'),
-    ('movements','tips','ARRAY'),
+    ('movements','tips','jsonb'),
     ('movements','scaling_options','text'),
     ('movements','common_faults','text'),
     ('movements','youtube_url','text'),
@@ -79,7 +79,7 @@ select
   $$The seated calf raise is done on the seated calf raise machine. With the pad on your lower thighs and the balls of your feet on the foot bar, you release the safety lever, lower your heels, then press up onto the balls of your feet. With your knees bent, it works mostly the soleus, the deeper calf muscle.
 
 Options: work one leg at a time with a lighter load to even out a weaker side.$$ as description,
-  array[$$Set the pad snug on your lower thighs.$$, $$Keep the balls of your feet firmly on the bar.$$, $$Lower your heels as far as is comfortable.$$, $$Rise as high as you can, pause, then lower slowly.$$]::text[] as tips,
+  to_jsonb(array[$$Set the pad snug on your lower thighs.$$, $$Keep the balls of your feet firmly on the bar.$$, $$Lower your heels as far as is comfortable.$$, $$Rise as high as you can, pause, then lower slowly.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Seated calf raise with no plates","notes":"Learn the range and the safety lever first."},{"level":"rx","label":"Standard","movement":"Seated Calf Raise","notes":"Full range, slow, short pause at the top."},{"level":"advanced","label":"Advanced","movement":"Single-leg seated calf raise","notes":"One leg at a time, same reps each side."}]$$ as scaling_options,
   $$[{"mistake":"Bouncing at the bottom","fix":"Lower slowly and pause before you rise."},{"mistake":"Cutting the range short","fix":"Use the full range that feels comfortable."}]$$ as common_faults,
   null as youtube_url,
@@ -124,7 +124,7 @@ select
   $$The standing calf raise is done on the standing calf raise machine. With the shoulder pads on your shoulders and the balls of your feet on the step, you stand tall, lower your heels below the step, then rise onto your toes. With straight legs, it works both calf muscles.
 
 Options: work one leg at a time with a lighter load to even out a weaker side.$$ as description,
-  array[$$Set the shoulder pads for your height before you add weight.$$, $$Stand tall with a soft bend in your knees.$$, $$Keep the balls of your feet firmly on the step.$$, $$Lower slowly, then rise as high as you can.$$]::text[] as tips,
+  to_jsonb(array[$$Set the shoulder pads for your height before you add weight.$$, $$Stand tall with a soft bend in your knees.$$, $$Keep the balls of your feet firmly on the step.$$, $$Lower slowly, then rise as high as you can.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Bodyweight calf raise on a step","notes":"Learn the full range first."},{"level":"rx","label":"Standard","movement":"Standing Calf Raise","notes":"Full range, slow, short pause at the top."},{"level":"advanced","label":"Advanced","movement":"Single-leg standing calf raise","notes":"One leg at a time, same reps each side."}]$$ as scaling_options,
   $$[{"mistake":"Bouncing at the bottom","fix":"Lower slowly and pause before you rise."},{"mistake":"Rolling onto the outer edges of your feet","fix":"Press evenly through the balls of your feet."}]$$ as common_faults,
   null as youtube_url,
@@ -169,7 +169,7 @@ select
   $$The Smith machine squat is a squat with the bar fixed on the Smith machine's rails. With the bar across your upper back and your feet slightly in front of it, you unhook the bar, squat down to a depth you can control, and stand back up, then hook it again.
 
 Options: change foot position to shift the work, or split your stance for a split squat or reverse lunge.$$ as description,
-  array[$$Set the safety stops just below your lowest point.$$, $$Place your feet slightly in front of the bar.$$, $$Rotate the bar off the hooks and brace before you lower.$$, $$Hook the bar fully at the end of the set.$$]::text[] as tips,
+  to_jsonb(array[$$Set the safety stops just below your lowest point.$$, $$Place your feet slightly in front of the bar.$$, $$Rotate the bar off the hooks and brace before you lower.$$, $$Hook the bar fully at the end of the set.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Smith machine squat with the empty bar","notes":"Learn the path and the hooks first."},{"level":"rx","label":"Standard","movement":"Smith Machine Squat","notes":"Controlled depth, knees over toes, bar hooked at the end."},{"level":"advanced","label":"Advanced","movement":"Smith machine split squat","notes":"One leg forward, one back, same reps each side."}]$$ as scaling_options,
   $$[{"mistake":"Feet directly under the bar","fix":"Step your feet a little forward until the squat feels balanced."},{"mistake":"Forgetting to hook the bar","fix":"Rotate the bar fully onto a slot and check it's caught."}]$$ as common_faults,
   null as youtube_url,
@@ -199,7 +199,7 @@ select
   $$The Smith machine bench press is a bench press with the bar on the Smith machine's rails. Lying on a bench under the bar, you unhook it, lower it to your mid-chest, and press it back up, then hook it again.
 
 Options: set the bench to an incline to shift work toward your upper chest, or bring your grip in closer for more triceps.$$ as description,
-  array[$$Set the bench so the bar lowers to your mid-chest.$$, $$Set the safety stops just above your chest.$$, $$Grip a little wider than shoulder width.$$, $$Lower under control and press up smoothly.$$]::text[] as tips,
+  to_jsonb(array[$$Set the bench so the bar lowers to your mid-chest.$$, $$Set the safety stops just above your chest.$$, $$Grip a little wider than shoulder width.$$, $$Lower under control and press up smoothly.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Smith machine bench press with the empty bar","notes":"Learn the path and the hooks first."},{"level":"rx","label":"Standard","movement":"Smith Machine Bench Press","notes":"Bar to mid-chest, elbows slightly tucked."},{"level":"advanced","label":"Advanced","movement":"Incline Smith machine bench press","notes":"Bench at a low incline, same controlled reps."}]$$ as scaling_options,
   $$[{"mistake":"Bench in the wrong spot","fix":"Move the bench so the bar lowers to your mid-chest, not your neck or stomach."},{"mistake":"Flaring the elbows wide","fix":"Keep your elbows slightly tucked toward your sides."}]$$ as common_faults,
   null as youtube_url,
@@ -229,7 +229,7 @@ select
   $$The Smith machine hip thrust is a hip thrust with the Smith bar across your hips. With your upper back on a bench, a pad on the bar and your feet flat, you drive your hips up until your body is straight from shoulders to knees, then lower under control.
 
 Options: for a glute bridge, lie on the floor instead of using the bench.$$ as description,
-  array[$$Put a pad on the bar where it crosses your hips.$$, $$Set the safety stops so the bar can't come down past your start position.$$, $$Place your feet so your shins are about vertical at the top.$$, $$Pause at the top, then lower under control.$$]::text[] as tips,
+  to_jsonb(array[$$Put a pad on the bar where it crosses your hips.$$, $$Set the safety stops so the bar can't come down past your start position.$$, $$Place your feet so your shins are about vertical at the top.$$, $$Pause at the top, then lower under control.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Glute bridge on the floor","notes":"Learn the hip drive with no load."},{"level":"rx","label":"Standard","movement":"Smith Machine Hip Thrust","notes":"Full hip extension, short pause at the top."},{"level":"advanced","label":"Advanced","movement":"Smith machine hip thrust with a 3-second hold","notes":"Hold the top for 3 seconds each rep."}]$$ as scaling_options,
   $$[{"mistake":"Arching the lower back at the top","fix":"Stop when your body is straight. Keep your ribs down."},{"mistake":"No pad on the bar","fix":"Use a bar pad so the load sits comfortably on your hips."}]$$ as common_faults,
   null as youtube_url,
@@ -274,7 +274,7 @@ select
   $$The machine chest press is done on a plate-loaded chest press. Seated or lying with your back on the pad and the handles at about mid-chest height, you press the handles forward until your arms are nearly straight, then return under control.
 
 Options: on independent-arm models, press one arm at a time to even out a weaker side.$$ as description,
-  array[$$Set the seat so the handles line up with your mid-chest.$$, $$Keep your back and head on the pad.$$, $$Press to nearly straight arms, then return slowly.$$, $$Keep your elbows slightly below your shoulders.$$]::text[] as tips,
+  to_jsonb(array[$$Set the seat so the handles line up with your mid-chest.$$, $$Keep your back and head on the pad.$$, $$Press to nearly straight arms, then return slowly.$$, $$Keep your elbows slightly below your shoulders.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Machine chest press with no plates","notes":"Learn the path of the handles first."},{"level":"rx","label":"Standard","movement":"Machine Chest Press","notes":"Back on the pad, controlled press and return."},{"level":"advanced","label":"Advanced","movement":"Single-arm machine chest press","notes":"On independent-arm models, one arm at a time."}]$$ as scaling_options,
   $$[{"mistake":"Seat too high or too low","fix":"Set the handles at mid-chest before you load the machine."},{"mistake":"Shoulders rolling forward","fix":"Keep your shoulder blades back against the pad."}]$$ as common_faults,
   null as youtube_url,
@@ -319,7 +319,7 @@ select
   $$The machine high row is done on a plate-loaded high row. Seated with your thighs under the pad, you reach up and forward to the handles and pull them down and back toward your sides, then return under control.
 
 Options: on independent-arm models, row one arm at a time.$$ as description,
-  array[$$Set the thigh pad snug so you stay seated.$$, $$Reach up to the handles with your chest tall.$$, $$Pull your elbows down and back toward your hips.$$, $$Return slowly to a full stretch.$$]::text[] as tips,
+  to_jsonb(array[$$Set the thigh pad snug so you stay seated.$$, $$Reach up to the handles with your chest tall.$$, $$Pull your elbows down and back toward your hips.$$, $$Return slowly to a full stretch.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Machine high row with no plates","notes":"Learn the path of the handles first."},{"level":"rx","label":"Standard","movement":"Machine High Row","notes":"Elbows down and back, slow return."},{"level":"advanced","label":"Advanced","movement":"Single-arm machine high row","notes":"On independent-arm models, one arm at a time."}]$$ as scaling_options,
   $$[{"mistake":"Leaning back to move the weight","fix":"Keep your torso still. Lighten the load if you rock."},{"mistake":"Pulling with the arms only","fix":"Start each rep by drawing your shoulder blades down."}]$$ as common_faults,
   null as youtube_url,
@@ -349,7 +349,7 @@ select
   $$The machine low row is done on a plate-loaded low row. Seated with your chest against the pad, if your model has one, you pull the handles straight back toward your lower ribs, then return under control.
 
 Options: on independent-arm models, row one arm at a time.$$ as description,
-  array[$$Set the seat so the handles line up with your lower chest.$$, $$Keep your chest on the pad if your model has one.$$, $$Pull your elbows back past your sides.$$, $$Return slowly to a full stretch.$$]::text[] as tips,
+  to_jsonb(array[$$Set the seat so the handles line up with your lower chest.$$, $$Keep your chest on the pad if your model has one.$$, $$Pull your elbows back past your sides.$$, $$Return slowly to a full stretch.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Machine low row with no plates","notes":"Learn the path of the handles first."},{"level":"rx","label":"Standard","movement":"Machine Low Row","notes":"Elbows back, squeeze, slow return."},{"level":"advanced","label":"Advanced","movement":"Single-arm machine low row","notes":"On independent-arm models, one arm at a time."}]$$ as scaling_options,
   $$[{"mistake":"Rounding the back at the stretch","fix":"Keep your chest tall as the handles go forward."},{"mistake":"Shrugging up","fix":"Keep your shoulders down as you pull."}]$$ as common_faults,
   null as youtube_url,

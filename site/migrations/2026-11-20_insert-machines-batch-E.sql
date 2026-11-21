@@ -26,7 +26,7 @@ begin
     ('movements','tags','ARRAY'),
     ('movements','muscles','text'),
     ('movements','description','text'),
-    ('movements','tips','ARRAY'),
+    ('movements','tips','jsonb'),
     ('movements','scaling_options','text'),
     ('movements','common_faults','text'),
     ('movements','youtube_url','text'),
@@ -79,7 +79,7 @@ select
   $$The landmine press is a press with one end of a barbell anchored in a landmine. Holding the free end at your shoulder, you press it up and forward along its arc until your arm is straight, then lower it back under control. The angled path is often more comfortable for your shoulders than pressing straight overhead.
 
 Options: press with one arm or both hands, standing, in a split stance or half-kneeling.$$ as description,
-  array[$$Hold the end of the bar at the front of your shoulder.$$, $$Brace your core and squeeze your glutes.$$, $$Press up and forward to a straight arm.$$, $$Lower under control back to your shoulder.$$]::text[] as tips,
+  to_jsonb(array[$$Hold the end of the bar at the front of your shoulder.$$, $$Brace your core and squeeze your glutes.$$, $$Press up and forward to a straight arm.$$, $$Lower under control back to your shoulder.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Landmine press with the empty bar","notes":"Learn the arc first."},{"level":"rx","label":"Standard","movement":"Landmine Press","notes":"Braced torso, full press, controlled lowering."},{"level":"advanced","label":"Advanced","movement":"Half-kneeling landmine press","notes":"Kneel on one knee for more core work."}]$$ as scaling_options,
   $$[{"mistake":"Leaning back","fix":"Brace your core and keep your ribs down."},{"mistake":"Pressing straight up","fix":"Follow the bar's arc up and forward."}]$$ as common_faults,
   null as youtube_url,
@@ -109,7 +109,7 @@ select
   $$The landmine row is a row with one end of a barbell anchored in a landmine. Hinged forward with a flat back, you pull the free end toward your chest, then lower it under control.
 
 Options: row with both hands using a handle under the bar (T-bar style), or with one arm.$$ as description,
-  array[$$Hinge forward with a flat back and soft knees.$$, $$Pull your elbows back past your sides.$$, $$Keep your torso still.$$, $$Lower to a full stretch without rounding.$$]::text[] as tips,
+  to_jsonb(array[$$Hinge forward with a flat back and soft knees.$$, $$Pull your elbows back past your sides.$$, $$Keep your torso still.$$, $$Lower to a full stretch without rounding.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Landmine row with the empty bar","notes":"Learn the hinge and the pull first."},{"level":"rx","label":"Standard","movement":"Landmine Row","notes":"Flat back, full pull, slow lowering."},{"level":"advanced","label":"Advanced","movement":"Single-arm landmine row","notes":"One arm at a time, same reps each side."}]$$ as scaling_options,
   $$[{"mistake":"Rounding the back","fix":"Keep your chest up and your back flat."},{"mistake":"Jerking the weight up","fix":"Pull smoothly. Lighten the load if you heave."}]$$ as common_faults,
   null as youtube_url,
@@ -139,7 +139,7 @@ select
   $$The landmine squat is a squat holding the free end of a landmine bar at your chest. Leaning slightly into the bar, you squat down between your feet and stand back up. Holding the weight in front helps you stay upright.
 
 Options: step back into a reverse lunge while holding the bar.$$ as description,
-  array[$$Hold the end of the bar at your chest with both hands.$$, $$Stand with your feet about shoulder width apart.$$, $$Squat down between your feet, chest up.$$, $$Stand all the way up.$$]::text[] as tips,
+  to_jsonb(array[$$Hold the end of the bar at your chest with both hands.$$, $$Stand with your feet about shoulder width apart.$$, $$Squat down between your feet, chest up.$$, $$Stand all the way up.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Landmine squat with the empty bar","notes":"Learn the depth and position first."},{"level":"rx","label":"Standard","movement":"Landmine Squat","notes":"Chest up, full depth you can control."},{"level":"advanced","label":"Advanced","movement":"Landmine reverse lunge","notes":"Step back into a lunge, same reps each side."}]$$ as scaling_options,
   $$[{"mistake":"Knees caving in","fix":"Push your knees out in line with your toes."},{"mistake":"Leaning too far into the bar","fix":"Stay mostly upright; the bar is a guide, not a crutch."}]$$ as common_faults,
   null as youtube_url,
@@ -184,7 +184,7 @@ select
   $$The cable row is a row on a cable machine. Seated with your feet braced, or standing with the pulley at chest height, you pull the handle toward your lower ribs, then let it return under control.
 
 Options: row seated or standing, with one arm, or with different handles such as a V-handle or a straight bar.$$ as description,
-  array[$$Sit or stand tall with a slight bend in your knees.$$, $$Pull your elbows back past your sides.$$, $$Squeeze your shoulder blades together.$$, $$Return slowly to a full stretch.$$]::text[] as tips,
+  to_jsonb(array[$$Sit or stand tall with a slight bend in your knees.$$, $$Pull your elbows back past your sides.$$, $$Squeeze your shoulder blades together.$$, $$Return slowly to a full stretch.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Cable row with a light weight","notes":"Learn the pull first."},{"level":"rx","label":"Standard","movement":"Cable Row","notes":"Tall torso, full pull, slow return."},{"level":"advanced","label":"Advanced","movement":"Single-arm cable row","notes":"One arm at a time, same reps each side."}]$$ as scaling_options,
   $$[{"mistake":"Rocking back and forth","fix":"Keep your torso still. Lighten the weight if you rock."},{"mistake":"Shrugging up","fix":"Keep your shoulders down as you pull."}]$$ as common_faults,
   null as youtube_url,
@@ -214,7 +214,7 @@ select
   $$The cable chest fly is done standing between the two pulleys of a cable machine. With a handle in each hand and a slight bend in your elbows, you bring your hands together in front of your chest in a wide arc, then open back out under control.
 
 Options: set the pulleys high and pull down, or low and pull up, or work one arm at a time.$$ as description,
-  array[$$Set both pulleys at the same height.$$, $$Step forward into a split stance for balance.$$, $$Keep a slight bend in your elbows.$$, $$Bring your hands together, then open slowly.$$]::text[] as tips,
+  to_jsonb(array[$$Set both pulleys at the same height.$$, $$Step forward into a split stance for balance.$$, $$Keep a slight bend in your elbows.$$, $$Bring your hands together, then open slowly.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Cable chest fly with a light weight","notes":"Learn the arc first."},{"level":"rx","label":"Standard","movement":"Cable Chest Fly","notes":"Wide arc, slight elbow bend, slow return."},{"level":"advanced","label":"Advanced","movement":"Single-arm cable chest fly","notes":"One arm at a time, same reps each side."}]$$ as scaling_options,
   $$[{"mistake":"Stretching too far back","fix":"Open only until your hands are level with your chest."},{"mistake":"Bending the elbows more as you go","fix":"Keep the same elbow bend through the rep."}]$$ as common_faults,
   null as youtube_url,
@@ -244,7 +244,7 @@ select
   $$The cable triceps pushdown is done facing a high pulley. With your elbows at your sides, you push the handle down until your arms are straight, then let it rise back under control.
 
 Options: use a rope or a straight bar, or work one arm at a time.$$ as description,
-  array[$$Set the pulley at the top of the column.$$, $$Keep your elbows pinned at your sides.$$, $$Push down until your arms are straight.$$, $$Let the handle rise slowly to about chest height.$$]::text[] as tips,
+  to_jsonb(array[$$Set the pulley at the top of the column.$$, $$Keep your elbows pinned at your sides.$$, $$Push down until your arms are straight.$$, $$Let the handle rise slowly to about chest height.$$]::text[]) as tips,
   $$[{"level":"beginner","label":"Beginner","movement":"Cable triceps pushdown with a light weight","notes":"Learn to keep your elbows still."},{"level":"rx","label":"Standard","movement":"Cable Triceps Pushdown","notes":"Elbows at your sides, full lockout, slow return."},{"level":"advanced","label":"Advanced","movement":"Single-arm cable triceps pushdown","notes":"One arm at a time, same reps each side."}]$$ as scaling_options,
   $$[{"mistake":"Elbows drifting forward","fix":"Pin your elbows at your sides. Lighten the weight if they move."},{"mistake":"Leaning over the handle","fix":"Stand tall so your arms do the work."}]$$ as common_faults,
   null as youtube_url,
