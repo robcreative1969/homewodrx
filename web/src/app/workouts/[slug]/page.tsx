@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { OG_IMAGE } from "@/lib/site";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { BottomBar, primaryAction } from "@/components/BottomBar";
 import { Card } from "@/components/Card";
 import { VideoPlayer } from "@/components/VideoPlayer";
@@ -44,6 +44,8 @@ const SCORE_TALK = /\b(sub-\d|elite|under \d+\s*min|minutes? is)/i;
 export default async function WorkoutPage({ params }: PageProps<"/workouts/[slug]">) {
   const { slug } = await params;
   const [w, all, linkFor] = await Promise.all([getWorkout(slug), listWorkouts(), movementLinker()]);
+  // The old site had a few underscore addresses (fight_gone_bad); send them to the real page.
+  if (!w && slug.includes("_")) permanentRedirect(`/workouts/${slug.replace(/_/g, "-")}`);
   if (!w) notFound();
 
   const video = youtubeId(w.youtube_url);

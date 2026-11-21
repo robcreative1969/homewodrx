@@ -1,0 +1,36 @@
+{
+  "slug": "terms",
+  "title": "Terms of Service",
+  "updated": "April 27, 2026",
+  "sections": [
+    {
+      "id": "acceptance",
+      "title": "Acceptance of Terms"
+    },
+    {
+      "id": "use",
+      "title": "Use of the Site"
+    },
+    {
+      "id": "content",
+      "title": "User-Generated Content"
+    },
+    {
+      "id": "fitness",
+      "title": "Fitness Disclaimer"
+    },
+    {
+      "id": "affiliate",
+      "title": "Affiliate Links"
+    },
+    {
+      "id": "termination",
+      "title": "Termination"
+    },
+    {
+      "id": "changes",
+      "title": "Changes to These Terms"
+    }
+  ],
+  "bodyHtml": "<div class=\"legal-section\" id=\"acceptance\">\n      <h2>Acceptance of Terms</h2>\n      <p>By using HomeWODRx you agree to these Terms of Service. If you do not agree, please do not use the site.</p>\n    </div>\n    <div class=\"legal-section\" id=\"use\">\n      <h2>Use of the Site</h2>\n      <p>HomeWODRx is a fitness resource for personal, non-commercial use. You agree to use the site lawfully and not to misuse any features, attempt to disrupt the service, or access other users' accounts.</p>\n      <ul>\n        <li>You must be 13 years of age or older to create an account</li>\n        <li>You are responsible for maintaining the security of your account credentials</li>\n        <li>You are responsible for all activity that occurs under your account</li>\n      </ul>\n    </div>\n    <div class=\"legal-section\" id=\"content\">\n      <h2>User-Generated Content</h2>\n      <p>When you log workout results or submit feedback, you grant us a non-exclusive license to display that content on the site. You retain ownership of any content you create.</p>\n      <p>You agree not to submit content that is false, harmful, or in violation of any third-party rights.</p>\n    </div>\n    <div class=\"legal-section\" id=\"fitness\">\n      <h2>Fitness Disclaimer</h2>\n      <div class=\"legal-highlight\">All workouts and fitness content on HomeWODRx are for informational purposes only. Consult a qualified healthcare provider before beginning any exercise program.</div>\n      <p>HomeWODRx is not a substitute for professional medical advice, diagnosis, or treatment. Always warm up properly, use appropriate weights, and exercise within your ability level.</p>\n    </div>\n    <div class=\"legal-section\" id=\"affiliate\">\n      <h2>Affiliate Links</h2>\n      <p>Some links on the Gear Shop and blog posts are affiliate links. If you purchase through one of these links, we may earn a small commission at no extra cost to you. We only recommend products we believe are genuinely useful for functional fitness athletes.</p>\n    </div>\n    <div class=\"legal-section\" id=\"termination\">\n      <h2>Termination</h2>\n      <p>We reserve the right to suspend or terminate accounts that violate these Terms. You may delete your account at any time from your Profile settings.</p>\n    </div>\n    <div class=\"legal-section\" id=\"changes\">\n      <h2>Changes to These Terms</h2>\n      <p>We may update these Terms from time to time. We will note the updated date at the top of this page. Continued use of the site after changes constitutes acceptance of the revised Terms.</p>\n      <div class=\"legal-contact-box\">Questions? <a href=\"/contact\">Contact us</a></div>\n    </div>"
+}

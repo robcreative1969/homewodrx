@@ -101,14 +101,14 @@ export default async function Home() {
 
       <EmailSignup source="homepage_digest" title="Get the Daily 20 by email" text="Today's workout and stretch in your inbox every morning. Free; unsubscribe anytime." />
 
-      <section aria-labelledby="plan" className="flex flex-col gap-2.5 rounded-2xl bg-footer p-5 text-footer-ink">
-        <h2 id="plan" className="m-0 text-[22px] font-extrabold tracking-tight text-white">Plan your week</h2>
+      <section aria-labelledby="build" className="flex flex-col gap-2.5 rounded-2xl bg-footer p-5 text-footer-ink">
+        <h2 id="build" className="m-0 text-[22px] font-extrabold tracking-tight text-white">Build your own workout</h2>
         <p className="m-0">
-          Mix benchmark workouts, builder workouts and your own into one weekly plan, then print it or send it to your calendar.
+          Tell the WOD Builder what equipment you have and how long you&apos;ve got. It builds the workout and times it for you.
         </p>
-        <a href="https://homewodrx.com/planner" className="flex min-h-11 items-center self-start rounded-xl bg-white px-4 font-bold text-[#16181d] no-underline">
-          Open the Planner
-        </a>
+        <Link href="/wodbuilder" className="flex min-h-11 items-center self-start rounded-xl bg-white px-4 font-bold text-[#16181d] no-underline">
+          Open the WOD Builder
+        </Link>
       </section>
 
       <section aria-labelledby="from-blog" className="flex flex-col gap-2.5">

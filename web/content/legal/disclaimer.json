@@ -1,0 +1,24 @@
+{
+  "slug": "disclaimer",
+  "title": "Disclaimer",
+  "updated": "April 27, 2026",
+  "sections": [
+    {
+      "id": "fitness",
+      "title": "Fitness & Health"
+    },
+    {
+      "id": "accuracy",
+      "title": "Content Accuracy"
+    },
+    {
+      "id": "affiliate",
+      "title": "Affiliate & Product Recommendations"
+    },
+    {
+      "id": "external",
+      "title": "External Links"
+    }
+  ],
+  "bodyHtml": "<div class=\"legal-section\" id=\"fitness\">\n      <h2>Fitness &amp; Health</h2>\n      <div class=\"legal-highlight\">All workout content on HomeWODRx is provided for informational and educational purposes only. It is not medical advice.</div>\n      <p>Before starting any new exercise program, especially one involving high-intensity training, Olympic weightlifting, or gymnastics movements, consult with a qualified physician or physical therapist. This is particularly important if you have any pre-existing health conditions, injuries, or have been inactive for an extended period.</p>\n      <p>Exercise carries inherent risk of injury. HomeWODRx accepts no liability for injuries, accidents, or health complications arising from the use of information on this site.</p>\n    </div>\n    <div class=\"legal-section\" id=\"accuracy\">\n      <h2>Content Accuracy</h2>\n      <p>We strive to keep workout descriptions, movement standards, and coaching notes accurate and up to date. However, we make no warranty — express or implied — about the completeness, accuracy, or suitability of any content for a particular purpose.</p>\n      <p>Workout standards in competitive fitness evolve. Always verify current standards through official sources (CrossFit LLC, etc.) for competition purposes.</p>\n    </div>\n    <div class=\"legal-section\" id=\"affiliate\">\n      <h2>Affiliate &amp; Product Recommendations</h2>\n      <p>Product recommendations in the Gear Shop and blog posts reflect our honest assessment, but we are not responsible for the quality, safety, or performance of any third-party products. Always read product instructions and use equipment safely.</p>\n      <p>HomeWODRx participates in affiliate programs. See our <a href=\"/terms\">Terms of Service</a> for full disclosure.</p>\n    </div>\n    <div class=\"legal-section\" id=\"external\">\n      <h2>External Links</h2>\n      <p>The site may contain links to third-party websites. We are not responsible for the content, privacy practices, or accuracy of any external sites.</p>\n      <div class=\"legal-contact-box\">Questions? <a href=\"/contact\">Contact us</a></div>\n    </div>"
+}

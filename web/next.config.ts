@@ -1,24 +1,39 @@
 import type { NextConfig } from "next";
 
-// Pages the rebuild hasn't reached yet (REBUILD-PLAN.md §5). On the preview they send
-// visitors to the same page on the live site. Delete each line when its phase lands;
-// the list must be empty before the switch (the guard below stops a redirect loop).
-const NOT_REBUILT_YET = [
-  "/stretchbuilder",
-  "/timer",
-  "/planner",
-  "/myworkouts",
-  "/shop",
-  "/signup",
-  "/login",
-  "/profile",
-  "/settings",
-  "/contact",
-  "/privacy",
-  "/terms",
-  "/cookies",
-  "/disclaimer",
-  "/u/:handle",
+// Addresses from the old site that have no page of their own here. Permanent (308), so
+// search engines move their ranking to the new address. Accounts are on hold (Rob,
+// 2026-11-20), so the account pages send visitors to the homepage.
+const RETIRED: { source: string; destination: string }[] = [
+  { source: "/login", destination: "/" },
+  { source: "/signup", destination: "/" },
+  { source: "/profile", destination: "/" },
+  { source: "/settings", destination: "/" },
+  { source: "/myworkouts", destination: "/" },
+  { source: "/planner", destination: "/wodbuilder" },
+  { source: "/u/:handle", destination: "/" },
+  { source: "/leaderboard", destination: "/" },
+  { source: "/companion-onboarding", destination: "/" },
+  { source: "/admin.html", destination: "/admin" },
+  { source: "/generator", destination: "/wodbuilder" },
+  { source: "/stretch", destination: "/stretch-routines" },
+  { source: "/stretchbuilder", destination: "/stretch-routines" },
+  // Older movement addresses the old site already forwarded.
+  { source: "/movements/deadlift", destination: "/movements/deadlifts" },
+  { source: "/movements/power-clean", destination: "/movements/power-cleans" },
+  { source: "/movements/thruster", destination: "/movements/thrusters" },
+  { source: "/movements/db-lateral-raise", destination: "/movements/db-lateral-raises" },
+  { source: "/movements/db-dumbbell-thrusters", destination: "/movements/db-thrusters" },
+  { source: "/movements/dumbbell-thruster", destination: "/movements/db-thrusters" },
+];
+
+// The old site's page files (workout.html?slug=fran, movement.html?slug=…), which some
+// old links and emails still use.
+const OLD_FILES: { source: string; base: string }[] = [
+  { source: "/workout", base: "/workouts" },
+  { source: "/movement", base: "/movements" },
+  { source: "/machine", base: "/machines" },
+  { source: "/stretch-movement", base: "/stretches" },
+  { source: "/stretch-routine", base: "/stretch-routines" },
 ];
 
 const nextConfig: NextConfig = {
@@ -28,12 +43,16 @@ const nextConfig: NextConfig = {
     remotePatterns: [{ protocol: "https", hostname: "i.ytimg.com", pathname: "/vi/**" }],
   },
   async redirects() {
-    if (process.env.SITE_INDEXABLE === "1") return [];
-    return NOT_REBUILT_YET.map((source) => ({
-      source,
-      destination: `https://homewodrx.com${source}`,
-      permanent: false,
-    }));
+    return [
+      ...RETIRED.map((r) => ({ ...r, permanent: true })),
+      ...OLD_FILES.flatMap(({ source, base }) => [
+        { source: `${source}.html`, has: [{ type: "query" as const, key: "slug", value: "(?<slug>.+)" }], destination: `${base}/:slug`, permanent: true },
+        { source, has: [{ type: "query" as const, key: "slug", value: "(?<slug>.+)" }], destination: `${base}/:slug`, permanent: true },
+      ]),
+      // Any other old ".html" address: drop the extension (index.html → /).
+      { source: "/index.html", destination: "/", permanent: true },
+      { source: "/:path((?!admin).*)\\.html", destination: "/:path", permanent: true },
+    ];
   },
 };
 

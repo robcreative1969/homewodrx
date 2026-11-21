@@ -267,3 +267,15 @@ body:has([data-bottom-bar]) footer {
   --accent-text: #ff6b5e;
   color-scheme: dark;
 }
+
+/* Legal pages (imported from the old site): section spacing and the two callout styles. */
+.legal-body .legal-section { scroll-margin-top: 80px; }
+.legal-body .legal-section + .legal-section { margin-top: 8px; }
+.legal-body .legal-highlight,
+.legal-body .legal-contact-box {
+  margin: 12px 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--surface-muted);
+  font-weight: 600;
+}
