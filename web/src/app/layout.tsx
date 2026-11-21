@@ -19,7 +19,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "HomeWODRx: workouts, a WOD Builder and a weekly Planner",
+    default: "HomeWODRx: free workouts, a WOD Builder and the Daily 20",
     template: "%s | HomeWODRx",
   },
   description:
@@ -28,6 +28,8 @@ export const metadata: Metadata = {
   openGraph: { images: [OG_IMAGE] },
   // The rebuild stays out of search results until it replaces the live site.
   robots: isIndexable() ? undefined : { index: false, follow: false },
+  // Pinterest website claim (2026-11-21).
+  other: { "p:domain_verify": "b7ab8049fdcd74c19a98ce90dc31c2b1" },
 };
 
 // Applies a saved light/dark choice before the page paints, so it never flashes.

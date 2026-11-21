@@ -31,7 +31,7 @@ export default async function Home() {
           Program your training. Then go do it.
         </h1>
         <p className="m-0 text-[17px] text-ink-2">
-          Benchmark workouts, a WOD Builder and a weekly Planner, for training at the box, the health club, or at home.
+          Benchmark workouts, a WOD Builder and a new Daily 20 every day, for training at the box, the health club, or at home.
         </p>
         <div className="flex flex-col gap-2 sm:flex-row">
           <Link href="/wodbuilder" className="flex h-14 items-center justify-center rounded-[14px] bg-accent px-6 text-[17px] font-bold text-accent-ink no-underline">
