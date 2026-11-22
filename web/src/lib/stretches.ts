@@ -52,6 +52,7 @@ export function modalityLabel(m: string | null | undefined) {
 
 const FOCUS: Record<string, string> = {
   full: "Full Body",
+  neck: "Neck",
   hips: "Hips",
   shoulders: "Shoulders",
   back: "Back",

@@ -7,6 +7,7 @@ import type { StretchStep } from "@/lib/stretchSession";
 
 export const STRETCH_FOCUSES = [
   { code: "full", label: "Full Body" },
+  { code: "neck", label: "Neck" },
   { code: "hips", label: "Hips" },
   { code: "back", label: "Back" },
   { code: "shoulders", label: "Shoulders" },
