@@ -4,13 +4,19 @@ import { LibrarySwitch } from "@/components/LibrarySwitch";
 import { CATEGORIES, categoryLabel } from "@/lib/labels";
 import { listWorkouts } from "@/lib/workouts";
 
+// Memorials & Tributes was folded into Hero WODs (2026-11-22); old links still work.
+function folded(v: string | string[] | undefined) {
+  const s = Array.isArray(v) ? v[0] : v;
+  return s === "memorials" || s === "memorial" ? "hero" : s;
+}
+
 export async function generateMetadata({ searchParams }: PageProps<"/workouts">): Promise<Metadata> {
   const { category } = await searchParams;
-  const cat = CATEGORIES.find((c) => c.param === category);
+  const cat = CATEGORIES.find((c) => c.param === folded(category));
   const title = cat ? cat.label : "Benchmark workouts";
   return {
     title,
-    description: "Classic Benchmarks, Hero WODs, Competition WODs and Memorials & Tributes, each with scaling, coaching cues and a video.",
+    description: "Classic Benchmarks, Hero WODs and Competition WODs, each with scaling, coaching cues and a video.",
     alternates: { canonical: cat ? `https://homewodrx.com/workouts?category=${cat.param}` : "https://homewodrx.com/workouts" },
   };
 }
@@ -19,7 +25,7 @@ export default async function WorkoutsPage({ searchParams }: PageProps<"/workout
   const { category, cat: legacyCat } = await searchParams;
   const all = await listWorkouts();
   // Old site links use ?cat=<database code>; new links use ?category=<short name>.
-  const active = CATEGORIES.find((c) => c.param === category || c.code === legacyCat);
+  const active = CATEGORIES.find((c) => c.param === folded(category) || c.code === folded(legacyCat));
   const workouts = active ? all.filter((w) => w.category === active.code) : all;
   const counts = new Map<string, number>();
   for (const w of all) counts.set(w.category, (counts.get(w.category) ?? 0) + 1);

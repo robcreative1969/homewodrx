@@ -6,7 +6,6 @@ export const CATEGORIES = [
   { code: "hero", param: "hero", label: "Hero WODs" },
   { code: "competition", param: "competition", label: "Competition WODs" },
   { code: "community", param: "community", label: "Community WODs" },
-  { code: "memorial", param: "memorials", label: "Memorials & Tributes" },
   // Partner and gym versions of classic workouts; not official CrossFit benchmarks.
   { code: "variation", param: "variations", label: "Variations" },
 ] as const;

@@ -40,7 +40,7 @@ const WORKOUT_CATEGORIES = [
   { value: "classic_benchmark", label: "Classic benchmark" },
   { value: "hero", label: "Hero WOD" },
   { value: "competition", label: "Competition / Open" },
-  { value: "memorial", label: "Memorial" },
+  { value: "variation", label: "Variation (not official)" },
 ];
 
 export const CONTENT_TYPES: Record<string, ContentType> = {
