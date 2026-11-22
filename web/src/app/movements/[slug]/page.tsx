@@ -8,7 +8,8 @@ import { categoryLabel } from "@/lib/labels";
 import {
   getMovement,
   listMovements,
-  movementCategoryLabel,
+  bodyAreaLabel,
+  equipmentGroup,
   scalingLevelLabel,
   workoutsWithMovement,
 } from "@/lib/movements";
@@ -42,7 +43,8 @@ export default async function MovementPage({ params }: PageProps<"/movements/[sl
 
   const video = youtubeId(m.youtube_url);
   const workouts = await workoutsWithMovement(m.slug);
-  const category = movementCategoryLabel(m.category);
+  const area = bodyAreaLabel(m.body_area);
+  const gear = equipmentGroup(m.equipment_category);
 
   return (
     <div className="flex flex-col">
@@ -57,7 +59,9 @@ export default async function MovementPage({ params }: PageProps<"/movements/[sl
           <nav aria-label="Breadcrumb" className="text-[13px] text-ink-3">
             <Link href="/movements" className="text-ink-2">Movements</Link>
             {" › "}
-            <Link href={`/movements?category=${m.category}`} className="text-ink-2">{category}</Link>
+            {m.body_area ? <Link href={`/movements?area=${m.body_area}`} className="text-ink-2">{area}</Link> : area}
+            {" · "}
+            <Link href={`/movements?equipment=${gear.key}`} className="text-ink-2">{gear.label}</Link>
           </nav>
           <h1 className="m-0 text-[40px] leading-none font-extrabold tracking-tight">{m.name}</h1>
           {m.description ? <p className="m-0 text-ink-2">{m.description}</p> : null}

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { listPosts } from "@/lib/blog";
 import { categoryLabel } from "@/lib/labels";
 import { listMachines } from "@/lib/machines";
-import { listMovements, movementCategoryLabel } from "@/lib/movements";
+import { bodyAreaLabel, listMovements } from "@/lib/movements";
 import { listRoutines, listStretches } from "@/lib/stretches";
 import { listWorkouts } from "@/lib/workouts";
 import { LogSearch } from "@/components/SiteMetrics";
@@ -48,7 +48,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
         label: "Movements",
         hits: movements
           .filter((m) => matches(m.name, m.muscles))
-          .map((m) => ({ href: `/movements/${m.slug}`, title: m.name, detail: movementCategoryLabel(m.category) })),
+          .map((m) => ({ href: `/movements/${m.slug}`, title: m.name, detail: bodyAreaLabel(m.body_area) })),
       },
       {
         label: "Machines",

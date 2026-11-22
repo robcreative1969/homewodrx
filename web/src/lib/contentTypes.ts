@@ -85,8 +85,11 @@ export const CONTENT_TYPES: Record<string, ContentType> = {
     publicPath: (s) => `/movements/${s}`,
     fields: [
       { key: "name", label: "Name", kind: "text" },
-      { key: "category", label: "Category", kind: "text" },
-      { key: "equipment_category", label: "Equipment group", kind: "text", help: "Used by the WOD Builder, e.g. kettlebell, dumbbells, bodyweight" },
+      { key: "body_area", label: "Body area", kind: "select", options: [
+        { value: "upper", label: "Upper Body" }, { value: "lower", label: "Lower Body" }, { value: "core", label: "Core" },
+        { value: "full", label: "Full Body" }, { value: "cardio", label: "Cardio" },
+      ], help: "Where the movement works. Used by the Movements page filter." },
+      { key: "equipment_category", label: "Equipment group", kind: "text", help: "Used by the WOD Builder and the Movements equipment filter, e.g. kettlebell, dumbbells, bodyweight" },
       { key: "description", label: "Description", kind: "textarea", rows: 5 },
       { key: "muscles", label: "Muscles (sentence)", kind: "text" },
       { key: "muscle_groups", label: "Muscle groups", kind: "lines", store: "text[]", help: "One per line: glutes, hamstrings, quads, calves, inner-thighs, core, back, chest, shoulders, arms" },
