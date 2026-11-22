@@ -78,6 +78,9 @@ export default async function WorkoutPage({ params }: PageProps<"/workouts/[slug
           </Link>
         </nav>
         <h1 className="m-0 text-[44px] leading-none font-extrabold tracking-tight">{w.name}</h1>
+        {w.category === "variation" ? (
+          <p className="m-0 text-[15px] text-ink-2">A HomeWODRx variation of a classic workout, not an official CrossFit benchmark.</p>
+        ) : null}
         <dl className="m-0 grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm">
           {facts.map(([label, value]) => (
             <div key={label} className="flex flex-col">
