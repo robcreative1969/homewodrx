@@ -26,7 +26,8 @@ export default async function StretchesPage({ searchParams }: PageProps<"/stretc
           <span className="font-mono font-bold text-ink">{all.length}</span> stretches and{" "}
           <Link href="/stretch-routines" className="font-semibold text-ink">
             <span className="font-mono">{routines.length}</span> ready-made routines
-          </Link>
+          </Link>, or{" "}
+          <Link href="/stretchbuilder" className="font-semibold text-ink">build your own routine</Link>
         </p>
       </div>
 

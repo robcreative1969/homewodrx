@@ -7,6 +7,8 @@ export const MAIN_NAV = [
   { href: "/machines", label: "Machines" },
   { href: "/daily-wod", label: "The Daily 20" },
   { href: "/wodbuilder", label: "WOD Builder" },
+  // Phone menu only: the desktop header has no room; Stretches and Routines link to it.
+  { href: "/stretchbuilder", label: "Stretch Builder", menuOnly: true },
   { href: "/blog", label: "Blog" },
   { href: "/search", label: "Search" },
-] as const;
+] as const satisfies readonly { href: string; label: string; menuOnly?: boolean }[];

@@ -15,8 +15,8 @@ const RETIRED: { source: string; destination: string }[] = [
   { source: "/companion-onboarding", destination: "/" },
   { source: "/admin.html", destination: "/admin" },
   { source: "/generator", destination: "/wodbuilder" },
-  { source: "/stretch", destination: "/stretch-routines" },
-  { source: "/stretchbuilder", destination: "/stretch-routines" },
+  // The April version of the Stretch Builder.
+  { source: "/stretch", destination: "/stretchbuilder" },
   // Older movement addresses the old site already forwarded.
   { source: "/movements/deadlift", destination: "/movements/deadlifts" },
   { source: "/movements/power-clean", destination: "/movements/power-cleans" },

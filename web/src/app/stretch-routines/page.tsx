@@ -15,14 +15,12 @@ export default async function RoutinesPage() {
   const routines = await listRoutines();
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-5">
-      <LibrarySwitch current="stretches" />
+      <LibrarySwitch current="routines" />
       <div className="flex flex-col gap-1">
-        <nav aria-label="Breadcrumb" className="text-[13px] text-ink-3">
-          <Link href="/stretches" className="text-ink-2">Stretches</Link>
-        </nav>
         <h1 className="m-0 text-[32px] font-extrabold tracking-tight">Stretch routines</h1>
         <p className="m-0 text-ink-2">
-          <span className="font-mono font-bold text-ink">{routines.length}</span> routines, from five-minute warm-ups to full recovery sessions
+          <span className="font-mono font-bold text-ink">{routines.length}</span> routines, from five-minute warm-ups to full recovery sessions. Or{" "}
+          <Link href="/stretchbuilder" className="font-semibold text-ink">build your own</Link>.
         </p>
       </div>
       <ul className="m-0 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-2">

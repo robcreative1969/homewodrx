@@ -273,7 +273,7 @@ export function WorkoutMode({ session }: { session: Session }) {
               <span className="font-mono text-7xl font-extrabold tracking-tighter">{clock(finalSeconds ?? elapsed)}</span>
             )}
             <p className="m-0 max-w-sm text-ink-2">
-              Write it down. Logging results on HomeWODRx arrives with accounts in the new site.
+              Write it down, so you know what to beat next time.
             </p>
             <Link href={session.backHref} className="flex h-14 w-full max-w-sm items-center justify-center rounded-2xl bg-accent text-lg font-bold text-accent-ink no-underline">
               Back to the workout

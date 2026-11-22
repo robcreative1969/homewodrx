@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BottomBar, primaryAction } from "@/components/BottomBar";
 import { Card } from "@/components/Card";
 import { getRoutine, listRoutines, listStretches, modalityLabel } from "@/lib/stretches";
 
@@ -36,7 +37,7 @@ export default async function RoutinePage({ params }: PageProps<"/stretch-routin
   ].filter(([, v]) => v) as [string, string][];
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-5">
+    <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 pt-5 pb-28">
       <Card>
         <nav aria-label="Breadcrumb" className="text-[13px] text-ink-3">
           <Link href="/stretches" className="text-ink-2">Stretches</Link>
@@ -91,6 +92,16 @@ export default async function RoutinePage({ params }: PageProps<"/stretch-routin
           </ul>
         </Card>
       ) : null}
+
+      <BottomBar>
+        <Link href={`/stretch-routines/${r.slug}/go`} className={primaryAction}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <circle cx="12" cy="13" r="8" />
+            <path d="M12 9v4l2.5 2.5M9 2h6" />
+          </svg>
+          Start follow-along
+        </Link>
+      </BottomBar>
     </div>
   );
 }

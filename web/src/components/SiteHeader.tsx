@@ -11,7 +11,7 @@ export function SiteHeader() {
         <Wordmark />
         <nav aria-label="Main" className="flex items-center gap-1">
           <ul className="m-0 hidden list-none items-center gap-1 p-0 lg:flex">
-            {MAIN_NAV.map((item) => (
+            {MAIN_NAV.filter((item) => !("menuOnly" in item)).map((item) => (
               <li key={item.href}>
                 <Link href={item.href} className="flex min-h-11 items-center rounded-lg px-2.5 text-[15px] font-semibold text-ink no-underline hover:bg-surface-muted">
                   {item.label}

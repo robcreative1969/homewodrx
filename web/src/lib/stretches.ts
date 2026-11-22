@@ -1,5 +1,6 @@
 import "server-only";
 import { cache } from "react";
+import type { PoolStretch } from "@/lib/stretchBuilder";
 import { publicClient } from "@/lib/supabase/public";
 
 export type Stretch = {
@@ -105,3 +106,13 @@ export async function routinesWithStretch(slug: string) {
   const routines = await listRoutines();
   return routines.filter((r) => (r.stretches ?? []).some((s) => s.slug === slug));
 }
+
+/** Every stretch with what the Stretch Builder needs. */
+export const loadStretchPool = cache(async () => {
+  const { data, error } = await publicClient()
+    .from("stretches")
+    .select("name,slug,modality,focus,level,sides,hold_beginner,hold_intermediate,hold_advanced,tip")
+    .order("name");
+  if (error) throw new Error(`Could not load stretches: ${error.message}`);
+  return (data ?? []) as PoolStretch[];
+});

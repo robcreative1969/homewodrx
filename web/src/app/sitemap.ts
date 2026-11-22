@@ -34,6 +34,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     page("/blog", 0.7),
     page("/daily-wod", 0.8),
     page("/wodbuilder", 0.8),
+    page("/stretchbuilder", 0.7),
     page("/timer", 0.6),
     page("/shop", 0.5),
     page("/contact", 0.3),
