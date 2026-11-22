@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { BottomBar, primaryAction } from "@/components/BottomBar";
 import { Card } from "@/components/Card";
+import { ExclusiveAll } from "@/components/ExclusiveAll";
 import {
   EQUIPMENT,
   FOCUSES,
@@ -133,7 +134,8 @@ export default async function BuilderPage({ searchParams }: PageProps<"/wodbuild
               </label>
             ))}
           </div>
-          <p className="m-0 text-[13px] text-ink-2">Pick one or more. Full Body overrides the rest.</p>
+          <p className="m-0 text-[13px] text-ink-2">Pick one or more.</p>
+          <ExclusiveAll name="focus" all="full-body" />
         </fieldset>
 
         <fieldset className="m-0 flex flex-col gap-3 rounded-2xl border border-line bg-surface p-[18px]">

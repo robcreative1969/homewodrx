@@ -66,7 +66,9 @@ export function parseStretchParams(sp: Search): StretchBuilderParams | null {
   if (first(sp.t) === undefined) return null;
   const focusCodes = new Set<string>(STRETCH_FOCUSES.map((f) => f.code));
   let focus = list(sp.focus).filter((f) => focusCodes.has(f));
-  if (!focus.length || focus.includes("full")) focus = ["full"];
+  // Specific areas win over Full Body when both arrive (e.g. without JavaScript).
+  focus = focus.filter((f) => f !== "full");
+  if (!focus.length) focus = ["full"];
   const typeCodes = new Set<string>(STRETCH_TYPES.map((t) => t.code));
   let types = list(sp.type).filter((t) => typeCodes.has(t));
   if (!types.length) types = STRETCH_TYPES.map((t) => t.code);

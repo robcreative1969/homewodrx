@@ -72,7 +72,9 @@ export function parseBuilderParams(sp: Search): BuilderParams | null {
   const equipment = ["bodyweight", ...list(sp.eq).filter((c) => known.has(c))];
   const focusCodes = new Set(FOCUSES.map((f) => f.code));
   let focus = list(sp.focus).filter((f): f is Focus => focusCodes.has(f as Focus));
-  if (!focus.length || focus.includes("full-body")) focus = ["full-body"];
+  // Specific focuses win over Full Body when both arrive (e.g. without JavaScript).
+  focus = focus.filter((f) => f !== "full-body");
+  if (!focus.length) focus = ["full-body"];
   const fmt = first(sp.fmt);
   const format = FORMATS.some((f) => f.code === fmt) ? (fmt as Format | "any") : "any";
   const lvl = first(sp.lvl);
