@@ -55,7 +55,6 @@ export default async function WorkoutPage({ params }: PageProps<"/workouts/[slug
   const cues = (w.coaching_tips ?? []).filter((c) => !SCORE_TALK.test(c));
   const related = relatedWorkouts(w, all);
   const catParam = categoryParam(w.category);
-  const maxMinutes = tiers.length ? tiers[tiers.length - 1].value : 0;
   // Reps that just repeat the scheme ("21 – 15 – 9" under "21-15-9 For Time") are shown once.
   const digits = (s: string | null | undefined) => (s ?? "").match(/\d+/g)?.join("-") ?? "";
   const schemeDigits = digits(w.scheme);
@@ -124,34 +123,14 @@ export default async function WorkoutPage({ params }: PageProps<"/workouts/[slug
         <Card title="Score" labelledBy="score">
           {instruction ? <p className="m-0 text-ink-2">{instruction}</p> : null}
           {tiers.length ? (
-            <>
-              <div aria-hidden="true" className="flex flex-col gap-2">
-                <div className="flex h-3 overflow-hidden rounded-md">
-                  {tiers.map((t, i) => (
-                    <div
-                      key={t.label}
-                      style={{ flex: t.value - (tiers[i - 1]?.value ?? 0) }}
-                      className={["bg-ink", "bg-ink-3", "bg-chip-line", "bg-line"][i] ?? "bg-line"}
-                    />
-                  ))}
+            <dl className="m-0 grid grid-cols-3 gap-2 text-sm">
+              {tiers.map((t) => (
+                <div key={t.label} className="flex flex-col">
+                  <dt className="font-bold">{t.label}</dt>
+                  <dd className="m-0 font-mono">under {t.value}:00</dd>
                 </div>
-                <div className="flex font-mono text-xs text-ink-2">
-                  <span style={{ flex: tiers[0].value }}>0:00</span>
-                  {tiers.slice(0, -1).map((t, i) => (
-                    <span key={t.label} style={{ flex: tiers[i + 1].value - t.value }}>{t.value}:00</span>
-                  ))}
-                  <span>{maxMinutes}:00</span>
-                </div>
-              </div>
-              <dl className="m-0 grid grid-cols-3 gap-2 text-sm">
-                {tiers.map((t) => (
-                  <div key={t.label} className="flex flex-col">
-                    <dt className="font-bold">{t.label}</dt>
-                    <dd className="m-0 font-mono">under {t.value}:00</dd>
-                  </div>
-                ))}
-              </dl>
-            </>
+              ))}
+            </dl>
           ) : null}
           {targets?.kind === "count" ? (
             <dl className="m-0 flex flex-col text-sm">
