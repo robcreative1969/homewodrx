@@ -38,6 +38,8 @@ const ALIASES: Record<string, string> = {
   "dumbbell squat clean thruster": "dumbbell thruster",
   "burpee over backpack": "burpee",
   "run with plate": "plate run",
+  "parallette handstand push up": "handstand push up",
+  "toe to ring": "toe to bar",
   "squat clean and jerk": "clean and jerk",
   "ground to overhead": "clean and jerk",
   pistol: "pistol squat",
