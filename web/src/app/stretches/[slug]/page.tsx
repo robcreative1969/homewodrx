@@ -3,6 +3,7 @@ import { OG_IMAGE } from "@/lib/site";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card } from "@/components/Card";
+import { splitLede } from "@/lib/lede";
 import { VideoPlayer } from "@/components/VideoPlayer";
 import { focusLabels, getStretch, listStretches, modalityLabel, routinesWithStretch } from "@/lib/stretches";
 import { youtubeId } from "@/lib/youtube";
@@ -32,6 +33,7 @@ export default async function StretchPage({ params }: PageProps<"/stretches/[slu
   const s = await getStretch(slug);
   if (!s) notFound();
   const video = youtubeId(s.youtube_url);
+  const intro = splitLede(s.description);
   const routines = await routinesWithStretch(s.slug);
   const holds = [
     ["Beginner", s.hold_beginner],
@@ -57,10 +59,16 @@ export default async function StretchPage({ params }: PageProps<"/stretches/[slu
             <div className="flex flex-col"><dt className="text-ink-3">Focus</dt><dd className="m-0 font-semibold">{focusLabels(s.focus).join(", ")}</dd></div>
             {s.sides ? <div className="col-span-2 flex flex-col"><dt className="text-ink-3">Sides</dt><dd className="m-0 font-semibold">Do each side</dd></div> : null}
           </dl>
-          {s.description ? <p className="m-0 text-ink-2">{s.description}</p> : null}
+          {intro.lede ? <p className="m-0 text-ink-2">{intro.lede}</p> : null}
         </section>
       </div>
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-4 pb-8">
+        {intro.rest ? (
+          <Card title="About this stretch" labelledBy="about">
+            <p className="m-0 text-[15px]">{intro.rest}</p>
+          </Card>
+        ) : null}
+
         {holds.length ? (
           <Card title={s.modality === "static" || s.modality === "pnf" ? "How long to hold" : "How long"} labelledBy="holds">
             <dl className="m-0 grid grid-cols-3 gap-2 text-sm">

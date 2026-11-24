@@ -3,6 +3,7 @@ import { OG_IMAGE } from "@/lib/site";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card } from "@/components/Card";
+import { splitLede } from "@/lib/lede";
 import { VideoPlayer } from "@/components/VideoPlayer";
 import { categoryLabel } from "@/lib/labels";
 import {
@@ -42,6 +43,7 @@ export default async function MovementPage({ params }: PageProps<"/movements/[sl
   if (!m) notFound();
 
   const video = youtubeId(m.youtube_url);
+  const intro = splitLede(m.description);
   const workouts = await workoutsWithMovement(m.slug);
   const area = bodyAreaLabel(m.body_area);
   const gear = equipmentGroup(m.equipment_category);
@@ -63,7 +65,7 @@ export default async function MovementPage({ params }: PageProps<"/movements/[sl
             <Link href={`/movements?equipment=${gear.key}`} className="text-ink-2">{gear.label}</Link>
           </nav>
           <h1 className="m-0 text-[40px] leading-none font-extrabold tracking-tight">{m.name}</h1>
-          {m.description ? <p className="m-0 text-ink-2">{m.description}</p> : null}
+          {intro.lede ? <p className="m-0 text-ink-2">{intro.lede}</p> : null}
           {m.muscles || m.machine ? (
             <dl className="m-0 grid grid-cols-1 gap-2.5 rounded-2xl border border-line bg-surface px-4 py-3.5 text-sm">
               {m.muscles ? (
@@ -81,6 +83,12 @@ export default async function MovementPage({ params }: PageProps<"/movements/[sl
       </div>
 
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-4 pb-8">
+        {intro.rest ? (
+          <Card title="About the movement" labelledBy="about">
+            <p className="m-0 text-[15px]">{intro.rest}</p>
+          </Card>
+        ) : null}
+
         {m.tips?.length ? (
           <Card title="How to do it" labelledBy="how-to">
             <ol className="m-0 flex flex-col gap-2 pl-5 text-[15px]">

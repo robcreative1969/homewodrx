@@ -3,6 +3,7 @@ import { OG_IMAGE } from "@/lib/site";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card } from "@/components/Card";
+import { splitLede } from "@/lib/lede";
 import { VideoPlayer } from "@/components/VideoPlayer";
 import { getMachine, listMachines, machineMovements, muscleGroupLabels } from "@/lib/machines";
 import { youtubeId } from "@/lib/youtube";
@@ -33,6 +34,7 @@ export default async function MachinePage({ params }: PageProps<"/machines/[slug
   if (!m) notFound();
   const [movements] = await Promise.all([machineMovements(m.id)]);
   const video = youtubeId(m.youtube_url);
+  const intro = splitLede(m.overview);
   const muscles = muscleGroupLabels(m.muscle_groups);
 
   return (
@@ -54,10 +56,16 @@ export default async function MachinePage({ params }: PageProps<"/machines/[slug
               <dd className="m-0 font-semibold">{muscles.join(", ")}</dd>
             </dl>
           ) : null}
-          {m.overview ? <p className="m-0 text-ink-2">{m.overview}</p> : null}
+          {intro.lede ? <p className="m-0 text-ink-2">{intro.lede}</p> : null}
         </section>
       </div>
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-4 pb-8">
+        {intro.rest ? (
+          <Card title="About the machine" labelledBy="about">
+            <p className="m-0 text-[15px]">{intro.rest}</p>
+          </Card>
+        ) : null}
+
         {m.setup_notes ? (
           <Card title="Set it up" labelledBy="setup">
             <p className="m-0 text-[15px]">{m.setup_notes}</p>
