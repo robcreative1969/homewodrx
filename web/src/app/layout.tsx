@@ -4,6 +4,8 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteMetrics } from "@/components/SiteMetrics";
+import { Analytics } from "@/components/Analytics";
+import { ConsentBanner } from "@/components/ConsentBanner";
 import { isIndexable, OG_IMAGE } from "@/lib/site";
 import "./globals.css";
 
@@ -51,6 +53,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <SiteFooter />
         <BottomNav />
         <SiteMetrics />
+        <ConsentBanner />
+        <Analytics />
       </body>
     </html>
   );

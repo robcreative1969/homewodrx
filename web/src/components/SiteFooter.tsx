@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Wordmark } from "@/components/Wordmark";
+import { CookieChoicesButton } from "@/components/ConsentBanner";
 
 const LINKS = [
   { href: "/contact", label: "Contact" },
@@ -23,6 +24,7 @@ export function SiteFooter() {
           {LINKS.map((l) => (
             <Link key={l.href} href={l.href} className="font-semibold text-footer-ink">{l.label}</Link>
           ))}
+          <CookieChoicesButton className="cursor-pointer border-0 bg-transparent p-0 font-semibold text-footer-ink" />
         </nav>
       </div>
     </footer>
