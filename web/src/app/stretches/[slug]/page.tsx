@@ -41,13 +41,13 @@ export default async function StretchPage({ params }: PageProps<"/stretches/[slu
 
   return (
     <div className="flex flex-col">
-      {video ? (
-        <div className="mx-auto w-full max-w-5xl sm:px-4 sm:pt-4 lg:[&>*]:mx-auto lg:[&>*]:max-w-3xl">
-          <VideoPlayer videoId={video} title={`${s.name} demo video`} rounded={false} priority />
-        </div>
-      ) : null}
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-4 pb-8">
-        <section className="flex flex-col gap-2.5">
+      <div className="mx-auto w-full max-w-5xl lg:grid lg:grid-cols-[2fr_1fr] lg:items-center lg:gap-8 lg:px-4 lg:pt-6">
+        {video ? (
+          <div className="sm:px-4 sm:pt-4 lg:p-0">
+            <VideoPlayer videoId={video} title={`${s.name} demo video`} rounded={false} priority />
+          </div>
+        ) : null}
+        <section className={`flex flex-col gap-2.5 px-4 pt-4 lg:p-0 ${video ? "" : "lg:col-span-2"}`}>
           <nav aria-label="Breadcrumb" className="text-[13px] text-ink-3">
             <Link href="/stretches" className="text-ink-2">Stretches</Link>
           </nav>
@@ -59,7 +59,8 @@ export default async function StretchPage({ params }: PageProps<"/stretches/[slu
           </dl>
           {s.description ? <p className="m-0 text-ink-2">{s.description}</p> : null}
         </section>
-
+      </div>
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-4 pb-8">
         {holds.length ? (
           <Card title={s.modality === "static" || s.modality === "pnf" ? "How long to hold" : "How long"} labelledBy="holds">
             <dl className="m-0 grid grid-cols-3 gap-2 text-sm">

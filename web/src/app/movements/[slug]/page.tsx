@@ -48,14 +48,13 @@ export default async function MovementPage({ params }: PageProps<"/movements/[sl
 
   return (
     <div className="flex flex-col">
-      {video ? (
-        <div className="mx-auto w-full max-w-5xl sm:px-4 sm:pt-4 lg:[&>*]:mx-auto lg:[&>*]:max-w-3xl">
-          <VideoPlayer videoId={video} title={`${m.name} demo video`} rounded={false} priority />
-        </div>
-      ) : null}
-
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-4 pb-8">
-        <section className="flex flex-col gap-2.5">
+      <div className="mx-auto w-full max-w-5xl lg:grid lg:grid-cols-[2fr_1fr] lg:items-center lg:gap-8 lg:px-4 lg:pt-6">
+        {video ? (
+          <div className="sm:px-4 sm:pt-4 lg:p-0">
+            <VideoPlayer videoId={video} title={`${m.name} demo video`} rounded={false} priority />
+          </div>
+        ) : null}
+        <section className={`flex flex-col gap-2.5 px-4 pt-4 lg:p-0 ${video ? "" : "lg:col-span-2"}`}>
           <nav aria-label="Breadcrumb" className="text-[13px] text-ink-3">
             <Link href="/movements" className="text-ink-2">Movements</Link>
             {" › "}
@@ -79,7 +78,9 @@ export default async function MovementPage({ params }: PageProps<"/movements/[sl
             </dl>
           ) : null}
         </section>
+      </div>
 
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-4 pb-8">
         {m.tips?.length ? (
           <Card title="How to do it" labelledBy="how-to">
             <ol className="m-0 flex flex-col gap-2 pl-5 text-[15px]">

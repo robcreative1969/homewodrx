@@ -37,13 +37,13 @@ export default async function MachinePage({ params }: PageProps<"/machines/[slug
 
   return (
     <div className="flex flex-col">
-      {video ? (
-        <div className="mx-auto w-full max-w-5xl sm:px-4 sm:pt-4 lg:[&>*]:mx-auto lg:[&>*]:max-w-3xl">
-          <VideoPlayer videoId={video} title={`${m.name} video`} rounded={false} priority />
-        </div>
-      ) : null}
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-4 pb-8">
-        <section className="flex flex-col gap-2.5">
+      <div className="mx-auto w-full max-w-5xl lg:grid lg:grid-cols-[2fr_1fr] lg:items-center lg:gap-8 lg:px-4 lg:pt-6">
+        {video ? (
+          <div className="sm:px-4 sm:pt-4 lg:p-0">
+            <VideoPlayer videoId={video} title={`${m.name} video`} rounded={false} priority />
+          </div>
+        ) : null}
+        <section className={`flex flex-col gap-2.5 px-4 pt-4 lg:p-0 ${video ? "" : "lg:col-span-2"}`}>
           <nav aria-label="Breadcrumb" className="text-[13px] text-ink-3">
             <Link href="/machines" className="text-ink-2">Machines</Link>
           </nav>
@@ -56,7 +56,8 @@ export default async function MachinePage({ params }: PageProps<"/machines/[slug
           ) : null}
           {m.overview ? <p className="m-0 text-ink-2">{m.overview}</p> : null}
         </section>
-
+      </div>
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-4 pb-8">
         {m.setup_notes ? (
           <Card title="Set it up" labelledBy="setup">
             <p className="m-0 text-[15px]">{m.setup_notes}</p>
