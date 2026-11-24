@@ -49,7 +49,7 @@ export default async function MovementPage({ params }: PageProps<"/movements/[sl
   return (
     <div className="flex flex-col">
       {video ? (
-        <div className="mx-auto w-full max-w-5xl sm:px-4 sm:pt-4 lg:[&>*]:max-w-3xl">
+        <div className="mx-auto w-full max-w-5xl sm:px-4 sm:pt-4 lg:[&>*]:mx-auto lg:[&>*]:max-w-3xl">
           <VideoPlayer videoId={video} title={`${m.name} demo video`} rounded={false} priority />
         </div>
       ) : null}

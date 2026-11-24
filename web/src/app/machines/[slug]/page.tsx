@@ -38,7 +38,7 @@ export default async function MachinePage({ params }: PageProps<"/machines/[slug
   return (
     <div className="flex flex-col">
       {video ? (
-        <div className="mx-auto w-full max-w-5xl sm:px-4 sm:pt-4 lg:[&>*]:max-w-3xl">
+        <div className="mx-auto w-full max-w-5xl sm:px-4 sm:pt-4 lg:[&>*]:mx-auto lg:[&>*]:max-w-3xl">
           <VideoPlayer videoId={video} title={`${m.name} video`} rounded={false} priority />
         </div>
       ) : null}

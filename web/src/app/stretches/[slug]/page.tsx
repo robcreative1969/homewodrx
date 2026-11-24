@@ -42,7 +42,7 @@ export default async function StretchPage({ params }: PageProps<"/stretches/[slu
   return (
     <div className="flex flex-col">
       {video ? (
-        <div className="mx-auto w-full max-w-5xl sm:px-4 sm:pt-4 lg:[&>*]:max-w-3xl">
+        <div className="mx-auto w-full max-w-5xl sm:px-4 sm:pt-4 lg:[&>*]:mx-auto lg:[&>*]:max-w-3xl">
           <VideoPlayer videoId={video} title={`${s.name} demo video`} rounded={false} priority />
         </div>
       ) : null}

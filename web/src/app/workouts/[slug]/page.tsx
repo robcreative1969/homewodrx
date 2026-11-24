@@ -118,7 +118,7 @@ export default async function WorkoutPage({ params }: PageProps<"/workouts/[slug
 
       {video ? (
         <Card title="Watch it first" labelledBy="watch-it-first">
-          <div className="w-full max-w-3xl">
+          <div className="mx-auto w-full max-w-3xl">
             <VideoPlayer videoId={video} title={`${w.name} workout video`} />
           </div>
         </Card>
