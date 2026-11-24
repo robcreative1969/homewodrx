@@ -149,3 +149,94 @@ export async function loadSiteStats(supabase: SupabaseClient, days = 30): Promis
     since: first?.at ?? null,
   };
 }
+
+export type Journey = {
+  visitor: string;
+  first: string; // ISO time of the first page view
+  referrer: string;
+  country: string;
+  device: string;
+  pages: { at: string; path: string }[];
+};
+
+export type DayDetail = {
+  day: string;
+  views: number;
+  visitors: number;
+  hourly: number[]; // page views per hour, US Eastern
+  pages: Count[];
+  referrers: Count[];
+  countries: Count[];
+  devices: Count[];
+  searches: Count[];
+  journeys: Journey[];
+};
+
+function hourKey(iso: string) {
+  return Number(new Date(iso).toLocaleString("en-US", { timeZone: "America/New_York", hour: "numeric", hourCycle: "h23" })) % 24;
+}
+
+/** Everything recorded on one day (US Eastern), for the dashboard's day view. */
+export async function loadDayDetail(supabase: SupabaseClient, day: string): Promise<DayDetail> {
+  // Fetch a window wide enough to cover the Eastern day, then keep only that day.
+  const from = new Date(new Date(`${day}T00:00:00Z`).getTime() - 86400000).toISOString();
+  const to = new Date(new Date(`${day}T00:00:00Z`).getTime() + 2 * 86400000).toISOString();
+  const rows: Event[] = [];
+  for (let start = 0; ; start += 1000) {
+    const { data, error } = await supabase
+      .from("site_events")
+      .select("at,kind,path,referrer,device,country,visitor,query,results")
+      .in("host", LIVE_HOSTS)
+      .gte("at", from)
+      .lt("at", to)
+      .order("at", { ascending: true })
+      .range(start, start + 999);
+    if (error) throw new Error(`Could not load site metrics: ${error.message}`);
+    rows.push(...((data ?? []) as Event[]));
+    if (!data || data.length < 1000) break;
+  }
+
+  const hourly = Array.from({ length: 24 }, () => 0);
+  const pages = new Map<string, number>();
+  const referrers = new Map<string, number>();
+  const countries = new Map<string, number>();
+  const devices = new Map<string, number>();
+  const searches = new Map<string, number>();
+  const journeys = new Map<string, Journey>();
+  let views = 0;
+
+  for (const e of rows) {
+    if (dayKey(e.at) !== day) continue;
+    if (e.kind === "search") {
+      bump(searches, e.query);
+      continue;
+    }
+    views++;
+    hourly[hourKey(e.at)]++;
+    const path = e.path.replace(/\.html$/, "").replace(/\/$/, "") || "/";
+    bump(pages, path);
+    const id = e.visitor ?? e.at;
+    let j = journeys.get(id);
+    if (!j) {
+      j = { visitor: id, first: e.at, referrer: referrerLabel(e.referrer), country: e.country ?? "Unknown", device: e.device ?? "unknown", pages: [] };
+      journeys.set(id, j);
+      bump(referrers, j.referrer);
+      bump(countries, j.country);
+      bump(devices, j.device);
+    }
+    j.pages.push({ at: e.at, path });
+  }
+
+  return {
+    day,
+    views,
+    visitors: journeys.size,
+    hourly,
+    pages: top(pages, 15),
+    referrers: top(referrers, 10),
+    countries: top(countries, 10),
+    devices: top(devices, 3),
+    searches: top(searches, 15),
+    journeys: [...journeys.values()].sort((a, b) => a.first.localeCompare(b.first)),
+  };
+}
