@@ -49,12 +49,12 @@ export default async function MovementPage({ params }: PageProps<"/movements/[sl
   return (
     <div className="flex flex-col">
       {video ? (
-        <div className="mx-auto w-full max-w-3xl sm:px-4 sm:pt-4">
+        <div className="mx-auto w-full max-w-5xl sm:px-4 sm:pt-4 lg:[&>*]:max-w-3xl">
           <VideoPlayer videoId={video} title={`${m.name} demo video`} rounded={false} priority />
         </div>
       ) : null}
 
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 px-4 pt-4 pb-8">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-4 pb-8">
         <section className="flex flex-col gap-2.5">
           <nav aria-label="Breadcrumb" className="text-[13px] text-ink-3">
             <Link href="/movements" className="text-ink-2">Movements</Link>

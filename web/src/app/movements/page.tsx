@@ -74,7 +74,7 @@ export default async function MovementsPage({ searchParams }: PageProps<"/moveme
   const row = "m-0 flex list-none flex-wrap gap-2 p-0";
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-5">
+    <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-5">
       <LibrarySwitch current="movements" />
       <div className="flex flex-col gap-1">
         <h1 className="m-0 text-[32px] font-extrabold tracking-tight">{heading(area, equipment)}</h1>
@@ -121,7 +121,7 @@ export default async function MovementsPage({ searchParams }: PageProps<"/moveme
       </div>
 
       {movements.length ? (
-        <ul className="m-0 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-2">
+        <ul className="m-0 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-2 lg:grid-cols-3">
           {movements.map((m) => (
             <li key={m.slug}>
               <Link

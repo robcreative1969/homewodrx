@@ -19,7 +19,7 @@ export default async function BlogPage({ searchParams }: PageProps<"/blog">) {
     `flex min-h-11 items-center rounded-full border-[1.5px] px-3.5 text-sm font-semibold no-underline ${on ? "border-ink bg-ink text-ground" : "border-chip-line bg-surface text-ink"}`;
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-5">
+    <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-5">
       <div className="flex flex-col gap-1">
         <h1 className="m-0 text-[32px] font-extrabold tracking-tight">Blog</h1>
         <p className="m-0 text-ink-2">WOD guides, scaling, home gym builds and training advice.</p>

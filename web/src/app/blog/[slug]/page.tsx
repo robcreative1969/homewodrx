@@ -40,7 +40,7 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
   };
 
   return (
-    <article className="mx-auto flex max-w-3xl flex-col gap-5 px-4 py-5">
+    <article className="mx-auto flex max-w-5xl flex-col gap-5 px-4 py-5 [&>*]:max-w-3xl">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleData).replace(/</g, "\\u003c") }}

@@ -18,7 +18,7 @@ export default async function StretchesPage({ searchParams }: PageProps<"/stretc
     `flex min-h-11 items-center rounded-full border-[1.5px] px-3.5 text-sm font-semibold no-underline ${on ? "border-ink bg-ink text-ground" : "border-chip-line bg-surface text-ink"}`;
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-5">
+    <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-5">
       <LibrarySwitch current="stretches" />
       <div className="flex flex-col gap-1">
         <h1 className="m-0 text-[32px] font-extrabold tracking-tight">Stretches</h1>
@@ -42,7 +42,7 @@ export default async function StretchesPage({ searchParams }: PageProps<"/stretc
         </ul>
       </nav>
 
-      <ul className="m-0 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-2">
+      <ul className="m-0 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-2 lg:grid-cols-3">
         {stretches.map((s) => (
           <li key={s.slug}>
             <Link href={`/stretches/${s.slug}`} className="flex h-full flex-col gap-0.5 rounded-2xl border border-line bg-surface px-4 py-3 text-ink no-underline">

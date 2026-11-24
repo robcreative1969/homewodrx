@@ -11,7 +11,7 @@ const input = "h-12 w-full rounded-xl border-[1.5px] border-chip-line bg-surface
 
 export default function TimerPage() {
   return (
-    <div className="mx-auto flex max-w-2xl flex-col gap-4 px-4 pt-5 pb-16">
+    <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 pt-5 pb-16 [&>*]:max-w-2xl">
       <div className="flex flex-col gap-1">
         <h1 className="m-0 text-[32px] font-extrabold tracking-tight">WOD Timer</h1>
         <p className="m-0 text-ink-2">Pick a format and a length, then start. Beeps count you in and mark each minute or interval.</p>

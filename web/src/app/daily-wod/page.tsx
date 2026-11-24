@@ -28,7 +28,7 @@ export default async function DailyPage({ searchParams }: PageProps<"/daily-wod"
   const goHref = isToday ? "/daily-wod/go" : `/daily-wod/go?date=${date}`;
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 pt-5 pb-28">
+    <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 pt-5 pb-28">
       <div className="flex items-end justify-between gap-3">
         <div className="flex flex-col">
           <h1 className="m-0 text-[32px] leading-tight font-extrabold tracking-tight">{isToday ? "Today" : formatLongDate(date)}</h1>

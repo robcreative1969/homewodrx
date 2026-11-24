@@ -4,7 +4,7 @@ import { LEGAL_LINKS, getLegalPage, type LegalSlug } from "@/lib/legal";
 export function LegalArticle({ slug }: { slug: LegalSlug }) {
   const page = getLegalPage(slug);
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-5 px-4 pt-5 pb-16">
+    <div className="mx-auto flex max-w-5xl flex-col gap-5 px-4 pt-5 pb-16 [&>*]:max-w-3xl">
       <header className="flex flex-col gap-1">
         <span className="font-mono text-xs font-bold tracking-[1.5px] text-ink-3 uppercase">Legal</span>
         <h1 className="m-0 text-[32px] font-extrabold tracking-tight">{page.title}</h1>

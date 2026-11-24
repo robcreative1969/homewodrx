@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default async function RoutinesPage() {
   const routines = await listRoutines();
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-5">
+    <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-5">
       <LibrarySwitch current="routines" />
       <div className="flex flex-col gap-1">
         <h1 className="m-0 text-[32px] font-extrabold tracking-tight">Stretch routines</h1>

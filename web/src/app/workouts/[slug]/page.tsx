@@ -68,7 +68,7 @@ export default async function WorkoutPage({ params }: PageProps<"/workouts/[slug
   ].filter(([, v]) => v) as [string, string][];
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 pt-4 pb-28">
+    <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 pt-4 pb-28">
       <Card>
         <nav aria-label="Breadcrumb" className="text-[13px] text-ink-3">
           <Link href="/workouts" className="text-ink-2">Workouts</Link>

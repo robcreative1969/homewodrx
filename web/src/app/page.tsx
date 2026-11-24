@@ -25,7 +25,7 @@ export default async function Home() {
   const posts = listPosts().slice(0, 2);
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-6 px-4 pt-6 pb-8">
+    <div className="mx-auto flex max-w-5xl flex-col gap-6 px-4 pt-6 pb-8">
       <section className="flex flex-col gap-3.5">
         <h1 className="m-0 text-[40px] leading-[1.05] font-extrabold tracking-tight sm:text-5xl">
           Program your training. Then go do it.

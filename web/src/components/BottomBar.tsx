@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
 export function BottomBar({ children }: { children: ReactNode }) {
   return (
     <div data-bottom-bar className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface">
-      <div className="mx-auto flex max-w-3xl gap-2 px-4 pt-3 pb-[max(20px,env(safe-area-inset-bottom))]">
+      <div className="mx-auto flex max-w-5xl gap-2 px-4 pt-3 pb-[max(20px,env(safe-area-inset-bottom))]">
         {children}
       </div>
     </div>

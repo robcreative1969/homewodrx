@@ -42,11 +42,11 @@ export default async function StretchPage({ params }: PageProps<"/stretches/[slu
   return (
     <div className="flex flex-col">
       {video ? (
-        <div className="mx-auto w-full max-w-3xl sm:px-4 sm:pt-4">
+        <div className="mx-auto w-full max-w-5xl sm:px-4 sm:pt-4 lg:[&>*]:max-w-3xl">
           <VideoPlayer videoId={video} title={`${s.name} demo video`} rounded={false} priority />
         </div>
       ) : null}
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 px-4 pt-4 pb-8">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 pt-4 pb-8">
         <section className="flex flex-col gap-2.5">
           <nav aria-label="Breadcrumb" className="text-[13px] text-ink-3">
             <Link href="/stretches" className="text-ink-2">Stretches</Link>

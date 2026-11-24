@@ -74,7 +74,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
   const total = groups.reduce((n, g) => n + g.hits.length, 0);
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-5">
+    <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-5">
       <h1 className="m-0 text-[32px] font-extrabold tracking-tight">Search</h1>
       <form action="/search" role="search" className="flex gap-2">
         <label htmlFor="q" className="sr-only">Search workouts, movements, stretches and the blog</label>

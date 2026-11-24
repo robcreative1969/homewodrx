@@ -46,7 +46,7 @@ export default async function BuilderPage({ searchParams }: PageProps<"/wodbuild
   const focus = new Set(params?.focus ?? ["full-body"]);
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-4 px-4 pt-5 pb-28">
+    <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 pt-5 pb-28">
       <section className="flex flex-col gap-1">
         <h1 className="m-0 text-[32px] font-extrabold tracking-tight">WOD Builder</h1>
         <p className="m-0 text-ink-2">Tell us what you have and how long you&apos;ve got. We&apos;ll build the workout.</p>
