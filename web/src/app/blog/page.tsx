@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PostThumb } from "@/components/PostThumb";
 import { EmailSignup } from "@/components/EmailSignup";
 import { formatDate, listPosts } from "@/lib/blog";
 
@@ -45,13 +46,16 @@ export default async function BlogPage({ searchParams }: PageProps<"/blog">) {
           <li key={p.slug}>
             <Link
               href={`/blog/${p.slug}`}
-              className="flex h-full flex-col gap-1 rounded-2xl border border-line bg-surface p-4 text-ink no-underline"
+              className="flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-surface text-ink no-underline"
             >
-              <span className="text-xs font-bold tracking-wider text-accent-text uppercase">{p.categoryLabel}</span>
-              <span className="text-[17px] leading-snug font-bold">{p.title}</span>
-              <span className="text-sm text-ink-2">{p.excerpt}</span>
-              <span className="mt-auto pt-1 font-mono text-xs text-ink-2">
-                {formatDate(p.date)} · {p.readTime}
+              <PostThumb slug={p.slug} />
+              <span className="flex flex-1 flex-col gap-1 p-4">
+                <span className="text-xs font-bold tracking-wider text-accent-text uppercase">{p.categoryLabel}</span>
+                <span className="text-[17px] leading-snug font-bold">{p.title}</span>
+                <span className="text-sm text-ink-2">{p.excerpt}</span>
+                <span className="mt-auto pt-1 font-mono text-xs text-ink-2">
+                  {formatDate(p.date)} · {p.readTime}
+                </span>
               </span>
             </Link>
           </li>

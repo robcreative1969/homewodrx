@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { EmailSignup } from "@/components/EmailSignup";
 import { HeroTiles } from "@/components/HeroTiles";
+import { PostThumb } from "@/components/PostThumb";
 import { formatDate, listPosts } from "@/lib/blog";
 import { getDaily10, getDaily20, todayEastern } from "@/lib/daily";
 import { CATEGORIES } from "@/lib/labels";
@@ -121,10 +122,13 @@ export default async function Home() {
         </div>
         <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
           {posts.map((p) => (
-            <Link key={p.slug} href={`/blog/${p.slug}`} className="flex flex-col gap-1 rounded-2xl border border-line bg-surface p-4 text-ink no-underline">
-              <span className="text-xs font-bold tracking-wider text-accent-text uppercase">{p.categoryLabel}</span>
-              <span className="text-[17px] leading-snug font-bold">{p.title}</span>
-              <span className="mt-auto font-mono text-xs text-ink-2">{formatDate(p.date)} · {p.readTime}</span>
+            <Link key={p.slug} href={`/blog/${p.slug}`} className="flex flex-col overflow-hidden rounded-2xl border border-line bg-surface text-ink no-underline">
+              <PostThumb slug={p.slug} />
+              <span className="flex flex-1 flex-col gap-1 p-4">
+                <span className="text-xs font-bold tracking-wider text-accent-text uppercase">{p.categoryLabel}</span>
+                <span className="text-[17px] leading-snug font-bold">{p.title}</span>
+                <span className="mt-auto font-mono text-xs text-ink-2">{formatDate(p.date)} · {p.readTime}</span>
+              </span>
             </Link>
           ))}
         </div>

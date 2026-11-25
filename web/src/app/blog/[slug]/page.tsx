@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { OG_IMAGE } from "@/lib/site";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { formatDate, getPost, listPosts, relatedPosts } from "@/lib/blog";
+import { postImage } from "@/lib/blogImages";
 
 export const dynamicParams = false;
 
@@ -18,7 +20,7 @@ export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): P
     title: post.title,
     description: post.description,
     alternates: { canonical: `https://homewodrx.com/blog/${post.slug}` },
-    openGraph: { title: post.title, description: post.description, type: "article", publishedTime: post.date, images: [OG_IMAGE] },
+    openGraph: { title: post.title, description: post.description, type: "article", publishedTime: post.date, images: postImage(post.slug) ? [{ url: postImage(post.slug)!.src, width: 1280, height: 720, alt: postImage(post.slug)!.alt }] : [OG_IMAGE] },
   };
 }
 
@@ -26,6 +28,7 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
   const { slug } = await params;
   const post = getPost(slug);
   if (!post) notFound();
+  const cover = postImage(post.slug);
   const related = relatedPosts(post);
 
   const articleData = {
@@ -56,6 +59,15 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
           {formatDate(post.date)} · {post.readTime} · by the team at HomeWODRx
         </p>
       </header>
+
+      {cover ? (
+        <figure className="m-0 flex flex-col gap-1.5">
+          <div className="relative aspect-video overflow-hidden rounded-2xl bg-surface-muted">
+            <Image src={cover.src} alt={cover.alt} fill priority sizes="(min-width: 800px) 768px, 100vw" className="object-cover" />
+          </div>
+          {cover.credit ? <figcaption className="text-xs text-ink-3">{cover.credit}</figcaption> : null}
+        </figure>
+      ) : null}
 
       {post.toc.length ? (
         <details className="rounded-2xl border border-line bg-surface px-4 py-3">
