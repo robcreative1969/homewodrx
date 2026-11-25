@@ -10,5 +10,6 @@ export const MAIN_NAV = [
   // Phone menu only: the desktop header has no room; Stretches and Routines link to it.
   { href: "/stretchbuilder", label: "Stretch Builder", menuOnly: true },
   { href: "/blog", label: "Blog" },
+  { href: "/shop", label: "Gear" },
   { href: "/search", label: "Search" },
 ] as const satisfies readonly { href: string; label: string; menuOnly?: boolean }[];

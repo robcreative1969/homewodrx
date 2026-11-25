@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { formatDate, getPost, listPosts, relatedPosts } from "@/lib/blog";
 import { postImage } from "@/lib/blogImages";
+import { PostThumb } from "@/components/PostThumb";
 
 export const dynamicParams = false;
 
@@ -89,6 +90,11 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
       {/* Imported from the old site by scripts/import-blog.mjs; written by Rob, not visitors. */}
       <div className="article-body" dangerouslySetInnerHTML={{ __html: post.bodyHtml }} />
 
+      <div className="flex items-center gap-3 border-t border-divider pt-4">
+        <span className="text-[15px] font-semibold text-ink-2">Found this useful? Pass it on.</span>
+        <ShareButton title={post.title} />
+      </div>
+
       {post.tags.length ? (
         <ul aria-label="Tags" className="m-0 flex list-none flex-wrap gap-2 p-0">
           {post.tags.map((t) => (
@@ -100,17 +106,22 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
       {related.length ? (
         <section aria-labelledby="keep-reading" className="flex flex-col gap-2.5 border-t border-line pt-5">
           <h2 id="keep-reading" className="m-0 text-lg font-bold">Keep reading</h2>
-          {related.map((p) => (
-            <Link
-              key={p.slug}
-              href={`/blog/${p.slug}`}
-              className="flex flex-col gap-1 rounded-2xl border border-line bg-surface p-4 text-ink no-underline"
-            >
-              <span className="text-xs font-bold tracking-wider text-accent-text uppercase">{p.categoryLabel}</span>
-              <span className="text-[17px] leading-snug font-bold">{p.title}</span>
-              <span className="font-mono text-xs text-ink-2">{p.readTime}</span>
-            </Link>
-          ))}
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+            {related.map((p) => (
+              <Link
+                key={p.slug}
+                href={`/blog/${p.slug}`}
+                className="flex flex-col overflow-hidden rounded-2xl border border-line bg-surface text-ink no-underline"
+              >
+                <PostThumb slug={p.slug} />
+                <span className="flex flex-1 flex-col gap-1 p-3.5">
+                  <span className="text-xs font-bold tracking-wider text-accent-text uppercase">{p.categoryLabel}</span>
+                  <span className="text-[15px] leading-snug font-bold">{p.title}</span>
+                  <span className="mt-auto pt-1 font-mono text-xs text-ink-2">{p.readTime}</span>
+                </span>
+              </Link>
+            ))}
+          </div>
         </section>
       ) : null}
     </article>
