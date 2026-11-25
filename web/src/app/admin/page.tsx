@@ -206,7 +206,7 @@ export default async function AdminDashboard({ searchParams }: PageProps<"/admin
         <Stat label="Visitors today" value={n(stats.today.visits)} note={`${n(stats.today.views)} page views`} />
         <Stat label={`Visitors, ${days} days`} value={n(stats.visits)} note="added up day by day" />
         <Stat label={`Page views, ${days} days`} value={n(stats.views)} />
-        <Stat label="Site searches" value={n(stats.searchCount)} note={`${n(stats.emptySearches.reduce((a, s) => a + s.count, 0))} found nothing`} />
+        <Stat label="Site searches" value={n(stats.searchCount)} note={(() => { const none = stats.emptySearches.reduce((a, s) => a + s.count, 0); return stats.searchCount === 0 ? "None yet" : none === 0 ? "All found results" : `${n(none)} found nothing`; })()} />
       </div>
 
       <section className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4">
