@@ -4,12 +4,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BottomBar, primaryAction } from "@/components/BottomBar";
 import { Card } from "@/components/Card";
-import { getRoutine, listRoutines, listStretches, modalityLabel } from "@/lib/stretches";
+import { getRoutine, listStretches, modalityLabel } from "@/lib/stretches";
 
 export const revalidate = 3600;
 
+// Built on first visit, then cached (revalidate below), so a deploy doesn't load every
+// page from the database at once (Supabase Disk IO budget, Nov 25).
 export async function generateStaticParams() {
-  return (await listRoutines()).map((r) => ({ slug: r.slug }));
+  return [];
 }
 
 export async function generateMetadata({ params }: PageProps<"/stretch-routines/[slug]">): Promise<Metadata> {

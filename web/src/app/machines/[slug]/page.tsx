@@ -6,13 +6,15 @@ import { notFound } from "next/navigation";
 import { Card } from "@/components/Card";
 import { splitLede } from "@/lib/lede";
 import { VideoPlayer } from "@/components/VideoPlayer";
-import { getMachine, listMachines, machineMovements, muscleGroupLabels } from "@/lib/machines";
+import { getMachine, machineMovements, muscleGroupLabels } from "@/lib/machines";
 import { youtubeId } from "@/lib/youtube";
 
 export const revalidate = 3600;
 
+// Built on first visit, then cached (revalidate below), so a deploy doesn't load every
+// page from the database at once (Supabase Disk IO budget, Nov 25).
 export async function generateStaticParams() {
-  return (await listMachines()).map((m) => ({ slug: m.slug }));
+  return [];
 }
 
 export async function generateMetadata({ params }: PageProps<"/machines/[slug]">): Promise<Metadata> {

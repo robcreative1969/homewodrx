@@ -9,7 +9,6 @@ import { VideoPlayer } from "@/components/VideoPlayer";
 import { categoryLabel } from "@/lib/labels";
 import {
   getMovement,
-  listMovements,
   bodyAreaLabel,
   equipmentGroup,
   scalingLevelLabel,
@@ -19,9 +18,10 @@ import { youtubeId } from "@/lib/youtube";
 
 export const revalidate = 3600;
 
+// Built on first visit, then cached (revalidate below), so a deploy doesn't load every
+// page from the database at once (Supabase Disk IO budget, Nov 25).
 export async function generateStaticParams() {
-  const movements = await listMovements();
-  return movements.map((m) => ({ slug: m.slug }));
+  return [];
 }
 
 export async function generateMetadata({ params }: PageProps<"/movements/[slug]">): Promise<Metadata> {

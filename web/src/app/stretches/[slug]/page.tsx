@@ -6,13 +6,15 @@ import { notFound } from "next/navigation";
 import { Card } from "@/components/Card";
 import { splitLede } from "@/lib/lede";
 import { VideoPlayer } from "@/components/VideoPlayer";
-import { focusLabels, getStretch, listStretches, modalityLabel, routinesWithStretch } from "@/lib/stretches";
+import { focusLabels, getStretch, modalityLabel, routinesWithStretch } from "@/lib/stretches";
 import { youtubeId } from "@/lib/youtube";
 
 export const revalidate = 3600;
 
+// Built on first visit, then cached (revalidate below), so a deploy doesn't load every
+// page from the database at once (Supabase Disk IO budget, Nov 25).
 export async function generateStaticParams() {
-  return (await listStretches()).map((s) => ({ slug: s.slug }));
+  return [];
 }
 
 export async function generateMetadata({ params }: PageProps<"/stretches/[slug]">): Promise<Metadata> {

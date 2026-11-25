@@ -20,9 +20,10 @@ import { youtubeId } from "@/lib/youtube";
 // Pages are built ahead of time and refreshed hourly; new workouts render on first visit.
 export const revalidate = 3600;
 
+// Built on first visit, then cached (revalidate below), so a deploy doesn't load every
+// page from the database at once (Supabase Disk IO budget, Nov 25).
 export async function generateStaticParams() {
-  const workouts = await listWorkouts();
-  return workouts.map((w) => ({ slug: w.slug }));
+  return [];
 }
 
 export async function generateMetadata({ params }: PageProps<"/workouts/[slug]">): Promise<Metadata> {
