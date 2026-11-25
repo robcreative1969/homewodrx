@@ -1,3 +1,4 @@
+import { PageBanner } from "@/components/PageBanner";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -51,6 +52,8 @@ export default async function BuilderPage({ searchParams }: PageProps<"/wodbuild
         <h1 className="m-0 text-[32px] font-extrabold tracking-tight">WOD Builder</h1>
         <p className="m-0 text-ink-2">Tell us what you have and how long you&apos;ve got. We&apos;ll build the workout.</p>
       </section>
+
+      {!params ? <PageBanner name="wod-builder" focus="50% 48%" alt="A man in his garage gym choosing between a kettlebell, dumbbells, a jump rope, a box and rings" /> : null}
 
       {params && !workout ? (
         <p className="m-0 rounded-2xl border border-line bg-surface p-4">

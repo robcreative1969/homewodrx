@@ -1,3 +1,4 @@
+import { PageBanner } from "@/components/PageBanner";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LibrarySwitch } from "@/components/LibrarySwitch";
@@ -21,6 +22,14 @@ export async function generateMetadata({ searchParams }: PageProps<"/workouts">)
   };
 }
 
+const BANNERS: Record<string, { name: string; alt: string; focus: string }> = {
+  all: { name: "workouts", focus: "50% 55%", alt: "Athletes of different ages training together in a CrossFit class" },
+  classic_benchmark: { name: "classic-benchmarks", focus: "50% 60%", alt: "A woman chalking her hands beside a loaded barbell before a benchmark workout" },
+  hero: { name: "hero-wods", focus: "50% 37%", alt: "Athletes in weight vests doing push-ups together under an American flag on Memorial Day" },
+  competition: { name: "competition-wods", focus: "50% 12%", alt: "A woman doing toes-to-bar on a competition rig" },
+  variation: { name: "variations", focus: "50% 49%", alt: "Two athletes doing thrusters side by side, one with dumbbells and one with a barbell" },
+};
+
 export default async function WorkoutsPage({ searchParams }: PageProps<"/workouts">) {
   const { category, cat: legacyCat } = await searchParams;
   const all = await listWorkouts();
@@ -42,6 +51,8 @@ export default async function WorkoutsPage({ searchParams }: PageProps<"/workout
           {active ? "workouts" : "benchmark workouts, each with scaling, coaching cues and a video"}
         </p>
       </div>
+
+      <PageBanner {...(BANNERS[active?.code ?? "all"] ?? BANNERS.all)} />
 
       <nav aria-label="Categories" className="-mx-4 overflow-x-auto px-4">
         <ul className="m-0 flex w-max list-none gap-2 p-0">

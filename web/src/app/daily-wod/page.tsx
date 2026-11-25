@@ -1,3 +1,4 @@
+import { PageBanner } from "@/components/PageBanner";
 import { ShareButton } from "@/components/ShareButton";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -49,6 +50,8 @@ export default async function DailyPage({ searchParams }: PageProps<"/daily-wod"
           </nav>
         </div>
       </div>
+
+      <PageBanner name="daily-20" focus="50% 38%" alt="A woman doing a kettlebell squat in her living room at sunrise" />
       <p className="m-0 text-[15px] text-ink-2">
         A new workout and stretch routine every day, the same for everyone, free with no account.
       </p>
