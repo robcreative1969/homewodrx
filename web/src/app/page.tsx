@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import { EmailSignup } from "@/components/EmailSignup";
+import { HeroTiles } from "@/components/HeroTiles";
 import { formatDate, listPosts } from "@/lib/blog";
 import { getDaily10, getDaily20, todayEastern } from "@/lib/daily";
 import { CATEGORIES } from "@/lib/labels";
@@ -10,12 +10,6 @@ import { listWorkouts } from "@/lib/workouts";
 
 // Rebuilt every ten minutes, so "Today" turns over shortly after midnight Eastern.
 export const revalidate = 600;
-
-const HERO = [
-  { src: "/images/home/box.jpg", label: "Box", alt: "An athlete pressing a barbell overhead at a CrossFit box" },
-  { src: "/images/home/health-club.jpg", label: "Health club", alt: "The same athlete pressing dumbbells overhead in a health club" },
-  { src: "/images/home/home.jpg", label: "Home", alt: "The same athlete pressing a barbell overhead in a garage gym" },
-];
 
 export default async function Home() {
   const today = todayEastern();
@@ -50,16 +44,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <div className="grid grid-cols-3 gap-2">
-        {HERO.map((t) => (
-          <figure key={t.src} className="relative m-0 aspect-[3/4] overflow-hidden rounded-2xl bg-surface-muted">
-            <Image src={t.src} alt={t.alt} fill priority sizes="(min-width: 1024px) 330px, 33vw" className="object-cover" />
-            <figcaption className="absolute bottom-2 left-2 rounded-full bg-black/65 px-2 py-1 font-mono whitespace-nowrap text-[10px] font-bold tracking-wider text-white uppercase sm:bottom-3 sm:left-3 sm:text-xs">
-              {t.label}
-            </figcaption>
-          </figure>
-        ))}
-      </div>
+      <HeroTiles />
 
       <section aria-labelledby="today" className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-[18px]">
         <div className="flex items-baseline justify-between">
