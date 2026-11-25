@@ -23,7 +23,7 @@ export default async function Home() {
   const counts = new Map<string, number>();
   for (const w of workouts) counts.set(w.category, (counts.get(w.category) ?? 0) + 1);
   const categories = CATEGORIES.filter((c) => counts.get(c.code));
-  const posts = listPosts().slice(0, 2);
+  const posts = listPosts().slice(0, 4);
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6 px-4 pt-6 pb-8">
@@ -119,13 +119,15 @@ export default async function Home() {
           <h2 id="from-blog" className="m-0 text-lg font-bold">From the blog</h2>
           <Link href="/blog" className="text-sm font-semibold text-ink">All posts</Link>
         </div>
-        {posts.map((p) => (
-          <Link key={p.slug} href={`/blog/${p.slug}`} className="flex flex-col gap-1 rounded-2xl border border-line bg-surface p-4 text-ink no-underline">
-            <span className="text-xs font-bold tracking-wider text-accent-text uppercase">{p.categoryLabel}</span>
-            <span className="text-[17px] leading-snug font-bold">{p.title}</span>
-            <span className="font-mono text-xs text-ink-2">{formatDate(p.date)} · {p.readTime}</span>
-          </Link>
-        ))}
+        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+          {posts.map((p) => (
+            <Link key={p.slug} href={`/blog/${p.slug}`} className="flex flex-col gap-1 rounded-2xl border border-line bg-surface p-4 text-ink no-underline">
+              <span className="text-xs font-bold tracking-wider text-accent-text uppercase">{p.categoryLabel}</span>
+              <span className="text-[17px] leading-snug font-bold">{p.title}</span>
+              <span className="mt-auto font-mono text-xs text-ink-2">{formatDate(p.date)} · {p.readTime}</span>
+            </Link>
+          ))}
+        </div>
       </section>
     </div>
   );
