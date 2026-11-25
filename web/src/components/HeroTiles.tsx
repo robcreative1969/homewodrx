@@ -17,7 +17,6 @@ const TILES: Shot[][] = [
     s("thruster-box", "Box", "A man pressing a barbell overhead at a CrossFit box"),
     s("airbike-basement", "Basement", "A man riding an air bike in a basement gym"),
     s("wallball-backyard", "Backyard", "A woman throwing a wall ball against a backyard wall"),
-    s("ropes-box", "Box", "A wheelchair athlete working battle ropes at a CrossFit box"),
     s("jumprope-driveway", "Driveway", "A man jumping rope on a driveway"),
     s("kb-hotel", "Hotel gym", "A man swinging a kettlebell in a hotel gym"),
     s("handstand-garage", "Garage", "A woman holding a handstand against a garage wall"),
@@ -39,7 +38,7 @@ const TILES: Shot[][] = [
     s("pullup-rooftop", "Rooftop", "A woman doing a pull-up on a rooftop rig"),
     s("boxjump-backyard", "Backyard", "A woman on a plyo box in a backyard"),
     s("sprint-track", "Track", "A man sprinting on a running track"),
-    s("thruster-club", "Health club", "A man pressing dumbbells overhead in a health club"),
+    s("thruster-club", "Hotel gym", "A man pressing dumbbells overhead in a hotel gym"),
   ],
 ];
 
