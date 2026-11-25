@@ -24,7 +24,7 @@ export default async function RoutinesPage() {
           <Link href="/stretchbuilder" className="font-semibold text-ink">build your own</Link>.
         </p>
       </div>
-      <PageBanner name="stretch-routines" focus="50% 85%" alt="Two people stretching on mats in a bright room at home" />
+      <PageBanner name="stretch-routines" focus="50% 35%" alt="Two people stretching on mats in a bright room at home" />
 
       <ul className="m-0 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-2">
         {routines.map((r) => (
