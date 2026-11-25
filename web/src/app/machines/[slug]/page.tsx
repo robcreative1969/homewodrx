@@ -1,3 +1,4 @@
+import { ShareButton } from "@/components/ShareButton";
 import type { Metadata } from "next";
 import { OG_IMAGE } from "@/lib/site";
 import Link from "next/link";
@@ -46,9 +47,12 @@ export default async function MachinePage({ params }: PageProps<"/machines/[slug
           </div>
         ) : null}
         <section className={`flex flex-col gap-2.5 px-4 pt-4 lg:p-0 ${video ? "" : "lg:col-span-2"}`}>
-          <nav aria-label="Breadcrumb" className="text-[13px] text-ink-3">
-            <Link href="/machines" className="text-ink-2">Machines</Link>
-          </nav>
+          <div className="flex items-center justify-between gap-3">
+            <nav aria-label="Breadcrumb" className="text-[13px] text-ink-3">
+              <Link href="/machines" className="text-ink-2">Machines</Link>
+            </nav>
+            <ShareButton title={m.name} />
+          </div>
           <h1 className="m-0 text-[40px] leading-none font-extrabold tracking-tight">{m.name}</h1>
           {muscles.length ? (
             <dl className="m-0 rounded-2xl border border-line bg-surface px-4 py-3.5 text-sm">

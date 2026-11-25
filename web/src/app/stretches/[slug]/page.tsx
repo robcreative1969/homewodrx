@@ -1,3 +1,4 @@
+import { ShareButton } from "@/components/ShareButton";
 import type { Metadata } from "next";
 import { OG_IMAGE } from "@/lib/site";
 import Link from "next/link";
@@ -50,9 +51,12 @@ export default async function StretchPage({ params }: PageProps<"/stretches/[slu
           </div>
         ) : null}
         <section className={`flex flex-col gap-2.5 px-4 pt-4 lg:p-0 ${video ? "" : "lg:col-span-2"}`}>
-          <nav aria-label="Breadcrumb" className="text-[13px] text-ink-3">
-            <Link href="/stretches" className="text-ink-2">Stretches</Link>
-          </nav>
+          <div className="flex items-center justify-between gap-3">
+            <nav aria-label="Breadcrumb" className="text-[13px] text-ink-3">
+              <Link href="/stretches" className="text-ink-2">Stretches</Link>
+            </nav>
+            <ShareButton title={s.name} />
+          </div>
           <h1 className="m-0 text-[40px] leading-none font-extrabold tracking-tight">{s.name}</h1>
           <dl className="m-0 grid grid-cols-2 gap-x-4 gap-y-2.5 rounded-2xl border border-line bg-surface px-4 py-3.5 text-sm">
             <div className="flex flex-col"><dt className="text-ink-3">Type</dt><dd className="m-0 font-semibold">{modalityLabel(s.modality)}</dd></div>

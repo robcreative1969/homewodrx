@@ -1,3 +1,4 @@
+import { ShareButton } from "@/components/ShareButton";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BottomBar, primaryAction } from "@/components/BottomBar";
@@ -34,16 +35,19 @@ export default async function DailyPage({ searchParams }: PageProps<"/daily-wod"
           <h1 className="m-0 text-[32px] leading-tight font-extrabold tracking-tight">{isToday ? "Today" : formatLongDate(date)}</h1>
           <p className="m-0 font-mono text-[13px] text-ink-2">{isToday ? formatLongDate(date) : "A past day"}</p>
         </div>
-        <nav aria-label="Other days" className="flex gap-1.5">
-          <Link href={`/daily-wod?date=${shiftDate(date, -1)}`} aria-label="Previous day" className="flex h-11 w-11 items-center justify-center rounded-xl border border-line bg-surface text-ink">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
-          </Link>
-          {!isToday ? (
-            <Link href={shiftDate(date, 1) >= today ? "/daily-wod" : `/daily-wod?date=${shiftDate(date, 1)}`} aria-label="Next day" className="flex h-11 w-11 items-center justify-center rounded-xl border border-line bg-surface text-ink">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+        <div className="flex items-center gap-1.5">
+          <ShareButton title="The Daily 20 on HomeWODRx" />
+          <nav aria-label="Other days" className="flex gap-1.5">
+            <Link href={`/daily-wod?date=${shiftDate(date, -1)}`} aria-label="Previous day" className="flex h-11 w-11 items-center justify-center rounded-xl border border-line bg-surface text-ink">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
             </Link>
-          ) : null}
-        </nav>
+            {!isToday ? (
+              <Link href={shiftDate(date, 1) >= today ? "/daily-wod" : `/daily-wod?date=${shiftDate(date, 1)}`} aria-label="Next day" className="flex h-11 w-11 items-center justify-center rounded-xl border border-line bg-surface text-ink">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+              </Link>
+            ) : null}
+          </nav>
+        </div>
       </div>
       <p className="m-0 text-[15px] text-ink-2">
         A new workout and stretch routine every day, the same for everyone, free with no account.

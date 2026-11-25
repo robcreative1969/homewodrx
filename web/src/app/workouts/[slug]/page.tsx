@@ -1,3 +1,4 @@
+import { ShareButton } from "@/components/ShareButton";
 import type { Metadata } from "next";
 import { OG_IMAGE } from "@/lib/site";
 import Link from "next/link";
@@ -70,13 +71,16 @@ export default async function WorkoutPage({ params }: PageProps<"/workouts/[slug
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 pt-4 pb-28">
       <Card>
-        <nav aria-label="Breadcrumb" className="text-[13px] text-ink-3">
-          <Link href="/workouts" className="text-ink-2">Workouts</Link>
-          {" › "}
-          <Link href={catParam ? `/workouts?category=${catParam}` : "/workouts"} className="text-ink-2">
-            {categoryLabel(w.category)}
-          </Link>
-        </nav>
+        <div className="flex items-center justify-between gap-3">
+          <nav aria-label="Breadcrumb" className="text-[13px] text-ink-3">
+            <Link href="/workouts" className="text-ink-2">Workouts</Link>
+            {" › "}
+            <Link href={catParam ? `/workouts?category=${catParam}` : "/workouts"} className="text-ink-2">
+              {categoryLabel(w.category)}
+            </Link>
+          </nav>
+          <ShareButton title={w.name} />
+        </div>
         <h1 className="m-0 text-[44px] leading-none font-extrabold tracking-tight">{w.name}</h1>
         {w.category === "variation" ? (
           <p className="m-0 text-[15px] text-ink-2">A HomeWODRx variation of a classic workout, not an official CrossFit benchmark.</p>

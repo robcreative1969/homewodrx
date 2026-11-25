@@ -1,3 +1,4 @@
+import { ShareButton } from "@/components/ShareButton";
 import type { Metadata } from "next";
 import { OG_IMAGE } from "@/lib/site";
 import Link from "next/link";
@@ -57,13 +58,16 @@ export default async function MovementPage({ params }: PageProps<"/movements/[sl
           </div>
         ) : null}
         <section className={`flex flex-col gap-2.5 px-4 pt-4 lg:p-0 ${video ? "" : "lg:col-span-2"}`}>
-          <nav aria-label="Breadcrumb" className="text-[13px] text-ink-3">
-            <Link href="/movements" className="text-ink-2">Movements</Link>
-            {" › "}
-            {m.body_area ? <Link href={`/movements?area=${m.body_area}`} className="text-ink-2">{area}</Link> : area}
-            {" · "}
-            <Link href={`/movements?equipment=${gear.key}`} className="text-ink-2">{gear.label}</Link>
-          </nav>
+          <div className="flex items-center justify-between gap-3">
+            <nav aria-label="Breadcrumb" className="text-[13px] text-ink-3">
+              <Link href="/movements" className="text-ink-2">Movements</Link>
+              {" › "}
+              {m.body_area ? <Link href={`/movements?area=${m.body_area}`} className="text-ink-2">{area}</Link> : area}
+              {" · "}
+              <Link href={`/movements?equipment=${gear.key}`} className="text-ink-2">{gear.label}</Link>
+            </nav>
+            <ShareButton title={m.name} />
+          </div>
           <h1 className="m-0 text-[40px] leading-none font-extrabold tracking-tight">{m.name}</h1>
           {intro.lede ? <p className="m-0 text-ink-2">{intro.lede}</p> : null}
           {m.muscles || m.machine ? (

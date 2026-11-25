@@ -1,3 +1,4 @@
+import { ShareButton } from "@/components/ShareButton";
 import type { Metadata } from "next";
 import { OG_IMAGE } from "@/lib/site";
 import Link from "next/link";
@@ -49,11 +50,14 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleData).replace(/</g, "\\u003c") }}
       />
       <header className="flex flex-col gap-2.5">
-        <nav aria-label="Breadcrumb" className="text-[13px] text-ink-3">
-          <Link href="/blog" className="text-ink-2">Blog</Link>
-          {" › "}
-          <Link href={`/blog?category=${post.category}`} className="text-ink-2">{post.categoryLabel}</Link>
-        </nav>
+        <div className="flex items-center justify-between gap-3">
+          <nav aria-label="Breadcrumb" className="text-[13px] text-ink-3">
+            <Link href="/blog" className="text-ink-2">Blog</Link>
+            {" › "}
+            <Link href={`/blog?category=${post.category}`} className="text-ink-2">{post.categoryLabel}</Link>
+          </nav>
+          <ShareButton title={post.title} />
+        </div>
         <h1 className="m-0 text-[34px] leading-tight font-extrabold tracking-tight">{post.title}</h1>
         <p className="m-0 font-mono text-[13px] text-ink-2">
           {formatDate(post.date)} · {post.readTime} · by the team at HomeWODRx

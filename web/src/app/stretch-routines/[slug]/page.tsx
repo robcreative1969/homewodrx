@@ -1,3 +1,4 @@
+import { ShareButton } from "@/components/ShareButton";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -39,11 +40,14 @@ export default async function RoutinePage({ params }: PageProps<"/stretch-routin
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 pt-5 pb-28">
       <Card>
-        <nav aria-label="Breadcrumb" className="text-[13px] text-ink-3">
-          <Link href="/stretches" className="text-ink-2">Stretches</Link>
-          {" › "}
-          <Link href="/stretch-routines" className="text-ink-2">Routines</Link>
-        </nav>
+        <div className="flex items-center justify-between gap-3">
+          <nav aria-label="Breadcrumb" className="text-[13px] text-ink-3">
+            <Link href="/stretches" className="text-ink-2">Stretches</Link>
+            {" › "}
+            <Link href="/stretch-routines" className="text-ink-2">Routines</Link>
+          </nav>
+          <ShareButton title={r.name} />
+        </div>
         <h1 className="m-0 text-[34px] leading-tight font-extrabold tracking-tight">{r.name}</h1>
         <dl className="m-0 grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm">
           {facts.map(([label, value]) => (
