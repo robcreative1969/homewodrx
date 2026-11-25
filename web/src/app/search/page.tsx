@@ -156,12 +156,12 @@ const POPULAR = ["Fran", "Murph", "Cindy", "Kettlebell", "No equipment", "Hotel"
 function SearchStart({ counts }: { counts: Record<string, number> }) {
   const browse = [
     { href: "/workouts", label: "Workouts", count: counts.workouts, img: "/images/banners/workouts.jpg" },
-    { href: "/movements", label: "Movements", count: counts.movements, img: "/images/home/thruster-box.jpg" },
-    { href: "/stretches", label: "Stretches", count: counts.stretches, img: "/images/blog/why-stretching-matters.jpg" },
+    { href: "/movements", label: "Movements", count: counts.movements, img: "/images/banners/movements.jpg" },
+    { href: "/stretches", label: "Stretches", count: counts.stretches, img: "/images/banners/stretches.jpg" },
     { href: "/stretch-routines", label: "Stretch routines", count: counts.routines, img: "/images/banners/stretch-routines.jpg" },
-    { href: "/machines", label: "Machines", count: counts.machines, img: "/images/home/row-club.jpg" },
+    { href: "/machines", label: "Machines", count: counts.machines, img: "/images/banners/machines.jpg" },
     { href: "/blog", label: "Blog", count: counts.posts, img: "/images/blog/case-for-logging-workouts.jpg" },
-    { href: "/shop", label: "Gear", count: counts.gear, img: "/images/blog/best-home-gym-equipment.jpg" },
+    { href: "/shop", label: "Gear", count: counts.gear, img: "/images/banners/gear.jpg" },
     { href: "/daily-wod", label: "Today's Daily 20", count: null, img: "/images/banners/daily-20.jpg" },
   ];
   return (

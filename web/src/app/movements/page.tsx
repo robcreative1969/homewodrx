@@ -1,3 +1,4 @@
+import { PageBanner } from "@/components/PageBanner";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -82,6 +83,8 @@ export default async function MovementsPage({ searchParams }: PageProps<"/moveme
           <span className="font-mono font-bold text-ink">{movements.length}</span> movements, each with a demo video
         </p>
       </div>
+
+      <PageBanner name="movements" focus="50% 30%" alt="A man doing a kettlebell goblet squat in a home garage gym" />
 
       <div className="flex flex-col gap-3">
         <nav aria-label="Body area" className="flex flex-col gap-1.5">

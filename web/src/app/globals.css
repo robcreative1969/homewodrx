@@ -107,24 +107,22 @@ body {
   display: block;
 }
 
-/* Phones show one bar at the bottom: the tab bar (BottomNav) on most pages, or the
-   action bar (BottomBar) on workout and builder screens, which hide the tab bar and
-   bring back the header menu button instead. Workout mode covers both. */
-body:has([data-bottom-bar]) [data-bottom-nav],
+/* Phones always show the tab bar (BottomNav). Workout and builder screens add an
+   action bar (BottomBar) that sits just above it. Workout mode covers both. */
 body:has(.workout-mode) [data-bottom-nav] {
   display: none;
 }
-body:not(:has([data-bottom-bar])) .header-menu {
-  display: none;
-}
 
-/* Keep the footer clear of whichever bottom bar the page has. */
+/* Keep the footer clear of the bottom bars. */
 body:has([data-bottom-bar]) footer {
   padding-bottom: 96px;
 }
 @media (width < 64rem) {
-  body:not(:has([data-bottom-bar])) footer {
+  footer {
     padding-bottom: calc(72px + env(safe-area-inset-bottom));
+  }
+  body:has([data-bottom-bar]) footer {
+    padding-bottom: calc(152px + env(safe-area-inset-bottom));
   }
 }
 

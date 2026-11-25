@@ -2,12 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useId, useState, type ReactNode } from "react";
-import { MAIN_NAV } from "@/lib/nav";
+import type { ReactNode } from "react";
 
-// The phone tab bar (hidden from lg up, where the header menu shows). Pages with a
-// bottom action bar (workout and builder screens) hide it; see globals.css. When the
-// Planner and accounts land, Search and More become Plan and Me.
+// The phone tab bar (hidden from lg up, where the header menu shows). It shows on every
+// page; workout and builder screens stack their action bar above it (BottomBar).
+// More is a page of its own (/more) for everything the other tabs don't cover.
 
 type Tab = { label: string; href: string; match: string[]; icon: ReactNode };
 
@@ -33,7 +32,7 @@ const TABS: Tab[] = [
   {
     label: "Build",
     href: "/wodbuilder",
-    match: ["/wodbuilder"],
+    match: ["/wodbuilder", "/stretchbuilder"],
     icon: icon(<><path d="M12 3v4M12 17v4M3 12h4M17 12h4" /><circle cx="12" cy="12" r="3" /></>),
   },
   {
@@ -42,81 +41,41 @@ const TABS: Tab[] = [
     match: ["/search"],
     icon: icon(<><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></>),
   },
+  {
+    label: "More",
+    href: "/more",
+    match: ["/more", "/blog", "/shop", "/timer", "/contact", "/privacy", "/terms", "/cookies", "/disclaimer"],
+    icon: icon(<><circle cx="5" cy="12" r="1.5" /><circle cx="12" cy="12" r="1.5" /><circle cx="19" cy="12" r="1.5" /></>),
+  },
 ];
 
 export function BottomNav() {
   const pathname = usePathname();
-  const [moreOpen, setMoreOpen] = useState(false);
-  const [lastPath, setLastPath] = useState<string | null>(null);
-  const panelId = useId();
-
-  // Close the More panel on navigation (adjusted during render, not in an effect).
-  if (pathname !== lastPath) {
-    setLastPath(pathname);
-    if (moreOpen) setMoreOpen(false);
-  }
-
-  useEffect(() => {
-    if (!moreOpen) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMoreOpen(false);
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [moreOpen]);
-
   const isCurrent = (tab: Tab) => tab.match.some((m) => pathname === m || pathname.startsWith(`${m}/`));
-  const tabClass = (on: boolean) =>
-    `flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 text-[11px] font-semibold no-underline ${on ? "text-accent-text" : "text-ink-2"}`;
 
   return (
-    <div data-bottom-nav className="lg:hidden">
-      {moreOpen ? (
-        <div className="fixed inset-0 z-30 bg-black/30" onClick={() => setMoreOpen(false)} aria-hidden="true" />
-      ) : null}
-      <div
-        id={panelId}
-        hidden={!moreOpen}
-        className="fixed inset-x-0 bottom-[calc(64px+env(safe-area-inset-bottom))] z-40 rounded-t-2xl border-t border-line bg-surface shadow-lg"
-      >
-        <ul className="m-0 flex list-none flex-col px-4 py-2">
-          {MAIN_NAV.map((item) => (
-            <li key={item.href}>
-              <Link href={item.href} className="flex min-h-12 items-center border-b border-divider text-[17px] font-semibold text-ink no-underline">
-                {item.label}
+    <nav
+      data-bottom-nav
+      aria-label="Main"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface pb-[env(safe-area-inset-bottom)] lg:hidden"
+    >
+      <ul className="m-0 flex list-none p-0">
+        {TABS.map((tab) => {
+          const on = isCurrent(tab);
+          return (
+            <li key={tab.label} className="flex flex-1">
+              <Link
+                href={tab.href}
+                aria-current={on ? "page" : undefined}
+                className={`flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 text-[11px] font-semibold no-underline ${on ? "text-accent-text" : "text-ink-2"}`}
+              >
+                {tab.icon}
+                {tab.label}
               </Link>
             </li>
-          ))}
-        </ul>
-      </div>
-      <nav
-        aria-label="Main"
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface pb-[env(safe-area-inset-bottom)]"
-      >
-        <ul className="m-0 flex list-none p-0">
-          {TABS.map((tab) => {
-            const on = isCurrent(tab);
-            return (
-              <li key={tab.label} className="flex flex-1">
-                <Link href={tab.href} aria-current={on ? "page" : undefined} className={tabClass(on)}>
-                  {tab.icon}
-                  {tab.label}
-                </Link>
-              </li>
-            );
-          })}
-          <li className="flex flex-1">
-            <button
-              type="button"
-              aria-expanded={moreOpen}
-              aria-controls={panelId}
-              onClick={() => setMoreOpen((o) => !o)}
-              className={tabClass(moreOpen)}
-            >
-              {icon(<><circle cx="5" cy="12" r="1.5" /><circle cx="12" cy="12" r="1.5" /><circle cx="19" cy="12" r="1.5" /></>)}
-              More
-            </button>
-          </li>
-        </ul>
-      </nav>
-    </div>
+          );
+        })}
+      </ul>
+    </nav>
   );
 }

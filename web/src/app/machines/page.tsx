@@ -1,3 +1,4 @@
+import { PageBanner } from "@/components/PageBanner";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LibrarySwitch } from "@/components/LibrarySwitch";
@@ -23,6 +24,8 @@ export default async function MachinesPage() {
           {machines.length === 1 ? "machine" : "machines"}, each with setup, common mistakes and a video
         </p>
       </div>
+
+      <PageBanner name="machines" focus="50% 45%" alt="A woman rowing on an indoor rower, with an air bike and ski erg behind her" />
       <ul className="m-0 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-2 lg:grid-cols-3">
         {machines.map((m) => (
           <li key={m.slug}>

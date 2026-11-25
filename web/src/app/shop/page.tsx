@@ -1,3 +1,4 @@
+import { PageBanner } from "@/components/PageBanner";
 import type { Metadata } from "next";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -24,6 +25,8 @@ export default function ShopPage() {
         <h1 className="m-0 text-[32px] font-extrabold tracking-tight">Gear</h1>
         <p className="m-0 max-w-[62ch] text-ink-2">Equipment, apparel and supplements for functional fitness, hand-picked across every budget and training style.</p>
       </div>
+
+      <PageBanner name="gear" focus="50% 70%" alt="Dumbbells, a kettlebell, a jump rope, bands and a medicine ball laid out on a gym floor" />
       <nav aria-label="Gear categories" className="-mx-4 overflow-x-auto px-4">
         <ul className="m-0 flex w-max list-none gap-2 p-0">
           {sections.map((s) => (

@@ -1,3 +1,4 @@
+import { PageBanner } from "@/components/PageBanner";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LibrarySwitch } from "@/components/LibrarySwitch";
@@ -30,6 +31,8 @@ export default async function StretchesPage({ searchParams }: PageProps<"/stretc
           <Link href="/stretchbuilder" className="font-semibold text-ink">build your own routine</Link>
         </p>
       </div>
+
+      <PageBanner name="stretches" focus="50% 45%" alt="A man doing a seated hamstring stretch on a mat in his living room" />
 
       <nav aria-label="Focus areas" className="-mx-4 overflow-x-auto px-4">
         <ul className="m-0 flex w-max list-none gap-2 p-0">
