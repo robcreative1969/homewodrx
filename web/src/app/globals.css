@@ -124,6 +124,13 @@ body:has([data-bottom-bar]) footer {
   body:has([data-bottom-bar]) footer {
     padding-bottom: calc(152px + env(safe-area-inset-bottom));
   }
+  /* The More page already lists the footer links. */
+  body:has([data-more-page]) footer {
+    display: none;
+  }
+  body:has([data-more-page]) main {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom));
+  }
 }
 
 :focus-visible {
