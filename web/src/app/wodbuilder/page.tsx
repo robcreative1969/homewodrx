@@ -23,7 +23,7 @@ export async function generateMetadata({ searchParams }: PageProps<"/wodbuilder"
   const built = parseBuilderParams(await searchParams);
   return {
     title: "WOD Builder",
-    description: "Tell the WOD Builder your equipment, time and focus, and it builds a workout for you. Free, no account needed.",
+    description: "Tell the WOD Builder your equipment, time and focus, and it builds a free workout for you.",
     alternates: { canonical: "https://homewodrx.com/wodbuilder" },
     // Built workouts have endless addresses; only the builder itself belongs in search.
     robots: built ? { index: false, follow: true } : undefined,

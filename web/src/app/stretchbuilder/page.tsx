@@ -20,7 +20,7 @@ export async function generateMetadata({ searchParams }: PageProps<"/stretchbuil
   const built = parseStretchParams(await searchParams);
   return {
     title: "Stretch Builder",
-    description: "Pick the areas to stretch and how long you have, and the Stretch Builder puts together a routine with a follow-along timer. Free, no account needed.",
+    description: "Pick the areas to stretch and how long you have, and the Stretch Builder puts together a free routine with a follow-along timer.",
     alternates: { canonical: "https://homewodrx.com/stretchbuilder" },
     robots: built ? { index: false, follow: true } : undefined,
   };
