@@ -74,7 +74,7 @@ export default async function Home() {
             ) : null}
           </Link>
         </div>
-        <p className="m-0 text-sm text-ink-2">New every day and free for everyone.</p>
+        <p className="m-0 text-sm text-ink-2">New every day, and free.</p>
       </section>
 
       <section aria-labelledby="library" className="flex flex-col gap-2.5">
