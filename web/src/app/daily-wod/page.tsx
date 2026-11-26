@@ -10,7 +10,7 @@ import { movementLinker } from "@/lib/workouts";
 
 export const metadata: Metadata = {
   title: "The Daily 20 and The Daily 10",
-  description: "A new 20-minute workout and a 10-minute stretch routine every day. It's free.",
+  description: "A new, free 20-minute workout and 10-minute stretch routine every day.",
   alternates: { canonical: "https://homewodrx.com/daily-wod" },
 };
 
@@ -53,7 +53,7 @@ export default async function DailyPage({ searchParams }: PageProps<"/daily-wod"
 
       <PageBanner name="daily-20" focus="50% 38%" alt="A woman doing a kettlebell squat in her living room at sunrise" />
       <p className="m-0 text-[15px] text-ink-2">
-        A new workout and stretch routine every day. It's free.
+        A new, free workout and stretch routine every day.
       </p>
 
       {wod ? (
