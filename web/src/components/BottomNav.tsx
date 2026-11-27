@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { useSignedIn } from "@/components/account/useSignedIn";
 
 // The phone tab bar (hidden from lg up, where the header menu shows). It shows on every
 // page; workout and builder screens stack their action bar above it (BottomBar).
@@ -44,13 +45,15 @@ const TABS: Tab[] = [
   {
     label: "More",
     href: "/more",
-    match: ["/more", "/blog", "/shop", "/timer", "/contact", "/privacy", "/terms", "/cookies", "/disclaimer"],
+    match: ["/more", "/me", "/login", "/signup", "/forgot-password", "/reset-password", "/blog", "/shop", "/timer", "/contact", "/privacy", "/terms", "/cookies", "/disclaimer"],
     icon: icon(<><circle cx="5" cy="12" r="1.5" /><circle cx="12" cy="12" r="1.5" /><circle cx="19" cy="12" r="1.5" /></>),
   },
 ];
 
 export function BottomNav() {
   const pathname = usePathname();
+  // Signed in, the More tab is labelled Me: the More page starts with the account.
+  const signedIn = useSignedIn();
   const isCurrent = (tab: Tab) => tab.match.some((m) => pathname === m || pathname.startsWith(`${m}/`));
 
   return (
@@ -70,7 +73,7 @@ export function BottomNav() {
                 className={`flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 text-[11px] font-semibold no-underline ${on ? "text-accent-text" : "text-ink-2"}`}
               >
                 {tab.icon}
-                {tab.label}
+                {tab.href === "/more" && signedIn ? "Me" : tab.label}
               </Link>
             </li>
           );

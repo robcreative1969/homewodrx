@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { CookieChoicesButton } from "@/components/ConsentBanner";
+import { MoreAccount } from "@/components/account/MoreAccount";
 
 export const metadata: Metadata = {
   title: "More",
@@ -29,6 +30,8 @@ export default function MorePage() {
   return (
     <div data-more-page className="mx-auto flex max-w-5xl flex-col gap-5 px-4 py-5">
       <h1 className="m-0 text-[32px] font-extrabold tracking-tight">More</h1>
+
+      <MoreAccount />
 
       <ul className="m-0 grid list-none grid-cols-2 gap-2 p-0 sm:grid-cols-4">
         {SECTIONS.map((s) => (

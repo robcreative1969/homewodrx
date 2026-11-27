@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { supabaseAnonKey, supabaseUrl } from "@/lib/supabase/env";
 
 /**
- * Keeps the signed-in session fresh on admin pages (Supabase rotates its tokens; server
+ * Keeps the signed-in session fresh on admin and account pages (Supabase rotates its tokens; server
  * components can read cookies but not write them, so the refresh happens here).
  */
 export async function proxy(request: NextRequest) {
@@ -24,4 +24,4 @@ export async function proxy(request: NextRequest) {
   return response;
 }
 
-export const config = { matcher: ["/admin/:path*"] };
+export const config = { matcher: ["/admin/:path*", "/me/:path*", "/reset-password"] };

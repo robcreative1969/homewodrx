@@ -1,14 +1,12 @@
 import type { NextConfig } from "next";
 
 // Addresses from the old site that have no page of their own here. Permanent (308), so
-// search engines move their ranking to the new address. Accounts are on hold (Rob,
-// 2026-11-20), so the account pages send visitors to the homepage.
+// search engines move their ranking to the new address. The old account pages go to
+// their new homes (free accounts, Phase 4).
 const RETIRED: { source: string; destination: string }[] = [
-  { source: "/login", destination: "/" },
-  { source: "/signup", destination: "/" },
-  { source: "/profile", destination: "/" },
-  { source: "/settings", destination: "/" },
-  { source: "/myworkouts", destination: "/" },
+  { source: "/profile", destination: "/me" },
+  { source: "/settings", destination: "/me" },
+  { source: "/myworkouts", destination: "/me" },
   { source: "/planner", destination: "/wodbuilder" },
   { source: "/u/:handle", destination: "/" },
   { source: "/leaderboard", destination: "/" },
