@@ -20,7 +20,6 @@ export default async function SignupPage({ searchParams }: PageProps<"/signup">)
               <span>{b}</span>
             </li>
           ))}
-          <li className="mt-1 text-[15px]">Every workout, timer and builder stays free without an account.</li>
         </ul>
       }
     >
