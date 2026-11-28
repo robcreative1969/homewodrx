@@ -28,6 +28,9 @@ const UNSUB_SECRET  = Deno.env.get("BROADCAST_UNSUB_SECRET") ?? Deno.env.get("DI
 const FROM    = "HomeWODRx <noreply@homewodrx.com>";
 const BASE    = "https://homewodrx.com";
 const FN_BASE = `${SUPABASE_URL}/functions/v1/send-broadcast`;
+// White logo baked onto a dark band: Gmail's dark mode flips background colours but not images.
+const HEADER_IMG = `${BASE}/brand/email-header.png`;
+const TAGLINE = "The training platform for functional fitness athletes, at the box, the health club, or at home.";
 
 const sb = createClient(SUPABASE_URL, SERVICE_KEY);
 
@@ -68,7 +71,7 @@ function html(body: string, status = 200) {
 
 async function handleUnsub(uid: string, token: string): Promise<Response> {
   const expected = await hmac(UNSUB_SECRET, uid);
-  if (token !== expected) return html("<h1>Invalid unsubscribe link.</h1>", 400);
+  if (token !== expected) return html(unsubPage("That link didn't work", "This unsubscribe link is invalid or has expired. Email hello@homewodrx.com and we'll take you off the list."), 400);
 
   const { data: prof } = await sb.from("profiles").select("notifications").eq("id", uid).single();
   const notif = (prof?.notifications as Record<string, boolean>) || {};
@@ -76,13 +79,16 @@ async function handleUnsub(uid: string, token: string): Promise<Response> {
   notif.product = false;
   await sb.from("profiles").update({ notifications: notif }).eq("id", uid);
 
-  return html(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Unsubscribed — HomeWODRx</title>
-<style>body{font-family:-apple-system,sans-serif;max-width:480px;margin:80px auto;text-align:center;color:#1a1a1a;padding:20px}
-h1{font-size:1.6rem;margin-bottom:12px}p{color:#666;line-height:1.6}a{color:#C41212}</style></head>
-<body><h1>You're unsubscribed.</h1>
-<p>You've been removed from HomeWODRx marketing emails. Transactional emails (password resets, security alerts) are unaffected.</p>
-<p><a href="${BASE}">← Back to HomeWODRx</a></p>
-</body></html>`);
+  return html(unsubPage("You're unsubscribed", "You won't get HomeWODRx blog or news emails anymore. Account emails, like login codes, still arrive."));
+}
+
+function unsubPage(title: string, text: string): string {
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title} · HomeWODRx</title></head>
+<body style="font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#f3f3f3;margin:0;padding:60px 16px;text-align:center;color:#1a1a1a;">
+<div style="max-width:480px;margin:0 auto;background:#fff;border:1px solid #e5e5e5;border-radius:16px;overflow:hidden;">
+<img src="${HEADER_IMG}" alt="HomeWODRx" width="480" style="display:block;width:100%;height:auto;border:0;"/>
+<div style="padding:32px;"><h1 style="font-size:1.6rem;margin:0 0 12px;">${title}</h1><p style="color:#555;line-height:1.6;margin:0 0 16px;">${text}</p>
+<p style="margin:0;"><a href="${BASE}" style="color:#C41212;">Back to HomeWODRx</a></p></div></div></body></html>`;
 }
 
 // ── Email builders ────────────────────────────────────────────────────────────
@@ -100,7 +106,6 @@ function blogEmail(fields: Record<string, string>, unsubLink: string): { subject
 <meta name="color-scheme" content="light dark"><meta name="supported-color-schemes" content="light dark">
 <style>
 :root{color-scheme:light dark;supported-color-schemes:light dark}
-.email-dark-logo{display:none}
 @media(prefers-color-scheme:dark){
   [style*="background-color:#f3f3f3"]{background-color:#161616!important}
   [style*="background-color:#ffffff"]{background-color:#222222!important}
@@ -112,11 +117,7 @@ function blogEmail(fields: Record<string, string>, unsubLink: string): { subject
   [style*="color:#666666"]{color:#a8a8a8!important}
   [style*="color:#999999"]{color:#8a8a8a!important}
   [style*="color:#C41212"]{color:#ff5a5a!important}
-  .email-light-logo{display:none!important}
-  .email-dark-logo{display:block!important}
 }
-[data-ogsc] .email-light-logo{display:none!important}
-[data-ogsc] .email-dark-logo{display:block!important}
 </style>
 </head>
 <body style="margin:0;padding:0;background-color:#f3f3f3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
@@ -124,13 +125,10 @@ function blogEmail(fields: Record<string, string>, unsubLink: string): { subject
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f3f3f3;min-height:100vh;">
 <tr><td align="center" style="padding:40px 16px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;background-color:#ffffff;border-radius:16px;border:1px solid #e5e5e5;overflow:hidden;">
-  <tr><td align="center" style="padding:36px 40px 24px;">
-    <a href="${BASE}" style="text-decoration:none;">
-      <img class="email-light-logo" src="${BASE}/HomeWODRx-logo-black-red-040626.png" alt="HomeWODRx" width="200" style="display:block;width:200px;height:auto;border:0;"/>
-      <img class="email-dark-logo" src="${BASE}/HomeWODRx-logo-white-red-black-strip-040626.png" alt="HomeWODRx" width="200" style="width:200px;height:auto;border:0;"/>
-    </a>
+  <tr><td style="padding:0;line-height:0;font-size:0;">
+    <a href="${BASE}" style="text-decoration:none;"><img src="${HEADER_IMG}" alt="HomeWODRx" width="560" style="display:block;width:100%;max-width:560px;height:auto;border:0;"/></a>
   </td></tr>
-  <tr><td style="padding:0 40px 6px;">
+  <tr><td style="padding:28px 40px 6px;">
     <p style="margin:0;font-size:11px;font-weight:700;color:#C41212;text-transform:uppercase;letter-spacing:1.2px;">New on the Blog</p>
   </td></tr>
   <tr><td style="padding:0 40px 16px;">
@@ -156,7 +154,7 @@ function blogEmail(fields: Record<string, string>, unsubLink: string): { subject
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr>
       <td><p style="margin:0 0 2px;font-size:13px;font-weight:700;color:#1a1a1a;">HomeWODRx</p>
-          <p style="margin:0;font-size:12px;color:#666666;line-height:1.6;">Every WOD. Every Athlete. One Platform.<br><a href="${BASE}" style="color:#C41212;text-decoration:none;">homewodrx.com</a></p></td>
+          <p style="margin:0;font-size:12px;color:#666666;line-height:1.6;">${TAGLINE}<br><a href="${BASE}" style="color:#C41212;text-decoration:none;">homewodrx.com</a></p></td>
       <td align="right" valign="top"><p style="margin:0;font-size:11px;color:#999999;line-height:1.8;text-align:right;">You opted in to blog updates.<br><a href="${unsubLink}" style="color:#999999;text-decoration:underline;">Unsubscribe</a></p></td>
     </tr></table>
   </td></tr>
@@ -186,7 +184,6 @@ function announcementEmail(fields: Record<string, string>, unsubLink: string): {
 <meta name="color-scheme" content="light dark"><meta name="supported-color-schemes" content="light dark">
 <style>
 :root{color-scheme:light dark;supported-color-schemes:light dark}
-.email-dark-logo{display:none}
 @media(prefers-color-scheme:dark){
   [style*="background-color:#f3f3f3"]{background-color:#161616!important}
   [style*="background-color:#ffffff"]{background-color:#222222!important}
@@ -197,11 +194,7 @@ function announcementEmail(fields: Record<string, string>, unsubLink: string): {
   [style*="color:#666666"]{color:#a8a8a8!important}
   [style*="color:#999999"]{color:#8a8a8a!important}
   [style*="color:#C41212"]{color:#ff5a5a!important}
-  .email-light-logo{display:none!important}
-  .email-dark-logo{display:block!important}
 }
-[data-ogsc] .email-light-logo{display:none!important}
-[data-ogsc] .email-dark-logo{display:block!important}
 </style>
 </head>
 <body style="margin:0;padding:0;background-color:#f3f3f3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
@@ -209,13 +202,10 @@ function announcementEmail(fields: Record<string, string>, unsubLink: string): {
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f3f3f3;min-height:100vh;">
 <tr><td align="center" style="padding:40px 16px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;background-color:#ffffff;border-radius:16px;border:1px solid #e5e5e5;overflow:hidden;">
-  <tr><td align="center" style="padding:36px 40px 24px;">
-    <a href="${BASE}" style="text-decoration:none;">
-      <img class="email-light-logo" src="${BASE}/HomeWODRx-logo-black-red-040626.png" alt="HomeWODRx" width="200" style="display:block;width:200px;height:auto;border:0;"/>
-      <img class="email-dark-logo" src="${BASE}/HomeWODRx-logo-white-red-black-strip-040626.png" alt="HomeWODRx" width="200" style="width:200px;height:auto;border:0;"/>
-    </a>
+  <tr><td style="padding:0;line-height:0;font-size:0;">
+    <a href="${BASE}" style="text-decoration:none;"><img src="${HEADER_IMG}" alt="HomeWODRx" width="560" style="display:block;width:100%;max-width:560px;height:auto;border:0;"/></a>
   </td></tr>
-  <tr><td style="padding:0 40px 6px;">
+  <tr><td style="padding:28px 40px 6px;">
     <p style="margin:0;font-size:11px;font-weight:700;color:#C41212;text-transform:uppercase;letter-spacing:1.2px;">${eyebrow}</p>
   </td></tr>
   <tr><td style="padding:0 40px 20px;">
@@ -228,7 +218,7 @@ function announcementEmail(fields: Record<string, string>, unsubLink: string): {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr>
       <td><p style="margin:0 0 2px;font-size:13px;font-weight:700;color:#1a1a1a;">HomeWODRx</p>
-          <p style="margin:0;font-size:12px;color:#666666;line-height:1.6;">Every WOD. Every Athlete. One Platform.<br><a href="${BASE}" style="color:#C41212;text-decoration:none;">homewodrx.com</a></p></td>
+          <p style="margin:0;font-size:12px;color:#666666;line-height:1.6;">${TAGLINE}<br><a href="${BASE}" style="color:#C41212;text-decoration:none;">homewodrx.com</a></p></td>
       <td align="right" valign="top"><p style="margin:0;font-size:11px;color:#999999;line-height:1.8;text-align:right;">You opted in to product updates.<br><a href="${unsubLink}" style="color:#999999;text-decoration:underline;">Unsubscribe</a></p></td>
     </tr></table>
   </td></tr>
