@@ -6,7 +6,7 @@ import { Card } from "@/components/Card";
 import { secondaryButton } from "@/components/account/ui";
 import { NewPasswordForm } from "../reset-password/ResetForm";
 import { DeleteAccount, EmailForm, UsernameForm } from "./AccountForms";
-import { signOut } from "./actions";
+import { SignOutButton } from "@/components/account/SignOutButton";
 
 export const metadata: Metadata = { title: "Me", robots: { index: false } };
 
@@ -39,9 +39,7 @@ export default async function MePage() {
         <NewPasswordForm button="Save password" />
       </Card>
 
-      <form action={signOut}>
-        <button type="submit" className={secondaryButton}>Log out</button>
-      </form>
+      <SignOutButton className={secondaryButton} />
 
       <DeleteAccount userId={user.id} />
     </div>

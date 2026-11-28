@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useSignedIn } from "./useSignedIn";
+import { SignOutButton } from "./SignOutButton";
 import { ACCOUNT_BENEFITS, primaryButton, secondaryButton } from "./ui";
 
 /** Top of the More page: the way into an account on phones, where the header link is hidden. */
@@ -21,6 +22,7 @@ export function MoreAccount() {
           Your account
           <span aria-hidden="true" className="text-ink-2">›</span>
         </Link>
+        <SignOutButton className={secondaryButton} />
       </div>
     );
   }
