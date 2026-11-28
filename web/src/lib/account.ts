@@ -23,7 +23,7 @@ export function passwordProblem(password: string): string | null {
 /** Plain-language versions of the Supabase auth errors people actually hit. */
 export function friendlyAuthError(message: string): string {
   const m = message.toLowerCase();
-  if (m.includes("invalid login credentials")) return "That email and password don't match.";
+  if (m.includes("invalid login credentials")) return "That email and password don't match. If you never added a password, use Email me a code.";
   if (m.includes("email not confirmed")) return "Confirm your email first. Check your inbox for the link we sent.";
   if (m.includes("already registered") || m.includes("already been registered")) return "There's already an account with that email. Try logging in.";
   if (m.includes("signups not allowed for otp") || m.includes("user not found")) return "There's no account with that email yet. Create a free account instead.";
