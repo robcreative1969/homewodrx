@@ -27,7 +27,7 @@ const RESEND_KEY   = Deno.env.get("RESEND_API_KEY") ?? "";
 const CRON_SECRET  = Deno.env.get("DIGEST_CRON_SECRET") ?? "";
 const UNSUB_SECRET = Deno.env.get("DIGEST_UNSUB_SECRET") ?? "";
 
-const FROM    = "HomeWODrx <noreply@homewodrx.com>";
+const FROM    = "HomeWODRx <noreply@homewodrx.com>";
 const BASE    = "https://homewodrx.com";
 const FN_BASE = `${SUPABASE_URL}/functions/v1/daily-wod-digest`;
 
@@ -227,7 +227,7 @@ function genCircuit(pool: Move[], level: string, duration: number, rng: () => nu
   };
 }
 
-async function generate(dateStr: string): Promise<Move> {
+async function generateLocal(dateStr: string): Promise<Move> {
   const override = await getManualOverride(dateStr);
   if (override) return { ...override, duration: 20, isManual: true, date: dateStr };
 
@@ -266,6 +266,20 @@ async function generate(dateStr: string): Promise<Move> {
 // ───────────────────────────────────────────────────────────────────────────
 // UNSUBSCRIBE TOKENS (HMAC-SHA256 of uid)
 // ───────────────────────────────────────────────────────────────────────────
+
+// The site's own Daily 20 (homewodrx.com/api/daily-20), so the email always shows the
+// same workout as the website. Falls back to this function's older copy of the
+// generator only if the site can't be reached.
+async function generate(dateStr: string): Promise<Move> {
+  try {
+    const res = await fetch(`https://homewodrx.com/api/daily-20?date=${dateStr}`, { signal: AbortSignal.timeout(10000) });
+    if (res.ok) {
+      const j = await res.json();
+      if (j?.daily20?.rows?.length) return { ...j.daily20, duration: 20, date: dateStr } as Move;
+    }
+  } catch (_) { /* use the fallback below */ }
+  return generateLocal(dateStr);
+}
 
 async function hmacHex(value: string): Promise<string> {
   const key = await crypto.subtle.importKey(
@@ -342,8 +356,8 @@ function buildEmailHtml(wod: Move, dateStr: string, firstName: string | null, un
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="card" style="max-width:560px;background-color:#ffffff;border-radius:16px;border:1px solid #e5e5e5;overflow:hidden;">
         <tr><td align="center" style="padding:36px 40px 20px;">
           <a href="${BASE}" style="text-decoration:none;">
-            <img class="light-logo" src="${BASE}/HomeWODRx-logo-black-red-040626.png" alt="HomeWODrx" width="200" style="display:block;width:200px;height:auto;border:0;"/>
-            <img class="dark-logo" src="${BASE}/HomeWODRx-logo-white-red-black-strip-040626.png" alt="HomeWODrx" width="200" style="width:200px;height:auto;border:0;"/>
+            <img class="light-logo" src="${BASE}/HomeWODRx-logo-black-red-040626.png" alt="HomeWODRx" width="200" style="display:block;width:200px;height:auto;border:0;"/>
+            <img class="dark-logo" src="${BASE}/HomeWODRx-logo-white-red-black-strip-040626.png" alt="HomeWODRx" width="200" style="width:200px;height:auto;border:0;"/>
           </a>
         </td></tr>
         <tr><td style="padding:0 40px 6px;">
@@ -377,7 +391,7 @@ function buildEmailHtml(wod: Move, dateStr: string, firstName: string | null, un
         <tr><td style="padding:0 40px;"><div class="divider" style="border-top:1px solid #e5e5e5;"></div></td></tr>
         <tr><td align="center" style="padding:20px 40px 30px;">
           <p style="margin:0 0 6px;font-size:11px;color:#999999;line-height:1.6;">
-            You're receiving this because Daily WOD Digest is turned on in your HomeWODrx settings.
+            You're receiving this because Daily WOD Digest is turned on in your HomeWODRx settings.
           </p>
           <p style="margin:0;font-size:11px;color:#999999;">
             <a href="${BASE}/settings#notifications" style="color:#888888;">Manage email preferences</a> &nbsp;·&nbsp;
@@ -385,7 +399,7 @@ function buildEmailHtml(wod: Move, dateStr: string, firstName: string | null, un
           </p>
         </td></tr>
       </table>
-      <p style="margin:18px 0 0;font-size:11px;color:#aaaaaa;">© ${new Date().getFullYear()} HomeWodRX · <a href="${BASE}" style="color:#aaaaaa;">homewodrx.com</a></p>
+      <p style="margin:18px 0 0;font-size:11px;color:#aaaaaa;">© ${new Date().getFullYear()} HomeWODRx · <a href="${BASE}" style="color:#aaaaaa;">homewodrx.com</a></p>
     </td></tr>
   </table>
 </body>
@@ -410,10 +424,10 @@ async function handleUnsubscribe(url: URL): Promise<Response> {
     body = "<h1>You're unsubscribed</h1><p>You won't receive the Daily WOD Digest anymore. Changed your mind? Turn it back on in <a href='https://homewodrx.com/settings'>Settings → Notifications</a>.</p>";
   }
   return new Response(
-    `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HomeWODrx</title></head>
+    `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HomeWODRx</title></head>
      <body style="font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#f3f3f3;margin:0;padding:60px 16px;text-align:center;">
      <div style="max-width:480px;margin:0 auto;background:#fff;border:1px solid #e5e5e5;border-radius:16px;padding:40px 32px;">
-     <img src="https://homewodrx.com/HomeWODRx-logo-black-red-040626.png" alt="HomeWODrx" width="180" style="margin-bottom:24px;"/>${body}</div></body></html>`,
+     <img src="https://homewodrx.com/HomeWODRx-logo-black-red-040626.png" alt="HomeWODRx" width="180" style="margin-bottom:24px;"/>${body}</div></body></html>`,
     { status: ok ? 200 : 400, headers: { "Content-Type": "text/html; charset=utf-8" } },
   );
 }
