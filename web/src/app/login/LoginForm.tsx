@@ -11,11 +11,11 @@ import { field, FormError, label, primaryButton, secondaryButton } from "@/compo
 
 const WAIT = "Wait for the human check to finish, then try again.";
 
-/** Log in with a password, or with a code we email (no password needed). */
+/** Log in with a code we email (the default, since sign-up sets no password), or with a password added on Me. */
 export function LoginForm({ next }: { next: string }) {
   const router = useRouter();
   const { box, token, reset } = useTurnstile();
-  const [mode, setMode] = useState<"password" | "code">("password");
+  const [mode, setMode] = useState<"password" | "code">("code");
   const [email, setEmail] = useState("");
   const [codeSentTo, setCodeSentTo] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -107,7 +107,7 @@ export function LoginForm({ next }: { next: string }) {
             {busy ? (mode === "code" ? "Sending…" : "Logging in…") : mode === "code" ? "Email me a code" : "Log in"}
           </button>
           <button type="button" onClick={switchMode} className={secondaryButton}>
-            {mode === "password" ? "Email me a code instead" : "Use my password instead"}
+            {mode === "password" ? "Email me a code instead" : "I have a password"}
           </button>
         </>
       )}
