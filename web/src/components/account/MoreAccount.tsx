@@ -39,7 +39,7 @@ export function MoreAccount() {
         ))}
       </ul>
       <div className="flex gap-2">
-        <Link href="/signup" className={primaryButton}>Create account</Link>
+        <Link href="/signup" className={primaryButton}>Sign up</Link>
         <Link href="/login" className={secondaryButton}>Log in</Link>
       </div>
     </section>

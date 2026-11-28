@@ -147,7 +147,7 @@ export function LogPanel({
         <h2 id="log-it" className="m-0 text-lg font-bold">{heading}</h2>
         <p className="m-0 text-[15px] text-ink-2">Create a free account to log this workout and see your best next time.</p>
         <div className="flex gap-2">
-          <Link href={`/signup?next=${back}`} className={primaryButton}>Create account</Link>
+          <Link href={`/signup?next=${back}`} className={primaryButton}>Sign up</Link>
           <Link href={`/login?next=${back}`} className={secondaryButton}>Log in</Link>
         </div>
       </section>
