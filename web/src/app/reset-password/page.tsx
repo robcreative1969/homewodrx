@@ -6,7 +6,7 @@ import { NewPasswordForm } from "./ResetForm";
 
 export const metadata: Metadata = { title: "Set a new password", robots: { index: false } };
 
-// Reached from the reset email via /auth/callback, which signs the person in first.
+// Reached after the forgot-password code (or the old reset link via /auth/callback), which signs the person in first.
 export default async function ResetPasswordPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
