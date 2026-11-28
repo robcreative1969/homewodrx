@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { BottomBar, primaryAction } from "@/components/BottomBar";
 import { Card } from "@/components/Card";
 import { LogPanel } from "@/components/log/LogPanel";
+import { SaveButton } from "@/components/saved/SaveButton";
 import { scoreKindFor } from "@/lib/log";
 import { ExclusiveAll } from "@/components/ExclusiveAll";
 import {
@@ -65,6 +66,9 @@ export default async function BuilderPage({ searchParams }: PageProps<"/wodbuild
 
       {workout ? (
         <Card title={workout.title} labelledBy="built" aside={<span className="font-mono text-[13px] text-ink-2">{workout.formatLabel} · {workout.minutes} min</span>}>
+          <div className="-mt-1 flex">
+            <SaveButton target={{ kind: "builder", query, workout }} />
+          </div>
           <dl className="m-0 grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-3">
             <div className="flex flex-col"><dt className="text-ink-3">Level</dt><dd className="m-0 font-semibold">{LEVELS.find((l) => l.code === params?.level)?.label}</dd></div>
             <div className="flex flex-col"><dt className="text-ink-3">Focus</dt><dd className="m-0 font-semibold">{params?.focus.map((f) => FOCUSES.find((x) => x.code === f)?.label).join(", ")}</dd></div>

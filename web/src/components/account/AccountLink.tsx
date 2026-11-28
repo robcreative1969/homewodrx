@@ -9,7 +9,7 @@ const item = "flex min-h-11 w-full items-center rounded-lg px-3 text-left text-[
 
 /**
  * Header account control (desktop). Signed out: "Log in". Signed in: a "Me" menu with
- * Your history, Your account and Log out, so logging out is two clicks from any page.
+ * Your history, Your workouts, Your account and Log out, so logging out is two clicks from any page.
  * Hidden until the session is known.
  */
 export function AccountLink() {
@@ -80,6 +80,7 @@ export function AccountLink() {
         className="absolute top-full right-0 z-40 mt-1 flex min-w-48 flex-col rounded-xl border border-line bg-surface p-1.5 shadow-lg"
       >
         <Link href="/history" onClick={() => setOpen(false)} className={item}>Your history</Link>
+        <Link href="/my-workouts" onClick={() => setOpen(false)} className={item}>Your workouts</Link>
         <Link href="/me" onClick={() => setOpen(false)} className={item}>Your account</Link>
         <SignOutButton className={item} onDone={() => setOpen(false)} />
       </div>

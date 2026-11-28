@@ -28,6 +28,10 @@ export default async function MePage() {
         Your history
         <span aria-hidden="true" className="text-ink-2">›</span>
       </Link>
+      <Link href="/my-workouts" className="flex min-h-14 items-center justify-between rounded-2xl border border-line bg-surface px-[18px] text-[17px] font-bold text-ink no-underline">
+        Your workouts
+        <span aria-hidden="true" className="text-ink-2">›</span>
+      </Link>
 
       <Card title="Account" labelledBy="me-account">
         <UsernameForm userId={user.id} current={username} />

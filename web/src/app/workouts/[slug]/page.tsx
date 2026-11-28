@@ -6,6 +6,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { BottomBar, primaryAction } from "@/components/BottomBar";
 import { Card } from "@/components/Card";
 import { LogPanel } from "@/components/log/LogPanel";
+import { SaveButton } from "@/components/saved/SaveButton";
 import { scoreKindFor } from "@/lib/log";
 import { modeFromFormat } from "@/lib/session";
 import { VideoPlayer } from "@/components/VideoPlayer";
@@ -83,7 +84,10 @@ export default async function WorkoutPage({ params }: PageProps<"/workouts/[slug
               {categoryLabel(w.category)}
             </Link>
           </nav>
-          <ShareButton title={w.name} />
+          <div className="flex shrink-0 items-center gap-1.5">
+            <SaveButton target={{ kind: "library", slug: w.slug, title: w.name }} />
+            <ShareButton title={w.name} />
+          </div>
         </div>
         <h1 className="m-0 text-[44px] leading-none font-extrabold tracking-tight">{w.name}</h1>
         {w.category === "variation" ? (

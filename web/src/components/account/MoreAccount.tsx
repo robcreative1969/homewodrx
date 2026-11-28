@@ -18,6 +18,10 @@ export function MoreAccount() {
           Your history
           <span aria-hidden="true" className="text-ink-2">›</span>
         </Link>
+        <Link href="/my-workouts" className={row}>
+          Your workouts
+          <span aria-hidden="true" className="text-ink-2">›</span>
+        </Link>
         <Link href="/me" className={row}>
           Your account
           <span aria-hidden="true" className="text-ink-2">›</span>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { BottomBar, primaryAction } from "@/components/BottomBar";
 import { Card } from "@/components/Card";
 import { LogPanel } from "@/components/log/LogPanel";
+import { SaveButton } from "@/components/saved/SaveButton";
 import { scoreKindFor } from "@/lib/log";
 import { levelLabel } from "@/lib/labels";
 import { bodyFocusLabel, formatLongDate, getDaily10, getDaily20, isDateString, todayEastern } from "@/lib/daily";
@@ -39,6 +40,7 @@ export default async function DailyPage({ searchParams }: PageProps<"/daily-wod"
           <p className="m-0 font-mono text-[13px] text-ink-2">{isToday ? formatLongDate(date) : "A past day"}</p>
         </div>
         <div className="flex items-center gap-1.5">
+          {wod ? <SaveButton target={{ kind: "daily20", date: wod.date, title: "The Daily 20" }} /> : null}
           <ShareButton title="The Daily 20 on HomeWODRx" />
           <nav aria-label="Other days" className="flex gap-1.5">
             <Link href={`/daily-wod?date=${shiftDate(date, -1)}`} aria-label="Previous day" className="flex h-11 w-11 items-center justify-center rounded-xl border border-line bg-surface text-ink">
