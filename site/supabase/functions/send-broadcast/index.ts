@@ -8,7 +8,7 @@
 //   BROADCAST_UNSUB_SECRET  — HMAC secret for unsubscribe tokens (same as DIGEST_UNSUB_SECRET is fine)
 //
 // Endpoints:
-//   POST /  (header x-broadcast-secret: <BROADCAST_ADMIN_SECRET>, or Authorization: Bearer <an admin's session token>)
+//   POST /  (header x-broadcast-secret: <BROADCAST_ADMIN_SECRET>)
 //   Body: { type: "blog" | "announcement", test_email?: string, ...fields }
 //
 //   Blog fields:    post_title, post_url, post_excerpt, post_category, reading_time
@@ -25,7 +25,7 @@ const RESEND_KEY    = Deno.env.get("RESEND_API_KEY") ?? "";
 const ADMIN_SECRET  = Deno.env.get("BROADCAST_ADMIN_SECRET") ?? "";
 const UNSUB_SECRET  = Deno.env.get("BROADCAST_UNSUB_SECRET") ?? Deno.env.get("DIGEST_UNSUB_SECRET") ?? "";
 
-const FROM    = "HomeWODrx <noreply@homewodrx.com>";
+const FROM    = "HomeWODRx <noreply@homewodrx.com>";
 const BASE    = "https://homewodrx.com";
 const FN_BASE = `${SUPABASE_URL}/functions/v1/send-broadcast`;
 
@@ -70,29 +70,18 @@ async function handleUnsub(uid: string, token: string): Promise<Response> {
   const expected = await hmac(UNSUB_SECRET, uid);
   if (token !== expected) return html("<h1>Invalid unsubscribe link.</h1>", 400);
 
-  // Determine which pref to clear (product announcements for announcement emails,
-  // blog for blog emails — we clear both since unsubscribe is a global opt-out for marketing).
-  await sb.from("profiles").update({
-    notifications: sb.rpc ? undefined : undefined, // handled below via RPC-free approach
-  });
+  const { data: prof } = await sb.from("profiles").select("notifications").eq("id", uid).single();
+  const notif = (prof?.notifications as Record<string, boolean>) || {};
+  notif.blog    = false;
+  notif.product = false;
+  await sb.from("profiles").update({ notifications: notif }).eq("id", uid);
 
-  // Use JSONB merge to set blog=false and product=false without wiping other prefs
-  const { error } = await sb.rpc("unsubscribe_marketing", { p_user_id: uid });
-  if (error) {
-    // Fallback: direct update (less precise but safe)
-    const { data: prof } = await sb.from("profiles").select("notifications").eq("id", uid).single();
-    const notif = (prof?.notifications as Record<string, boolean>) || {};
-    notif.blog    = false;
-    notif.product = false;
-    await sb.from("profiles").update({ notifications: notif }).eq("id", uid);
-  }
-
-  return html(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Unsubscribed — HomeWODrx</title>
+  return html(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Unsubscribed — HomeWODRx</title>
 <style>body{font-family:-apple-system,sans-serif;max-width:480px;margin:80px auto;text-align:center;color:#1a1a1a;padding:20px}
 h1{font-size:1.6rem;margin-bottom:12px}p{color:#666;line-height:1.6}a{color:#C41212}</style></head>
 <body><h1>You're unsubscribed.</h1>
-<p>You've been removed from HomeWODrx marketing emails. Transactional emails (password resets, security alerts) are unaffected.</p>
-<p><a href="${BASE}">← Back to HomeWODrx</a></p>
+<p>You've been removed from HomeWODRx marketing emails. Transactional emails (password resets, security alerts) are unaffected.</p>
+<p><a href="${BASE}">← Back to HomeWODRx</a></p>
 </body></html>`);
 }
 
@@ -137,8 +126,8 @@ function blogEmail(fields: Record<string, string>, unsubLink: string): { subject
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;background-color:#ffffff;border-radius:16px;border:1px solid #e5e5e5;overflow:hidden;">
   <tr><td align="center" style="padding:36px 40px 24px;">
     <a href="${BASE}" style="text-decoration:none;">
-      <img class="email-light-logo" src="${BASE}/HomeWODRx-logo-black-red-040626.png" alt="HomeWODrx" width="200" style="display:block;width:200px;height:auto;border:0;"/>
-      <img class="email-dark-logo" src="${BASE}/HomeWODRx-logo-white-red-black-strip-040626.png" alt="HomeWODrx" width="200" style="width:200px;height:auto;border:0;"/>
+      <img class="email-light-logo" src="${BASE}/HomeWODRx-logo-black-red-040626.png" alt="HomeWODRx" width="200" style="display:block;width:200px;height:auto;border:0;"/>
+      <img class="email-dark-logo" src="${BASE}/HomeWODRx-logo-white-red-black-strip-040626.png" alt="HomeWODRx" width="200" style="width:200px;height:auto;border:0;"/>
     </a>
   </td></tr>
   <tr><td style="padding:0 40px 6px;">
@@ -166,7 +155,7 @@ function blogEmail(fields: Record<string, string>, unsubLink: string): { subject
   <tr><td style="background-color:#f8f8f8;padding:22px 40px;border-top:1px solid #e5e5e5;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr>
-      <td><p style="margin:0 0 2px;font-size:13px;font-weight:700;color:#1a1a1a;">HomeWODrx</p>
+      <td><p style="margin:0 0 2px;font-size:13px;font-weight:700;color:#1a1a1a;">HomeWODRx</p>
           <p style="margin:0;font-size:12px;color:#666666;line-height:1.6;">Every WOD. Every Athlete. One Platform.<br><a href="${BASE}" style="color:#C41212;text-decoration:none;">homewodrx.com</a></p></td>
       <td align="right" valign="top"><p style="margin:0;font-size:11px;color:#999999;line-height:1.8;text-align:right;">You opted in to blog updates.<br><a href="${unsubLink}" style="color:#999999;text-decoration:underline;">Unsubscribe</a></p></td>
     </tr></table>
@@ -222,8 +211,8 @@ function announcementEmail(fields: Record<string, string>, unsubLink: string): {
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;background-color:#ffffff;border-radius:16px;border:1px solid #e5e5e5;overflow:hidden;">
   <tr><td align="center" style="padding:36px 40px 24px;">
     <a href="${BASE}" style="text-decoration:none;">
-      <img class="email-light-logo" src="${BASE}/HomeWODRx-logo-black-red-040626.png" alt="HomeWODrx" width="200" style="display:block;width:200px;height:auto;border:0;"/>
-      <img class="email-dark-logo" src="${BASE}/HomeWODRx-logo-white-red-black-strip-040626.png" alt="HomeWODrx" width="200" style="width:200px;height:auto;border:0;"/>
+      <img class="email-light-logo" src="${BASE}/HomeWODRx-logo-black-red-040626.png" alt="HomeWODRx" width="200" style="display:block;width:200px;height:auto;border:0;"/>
+      <img class="email-dark-logo" src="${BASE}/HomeWODRx-logo-white-red-black-strip-040626.png" alt="HomeWODRx" width="200" style="width:200px;height:auto;border:0;"/>
     </a>
   </td></tr>
   <tr><td style="padding:0 40px 6px;">
@@ -238,7 +227,7 @@ function announcementEmail(fields: Record<string, string>, unsubLink: string): {
   <tr><td style="background-color:#f8f8f8;padding:22px 40px;border-top:1px solid #e5e5e5;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr>
-      <td><p style="margin:0 0 2px;font-size:13px;font-weight:700;color:#1a1a1a;">HomeWODrx</p>
+      <td><p style="margin:0 0 2px;font-size:13px;font-weight:700;color:#1a1a1a;">HomeWODRx</p>
           <p style="margin:0;font-size:12px;color:#666666;line-height:1.6;">Every WOD. Every Athlete. One Platform.<br><a href="${BASE}" style="color:#C41212;text-decoration:none;">homewodrx.com</a></p></td>
       <td align="right" valign="top"><p style="margin:0;font-size:11px;color:#999999;line-height:1.8;text-align:right;">You opted in to product updates.<br><a href="${unsubLink}" style="color:#999999;text-decoration:underline;">Unsubscribe</a></p></td>
     </tr></table>
@@ -281,7 +270,7 @@ async function isAdminRequest(req: Request): Promise<boolean> {
 Deno.serve(async (req: Request) => {
   const url = new URL(req.url);
 
-  // ── CORS preflight ────────────────────────────────────────────────────────
+  // ── CORS preflight ───────────────────────────────────────────────────────
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: CORS });
   }
@@ -321,8 +310,6 @@ Deno.serve(async (req: Request) => {
   // ── Broadcast to subscribers ───────────────────────────────────────────────
   const notifKey = type === "blog" ? "blog" : "product";
 
-  // Fetch all profiles with the relevant opt-in.
-  // We use a raw SQL query via RPC or direct table scan with service role.
   const { data: profiles, error: dbErr } = await sb
     .from("profiles")
     .select("id, notifications")
@@ -330,19 +317,15 @@ Deno.serve(async (req: Request) => {
 
   if (dbErr) return json({ error: "DB error: " + dbErr.message }, 500);
 
-  // Filter in JS (JSONB partial index queries need an RPC; this works reliably)
   const recipients = (profiles ?? []).filter((p: { id: string; notifications: Record<string, boolean> }) => {
     const notif = p.notifications as Record<string, boolean> | null;
     if (!notif) return false;
-    // Support legacy "content" key for blog pref (migration: content → blog)
     if (notifKey === "blog") return notif.blog === true || notif.content === true;
     return notif[notifKey] === true;
   });
 
   if (recipients.length === 0) return json({ ok: true, sent: 0, message: "No opted-in subscribers" });
 
-  // Get auth emails for recipient IDs via service role
-  // Supabase doesn't expose auth.users via the client library; use admin API
   const authRes = await fetch(`${SUPABASE_URL}/auth/v1/admin/users?page=1&per_page=1000`, {
     headers: { "apikey": SERVICE_KEY, "Authorization": `Bearer ${SERVICE_KEY}` },
   });
@@ -367,7 +350,6 @@ Deno.serve(async (req: Request) => {
     if (ok) sent++;
     else errors.push(profile.id);
 
-    // Rate-limit: Resend free tier is 2 req/s — small delay between sends
     await new Promise(r => setTimeout(r, 150));
   }
 
