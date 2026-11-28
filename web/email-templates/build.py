@@ -5,12 +5,12 @@ Run:  python3 build.py
 Then paste each .html file into Supabase > Authentication > Emails > Templates
 (the file header comment says which template and subject it belongs to).
 
-The logo sits on a dark band that stays dark in every inbox. Gmail ignores the
-dark-mode logo swap the old templates used, so it showed the black logo on dark.
+The header is one image (white logo on a dark band). Gmail's dark mode flips
+background colours but never images, so this looks the same in every inbox.
 """
 from pathlib import Path
 
-LOGO = "https://homewodrx.com/HomeWODRx-logo-white-red-black-strip-040626.png"  # = /brand/logo-on-dark.png
+HEADER = "https://homewodrx.com/brand/email-header.png"  # white logo baked onto #161616, 1040x208
 TAGLINE = "The training platform for functional fitness athletes, at the box, the health club, or at home."
 RED = "#C41212"
 
@@ -42,10 +42,10 @@ def shell(title: str, preheader: str, content: str, reason: str) -> str:
   <tr>
     <td align="center" style="padding:32px 16px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="card" style="max-width:520px;background-color:#ffffff;border:1px solid #e5e5e5;border-radius:16px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-        <!-- Logo on a band that stays dark in every inbox -->
+        <!-- Logo and its dark band are one image, so Gmail dark mode can't flip the band -->
         <tr>
-          <td align="center" bgcolor="#161616" style="background-color:#161616;padding:26px 24px;">
-            <img src="{LOGO}" alt="HomeWODRx" width="200" style="display:block;width:200px;height:auto;border:0;">
+          <td style="padding:0;line-height:0;font-size:0;">
+            <img src="{HEADER}" alt="HomeWODRx" width="520" style="display:block;width:100%;max-width:520px;height:auto;border:0;">
           </td>
         </tr>
 {content}
