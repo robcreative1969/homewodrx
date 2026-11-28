@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card } from "@/components/Card";
 import { secondaryButton } from "@/components/account/ui";
@@ -48,6 +48,8 @@ function History({ entries, today }: { entries: LogEntry[]; today: string }) {
   const [shown, setShown] = useState(PAGE);
   const [logging, setLogging] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
+  // The day picked on the calendar: scrolled to and briefly highlighted in Your log.
+  const [picked, setPicked] = useState<{ day: string } | null>(null);
 
   const byDay = useMemo(() => {
     const map = new Map<string, LogEntry[]>();
@@ -55,6 +57,23 @@ function History({ entries, today }: { entries: LogEntry[]; today: string }) {
     return map;
   }, [entries]);
   const days = [...byDay.keys()]; // newest first, as the page sorted them
+
+  /** Calendar tap: load older days if that one isn't shown yet, then jump to it. */
+  function pick(day: string) {
+    const i = days.indexOf(day);
+    if (i >= shown) setShown(Math.ceil((i + 1) / PAGE) * PAGE);
+    setPicked({ day }); // a new object, so tapping the same day again re-runs the jump
+  }
+
+  useEffect(() => {
+    if (!picked) return;
+    const el = document.getElementById(`day-${picked.day}`);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    el?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    el?.focus({ preventScroll: true });
+    const t = window.setTimeout(() => setPicked(null), 1800);
+    return () => window.clearTimeout(t);
+  }, [picked]);
 
   // The month grid starts on a Monday, with blanks before the 1st.
   const first = `${month}-01`;
@@ -148,7 +167,7 @@ function History({ entries, today }: { entries: LogEntry[]; today: string }) {
               logged ? "bg-accent font-bold text-accent-ink no-underline" : d === today ? "border-[1.5px] border-ink font-bold text-ink" : d > today ? "text-ink-3" : "text-ink-2"
             }`;
             return logged ? (
-              <a key={d} href={`#day-${d}`} className={cls} aria-label={`${shortDate(d)}: logged`}>{n}</a>
+              <button key={d} type="button" onClick={() => pick(d)} className={cls} aria-label={`${shortDate(d)}: logged. Show this day`}>{n}</button>
             ) : (
               <span key={d} className={cls}>{n}</span>
             );
@@ -160,7 +179,14 @@ function History({ entries, today }: { entries: LogEntry[]; today: string }) {
         <section aria-labelledby="log-list" className="flex flex-col gap-3">
           <h2 id="log-list" className="m-0 px-1 text-lg font-bold">Your log</h2>
           {days.slice(0, shown).map((day) => (
-            <div key={day} id={`day-${day}`} className="flex scroll-mt-20 flex-col rounded-2xl border border-line bg-surface px-[18px] py-2">
+            <div
+              key={day}
+              id={`day-${day}`}
+              tabIndex={-1}
+              className={`flex scroll-mt-20 flex-col rounded-2xl border bg-surface px-[18px] py-2 outline-none transition-[border-color,box-shadow] duration-500 ${
+                picked?.day === day ? "border-accent ring-[3px] ring-accent" : "border-line"
+              }`}
+            >
               <h3 className="m-0 py-2 text-sm font-semibold text-ink-2">{day === today ? "Today" : day === addDays(today, -1) ? "Yesterday" : shortDate(day)}</h3>
               <ul className="m-0 flex list-none flex-col p-0">
                 {byDay.get(day)!.map((e) => {
