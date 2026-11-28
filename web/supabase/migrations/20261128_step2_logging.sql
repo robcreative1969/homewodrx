@@ -66,6 +66,10 @@ create policy "Read own results"   on public.results for select using (auth.uid(
 create policy "Add own results"    on public.results for insert with check (auth.uid() = user_id);
 create policy "Change own results" on public.results for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
 create policy "Delete own results" on public.results for delete using (auth.uid() = user_id);
+-- The admin Members page lists recent results, so admins can still read them.
+create policy "Admins read results" on public.results for select using (
+  exists (select 1 from public.profiles where id = auth.uid() and is_admin = true)
+);
 
 -- 5. Lift PRs are private ----------------------------------------------------------------
 alter table public.lift_prs enable row level security;
