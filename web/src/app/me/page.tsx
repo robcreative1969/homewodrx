@@ -29,7 +29,8 @@ export default async function MePage() {
       </Card>
 
       <Card title="Password" labelledBy="me-password">
-        <NewPasswordForm button="Change password" />
+        <p className="m-0 text-[15px] text-ink-2">Set or change your password. You can always log in with an emailed code instead.</p>
+        <NewPasswordForm button="Save password" />
       </Card>
 
       <form action={signOut}>

@@ -26,6 +26,9 @@ export function friendlyAuthError(message: string): string {
   if (m.includes("invalid login credentials")) return "That email and password don't match.";
   if (m.includes("email not confirmed")) return "Confirm your email first. Check your inbox for the link we sent.";
   if (m.includes("already registered") || m.includes("already been registered")) return "There's already an account with that email. Try logging in.";
+  if (m.includes("signups not allowed for otp") || m.includes("user not found")) return "There's no account with that email yet. Create a free account instead.";
+  if (m.includes("token has expired") || m.includes("otp") && m.includes("invalid")) return "That code didn't work or has expired. Send a new code and use the newest one.";
+  if (m.includes("for security purposes")) return "Wait a minute before asking for another code.";
   if (m.includes("captcha")) return "The human check didn't go through. Try again.";
   if (m.includes("rate limit") || m.includes("too many")) return "Too many tries. Wait a minute, then try again.";
   if (m.includes("reauthentication")) return "For your security, log out and back in, then change your password.";
