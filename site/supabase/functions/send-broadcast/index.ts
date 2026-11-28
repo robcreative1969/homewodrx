@@ -112,6 +112,7 @@ function blogEmail(fields: Record<string, string>, unsubLink: string): { subject
   [style*="background-color:#f8f8f8"]{background-color:#1e1e1e!important}
   [style*="background-color:#fdf8f0"]{background-color:#261e10!important}
   [style*="border:1px solid #e5e5e5"]{border-color:#333333!important}
+  [style*="border-top:1px solid #e5e5e5"]{border-top-color:#333333!important}
   [style*="color:#1a1a1a"]{color:#f5f5f5!important}
   [style*="color:#444444"]{color:#c9c9c9!important}
   [style*="color:#666666"]{color:#a8a8a8!important}
@@ -149,7 +150,6 @@ function blogEmail(fields: Record<string, string>, unsubLink: string): { subject
       <a href="${post_url}" style="display:inline-block;padding:14px 36px;font-size:15px;font-weight:800;color:#ffffff;text-decoration:none;letter-spacing:0.3px;border-radius:10px;">Read the Article →</a>
     </td></tr></table>
   </td></tr>
-  <tr><td style="padding:0 40px;"><div style="border-top:1px solid #e5e5e5;"></div></td></tr>
   <tr><td style="background-color:#f8f8f8;padding:22px 40px;border-top:1px solid #e5e5e5;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr>
@@ -189,6 +189,7 @@ function announcementEmail(fields: Record<string, string>, unsubLink: string): {
   [style*="background-color:#ffffff"]{background-color:#222222!important}
   [style*="background-color:#f8f8f8"]{background-color:#1e1e1e!important}
   [style*="border:1px solid #e5e5e5"]{border-color:#333333!important}
+  [style*="border-top:1px solid #e5e5e5"]{border-top-color:#333333!important}
   [style*="color:#1a1a1a"]{color:#f5f5f5!important}
   [style*="color:#444444"]{color:#c9c9c9!important}
   [style*="color:#666666"]{color:#a8a8a8!important}
@@ -213,7 +214,6 @@ function announcementEmail(fields: Record<string, string>, unsubLink: string): {
     <div style="font-size:15px;color:#444444;line-height:1.75;">${body_html}</div>
   </td></tr>
   ${ctaBlock}
-  <tr><td style="padding:0 40px;"><div style="border-top:1px solid #e5e5e5;"></div></td></tr>
   <tr><td style="background-color:#f8f8f8;padding:22px 40px;border-top:1px solid #e5e5e5;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr>
