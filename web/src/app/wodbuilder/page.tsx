@@ -101,7 +101,7 @@ export default async function BuilderPage({ searchParams }: PageProps<"/wodbuild
         </Card>
       ) : null}
 
-      {workout ? <LogPanel target={{ source: "builder", title: workout.title, score: scoreKindFor(workout.format) }} /> : null}
+      {workout ? <LogPanel target={{ source: "builder", title: workout.title, score: scoreKindFor(workout.format), query }} /> : null}
 
       <form id="builder-form" action="/wodbuilder" className="flex flex-col gap-4" aria-labelledby="choices">
         <h2 id="choices" className={workout ? "m-0 mt-2 text-lg font-bold" : "sr-only"}>Your choices</h2>

@@ -56,7 +56,7 @@ export default async function SavedBuilderPage({ params }: PageProps<"/my-workou
         <RemoveSaved id={saved.id} />
       </Card>
 
-      <LogPanel target={{ source: "builder", title: workout.title, score: scoreKindFor(workout.format) }} />
+      <LogPanel target={{ source: "builder", title: workout.title, score: scoreKindFor(workout.format), query: saved.ref }} />
 
       <BottomBar>
         <Link href={`/my-workouts/${saved.id}/go`} className={primaryAction}>

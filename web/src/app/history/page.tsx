@@ -11,13 +11,17 @@ export default async function HistoryPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/history");
   // Results are private: the database only returns this person's own rows.
-  const { data } = await supabase
-    .from("results")
-    .select(LOG_COLUMNS)
-    .eq("user_id", user.id)
-    .order("date", { ascending: false })
-    .order("created_at", { ascending: false })
-    .limit(2000);
+  const read = (columns: string) =>
+    supabase
+      .from("results")
+      .select(columns)
+      .eq("user_id", user.id)
+      .order("date", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(2000);
+  // builder_query arrives with the step 3 migration; until it runs, read without it.
+  let { data, error } = await read(`${LOG_COLUMNS},builder_query`);
+  if (error) ({ data, error } = await read(LOG_COLUMNS));
 
   return (
     <div className="mx-auto flex w-full max-w-xl flex-col gap-4 px-4 pt-5 pb-28">

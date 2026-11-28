@@ -11,5 +11,5 @@ export default async function SavedBuilderGoPage({ params }: PageProps<"/my-work
   const { user, saved, workout } = await getSavedBuilder(id);
   if (!user) redirect(`/login?next=${encodeURIComponent(`/my-workouts/${id}/go`)}`);
   if (!saved || !workout) notFound();
-  return <WorkoutMode session={sessionFromGenerated(workout, `/my-workouts/${saved.id}`)} />;
+  return <WorkoutMode session={sessionFromGenerated(workout, `/my-workouts/${saved.id}`, saved.ref)} />;
 }

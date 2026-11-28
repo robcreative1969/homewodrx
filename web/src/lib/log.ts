@@ -7,7 +7,8 @@ export type ScoreKind = "time" | "rounds" | "reps";
 export type LogTarget =
   | { source: "library"; slug: string; title: string; score: ScoreKind }
   | { source: "daily20"; date: string; title: string; score: ScoreKind }
-  | { source: "builder"; title: string; score: ScoreKind };
+  /** query is the builder link without "?", so History can link back to it. */
+  | { source: "builder"; title: string; score: ScoreKind; query?: string };
 
 /** A row from public.results, as the log screens read it. */
 export type LogEntry = {
@@ -16,6 +17,8 @@ export type LogEntry = {
   title: string | null;
   benchmark_slug: string | null;
   daily20_date: string | null;
+  /** Builder entries only; missing on rows logged before step 3. */
+  builder_query?: string | null;
   activity_type: string | null;
   activity_name: string | null;
   distance_value: number | null;
@@ -102,6 +105,7 @@ export function entryTitle(e: LogEntry) {
 export function entryHref(e: LogEntry): string | null {
   if (e.source === "library" && e.benchmark_slug) return `/workouts/${e.benchmark_slug}`;
   if (e.source === "daily20" && e.daily20_date) return `/daily-wod?date=${e.daily20_date}`;
+  if (e.source === "builder" && e.builder_query) return `/wodbuilder?${e.builder_query}`;
   return null;
 }
 

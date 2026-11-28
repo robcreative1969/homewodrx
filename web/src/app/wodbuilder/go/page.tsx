@@ -16,5 +16,5 @@ export default async function BuilderGoPage({ searchParams }: PageProps<"/wodbui
   if (!params?.seed) notFound();
   const workout = generateWorkout(await loadMovementPool(), params, params.seed);
   if (!workout) notFound();
-  return <WorkoutMode session={sessionFromGenerated(workout, `/wodbuilder?${builderQuery(params)}`)} />;
+  return <WorkoutMode session={sessionFromGenerated(workout, `/wodbuilder?${builderQuery(params)}`, builderQuery(params))} />;
 }

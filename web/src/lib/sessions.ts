@@ -42,7 +42,7 @@ export function sessionFromDaily20(d: Daily20, today: boolean): Session {
 }
 
 /** A WOD Builder workout in workout mode. */
-export function sessionFromGenerated(w: GeneratedWorkout, backHref: string): Session {
+export function sessionFromGenerated(w: GeneratedWorkout, backHref: string, query: string): Session {
   return {
     name: w.title,
     subtitle: `${w.formatLabel} · ${w.minutes} min`,
@@ -51,6 +51,6 @@ export function sessionFromGenerated(w: GeneratedWorkout, backHref: string): Ses
     rounds: w.rounds ?? null,
     rows: w.rows.map((r) => ({ name: r.movement, reps: repLadder(r.reps.replace(/\s*reps$/, "")) })),
     backHref,
-    log: { source: "builder", title: w.title, score: scoreKindFor(w.format) },
+    log: { source: "builder", title: w.title, score: scoreKindFor(w.format), query },
   };
 }

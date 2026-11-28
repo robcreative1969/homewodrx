@@ -109,6 +109,8 @@ export function LogPanel({
       title: target.title,
       benchmark_slug: target.source === "library" ? target.slug : null,
       daily20_date: target.source === "daily20" ? target.date : null,
+      // The builder link, so History can open this workout again (column added in step 3).
+      ...(target.source === "builder" && target.query ? { builder_query: target.query.slice(0, 500) } : {}),
       score_display: score?.display ?? null,
       score_seconds: score?.seconds ?? null,
       score_rounds: score?.rounds ?? null,

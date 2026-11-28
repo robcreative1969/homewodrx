@@ -9,6 +9,8 @@
 --      Nobody else can read them, admins included. There is no "change": remove and save again.
 --   3. Sanity limits: one save per workout per person, short titles and links,
 --      a builder workout under 20 KB, and at most 500 saves per person.
+--   4. Lets a logged WOD Builder workout remember its builder link (results.builder_query),
+--      so History can link back to it. Older builder entries stay unlinked.
 --
 -- It doesn't touch the old public.workouts table (2 public workouts from the old site).
 
@@ -48,6 +50,11 @@ end $$;
 drop trigger if exists saved_workouts_limit on public.saved_workouts;
 create trigger saved_workouts_limit before insert on public.saved_workouts
   for each row execute function public.saved_workouts_limit();
+
+-- History links for WOD Builder entries ---------------------------------------------------
+alter table public.results add column if not exists builder_query text;
+alter table public.results drop constraint if exists result_builder_query_length;
+alter table public.results add constraint result_builder_query_length check (builder_query is null or length(builder_query) <= 500);
 
 -- Private to each person ----------------------------------------------------------------
 alter table public.saved_workouts enable row level security;
