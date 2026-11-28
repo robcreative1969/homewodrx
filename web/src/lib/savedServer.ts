@@ -50,5 +50,7 @@ export async function getSavedBuilder(id: string) {
     .eq("kind", "builder")
     .maybeSingle();
   const saved = data as SavedWorkout | null;
-  return { user, saved, workout: saved ? readWorkout(saved.workout, saved.title) : null };
+  const workout = saved ? readWorkout(saved.workout, saved.title) : null;
+  // The person's own name for it wins, on the page, the timer and in History.
+  return { user, saved, workout: workout && saved ? { ...workout, title: saved.title } : null };
 }

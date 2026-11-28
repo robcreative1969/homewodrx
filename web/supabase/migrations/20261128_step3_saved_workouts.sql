@@ -5,8 +5,9 @@
 --   1. Adds a new table, saved_workouts. Each row is one workout someone saved:
 --      a library workout (by its slug), The Daily 20 (by date), or a WOD Builder
 --      workout (the workout itself plus the builder link, so it can be reopened).
---   2. Keeps it private: people can only see, add and remove their own saves.
---      Nobody else can read them, admins included. There is no "change": remove and save again.
+--   2. Keeps it private: people can only see, add, rename and remove their own saves.
+--      Nobody else can read them, admins included. Only the name of a WOD Builder save
+--      can be changed; nothing else about a save can be edited.
 --   3. Sanity limits: one save per workout per person, short titles and links,
 --      a builder workout under 20 KB, and at most 500 saves per person.
 --   4. Lets a logged WOD Builder workout remember its builder link (results.builder_query),
@@ -67,11 +68,14 @@ begin
 end $$;
 create policy "Read own saves"   on public.saved_workouts for select to authenticated using (auth.uid() = user_id);
 create policy "Add own saves"    on public.saved_workouts for insert to authenticated with check (auth.uid() = user_id);
+create policy "Rename own builder saves" on public.saved_workouts for update to authenticated
+  using (auth.uid() = user_id and kind = 'builder') with check (auth.uid() = user_id and kind = 'builder');
 create policy "Remove own saves" on public.saved_workouts for delete to authenticated using (auth.uid() = user_id);
 
 -- Signed-out visitors get nothing at all; signed-in people get only what the rules above allow.
 revoke all on public.saved_workouts from anon;
 revoke all on public.saved_workouts from authenticated;
 grant select, insert, delete on public.saved_workouts to authenticated;
+grant update (title) on public.saved_workouts to authenticated;  -- the name, and nothing else
 
 commit;
