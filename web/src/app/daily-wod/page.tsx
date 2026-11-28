@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BottomBar, primaryAction } from "@/components/BottomBar";
 import { Card } from "@/components/Card";
+import { LogPanel } from "@/components/log/LogPanel";
+import { scoreKindFor } from "@/lib/log";
 import { levelLabel } from "@/lib/labels";
 import { bodyFocusLabel, formatLongDate, getDaily10, getDaily20, isDateString, todayEastern } from "@/lib/daily";
 import { movementLinker } from "@/lib/workouts";
@@ -84,6 +86,8 @@ export default async function DailyPage({ searchParams }: PageProps<"/daily-wod"
           <p className="m-0 rounded-xl bg-surface-muted px-3.5 py-2.5 text-[15px]"><strong>Score:</strong> {wod.scoring}</p>
         </Card>
       ) : null}
+
+      {wod ? <LogPanel target={{ source: "daily20", date: wod.date, title: "The Daily 20", score: scoreKindFor(wod.format) }} /> : null}
 
       {stretch ? (
         <Card title="The Daily 10" labelledBy="daily-10-title" aside={<span className="font-mono text-[13px] text-ink-2">{stretch.totalMin} min</span>}>

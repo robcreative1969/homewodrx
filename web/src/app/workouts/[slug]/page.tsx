@@ -5,6 +5,9 @@ import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { BottomBar, primaryAction } from "@/components/BottomBar";
 import { Card } from "@/components/Card";
+import { LogPanel } from "@/components/log/LogPanel";
+import { scoreKindFor } from "@/lib/log";
+import { modeFromFormat } from "@/lib/session";
 import { VideoPlayer } from "@/components/VideoPlayer";
 import { categoryLabel, categoryParam, equipmentLabels, levelLabel } from "@/lib/labels";
 import {
@@ -154,6 +157,8 @@ export default async function WorkoutPage({ params }: PageProps<"/workouts/[slug
           ) : null}
         </Card>
       ) : null}
+
+      <LogPanel target={{ source: "library", slug: w.slug, title: w.name, score: scoreKindFor(modeFromFormat(w.format)) }} />
 
       {w.scaling_notes ? (
         <Card title="Scaling" labelledBy="scaling">

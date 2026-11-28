@@ -1,6 +1,8 @@
 // A workout prepared for workout mode (the timer screen). Built on the server from a
 // benchmark workout or The Daily 20, then handed to the client component.
 
+import type { LogTarget } from "./log";
+
 export type SessionMode = "fortime" | "amrap" | "emom" | "tabata" | "circuit";
 
 export type SessionRow = {
@@ -20,6 +22,8 @@ export type Session = {
   rounds: number | null;
   rows: SessionRow[];
   backHref: string;
+  /** What "Mark as done" on the Finished screen saves against. The plain timer has none. */
+  log?: LogTarget;
 };
 
 export function modeFromFormat(format: string | null | undefined): SessionMode {

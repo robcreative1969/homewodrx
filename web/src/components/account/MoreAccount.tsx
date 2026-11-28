@@ -10,11 +10,18 @@ export function MoreAccount() {
   if (signedIn === null) return <div className="min-h-[120px]" aria-hidden="true" />;
 
   if (signedIn) {
+    const row = "flex min-h-14 items-center justify-between rounded-2xl border border-line bg-surface px-[18px] text-[17px] font-bold text-ink no-underline";
     return (
-      <Link href="/me" className="flex min-h-14 items-center justify-between rounded-2xl border border-line bg-surface px-[18px] text-[17px] font-bold text-ink no-underline">
-        Your account
-        <span aria-hidden="true" className="text-ink-2">›</span>
-      </Link>
+      <div className="flex flex-col gap-2">
+        <Link href="/history" className={row}>
+          Your history
+          <span aria-hidden="true" className="text-ink-2">›</span>
+        </Link>
+        <Link href="/me" className={row}>
+          Your account
+          <span aria-hidden="true" className="text-ink-2">›</span>
+        </Link>
+      </div>
     );
   }
 

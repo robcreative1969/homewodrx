@@ -4,6 +4,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { BottomBar, primaryAction } from "@/components/BottomBar";
 import { Card } from "@/components/Card";
+import { LogPanel } from "@/components/log/LogPanel";
+import { scoreKindFor } from "@/lib/log";
 import { ExclusiveAll } from "@/components/ExclusiveAll";
 import {
   EQUIPMENT,
@@ -94,6 +96,8 @@ export default async function BuilderPage({ searchParams }: PageProps<"/wodbuild
           </div>
         </Card>
       ) : null}
+
+      {workout ? <LogPanel target={{ source: "builder", title: workout.title, score: scoreKindFor(workout.format) }} /> : null}
 
       <form id="builder-form" action="/wodbuilder" className="flex flex-col gap-4" aria-labelledby="choices">
         <h2 id="choices" className={workout ? "m-0 mt-2 text-lg font-bold" : "sr-only"}>Your choices</h2>

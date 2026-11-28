@@ -3,6 +3,7 @@ import type { Daily20 } from "@/lib/daily";
 import type { GeneratedWorkout } from "@/lib/generator";
 import { firstNumber, modeFromFormat, repLadder, type Session } from "@/lib/session";
 import type { BenchmarkWorkout } from "@/lib/workouts";
+import { scoreKindFor } from "@/lib/log";
 
 export function sessionFromBenchmark(w: BenchmarkWorkout): Session {
   const mode = modeFromFormat(w.format);
@@ -23,6 +24,7 @@ export function sessionFromBenchmark(w: BenchmarkWorkout): Session {
       load: [m.rx_men, m.rx_women].filter(Boolean).join(" / ") || undefined,
     })),
     backHref: `/workouts/${w.slug}`,
+    log: { source: "library", slug: w.slug, title: w.name, score: scoreKindFor(mode) },
   };
 }
 
@@ -35,6 +37,7 @@ export function sessionFromDaily20(d: Daily20, today: boolean): Session {
     rounds: d.rounds ?? null,
     rows: d.rows.map((r) => ({ name: r.movement, reps: repLadder(r.reps.replace(/^Minute \d+:\s*/, "").replace(/\s*reps$/, "")) })),
     backHref: today ? "/daily-wod" : `/daily-wod?date=${d.date}`,
+    log: { source: "daily20", date: d.date, title: "The Daily 20", score: scoreKindFor(d.format) },
   };
 }
 
@@ -48,5 +51,6 @@ export function sessionFromGenerated(w: GeneratedWorkout, backHref: string): Ses
     rounds: w.rounds ?? null,
     rows: w.rows.map((r) => ({ name: r.movement, reps: repLadder(r.reps.replace(/\s*reps$/, "")) })),
     backHref,
+    log: { source: "builder", title: w.title, score: scoreKindFor(w.format) },
   };
 }

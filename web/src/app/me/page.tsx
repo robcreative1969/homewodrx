@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Card } from "@/components/Card";
@@ -22,6 +23,11 @@ export default async function MePage() {
         <h1 className="m-0 text-[32px] font-extrabold tracking-tight">Me</h1>
         <p className="m-0 text-ink-2">Signed in as {username || user.email}</p>
       </div>
+
+      <Link href="/history" className="flex min-h-14 items-center justify-between rounded-2xl border border-line bg-surface px-[18px] text-[17px] font-bold text-ink no-underline">
+        Your history
+        <span aria-hidden="true" className="text-ink-2">›</span>
+      </Link>
 
       <Card title="Account" labelledBy="me-account">
         <UsernameForm userId={user.id} current={username} />

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { repsForRound, type Session } from "@/lib/session";
+import { LogPanel } from "@/components/log/LogPanel";
 
 type Status = "ready" | "countdown" | "running" | "paused" | "done";
 
@@ -272,9 +273,24 @@ export function WorkoutMode({ session }: { session: Session }) {
             ) : (
               <span className="font-mono text-7xl font-extrabold tracking-tighter">{clock(finalSeconds ?? elapsed)}</span>
             )}
-            <p className="m-0 max-w-sm text-ink-2">
-              Write it down, so you know what to beat next time.
-            </p>
+            {session.log ? (
+              <div className="w-full max-w-sm text-left">
+                <LogPanel
+                  target={session.log}
+                  heading="Log this workout"
+                  next={session.backHref}
+                  prefill={
+                    session.log.score === "time"
+                      ? { seconds: finalSeconds ?? elapsed }
+                      : session.log.score === "rounds"
+                        ? { rounds: roundsDone, reps: repsIntoRound }
+                        : undefined
+                  }
+                />
+              </div>
+            ) : (
+              <p className="m-0 max-w-sm text-ink-2">Write it down, so you know what to beat next time.</p>
+            )}
             <Link href={session.backHref} className="flex h-14 w-full max-w-sm items-center justify-center rounded-2xl bg-accent text-lg font-bold text-accent-ink no-underline">
               Back to the workout
             </Link>
