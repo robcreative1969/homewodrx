@@ -30,6 +30,9 @@ const UNSUB_SECRET = Deno.env.get("DIGEST_UNSUB_SECRET") ?? "";
 const FROM    = "HomeWODRx <noreply@homewodrx.com>";
 const BASE    = "https://homewodrx.com";
 const FN_BASE = `${SUPABASE_URL}/functions/v1/daily-wod-digest`;
+// White logo baked onto a dark band: Gmail's dark mode flips background colours but not images.
+const HEADER_IMG = `${BASE}/brand/email-header.png`;
+const TAGLINE = "The training platform for functional fitness athletes, at the box, the health club, or at home.";
 
 const sb = createClient(SUPABASE_URL, SERVICE_KEY);
 
@@ -326,7 +329,6 @@ function buildEmailHtml(wod: Move, dateStr: string, firstName: string | null, un
   <title>The Daily 20 — ${esc(dateLabel)}</title>
   <style>
     :root { color-scheme: light dark; supported-color-schemes: light dark; }
-    .dark-logo { display:none; }
     @media (prefers-color-scheme: dark) {
       .bg-page      { background-color:#161616 !important; }
       .card         { background-color:#222222 !important; border-color:#333333 !important; }
@@ -336,17 +338,13 @@ function buildEmailHtml(wod: Move, dateStr: string, firstName: string | null, un
       .meta-box     { background-color:#2a2a2a !important; border-color:#3a3a3a !important; color:#b0b0b0 !important; }
       .meta-strong  { color:#f0f0f0 !important; }
       .mv-table     { border-color:#3a3a3a !important; }
-      .mv-row       { border-top-color:#333333 !important; }
+      .mv-row td    { border-top-color:#333333 !important; }
       .mv-name      { color:#f0f0f0 !important; }
       .mv-reps      { color:#ff5a5a !important; }
       .divider      { border-top-color:#333333 !important; }
       .scoring      { color:#b0b0b0 !important; }
       .scoring-strong { color:#f0f0f0 !important; }
-      .light-logo   { display:none !important; }
-      .dark-logo    { display:block !important; }
     }
-    [data-ogsc] .light-logo { display:none !important; }
-    [data-ogsc] .dark-logo  { display:block !important; }
   </style>
 </head>
 <body class="bg-page" style="margin:0;padding:0;background-color:#f3f3f3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
@@ -354,13 +352,10 @@ function buildEmailHtml(wod: Move, dateStr: string, firstName: string | null, un
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="bg-page" style="background-color:#f3f3f3;">
     <tr><td align="center" style="padding:40px 16px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="card" style="max-width:560px;background-color:#ffffff;border-radius:16px;border:1px solid #e5e5e5;overflow:hidden;">
-        <tr><td align="center" style="padding:36px 40px 20px;">
-          <a href="${BASE}" style="text-decoration:none;">
-            <img class="light-logo" src="${BASE}/HomeWODRx-logo-black-red-040626.png" alt="HomeWODRx" width="200" style="display:block;width:200px;height:auto;border:0;"/>
-            <img class="dark-logo" src="${BASE}/HomeWODRx-logo-white-red-black-strip-040626.png" alt="HomeWODRx" width="200" style="width:200px;height:auto;border:0;"/>
-          </a>
+        <tr><td style="padding:0;line-height:0;font-size:0;">
+          <a href="${BASE}" style="text-decoration:none;"><img src="${HEADER_IMG}" alt="HomeWODRx" width="560" style="display:block;width:100%;max-width:560px;height:auto;border:0;"/></a>
         </td></tr>
-        <tr><td style="padding:0 40px 6px;">
+        <tr><td style="padding:28px 40px 6px;">
           <p class="text-eyebrow" style="margin:0 0 4px;font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#C41212;">The Daily 20 · ${esc(dateLabel)}</p>
           <h1 class="text-head" style="margin:0 0 10px;font-size:26px;font-weight:800;color:#1a1a1a;line-height:1.2;letter-spacing:-0.3px;">${esc(wod.title || "Daily 20")}</h1>
           <p class="text-body" style="margin:0 0 18px;font-size:15px;color:#444444;line-height:1.7;">${hi} today's workout is ready. ${esc(wod.description || "")}</p>
@@ -386,20 +381,19 @@ function buildEmailHtml(wod: Move, dateStr: string, firstName: string | null, un
               <a href="${BASE}/daily-wod" style="display:inline-block;padding:16px 44px;font-size:16px;font-weight:800;color:#ffffff;text-decoration:none;letter-spacing:0.3px;border-radius:10px;">Start Today's Workout</a>
             </td></tr>
           </table>
-          <p class="text-body" style="margin:14px 0 0;font-size:12px;color:#888888;">Pair it with <a href="${BASE}/daily-wod#daily-10" style="color:#C41212;font-weight:600;">The Daily 10 stretch</a> when you're done.</p>
+          <p class="text-body" style="margin:14px 0 0;font-size:12px;color:#888888;">Pair it with <a href="${BASE}/daily-wod#daily-10-title" style="color:#C41212;font-weight:600;">The Daily 10 stretch</a> when you're done.</p>
         </td></tr>
         <tr><td style="padding:0 40px;"><div class="divider" style="border-top:1px solid #e5e5e5;"></div></td></tr>
         <tr><td align="center" style="padding:20px 40px 30px;">
           <p style="margin:0 0 6px;font-size:11px;color:#999999;line-height:1.6;">
-            You're receiving this because Daily WOD Digest is turned on in your HomeWODRx settings.
+            You're receiving this because you signed up for the Daily 20 email.
           </p>
           <p style="margin:0;font-size:11px;color:#999999;">
-            <a href="${BASE}/settings#notifications" style="color:#888888;">Manage email preferences</a> &nbsp;·&nbsp;
             <a href="${unsubUrl}" style="color:#888888;">Unsubscribe</a>
           </p>
         </td></tr>
       </table>
-      <p style="margin:18px 0 0;font-size:11px;color:#aaaaaa;">© ${new Date().getFullYear()} HomeWODRx · <a href="${BASE}" style="color:#aaaaaa;">homewodrx.com</a></p>
+      <p style="margin:18px 0 0;font-size:11px;color:#aaaaaa;line-height:1.6;">${TAGLINE}<br>© ${new Date().getFullYear()} HomeWODRx · <a href="${BASE}" style="color:#aaaaaa;">homewodrx.com</a></p>
     </td></tr>
   </table>
 </body>
@@ -416,18 +410,18 @@ async function handleUnsubscribe(url: URL): Promise<Response> {
   const ok = !!(UNSUB_SECRET && uid && token) && token === (await hmacHex(uid));
   let body: string;
   if (!ok) {
-    body = "<h1>Invalid link</h1><p>This unsubscribe link is invalid or expired. You can manage email preferences in your <a href='https://homewodrx.com/settings'>account settings</a>.</p>";
+    body = "<h1>That link didn't work</h1><p>This unsubscribe link is invalid or has expired. Email hello@homewodrx.com and we'll take you off the list.</p>";
   } else {
     const { data } = await sb.from("profiles").select("notifications").eq("id", uid).maybeSingle();
     const notif = { ...((data as Move)?.notifications ?? {}), daily: false };
     await sb.from("profiles").update({ notifications: notif }).eq("id", uid);
-    body = "<h1>You're unsubscribed</h1><p>You won't receive the Daily WOD Digest anymore. Changed your mind? Turn it back on in <a href='https://homewodrx.com/settings'>Settings → Notifications</a>.</p>";
+    body = "<h1>You're unsubscribed</h1><p>You won't get the Daily 20 email anymore. Today's workout is always at <a href='https://homewodrx.com/daily-wod'>homewodrx.com/daily-wod</a>.</p>";
   }
   return new Response(
     `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HomeWODRx</title></head>
      <body style="font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#f3f3f3;margin:0;padding:60px 16px;text-align:center;">
-     <div style="max-width:480px;margin:0 auto;background:#fff;border:1px solid #e5e5e5;border-radius:16px;padding:40px 32px;">
-     <img src="https://homewodrx.com/HomeWODRx-logo-black-red-040626.png" alt="HomeWODRx" width="180" style="margin-bottom:24px;"/>${body}</div></body></html>`,
+     <div style="max-width:480px;margin:0 auto;background:#fff;border:1px solid #e5e5e5;border-radius:16px;overflow:hidden;">
+     <img src="${HEADER_IMG}" alt="HomeWODRx" width="480" style="display:block;width:100%;height:auto;border:0;"/><div style="padding:32px;">${body}</div></div></body></html>`,
     { status: ok ? 200 : 400, headers: { "Content-Type": "text/html; charset=utf-8" } },
   );
 }
