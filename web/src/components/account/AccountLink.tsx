@@ -37,16 +37,25 @@ export function AccountLink() {
     };
   }, [open]);
 
-  if (signedIn === null) return <span className="hidden min-w-[60px] lg:block" aria-hidden="true" />;
+  if (signedIn === null) return <span className="hidden min-w-[150px] lg:block" aria-hidden="true" />;
 
   if (!signedIn) {
+    // We can't tell whether a signed-out visitor has an account, so offer both.
     return (
-      <Link
-        href="/login"
-        className="hidden min-h-11 items-center whitespace-nowrap rounded-lg px-2 text-[15px] font-semibold text-accent-text no-underline hover:bg-surface-muted lg:flex"
-      >
-        Log in
-      </Link>
+      <div className="hidden items-center gap-1 lg:flex">
+        <Link
+          href="/login"
+          className="flex min-h-11 items-center whitespace-nowrap rounded-lg px-2 text-[15px] font-semibold text-ink no-underline hover:bg-surface-muted"
+        >
+          Log in
+        </Link>
+        <Link
+          href="/signup"
+          className="flex min-h-10 items-center whitespace-nowrap rounded-lg bg-accent px-3.5 text-[15px] font-bold text-accent-ink no-underline"
+        >
+          Sign up
+        </Link>
+      </div>
     );
   }
 
