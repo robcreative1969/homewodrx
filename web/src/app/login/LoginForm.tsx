@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { friendlyAuthError } from "@/lib/account";
 import { useTurnstile } from "@/components/account/useTurnstile";
 import { CodeStep } from "@/components/account/CodeStep";
+import { PasswordInput } from "@/components/account/PasswordInput";
 import { field, FormError, label, primaryButton, secondaryButton } from "@/components/account/ui";
 
 const WAIT = "Wait for the human check to finish, then try again.";
@@ -91,7 +92,7 @@ export function LoginForm({ next }: { next: string }) {
                 <label htmlFor="login-password" className={label}>Password</label>
                 <Link href="/forgot-password" className="text-sm font-semibold text-accent-text">Forgot password?</Link>
               </div>
-              <input id="login-password" name="password" type="password" autoComplete="current-password" required className={field} />
+              <PasswordInput id="login-password" name="password" autoComplete="current-password" required />
             </>
           ) : (
             <p className="m-0 -mt-1 text-[13px] text-ink-2">We&apos;ll email you a code to log in. No password needed.</p>
